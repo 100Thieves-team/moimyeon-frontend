@@ -6,8 +6,7 @@ import {
 } from "@vanilla-extract/css";
 import { media } from "./tokens";
 
-// 다크 모드에서 교체되는 시맨틱 컬러 (DESIGN.md `dark:` 블록과 1:1)
-// 별도 컨트랙트로 분리해 assignVars가 다크 블록 통째 적용을 빌드 타임에 강제
+// 다크 모드에서 교체되는 시맨틱 컬러
 const themeContract = createGlobalThemeContract({
   color: {
     background: "color-background",

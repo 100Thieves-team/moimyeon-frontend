@@ -1,7 +1,7 @@
 import { globalStyle } from "@vanilla-extract/css";
 import { vars } from "./theme.css";
 
-// 62.5% 트릭: 1rem = 10px — DESIGN.md의 모든 rem 값이 이 기준으로 적혀 있다.
+// 1rem = 10px
 globalStyle("html", {
   fontSize: "62.5%",
   height: "100%",
@@ -27,7 +27,7 @@ globalStyle("body", {
   backgroundColor: vars.color.background,
   color: vars.color.primary,
   fontFamily: vars.font.sans,
-  // 62.5% 루트 보정: 없으면 기본 텍스트가 10px로 렌더된다 (Base UI 포털도 body에서 상속)
+  // 62.5% 루트 보정: 없으면 기본 텍스트가 10px로 렌더링됨
   fontSize: "1.6rem",
   lineHeight: 1.5,
   WebkitFontSmoothing: "antialiased",

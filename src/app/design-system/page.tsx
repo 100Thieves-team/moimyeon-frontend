@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import { breakpoints, grid, sprinkles, textStyle, vars } from "@/styles";
+import type { Metadata } from "next";
 import * as styles from "./page.css";
 
 export const metadata: Metadata = {

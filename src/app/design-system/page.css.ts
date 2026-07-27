@@ -11,8 +11,8 @@ export const container = style({
   paddingBlock: vars.spacing.section,
 });
 
-// recipe 패턴 레퍼런스: Base UI 컴포넌트 단계에서 이 형태(base + variants + defaultVariants)로
-// 컴포넌트별 .css.ts를 작성하고, 반환된 클래스를 Base UI `className`에 전달한다.
+// recipe 패턴 레퍼런스: Base UI 컴포넌트에서 이 형태(base + variants + defaultVariants)로
+// 컴포넌트별 .css.ts를 작성하고, 반환된 클래스를 Base UI `className`에 전달
 export const swatchSurface = recipe({
   base: {
     flex: 1,

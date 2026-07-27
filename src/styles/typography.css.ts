@@ -5,8 +5,7 @@ import { media } from "./tokens";
 const sans = vars.font.sans;
 const mono = vars.font.mono;
 
-// DESIGN.md `typography:` 네임드 텍스트 스타일. desktop* 값은 명시된 브레이크포인트부터 적용.
-// @media 블록은 오름차순(md → lg)이어야 한다 — 동일 특이성이라 소스 순서가 결정한다.
+// @media 블록은 오름차순(md → lg)이어야 함
 export const textStyle = styleVariants({
   navLabel: {
     fontFamily: sans,
@@ -105,7 +104,6 @@ export const textStyle = styleVariants({
     lineHeight: "3.8rem",
     letterSpacing: "-0.05em",
     "@media": {
-      // md의 중간 단계를 거쳐 lg에서 최종 크기에 도달한다 (DESIGN.md Typography 프로즈)
       [media.md]: { fontSize: "4rem", lineHeight: "4.8rem" },
       [media.lg]: { fontSize: "4.8rem", lineHeight: "5.6rem" },
     },

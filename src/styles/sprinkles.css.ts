@@ -43,7 +43,7 @@ const responsiveProperties = defineProperties({
   },
 });
 
-// 컬러는 CSS 변수라 다크 모드에서 자동 전환된다 — 브레이크포인트 조건 불필요.
+// 컬러는 다크 모드에서 자동 전환됨
 const unconditionalProperties = defineProperties({
   properties: {
     color: vars.color,
