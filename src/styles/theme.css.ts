@@ -6,127 +6,112 @@ import {
 } from "@vanilla-extract/css";
 import { media } from "./tokens";
 
-// fillSecondaryHover -> fill-secondary-hover, primary50 -> primary-50, section2xl -> section-2xl
-const kebab = (s: string) =>
-  s
-    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
-    .replace(/([a-zA-Z])([0-9])/g, "$1-$2")
-    .toLowerCase();
-
-const toVarName = (_value: string | null, path: string[]) => path.map(kebab).join("-");
-
-// 다크 모드에서 통째로 교체되는 시맨틱 컬러 슬롯 (DESIGN.md `dark:` 블록의 키와 1:1로 일치).
-// 별도 컨트랙트로 분리해 assignVars가 "다크 블록 통째 적용" 규칙을 빌드 타임에 강제하게 한다.
-const themeContract = createGlobalThemeContract(
-  {
-    color: {
-      background: null,
-      primary: null,
-      secondary: null,
-      tertiary: null,
-      quaternary: null,
-      primary50: null,
-      primary10: null,
-      fillPrimary: null,
-      fillSecondary: null,
-      fillSecondaryHover: null,
-      fillTertiary: null,
-      strokeLight: null,
-      strokeMedium: null,
-    },
+// 다크 모드에서 교체되는 시맨틱 컬러 (DESIGN.md `dark:` 블록과 1:1)
+// 별도 컨트랙트로 분리해 assignVars가 다크 블록 통째 적용을 빌드 타임에 강제
+const themeContract = createGlobalThemeContract({
+  color: {
+    background: "color-background",
+    primary: "color-primary",
+    secondary: "color-secondary",
+    tertiary: "color-tertiary",
+    quaternary: "color-quaternary",
+    primary50: "color-primary-50",
+    primary10: "color-primary-10",
+    fillPrimary: "color-fill-primary",
+    fillSecondary: "color-fill-secondary",
+    fillSecondaryHover: "color-fill-secondary-hover",
+    fillTertiary: "color-fill-tertiary",
+    strokeLight: "color-stroke-light",
+    strokeMedium: "color-stroke-medium",
   },
-  toVarName,
-);
+});
 
 // 라이트/다크 공통 고정 토큰 (프리미티브 컬러, 스페이싱, 폰트, 레이아웃, radius, 그림자, 모션)
-const staticContract = createGlobalThemeContract(
-  {
-    color: {
-      black: null,
-      black50: null,
-      black10: null,
-      black8: null,
-      white: null,
-      white50: null,
-      white10: null,
-      trueWhite: null,
-      red: null,
-      red50: null,
-      red10: null,
-      blue: null,
-      blue50: null,
-      blue10: null,
-      pink: null,
-      pink50: null,
-      pink10: null,
-      yellow: null,
-      yellow50: null,
-      yellow10: null,
-      brown: null,
-      brown50: null,
-      brown10: null,
-      grey: null,
-      lightGrey: null,
-      toolTip: null,
-      linkHover: null,
-      headerBackground: null,
+const staticContract = createGlobalThemeContract({
+  color: {
+    black: "color-black",
+    black50: "color-black-50",
+    black10: "color-black-10",
+    black8: "color-black-8",
+    white: "color-white",
+    white50: "color-white-50",
+    white10: "color-white-10",
+    trueWhite: "color-true-white",
+    red: "color-red",
+    red50: "color-red-50",
+    red10: "color-red-10",
+    blue: "color-blue",
+    blue50: "color-blue-50",
+    blue10: "color-blue-10",
+    pink: "color-pink",
+    pink50: "color-pink-50",
+    pink10: "color-pink-10",
+    yellow: "color-yellow",
+    yellow50: "color-yellow-50",
+    yellow10: "color-yellow-10",
+    brown: "color-brown",
+    brown50: "color-brown-50",
+    brown10: "color-brown-10",
+    grey: "color-grey",
+    lightGrey: "color-light-grey",
+    toolTip: "color-tool-tip",
+    linkHover: "color-link-hover",
+    headerBackground: "color-header-background",
+  },
+  spacing: {
+    xs: "spacing-xs",
+    sm: "spacing-sm",
+    md: "spacing-md",
+    base: "spacing-base",
+    lg: "spacing-lg",
+    xl: "spacing-xl",
+    "2xl": "spacing-2xl",
+    "3xl": "spacing-3xl",
+    sectionSm: "spacing-section-sm",
+    section: "spacing-section",
+    sectionLg: "spacing-section-lg",
+    sectionXl: "spacing-section-xl",
+    section2xl: "spacing-section-2xl",
+  },
+  font: {
+    sans: "font-sans",
+    mono: "font-mono",
+  },
+  layout: {
+    maxWidth: "layout-max-width",
+    columnGap: "layout-column-gap",
+    sidePadding: "layout-side-padding",
+  },
+  radius: {
+    control: "radius-control",
+    cta: "radius-cta",
+    floating: "radius-floating",
+    link: "radius-link",
+    media: "radius-media",
+    ctaRound: "radius-cta-round",
+    pill: "radius-pill",
+  },
+  shadow: {
+    cardSoft: "shadow-card-soft",
+    cardRaise: "shadow-card-raise",
+    cardRaiseHover: "shadow-card-raise-hover",
+    tooltip: "shadow-tooltip",
+    glassHighlight: "shadow-glass-highlight",
+    hardOffset: "shadow-hard-offset",
+  },
+  motion: {
+    ease: {
+      site: "motion-ease-site",
+      underline: "motion-ease-underline",
+      fade: "motion-ease-fade",
     },
-    spacing: {
-      xs: null,
-      sm: null,
-      md: null,
-      base: null,
-      lg: null,
-      xl: null,
-      "2xl": null,
-      "3xl": null,
-      sectionSm: null,
-      section: null,
-      sectionLg: null,
-      sectionXl: null,
-      section2xl: null,
-    },
-    font: {
-      sans: null,
-      mono: null,
-    },
-    layout: {
-      maxWidth: null,
-      columnGap: null,
-      sidePadding: null,
-    },
-    radius: {
-      control: null,
-      cta: null,
-      floating: null,
-      link: null,
-      media: null,
-      ctaRound: null,
-      pill: null,
-    },
-    shadow: {
-      cardSoft: null,
-      cardRaise: null,
-      cardRaiseHover: null,
-      tooltip: null,
-      glassHighlight: null,
-      hardOffset: null,
-    },
-    motion: {
-      ease: {
-        site: null,
-        underline: null,
-        fade: null,
-      },
-      duration: {
-        fast: null,
-        base: null,
-        slow: null,
-      },
+    duration: {
+      fast: "motion-duration-fast",
+      base: "motion-duration-base",
+      slow: "motion-duration-slow",
     },
   },
-  toVarName,
-);
+});
 
 createGlobalTheme(":root", staticContract, {
   color: {
@@ -232,8 +217,8 @@ createGlobalTheme(":root", themeContract, {
   },
 });
 
-// 다크 모드: 시맨틱 슬롯만 통째로 재할당. 액센트/프리미티브는 양쪽 모드에서 동일.
-// createGlobalTheme(":root") 호출들과 특이성이 같으므로 반드시 그 뒤(소스 순서)에 위치해야 한다.
+// 다크 모드: 시맨틱 컬러 재할당
+// createGlobalTheme(":root") 호출들과 우선순위가 같으므로 반드시 그 뒤에 위치해야 함
 globalStyle(":root", {
   "@media": {
     [media.dark]: {
