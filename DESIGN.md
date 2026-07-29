@@ -48,7 +48,6 @@ colors:
   fill-tertiary: "rgba(0,0,0,0.04)"
   stroke-light: "rgba(0,0,0,0.06)"
   stroke-medium: "rgba(0,0,0,0.12)"
-  get-dia-button-hover: "rgba(0,0,0,0.90)"
   background: "#F8F8F8"
 dark:
   background: "#1B1B1B"
@@ -62,7 +61,6 @@ dark:
   fill-tertiary: "rgba(255,255,255,0.10)"
   stroke-light: "rgba(255,255,255,0.10)"
   stroke-medium: "rgba(255,255,255,0.20)"
-  get-dia-button-hover: "rgba(255,255,255,0.90)"
   primary-50: "rgba(255,255,255,0.50)"
   primary-10: "rgba(255,255,255,0.10)"
 typography:
@@ -211,6 +209,22 @@ layout:
     lg: 1000px
     xl: 1200px
     "2xl": 1400px
+spacing:
+  # component rhythm (4px grid)
+  xs: 0.4rem
+  sm: 0.8rem
+  md: 1.2rem
+  base: 1.6rem
+  lg: 2rem
+  xl: 2.4rem
+  "2xl": 3.2rem
+  "3xl": 4rem
+  # section rhythm (10px grid)
+  section-sm: 6rem
+  section: 8rem
+  section-lg: 10rem
+  section-xl: 12rem
+  section-2xl: 15rem
 rounded:
   control: 0.8rem
   cta: 1.4rem
@@ -445,6 +459,19 @@ nearest tier (900 → `lg`, 1100 → `xl`).
 Content sits on a 12-column grid with a `2rem` column gap, `1rem` side padding,
 and a `200rem` (2000px) maximum container width.
 
+### Spacing
+
+Spacing runs on two rhythms:
+
+- **Component rhythm — 4px grid** (`spacing.xs`–`spacing.3xl`, 4–40px):
+  padding and gaps inside controls, cards, and clusters. `spacing.lg` (20px)
+  is the pivot of the whole system — the most-used value on the site and
+  identical to the grid column gap.
+- **Section rhythm — 10px grid** (`spacing.section-*`, 60–150px): vertical
+  spacing between page sections.
+- **Optical adjustments** (1–7px) appear freely outside the scale for border
+  compensation and icon alignment; leave them untokenized.
+
 ## Elevation & Depth
 
 Depth stays light and functional. Floating controls use faint alpha-black
@@ -525,6 +552,8 @@ above are the curated subset this project uses.
   hero CTA and raised cards.
 - Do use semantic alpha-black tokens for text, borders, fills, and dividers.
 - Do keep component spacing compact and deliberate.
+- Do space component internals on the 4px rhythm and page sections on the
+  10px rhythm (`spacing.section-*`).
 - Do concentrate saturated color in small accent moments.
 - Do spend the novelty budget on AI/brand moments; keep core UI patterns
   familiar.
