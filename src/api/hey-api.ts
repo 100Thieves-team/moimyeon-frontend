@@ -1,3 +1,5 @@
+import "client-only";
+
 import type { CreateClientConfig } from "./generated/client.gen";
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -8,6 +10,6 @@ if (!apiBaseUrl) {
 
 export const createClientConfig: CreateClientConfig = (config) => ({
   ...config,
-  baseUrl: apiBaseUrl,
-  credentials: "include",
+  baseURL: apiBaseUrl,
+  withCredentials: true,
 });

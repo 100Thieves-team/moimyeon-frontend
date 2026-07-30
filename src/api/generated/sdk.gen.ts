@@ -69,6 +69,7 @@ export const exampleGet = <ThrowOnError extends boolean = false>(
   options: Options<ExampleGetData, ThrowOnError>,
 ): RequestResult<ExampleGetResponses, unknown, ThrowOnError> =>
   (options.client ?? client).get<ExampleGetResponses, unknown, ThrowOnError>({
+    responseType: "json",
     url: "/get/{exampleValue}",
     ...options,
   });
@@ -82,6 +83,7 @@ export const examplePost = <ThrowOnError extends boolean = false>(
   options?: Options<ExamplePostData, ThrowOnError>,
 ): RequestResult<ExamplePostResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).post<ExamplePostResponses, unknown, ThrowOnError>({
+    responseType: "json",
     url: "/post",
     ...options,
     headers: {
@@ -99,6 +101,7 @@ export const searchCompanies = <ThrowOnError extends boolean = false>(
   options: Options<SearchCompaniesData, ThrowOnError>,
 ): RequestResult<SearchCompaniesResponses, SearchCompaniesErrors, ThrowOnError> =>
   (options.client ?? client).get<SearchCompaniesResponses, SearchCompaniesErrors, ThrowOnError>({
+    responseType: "json",
     url: "/v1/companies",
     ...options,
   });
@@ -112,6 +115,7 @@ export const jobRoles = <ThrowOnError extends boolean = false>(
   options?: Options<JobRolesData, ThrowOnError>,
 ): RequestResult<JobRolesResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).get<JobRolesResponses, unknown, ThrowOnError>({
+    responseType: "json",
     url: "/v1/job-roles",
     ...options,
   });
@@ -125,6 +129,7 @@ export const regions = <ThrowOnError extends boolean = false>(
   options?: Options<RegionsData, ThrowOnError>,
 ): RequestResult<RegionsResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).get<RegionsResponses, unknown, ThrowOnError>({
+    responseType: "json",
     url: "/v1/regions",
     ...options,
   });
@@ -138,6 +143,7 @@ export const termsList = <ThrowOnError extends boolean = false>(
   options?: Options<TermsListData, ThrowOnError>,
 ): RequestResult<TermsListResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).get<TermsListResponses, unknown, ThrowOnError>({
+    responseType: "json",
     url: "/v1/terms",
     ...options,
   });
@@ -151,6 +157,7 @@ export const authLogout = <ThrowOnError extends boolean = false>(
   options?: Options<AuthLogoutData, ThrowOnError>,
 ): RequestResult<AuthLogoutResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).post<AuthLogoutResponses, unknown, ThrowOnError>({
+    responseType: "json",
     url: "/v1/auth/logout",
     ...options,
   });
@@ -164,6 +171,7 @@ export const authRefresh = <ThrowOnError extends boolean = false>(
   options?: Options<AuthRefreshData, ThrowOnError>,
 ): RequestResult<AuthRefreshResponses, AuthRefreshErrors, ThrowOnError> =>
   (options?.client ?? client).post<AuthRefreshResponses, AuthRefreshErrors, ThrowOnError>({
+    responseType: "json",
     url: "/v1/auth/refresh",
     ...options,
   });
@@ -177,6 +185,7 @@ export const memberMe = <ThrowOnError extends boolean = false>(
   options?: Options<MemberMeData, ThrowOnError>,
 ): RequestResult<MemberMeResponses, MemberMeErrors, ThrowOnError> =>
   (options?.client ?? client).get<MemberMeResponses, MemberMeErrors, ThrowOnError>({
+    responseType: "json",
     url: "/v1/members/me",
     ...options,
   });
@@ -193,7 +202,11 @@ export const nicknameAvailability = <ThrowOnError extends boolean = false>(
     NicknameAvailabilityResponses,
     NicknameAvailabilityErrors,
     ThrowOnError
-  >({ url: "/v1/nicknames/availability", ...options });
+  >({
+    responseType: "json",
+    url: "/v1/nicknames/availability",
+    ...options,
+  });
 
 /**
  * 닉네임 자동 추천
@@ -204,6 +217,7 @@ export const nicknameSuggestion = <ThrowOnError extends boolean = false>(
   options?: Options<NicknameSuggestionData, ThrowOnError>,
 ): RequestResult<NicknameSuggestionResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).get<NicknameSuggestionResponses, unknown, ThrowOnError>({
+    responseType: "json",
     url: "/v1/nicknames/suggestion",
     ...options,
   });
@@ -217,6 +231,7 @@ export const updateNickname = <ThrowOnError extends boolean = false>(
   options?: Options<UpdateNicknameData, ThrowOnError>,
 ): RequestResult<UpdateNicknameResponses, UpdateNicknameErrors, ThrowOnError> =>
   (options?.client ?? client).put<UpdateNicknameResponses, UpdateNicknameErrors, ThrowOnError>({
+    responseType: "json",
     url: "/v1/members/me/nickname",
     ...options,
     headers: {
@@ -234,6 +249,7 @@ export const createProfile = <ThrowOnError extends boolean = false>(
   options?: Options<CreateProfileData, ThrowOnError>,
 ): RequestResult<CreateProfileResponses, CreateProfileErrors, ThrowOnError> =>
   (options?.client ?? client).post<CreateProfileResponses, CreateProfileErrors, ThrowOnError>({
+    responseType: "json",
     url: "/v1/members/me/profile",
     ...options,
     headers: {
@@ -251,6 +267,7 @@ export const updateProfile = <ThrowOnError extends boolean = false>(
   options?: Options<UpdateProfileData, ThrowOnError>,
 ): RequestResult<UpdateProfileResponses, UpdateProfileErrors, ThrowOnError> =>
   (options?.client ?? client).put<UpdateProfileResponses, UpdateProfileErrors, ThrowOnError>({
+    responseType: "json",
     url: "/v1/members/me/profile",
     ...options,
     headers: {
@@ -268,6 +285,7 @@ export const publicProfile = <ThrowOnError extends boolean = false>(
   options: Options<PublicProfileData, ThrowOnError>,
 ): RequestResult<PublicProfileResponses, unknown, ThrowOnError> =>
   (options.client ?? client).get<PublicProfileResponses, unknown, ThrowOnError>({
+    responseType: "json",
     url: "/v1/members/{memberId}/profile",
     ...options,
   });

@@ -28,7 +28,7 @@ Create a local environment file before using the browser API client:
 cp .env.example .env.local
 ```
 
-Generate the typed Fetch client and SDK from the published development OpenAPI schema:
+Generate the typed Axios client and SDK from the published development OpenAPI schema:
 
 ```bash
 pnpm generate:api
