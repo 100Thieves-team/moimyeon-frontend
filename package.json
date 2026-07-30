@@ -9,6 +9,7 @@
     "lint:fix": "oxlint --fix",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
+    "generate:api": "openapi-ts",
     "lint-staged": "lint-staged",
     "prepare": "husky",
     "start": "next start"
@@ -23,6 +24,7 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "0.99.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

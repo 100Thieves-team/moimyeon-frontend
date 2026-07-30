@@ -20,6 +20,22 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## API Client
+
+Create a local environment file before using the browser API client:
+
+```bash
+cp .env.example .env.local
+```
+
+Generate the typed Fetch client and SDK from the published development OpenAPI schema:
+
+```bash
+pnpm generate:api
+```
+
+Generated files are written to `src/api/generated` and committed to Git. Do not edit them directly; update the OpenAPI schema and regenerate instead.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
