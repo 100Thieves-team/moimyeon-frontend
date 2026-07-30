@@ -18,7 +18,7 @@
     "browser": true,
     "node": true
   },
-  "ignorePatterns": [".next/**", "out/**", "build/**", "next-env.d.ts"],
+  "ignorePatterns": [".next/**", "out/**", "build/**", "next-env.d.ts", "src/api/generated/**"],
   "rules": {
     "react/react-in-jsx-scope": "off",
     "import/no-unassigned-import": "off"
