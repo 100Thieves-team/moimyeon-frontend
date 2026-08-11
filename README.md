@@ -36,6 +36,31 @@ pnpm generate:api
 
 Generated files are written to `src/api/generated` and committed to Git. Do not edit them directly; update the OpenAPI schema and regenerate instead.
 
+## Testing
+
+Install the Chromium binary once after installing dependencies:
+
+```bash
+pnpm exec playwright install chromium
+```
+
+Run the Node unit tests and Chromium component tests together, or run either project separately:
+
+```bash
+pnpm test
+pnpm test:unit
+pnpm test:browser
+```
+
+To debug the browser tests in the Vitest Browser Mode UI, run either color-scheme project:
+
+```bash
+pnpm test:browser:ui
+pnpm test:browser:ui:dark
+```
+
+CI environments should install Chromium and its operating-system dependencies with `pnpm exec playwright install --with-deps chromium` before running the tests.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
