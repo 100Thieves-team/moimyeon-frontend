@@ -1,5 +1,5 @@
 ---
-name: moimyeon-git-conventions
+name: git-conventions
 description: 커밋 작성, 브랜치 생성, PR 생성 등 모든 git 작업 시 팀 컨벤션을 적용한다. "커밋해줘", "브랜치 만들어줘", "PR 올려줘" 요청이나 작업 완료 후 커밋/PR을 만들기 전에 반드시 참조.
 ---
 
