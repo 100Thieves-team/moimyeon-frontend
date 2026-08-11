@@ -9,6 +9,12 @@
     "lint:fix": "oxlint --fix",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
+    "test": "vitest run",
+    "test:browser": "vitest run --project browser",
+    "test:browser:ui": "vitest --project chromium-light --browser.headless=false",
+    "test:browser:ui:dark": "vitest --project chromium-dark --browser.headless=false",
+    "test:unit": "vitest run --project unit",
+    "typecheck": "tsc --noEmit",
     "generate:api": "openapi-ts",
     "lint-staged": "lint-staged",
     "prepare": "husky",
@@ -29,11 +35,17 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vanilla-extract/next-plugin": "2.5.2",
+    "@vanilla-extract/vite-plugin": "^5.2.6",
+    "@vitejs/plugin-react": "^6.0.5",
+    "@vitest/browser-playwright": "^4.1.10",
     "husky": "^9.1.7",
     "lint-staged": "^17.1.0",
     "oxfmt": "^0.59.0",
     "oxlint": "^1.74.0",
-    "typescript": "^5"
+    "playwright": "^1.62.1",
+    "typescript": "^5",
+    "vitest": "^4.1.10",
+    "vitest-browser-react": "^2.2.0"
   },
   "lint-staged": {
     "*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}": [
