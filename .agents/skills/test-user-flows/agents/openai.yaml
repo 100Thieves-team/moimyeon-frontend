@@ -1,0 +1,6 @@
+interface:
+  display_name: "핵심 사용자 흐름 테스트"
+  short_description: "핵심 사용자 동작과 명시된 예외만 테스트하도록 안내"
+  default_prompt: "$test-user-flows를 사용해 핵심 사용자 동작과 명시된 예외만 검증하는 테스트를 작성해줘."
+policy:
+  allow_implicit_invocation: true
