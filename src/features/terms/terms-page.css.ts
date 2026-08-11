@@ -15,32 +15,6 @@ export const page = style({
   },
 });
 
-export const header = style({
-  width: "100%",
-  maxWidth: "76rem",
-  margin: "0 auto 5.6rem",
-  "@media": {
-    [mobile]: {
-      marginBottom: "4rem",
-    },
-  },
-});
-
-export const back = style({
-  display: "inline-flex",
-  minHeight: "4rem",
-  alignItems: "center",
-  borderRadius: vars.radius.control,
-  color: vars.color.secondary,
-  fontSize: "1.4rem",
-  selectors: {
-    "&:focus-visible": {
-      outline: `2px solid ${vars.color.primary}`,
-      outlineOffset: "2px",
-    },
-  },
-});
-
 export const article = style({
   width: "100%",
   maxWidth: "76rem",

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { termsList, type TermsListResponse } from "@/api/generated";
 import * as styles from "./terms-page.css";
 
@@ -40,11 +39,6 @@ export async function TermsPage({ type }: TermsPageProps) {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <Link className={styles.back} href="/">
-          ← 돌아가기
-        </Link>
-      </header>
       <main className={styles.article}>
         {term ? (
           <article>
