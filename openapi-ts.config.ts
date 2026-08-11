@@ -11,7 +11,7 @@ export default defineConfig({
     "@hey-api/typescript",
     "@hey-api/sdk",
     {
-      name: "@hey-api/client-axios",
+      name: "@hey-api/client-next",
       runtimeConfigPath: "./src/api/hey-api",
     },
   ],

@@ -22,13 +22,13 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## API Client
 
-Create a local environment file before using the browser API client:
+Create a local environment file before using the generated API client:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Generate the typed Axios client and SDK from the published development OpenAPI schema:
+Generate the typed Next.js Fetch client and SDK from the published development OpenAPI schema:
 
 ```bash
 pnpm generate:api
