@@ -1,0 +1,130 @@
+name: Deploy Preview environment
+
+on:
+  pull_request_target:
+    types: [labeled, unlabeled, synchronize, reopened, closed]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  update-preview-branch:
+    if: >-
+      (github.event.action == 'labeled' && github.event.label.name == 'preview') ||
+      (github.event.action == 'unlabeled' && github.event.label.name == 'preview') ||
+      (
+        (github.event.action == 'synchronize' || github.event.action == 'reopened') &&
+        contains(github.event.pull_request.labels.*.name, 'preview')
+      ) ||
+      (
+        github.event.action == 'closed' &&
+        contains(github.event.pull_request.labels.*.name, 'preview')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    concurrency:
+      group: preview-deployment
+      cancel-in-progress: true
+    steps:
+      - name: Update preview branch
+        uses: actions/github-script@v9
+        env:
+          PREVIEW_BRANCH: preview
+          PREVIEW_LABEL: preview
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const previewBranch = process.env.PREVIEW_BRANCH;
+            const previewLabel = process.env.PREVIEW_LABEL;
+
+            const openPullRequests = await github.paginate(
+              github.rest.pulls.list,
+              {
+                owner,
+                repo,
+                state: "open",
+                per_page: 100,
+              },
+            );
+
+            const labeledPullRequests = openPullRequests.filter((pullRequest) =>
+              pullRequest.labels.some((label) => label.name === previewLabel),
+            );
+
+            if (labeledPullRequests.length === 0) {
+              core.notice(
+                `No open pull request has the ${previewLabel} label. Keeping ${previewBranch} unchanged.`,
+              );
+              return;
+            }
+
+            if (labeledPullRequests.length > 1) {
+              const pullRequestNumbers = labeledPullRequests
+                .map((pullRequest) => `#${pullRequest.number}`)
+                .join(", ");
+
+              core.setFailed(
+                `Expected exactly one open pull request with the ${previewLabel} label, found ${labeledPullRequests.length}: ${pullRequestNumbers}`,
+              );
+              return;
+            }
+
+            const candidate = labeledPullRequests[0];
+            const { data: pullRequest } = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: candidate.number,
+            });
+
+            const stillEligible =
+              pullRequest.state === "open" &&
+              pullRequest.labels.some((label) => label.name === previewLabel);
+
+            if (!stillEligible) {
+              core.notice(
+                `Pull request #${pullRequest.number} is no longer eligible. Keeping ${previewBranch} unchanged.`,
+              );
+              return;
+            }
+
+            const headSha = pullRequest.head.sha;
+
+            await github.rest.git.updateRef({
+              owner,
+              repo,
+              ref: `heads/${previewBranch}`,
+              sha: headSha,
+              force: true,
+            });
+
+            const { data: updatedRef } = await github.rest.git.getRef({
+              owner,
+              repo,
+              ref: `heads/${previewBranch}`,
+            });
+
+            if (updatedRef.object.sha !== headSha) {
+              core.setFailed(
+                `Expected ${previewBranch} to point to ${headSha}, but found ${updatedRef.object.sha}.`,
+              );
+              return;
+            }
+
+            await core.summary
+              .addHeading("Preview environment deployment")
+              .addTable([
+                [
+                  { data: "Target", header: true },
+                  { data: "Value", header: true },
+                ],
+                ["Pull request", `#${pullRequest.number}`],
+                ["Commit", headSha],
+                ["Branch", previewBranch],
+              ])
+              .addLink(
+                "Open Preview environment",
+                "https://dev.moimyeon.plady.io",
+              )
+              .write();
