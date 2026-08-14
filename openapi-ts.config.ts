@@ -9,7 +9,16 @@ export default defineConfig({
   },
   plugins: [
     "@hey-api/typescript",
-    "@hey-api/sdk",
+    {
+      name: "@hey-api/sdk",
+      validator: {
+        response: "zod",
+      },
+    },
+    {
+      name: "zod",
+      compatibilityVersion: 4,
+    },
     {
       name: "@hey-api/client-next",
       runtimeConfigPath: "./src/api/hey-api",
