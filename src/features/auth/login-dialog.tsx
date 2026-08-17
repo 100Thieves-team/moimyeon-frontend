@@ -3,6 +3,7 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
+import { Button, type ButtonProps } from "@/components/button";
 import type { LoginReturnTo } from "./auth-intent";
 import { DevLoginForm } from "./dev-login-form";
 import { loginDialog } from "./login-dialog-handle";
@@ -10,8 +11,9 @@ import * as styles from "./login-dialog.css";
 
 type LoginTriggerProps = {
   children: ReactNode;
-  className?: string;
   returnTo: LoginReturnTo;
+  size?: ButtonProps["size"];
+  variant?: ButtonProps["variant"];
 };
 
 type LoginDialogProps = {
@@ -25,9 +27,14 @@ const loginDialogTitleLines: Record<LoginReturnTo, readonly [string, string]> = 
   "/interviews/new": ["로그인하고", "면접을 만들어 보세요"],
 };
 
-export function LoginTrigger({ children, className, returnTo }: LoginTriggerProps) {
+export function LoginTrigger({ children, returnTo, size, variant }: LoginTriggerProps) {
   return (
-    <Dialog.Trigger className={className} handle={loginDialog} payload={{ returnTo }} type="button">
+    <Dialog.Trigger
+      handle={loginDialog}
+      payload={{ returnTo }}
+      render={<Button size={size} variant={variant} />}
+      type="button"
+    >
       {children}
     </Dialog.Trigger>
   );

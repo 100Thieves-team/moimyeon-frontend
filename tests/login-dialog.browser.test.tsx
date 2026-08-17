@@ -1,28 +1,38 @@
 import { LoginDialog } from "@/features/auth/login-dialog";
+import { LoginDialogController } from "@/features/auth/login-dialog-controller";
 import { DevLoginForm } from "@/features/auth/dev-login-form";
 import { TopBar } from "@/features/navigation/top-bar";
 import "@/styles/global.css";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-react";
 import { page } from "vitest/browser";
-import { routerRefreshMock, routerReplaceMock } from "./mocks/next-navigation";
 
-const { issueDevSessionMock } = vi.hoisted(() => ({
+const { issueDevSessionMock, navigation } = vi.hoisted(() => ({
   issueDevSessionMock: vi.fn(),
+  navigation: {
+    getCurrentMemberState: vi.fn(),
+    routerRefresh: vi.fn(),
+    routerReplace: vi.fn(),
+    searchParams: new URLSearchParams(),
+    segment: null as string | null,
+  },
 }));
 
 vi.mock("@/api", () => ({
   issueDevSession: issueDevSessionMock,
 }));
-
-function LoginFixture({ showDevLogin = false }: { showDevLogin?: boolean }) {
-  return (
-    <>
-      <TopBar />
-      <LoginDialog showDevLogin={showDevLogin} />
-    </>
-  );
-}
+vi.mock("server-only", () => ({}));
+vi.mock("@/features/auth/current-member-server", () => ({
+  getCurrentMemberState: navigation.getCurrentMemberState,
+}));
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    refresh: navigation.routerRefresh,
+    replace: navigation.routerReplace,
+  }),
+  useSearchParams: () => navigation.searchParams,
+  useSelectedLayoutSegment: () => navigation.segment,
+}));
 
 type TriggerName = "로그인" | "면접 만들기";
 
@@ -32,12 +42,20 @@ const dialogTitleByTrigger: Record<TriggerName, string> = {
 };
 
 beforeEach(async () => {
-  vi.resetAllMocks();
+  vi.clearAllMocks();
+  navigation.getCurrentMemberState.mockResolvedValue({ error: {}, status: "anonymous" });
+  navigation.searchParams = new URLSearchParams();
+  navigation.segment = null;
   await page.viewport(1440, 1024);
 });
 
 async function openLoginDialog(triggerName: TriggerName, showDevLogin = false) {
-  const screen = await render(<LoginFixture showDevLogin={showDevLogin} />);
+  const screen = await render(
+    <>
+      {await TopBar()}
+      <LoginDialog showDevLogin={showDevLogin} />
+    </>,
+  );
   const trigger = screen.getByRole("button", {
     exact: true,
     name: triggerName,
@@ -83,6 +101,15 @@ describe("LoginDialog", () => {
     await expect.element(dialog).not.toBeInTheDocument();
   });
 
+  it("OAuth 로그인 실패를 사용자에게 알린다", async () => {
+    navigation.searchParams = new URLSearchParams("authError=login_failed");
+    const screen = await render(<LoginDialogController />);
+
+    await expect
+      .element(screen.getByRole("alert"))
+      .toHaveTextContent("로그인에 실패했어요. 다시 시도해 주세요.");
+    await screen.getByRole("button", { name: "로그인 창 닫기" }).click();
+  });
   it("개발 로그인을 활성화하면 UUID 폼을 표시한다", async () => {
     const { dialog, screen } = await openLoginDialog("로그인", true);
 
@@ -105,8 +132,8 @@ describe("LoginDialog", () => {
     await screen.getByRole("button", { name: "dev 계정으로 로그인" }).click();
 
     await expect.element(dialog).not.toBeInTheDocument();
-    await expect.poll(() => routerReplaceMock).toHaveBeenCalledWith("/");
-    expect(routerRefreshMock).toHaveBeenCalledOnce();
+    await expect.poll(() => navigation.routerReplace).toHaveBeenCalledWith("/");
+    expect(navigation.routerRefresh).toHaveBeenCalledOnce();
   });
 });
 
@@ -133,8 +160,8 @@ describe("DevLoginForm", () => {
 
     await expect.element(screen.getByRole("alert")).toHaveTextContent("회원 UUID를 입력해 주세요.");
     expect(issueDevSessionMock).not.toHaveBeenCalled();
-    expect(routerReplaceMock).not.toHaveBeenCalled();
-    expect(routerRefreshMock).not.toHaveBeenCalled();
+    expect(navigation.routerReplace).not.toHaveBeenCalled();
+    expect(navigation.routerRefresh).not.toHaveBeenCalled();
   });
 
   it("UUID로 세션을 발급하면 바로 원래 경로로 이동한다", async () => {
@@ -142,8 +169,8 @@ describe("DevLoginForm", () => {
 
     await submitDevLogin();
 
-    await expect.poll(() => routerReplaceMock).toHaveBeenCalledWith("/interviews/new");
-    expect(routerRefreshMock).toHaveBeenCalledOnce();
+    await expect.poll(() => navigation.routerReplace).toHaveBeenCalledWith("/interviews/new");
+    expect(navigation.routerRefresh).toHaveBeenCalledOnce();
     expect(issueDevSessionMock).toHaveBeenCalledWith({
       body: { memberId },
       credentials: "include",
@@ -166,8 +193,8 @@ describe("DevLoginForm", () => {
     const screen = await submitDevLogin("/");
 
     await expect.element(screen.getByRole("alert")).toHaveTextContent(message);
-    expect(routerReplaceMock).not.toHaveBeenCalled();
-    expect(routerRefreshMock).not.toHaveBeenCalled();
+    expect(navigation.routerReplace).not.toHaveBeenCalled();
+    expect(navigation.routerRefresh).not.toHaveBeenCalled();
   });
 
   it("알 수 없는 오류가 발생하면 공통 오류를 안내하고 이동하지 않는다", async () => {
@@ -184,8 +211,8 @@ describe("DevLoginForm", () => {
     await expect
       .element(screen.getByRole("alert"))
       .toHaveTextContent("dev 로그인에 실패했어요. 잠시 후 다시 시도해 주세요.");
-    expect(routerReplaceMock).not.toHaveBeenCalled();
-    expect(routerRefreshMock).not.toHaveBeenCalled();
+    expect(navigation.routerReplace).not.toHaveBeenCalled();
+    expect(navigation.routerRefresh).not.toHaveBeenCalled();
   });
 
   it("세션 발급 중에는 중복 제출을 막는다", async () => {
@@ -202,12 +229,12 @@ describe("DevLoginForm", () => {
 
     await expect.element(submitButton).toBeDisabled();
     expect(issueDevSessionMock).toHaveBeenCalledTimes(1);
-    expect(routerReplaceMock).not.toHaveBeenCalled();
-    expect(routerRefreshMock).not.toHaveBeenCalled();
+    expect(navigation.routerReplace).not.toHaveBeenCalled();
+    expect(navigation.routerRefresh).not.toHaveBeenCalled();
 
     resolveRequest?.();
 
-    await expect.poll(() => routerReplaceMock).toHaveBeenCalledWith("/");
-    expect(routerRefreshMock).toHaveBeenCalledOnce();
+    await expect.poll(() => navigation.routerReplace).toHaveBeenCalledWith("/");
+    expect(navigation.routerRefresh).toHaveBeenCalledOnce();
   });
 });
