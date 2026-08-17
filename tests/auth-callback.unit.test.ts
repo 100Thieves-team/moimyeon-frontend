@@ -2,6 +2,14 @@ import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/auth/callback/route";
 
+const { memberMeMock } = vi.hoisted(() => ({
+  memberMeMock: vi.fn(),
+}));
+
+vi.mock("@/api", () => ({
+  memberMe: memberMeMock,
+}));
+
 vi.mock("server-only", () => ({}));
 
 function createCallbackRequest(returnTo?: string) {
@@ -22,7 +30,16 @@ function expectLoginIntentCleared(response: Response) {
 }
 
 beforeEach(() => {
+  vi.resetAllMocks();
   vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "https://api.dev.moimyeon.plady.io");
+  memberMeMock.mockResolvedValue({
+    data: {
+      data: {
+        memberId: "518d3feb-5351-66b1-7ce1-3a32d6a50f0b",
+      },
+      result: "SUCCESS",
+    },
+  });
 });
 
 afterEach(() => {
@@ -32,18 +49,22 @@ afterEach(() => {
 
 describe("OAuth callback", () => {
   it("인증된 회원을 로그인 전에 의도한 경로로 돌려보낸다", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 200 })));
-
     const response = await GET(createCallbackRequest("/interviews/new"));
 
     expect(response.status).toBe(303);
     expect(response.headers.get("Location")).toBe("https://moimyeon.plady.io/interviews/new");
+    expect(memberMeMock).toHaveBeenCalledWith({
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+        Cookie: "moimyeon_return_to=/interviews/new",
+      },
+      throwOnError: false,
+    });
     expectLoginIntentCleared(response);
   });
 
   it("로그인 의도가 없으면 홈으로 돌려보낸다", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 200 })));
-
     const response = await GET(createCallbackRequest());
 
     expect(response.status).toBe(303);
@@ -52,10 +73,10 @@ describe("OAuth callback", () => {
   });
 
   it.each([
-    ["회원 조회 실패", () => Promise.resolve(new Response(null, { status: 401 }))],
+    ["회원 조회 실패", () => Promise.resolve({ data: undefined, error: { result: "ERROR" } })],
     ["네트워크 오류", () => Promise.reject(new Error("network error"))],
-  ])("%s 시 로그인 실패를 표시할 홈으로 돌려보낸다", async (_, fetchResult) => {
-    vi.stubGlobal("fetch", vi.fn().mockImplementation(fetchResult));
+  ])("%s 시 로그인 실패를 표시할 홈으로 돌려보낸다", async (_, memberMeResult) => {
+    memberMeMock.mockImplementation(memberMeResult);
 
     const response = await GET(createCallbackRequest("/interviews/new"));
 

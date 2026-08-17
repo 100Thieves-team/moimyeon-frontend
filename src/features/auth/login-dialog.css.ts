@@ -68,6 +68,7 @@ export const popup = style({
 });
 
 export const title = style({
+  paddingRight: "3.2rem",
   fontFamily: vars.font.sans,
   fontSize: "2.6rem",
   fontWeight: 300,
@@ -240,22 +241,37 @@ export const devSubmit = style({
 });
 
 export const close = style({
-  alignSelf: "center",
+  position: "absolute",
+  top: "1.2rem",
+  right: "1.2rem",
+  display: "grid",
+  width: "4.4rem",
+  height: "4.4rem",
+  padding: 0,
   border: 0,
+  borderRadius: vars.radius.pill,
   background: "transparent",
   color: vars.color.secondary,
-  fontFamily: vars.font.sans,
-  fontSize: "1.35rem",
-  fontWeight: 400,
-  lineHeight: "1.8rem",
-  textDecoration: "underline",
-  textUnderlineOffset: "0.15em",
   cursor: "pointer",
+  placeItems: "center",
+  transition: `background-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, transform ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
   selectors: {
     "&:focus-visible": {
-      borderRadius: "0.2rem",
       outline: `2px solid ${vars.color.primary}`,
       outlineOffset: "3px",
+    },
+    "&:active": {
+      transform: "scale(0.92)",
+    },
+  },
+  "@media": {
+    [media.hover]: {
+      ":hover": {
+        backgroundColor: vars.color.fillTertiary,
+      },
+    },
+    [media.reducedMotion]: {
+      transition: "none",
     },
   },
 });

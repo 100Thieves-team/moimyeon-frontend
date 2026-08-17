@@ -1,6 +1,7 @@
 "use client";
 
 import { Dialog } from "@base-ui/react/dialog";
+import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import type { LoginReturnTo } from "./auth-intent";
 import { DevLoginForm } from "./dev-login-form";
@@ -17,6 +18,11 @@ type LoginDialogProps = {
   defaultOpen?: boolean;
   errorMessage?: string;
   showDevLogin?: boolean;
+};
+
+const loginDialogTitleLines: Record<LoginReturnTo, readonly [string, string]> = {
+  "/": ["로그인하고 함께", "면접을 준비해 보세요"],
+  "/interviews/new": ["로그인하고", "면접을 만들어 보세요"],
 };
 
 export function LoginTrigger({ children, className, returnTo }: LoginTriggerProps) {
@@ -36,15 +42,20 @@ export function LoginDialog({
     <Dialog.Root defaultOpen={defaultOpen} handle={loginDialog}>
       {({ payload }) => {
         const returnTo = payload?.returnTo ?? "/";
+        const [titleFirstLine, titleSecondLine] = loginDialogTitleLines[returnTo];
         const googleLoginHref = `/auth/google/start?returnTo=${encodeURIComponent(returnTo)}`;
 
         return (
           <Dialog.Portal>
             <Dialog.Backdrop className={styles.backdrop} />
             <Dialog.Popup className={styles.popup}>
+              <Dialog.Close aria-label="로그인 창 닫기" className={styles.close} type="button">
+                <X aria-hidden="true" size={20} strokeWidth={2} />
+              </Dialog.Close>
+
               <Dialog.Title className={styles.title}>
-                <span className={styles.titleLine}>로그인하고</span>{" "}
-                <span className={styles.titleLine}>면접을 만들 수 있어요</span>
+                <span className={styles.titleLine}>{titleFirstLine}</span>{" "}
+                <span className={styles.titleLine}>{titleSecondLine}</span>
               </Dialog.Title>
 
               <a className={styles.googleAction} href={googleLoginHref}>
@@ -98,8 +109,6 @@ export function LoginDialog({
                 </a>
                 에 동의한 것으로 간주됩니다.
               </Dialog.Description>
-
-              <Dialog.Close className={styles.close}>다음에 할게요</Dialog.Close>
             </Dialog.Popup>
           </Dialog.Portal>
         );

@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { NextRequest, NextResponse } from "next/server";
+import { memberMe } from "@/api";
 import { DEFAULT_LOGIN_RETURN_TO, normalizeLoginReturnTo, type LoginReturnTo } from "./auth-intent";
 
 const LOGIN_RETURN_TO_COOKIE = "moimyeon_return_to";
@@ -46,13 +47,14 @@ export function getLoginIntent(request: NextRequest): LoginReturnTo {
 }
 
 export async function hasAuthenticatedMember(request: NextRequest) {
-  const response = await fetch(`${getApiBaseUrl()}/v1/members/me`, {
+  const result = await memberMe({
     cache: "no-store",
     headers: {
       Accept: "application/json",
       Cookie: request.headers.get("cookie") ?? "",
     },
+    throwOnError: false,
   });
 
-  return response.ok;
+  return result.data?.data !== undefined;
 }
