@@ -32,17 +32,23 @@ export const textStyle = styleVariants({
     lineHeight: "2.7rem",
     letterSpacing: "-0.02em",
   },
+  buttonSm: {
+    fontFamily: sans,
+    fontSize: "1.5rem",
+    fontWeight: 500,
+    lineHeight: "2rem",
+  },
+  buttonMd: {
+    fontFamily: sans,
+    fontSize: "1.6rem",
+    fontWeight: 500,
+    lineHeight: "2.4rem",
+  },
   buttonLg: {
     fontFamily: sans,
     fontSize: "2rem",
     fontWeight: 500,
     lineHeight: "3rem",
-  },
-  watchButton: {
-    fontFamily: sans,
-    fontSize: "1.6rem",
-    fontWeight: 500,
-    lineHeight: "2.4rem",
   },
   privacyLink: {
     fontFamily: sans,

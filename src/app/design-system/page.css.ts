@@ -92,6 +92,40 @@ export const motionCard = style({
   },
 });
 
+export const componentGrid = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.spacing.xl,
+});
+
+export const componentRow = style({
+  display: "grid",
+  gridTemplateColumns: "10rem minmax(0, 1fr)",
+  gap: vars.spacing.lg,
+  alignItems: "center",
+  "@media": {
+    [media.sm]: {
+      gridTemplateColumns: "12rem minmax(0, 1fr)",
+    },
+  },
+});
+
+export const componentLabel = style({
+  color: vars.color.tertiary,
+  fontFamily: vars.font.mono,
+  fontSize: "1.3rem",
+  lineHeight: "1.7rem",
+  letterSpacing: "0.1em",
+  textTransform: "uppercase",
+});
+
+export const componentExamples = style({
+  display: "flex",
+  flexWrap: "wrap",
+  gap: vars.spacing.md,
+  alignItems: "center",
+});
+
 // 62.5% 검증용 눈금자: 1.6rem이 정확히 16px로 렌더되어야 한다.
 export const ruler = style({
   width: "1.6rem",
