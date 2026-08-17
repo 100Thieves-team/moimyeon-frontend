@@ -11,6 +11,8 @@ export default defineConfig({
   optimizeDeps: {
     include: [
       "@base-ui/react/button",
+      "@base-ui/react/field",
+      "@base-ui/react/form",
       "@base-ui/react/merge-props",
       "@vanilla-extract/recipes/createRuntimeFn",
       "@vanilla-extract/sprinkles/createRuntimeSprinkles",
@@ -37,6 +39,7 @@ export default defineConfig({
         resolve: {
           alias: {
             "next/link": path.resolve(rootDirectory, "tests/mocks/next-link.tsx"),
+            "next/navigation": path.resolve(rootDirectory, "tests/mocks/next-navigation.ts"),
           },
         },
         test: {

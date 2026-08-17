@@ -158,6 +158,87 @@ export const error = style({
   textAlign: "center",
 });
 
+export const devSection = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: "1.2rem",
+  paddingTop: "2rem",
+  borderTop: `1px solid ${vars.color.strokeLight}`,
+});
+
+export const devTitle = style({
+  color: vars.color.primary,
+  fontFamily: vars.font.sans,
+  fontSize: "1.5rem",
+  fontWeight: 600,
+  lineHeight: "2rem",
+});
+
+export const devDescription = style({
+  color: vars.color.tertiary,
+  fontFamily: vars.font.sans,
+  fontSize: "1.25rem",
+  lineHeight: "1.8rem",
+});
+
+export const devForm = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: "1.2rem",
+});
+
+export const devField = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.8rem",
+});
+
+export const devLabel = style({
+  color: vars.color.secondary,
+  fontFamily: vars.font.sans,
+  fontSize: "1.3rem",
+  fontWeight: 500,
+  lineHeight: "1.8rem",
+});
+
+export const devInput = style({
+  width: "100%",
+  minHeight: "4.8rem",
+  paddingInline: "1.4rem",
+  border: `1px solid ${vars.color.strokeMedium}`,
+  borderRadius: vars.radius.control,
+  backgroundColor: vars.color.background,
+  color: vars.color.primary,
+  fontFamily: vars.font.mono,
+  fontSize: "1.6rem",
+  lineHeight: "2rem",
+  selectors: {
+    "&::placeholder": {
+      color: vars.color.quaternary,
+    },
+    "&:focus-visible": {
+      borderColor: vars.color.primary,
+      outline: `2px solid ${vars.color.primary10}`,
+      outlineOffset: "2px",
+    },
+    "&[data-invalid]": {
+      borderColor: vars.color.red,
+    },
+  },
+});
+
+export const devError = style({
+  color: vars.color.red,
+  fontFamily: vars.font.sans,
+  fontSize: "1.3rem",
+  lineHeight: "1.8rem",
+});
+
+export const devSubmit = style({
+  width: "100%",
+  marginTop: "0.4rem",
+});
+
 export const close = style({
   alignSelf: "center",
   border: 0,

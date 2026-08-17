@@ -4,14 +4,1298 @@ export type ClientOptions = {
   baseUrl: "http://localhost:8080" | "https://api.dev.moimyeon.plady.io" | (string & {});
 };
 
-export type V1MembersMeResumesResumeId1190069423 = {
+export type V1RoomsRoomIdApplications240308819 = {
+  /**
+   * 방장에게 전할 말 (선택, 최대 300자, 미입력 시 빈 문자열)
+   */
+  note?: string | null;
+  /**
+   * 제출할 본인 보관 이력서 id (UUID)
+   */
+  resumeId: string;
+};
+
+export type V1ReviewsReviewId292942325 = {
+  /**
+   * 교체할 한 줄 후기 (선택)
+   */
+  content?: string | null;
+  /**
+   * 평가 태그 교체 (시간을 잘 지켜요 | 준비가 성실해요 | 질문이 날카로워요 | 피드백이 구체적이에요 | 소통이 원활해요, 빈 배열 허용)
+   */
+  tags: Array<
+    | {
+        [key: string]: unknown;
+      }
+    | boolean
+    | string
+    | number
+  >;
+};
+
+export type V1JobPostings1538643122 = {
   /**
    * 처리 결과 (SUCCESS)
    */
   result: string;
   data?: {
     /**
-     * 기본 이력서 여부
+     * 공고 출처 링크
+     */
+    sourceUrl: string;
+    /**
+     * 회사 id
+     */
+    companyId: number;
+    /**
+     * 생성(또는 재사용)된 채용 공고 id (룸 생성에 바로 사용)
+     */
+    jobPostingId: number;
+    /**
+     * 운영 검수 여부 (생성 직후 false)
+     */
+    verified: boolean;
+    /**
+     * 공고명
+     */
+    postingName: string;
+  };
+};
+
+export type V1JobPostingsLinkMetadata1427693842 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 공고 출처 링크 (og:url, 없으면 요청 url)
+     */
+    sourceUrl: string;
+    /**
+     * 가정한 회사 id (요청 값 echo, 생성 요청에 그대로 사용)
+     */
+    companyId: number;
+    /**
+     * 미리보기 이미지 (og:image, 없으면 null)
+     */
+    imageUrl?: string | null;
+    /**
+     * 미리보기 설명 (og:description, 없으면 null)
+     */
+    description?: string | null;
+    /**
+     * 공고명 후보 (og:title, 사용자가 확인·수정). fetch 실패·OG 없음이면 null → 직접 입력
+     */
+    postingName?: string | null;
+  };
+};
+
+export type V1RoomsRoomIdParticipants1711899011 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 참여자 명부 (방장 우선, 그다음 참여 순서)
+     */
+    participants: Array<{
+      /**
+       * 방장 여부
+       */
+      isHost: boolean;
+      /**
+       * 관심 직무 목록 (없으면 빈 배열)
+       */
+      jobRoles: Array<{
+        /**
+         * 관심 직무명
+         */
+        name: string;
+        /**
+         * 관심 직무 id
+         */
+        jobRoleId: number;
+      }>;
+      /**
+       * 이력서 AI 요약. 제출 이력서가 없으면 null
+       */
+      aiSummary?: {
+        /**
+         * AI 요약 내용 (DONE 일 때 제공)
+         */
+        text?: string | null;
+        /**
+         * AI 요약 상태 (PROCESSING | DONE). 생성 실패도 준비 중으로 내려간다
+         */
+        status?: string | null;
+      };
+      /**
+       * 이력서 원본을 열 수 있는지. 원본 공개 룸이고 진행이 확정됐으며 조회자가 확정 참여자일 때만 true
+       */
+      canViewOriginal: boolean;
+      /**
+       * 닉네임. 탈퇴한 회원이면 대체 문구가 내려간다
+       */
+      nickname: string;
+      /**
+       * 공개 가능한 활동 정보 (이 목록에서는 null, 공개 프로필 API에서 조회)
+       */
+      activitySummary?: string | null;
+      /**
+       * 제출 이력서 식별자. 원본 열람 요청의 입력이며 URL 은 내려가지 않는다
+       */
+      resumeSubmissionId?: number | null;
+      /**
+       * 참여자 회원 식별자 (UUID)
+       */
+      memberId: string;
+    }>;
+  };
+};
+
+export type V1JobPostingsLinkMetadata34312967 = {
+  /**
+   * 이 링크가 속한다고 가정할 회사 id (필수, /v1/companies 검색 결과)
+   */
+  companyId: number;
+  /**
+   * 메타데이터를 읽을 공고 링크 (필수, http/https, 최대 2000자)
+   */
+  url: string;
+};
+
+export type GetExampleValue191457252 = {
+  /**
+   * ResultType
+   */
+  result: string;
+  data?: {
+    /**
+     * Result Date
+     */
+    date: string;
+    /**
+     * Result Data
+     */
+    result: string;
+    /**
+     * Result Datetime
+     */
+    datetime: string;
+    /**
+     * Result Items
+     */
+    items: Array<{
+      /**
+       * Result Item
+       */
+      key: string;
+    }>;
+  };
+};
+
+export type V1MembersMeNickname198252895 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+};
+
+export type V1Rounds1524907893 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * INTERVIEWEE | PARTICIPANT
+     */
+    role: string;
+    /**
+     * 참여자용 질문 카드, 면접자는 null
+     */
+    questions?: Array<{
+      /**
+       * 꼬리질문 목록
+       */
+      followUps: Array<{
+        /**
+         * 꼬리질문 id
+         */
+        questionId: number;
+        /**
+         * 꼬리질문 사용 여부
+         */
+        asked: boolean;
+        author?: {
+          /**
+           * 꼬리질문 작성자 표시 이름
+           */
+          nickname: string;
+          /**
+           * 꼬리질문 작성자 회원 id
+           */
+          memberId: string;
+        };
+        /**
+         * PREPARATION | IN_PROGRESS
+         */
+        source: string;
+        /**
+         * 꼬리질문 본문
+         */
+        content: string;
+      }>;
+      /**
+       * 원 질문 id
+       */
+      questionId: number;
+      /**
+       * 질문 사용 여부
+       */
+      asked: boolean;
+      author?: {
+        /**
+         * 원 질문 작성자 표시 이름
+         */
+        nickname: string;
+        /**
+         * 원 질문 작성자 회원 id
+         */
+        memberId: string;
+      };
+      /**
+       * PREPARATION | IN_PROGRESS
+       */
+      source: string;
+      /**
+       * 원 질문 본문
+       */
+      content: string;
+    }> | null;
+    interviewee?: {
+      /**
+       * 현재 라운드 면접자 표시 이름
+       */
+      nickname: string;
+      /**
+       * 현재 라운드 면접자 회원 id
+       */
+      memberId: string;
+    };
+  };
+};
+
+export type V1MembersMeRooms1592819168 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 처리 대기 중인 참가 신청 (최근 신청 순)
+     */
+    pendingApplications: Array<{
+      /**
+       * 신청에 제출한 이력서 원본 파일명
+       */
+      resumeOriginalName: string;
+      /**
+       * 참가 신청 식별자
+       */
+      applicationId: number;
+      /**
+       * 신청 대상 룸 요약
+       */
+      room: {
+        /**
+         * 룸 제목
+         */
+        title: string;
+        /**
+         * 진행 방식 (ONLINE | OFFLINE)
+         */
+        meetingType: string;
+        /**
+         * 룸 식별자 (UUID)
+         */
+        roomId: string;
+        /**
+         * 최대 참여 인원
+         */
+        maxParticipants: number;
+        /**
+         * 룸 상태
+         */
+        roomStatus: string;
+        /**
+         * 진행 시간(분)
+         */
+        durationMinutes: number;
+        /**
+         * 오프라인 시군구 식별자. 값이 없으면 null
+         */
+        sigunguId?: number | null;
+        /**
+         * 채용 공고 식별자
+         */
+        jobPostingId: number;
+        /**
+         * 면접 유형. 값이 없으면 null
+         */
+        interviewType?: string | null;
+        /**
+         * 표시 참여 인원 (신청·참여 중은 현재 인원, 완료는 실제 출석 인원)
+         */
+        participantCount: number;
+        /**
+         * 직무 식별자
+         */
+        jobRoleId: number;
+        /**
+         * 면접 단계
+         */
+        interviewStage: string;
+        /**
+         * 시작 예정 시각
+         */
+        startAt: string;
+      };
+      /**
+       * 신청 시각
+       */
+      appliedAt: string;
+    }>;
+    /**
+     * 현재 참여 중인 룸 (가까운 일정 순)
+     */
+    participatingRooms: Array<{
+      /**
+       * 참여 중인 룸 요약
+       */
+      room: {
+        /**
+         * 룸 제목
+         */
+        title: string;
+        /**
+         * 진행 방식 (ONLINE | OFFLINE)
+         */
+        meetingType: string;
+        /**
+         * 룸 식별자 (UUID)
+         */
+        roomId: string;
+        /**
+         * 최대 참여 인원
+         */
+        maxParticipants: number;
+        /**
+         * 룸 상태
+         */
+        roomStatus: string;
+        /**
+         * 진행 시간(분)
+         */
+        durationMinutes: number;
+        /**
+         * 오프라인 시군구 식별자. 값이 없으면 null
+         */
+        sigunguId?: number | null;
+        /**
+         * 채용 공고 식별자
+         */
+        jobPostingId: number;
+        /**
+         * 면접 유형. 값이 없으면 null
+         */
+        interviewType?: string | null;
+        /**
+         * 표시 참여 인원 (신청·참여 중은 현재 인원, 완료는 실제 출석 인원)
+         */
+        participantCount: number;
+        /**
+         * 직무 식별자
+         */
+        jobRoleId: number;
+        /**
+         * 면접 단계
+         */
+        interviewStage: string;
+        /**
+         * 시작 예정 시각
+         */
+        startAt: string;
+      };
+    }>;
+    /**
+     * 완료된 룸 (최근 일정 순)
+     */
+    completedRooms: Array<{
+      /**
+       * 후기 상태 (WRITABLE | WRITTEN | NOT_ELIGIBLE_ABSENT | NOT_ELIGIBLE_NO_TARGET)
+       */
+      reviewStatus: string;
+      /**
+       * 완료된 룸 요약
+       */
+      room: {
+        /**
+         * 룸 제목
+         */
+        title: string;
+        /**
+         * 진행 방식 (ONLINE | OFFLINE)
+         */
+        meetingType: string;
+        /**
+         * 룸 식별자 (UUID)
+         */
+        roomId: string;
+        /**
+         * 최대 참여 인원
+         */
+        maxParticipants: number;
+        /**
+         * 룸 상태
+         */
+        roomStatus: string;
+        /**
+         * 진행 시간(분)
+         */
+        durationMinutes: number;
+        /**
+         * 오프라인 시군구 식별자. 값이 없으면 null
+         */
+        sigunguId?: number | null;
+        /**
+         * 채용 공고 식별자
+         */
+        jobPostingId: number;
+        /**
+         * 면접 유형. 값이 없으면 null
+         */
+        interviewType?: string | null;
+        /**
+         * 표시 참여 인원 (신청·참여 중은 현재 인원, 완료는 실제 출석 인원)
+         */
+        participantCount: number;
+        /**
+         * 직무 식별자
+         */
+        jobRoleId: number;
+        /**
+         * 면접 단계
+         */
+        interviewStage: string;
+        /**
+         * 시작 예정 시각
+         */
+        startAt: string;
+      };
+    }>;
+  };
+};
+
+export type V1ClosingQuestionsMe207387725 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 실제로 사용된 원 질문 목록
+     */
+    questions: Array<{
+      /**
+       * 평가 대상 원 질문 id
+       */
+      questionId: number;
+      /**
+       * 질문 작성자 회원 id
+       */
+      authorMemberId: string;
+      /**
+       * PREPARATION | IN_PROGRESS
+       */
+      source: string;
+      /**
+       * 질문 본문
+       */
+      content: string;
+    }>;
+  };
+};
+
+export type V1FollowUpQuestions140122441 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 생성된 꼬리질문 id
+     */
+    questionId: number;
+  };
+};
+
+export type V1RoomsRoomIdQuestions282474051 = {
+  /**
+   * 질문 대상 회원 id (UUID)
+   */
+  targetMemberId: string;
+  /**
+   * 질문 본문 (공백 불가, 최대 500자)
+   */
+  content: string;
+};
+
+export type Post1780624183 = {
+  /**
+   * ExampleBody Data Field
+   */
+  data: string;
+};
+
+export type V1RoomsRoomId1165715694 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 조회자와 이 룸의 관계·행동. 목록과 같은 객체다
+     */
+    viewer: {
+      /**
+       * 할 수 있는 것이 하나도 없는 이유 (ROOM_CONFIRMED | ROOM_CANCELED | ROOM_COMPLETED | SCHEDULE_PASSED | APPLICATION_REJECTED | REMOVED_FROM_ROOM | MEMBER_SUSPENDED | PARTICIPATION_SLOT_EXCEEDED | APPLICATION_LIMIT_EXCEEDED). actions 가 비어 있을 때만 값이 있다. 정원 도달은 사유가 아니다 — 확정 전이면 APPLY_WAITLIST 로 접수된다
+       */
+      blockReason?: string | null;
+      /**
+       * 취할 수 있는 행동. 순서가 계약이며 첫 원소가 주 버튼이다 (LOGIN_REQUIRED | APPLY | APPLY_WAITLIST | VIEW_MY_APPLICATION | WITHDRAW_APPLICATION | VIEW_MY_ROOM | MANAGE_ROOM). 표시 문구는 클라이언트가 만든다
+       */
+      actions: Array<
+        | {
+            [key: string]: unknown;
+          }
+        | boolean
+        | string
+        | number
+      >;
+      /**
+       * 조회자와 이 룸의 관계 (ANONYMOUS 비로그인 | NONE 무관계 | APPLIED 신청 대기 | WITHDRAWN 철회 | APPLICATION_CLOSED 시스템이 끝낸 신청(룸 취소·확정·참여 슬롯 초과) | REJECTED 반려 | REMOVED 강퇴 | PARTICIPANT 참여 중 | HOST 방장). 배지(`참여 중`·`내가 만든 룸`)를 이 값으로 그린다
+       */
+      relation: string;
+    };
+    /**
+     * 방장 회원 식별자 (UUID)
+     */
+    hostMemberId: string;
+    /**
+     * 이력서 원본 공개 여부 (룸 속성)
+     */
+    resumePublic: boolean;
+    /**
+     * 진행 방식 (ONLINE | OFFLINE)
+     */
+    method: string;
+    /**
+     * 룸 설명 (선택)
+     */
+    description?: string | null;
+    /**
+     * 진행 확정 준비 여부. 이 룸의 사실이며 조회자가 확정할 수 있는지와는 다르다
+     */
+    confirmation: {
+      /**
+       * 확정 가능 여부 (모집 중 && 일정 미경과 && 인원 >= 최소 인원)
+       */
+      ready: boolean;
+      /**
+       * 확정할 수 없는 사유. ready 가 true 면 null
+       */
+      blockReason?: {
+        /**
+         * 사유 코드 (ROOM_CONFIRMED | ROOM_IN_PROGRESS | ROOM_COMPLETED | ROOM_CANCELED | SCHEDULE_PASSED | BELOW_MIN_CAPACITY)
+         */
+        code?: string | null;
+        /**
+         * 화면에 그대로 쓰는 사유 문구. 인원 미달이면 현재 인원과 최소 인원이 들어간다
+         */
+        label?: string | null;
+      };
+    };
+    /**
+     * 면접 유형 (선택)
+     */
+    type?: string | null;
+    /**
+     * 룸 제목
+     */
+    title: string;
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+    schedule?: {
+      /**
+       * 예상 소요 시간(분)
+       */
+      durationMinutes: number;
+      /**
+       * 진행 시작 일시 (ISO-8601)
+       */
+      startAt: string;
+    };
+    /**
+     * 오프라인 지역 시군구 id (온라인이면 null)
+     */
+    sigunguId?: number | null;
+    /**
+     * 면접 회차 (FIRST | SECOND | THIRD | ETC)
+     */
+    round: string;
+    /**
+     * 채용 공고 id (회사는 공고에서 파생)
+     */
+    jobPostingId: number;
+    recruit?: {
+      /**
+       * 현재 인원 (활성 참여 수, 방장 포함)
+       */
+      current: number;
+      /**
+       * 최소 인원
+       */
+      min: number;
+      /**
+       * 대기 중인 참가 신청 수. 수만 공개하고 대기자 목록은 방장 외 비공개다
+       */
+      pendingApplicationCount: number;
+      /**
+       * 최대 인원
+       */
+      max: number;
+      /**
+       * 모집 상태 (RECRUITING | CLOSED, 정원 충족 시 CLOSED)
+       */
+      recruitStatus: string;
+    };
+    /**
+     * 직무 id
+     */
+    jobRoleId: number;
+    /**
+     * 면접 유형 표시명 (선택)
+     */
+    typeLabel?: string | null;
+    /**
+     * 면접 회차 표시명
+     */
+    roundLabel: string;
+    /**
+     * 룸 상태 (RECRUITING | CONFIRMED | COMPLETED | CANCELED)
+     */
+    status: string;
+  };
+};
+
+export type V1RoomsRoomIdReviews1785905513 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 생성된 후기 id
+     */
+    reviewId: number;
+  };
+};
+
+export type V1ProgressRails60461824 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 오프닝, 라운드, 클로징 순 진행 블록
+     */
+    blocks: Array<{
+      /**
+       * OPENING | ROUND | CLOSING
+       */
+      type: string;
+      /**
+       * ROUND 블록의 면접 대상, 그 외 null
+       */
+      target?: {
+        /**
+         * 면접 대상 표시 이름
+         */
+        nickname?: string | null;
+        /**
+         * 면접 대상 회원 id
+         */
+        memberId?: string | null;
+      };
+    }>;
+  };
+};
+
+export type V1Questions1610867609 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 생성된 원 질문 id
+     */
+    questionId: number;
+  };
+};
+
+export type V1SelfFeedbacks342673527 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 저장된 자가 피드백 id
+     */
+    feedbackId: number;
+  };
+};
+
+export type V1FollowUpQuestions1363007138 = {
+  /**
+   * 라운드 면접자 회원 id (UUID)
+   */
+  intervieweeMemberId: string;
+  /**
+   * 부모 원 질문 id
+   */
+  questionId: number;
+  /**
+   * 꼬리질문 본문 (1~500자)
+   */
+  content: string;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
+};
+
+export type V1RoomsRoomIdReviewTargets2072286757 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 제출 완료한 대상 수
+     */
+    submittedCount: number;
+    /**
+     * 후기 작성 대상 수
+     */
+    totalCount: number;
+    /**
+     * 후기 작성 대상
+     */
+    targets: Array<{
+      /**
+       * 대상 닉네임
+       */
+      nickname: string;
+      /**
+       * 제출된 후기 id. WRITABLE 대상이면 null
+       */
+      reviewId?: number | null;
+      /**
+       * 작성 상태 (WRITABLE | SUBMITTED)
+       */
+      status: string;
+      /**
+       * 대상 회원 id
+       */
+      memberId: string;
+    }>;
+  };
+};
+
+export type V1RoomsFormOptions38619118 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 면접 유형 선택지
+     */
+    types: Array<{
+      /**
+       * 유형 코드
+       */
+      code: string;
+      /**
+       * 유형 표시명
+       */
+      label: string;
+    }>;
+    /**
+     * 진행 방식 선택지
+     */
+    methods: Array<{
+      /**
+       * 진행 방식 코드 (ONLINE | OFFLINE)
+       */
+      code: string;
+      /**
+       * 선택 시 안내 문구
+       */
+      hint: string;
+      /**
+       * 진행 방식 표시명
+       */
+      label: string;
+    }>;
+    /**
+     * 예상 소요 시간 선택지
+     */
+    durations: Array<{
+      /**
+       * 소요 시간(분)
+       */
+      minutes: number;
+      /**
+       * 소요 시간 표시명
+       */
+      label: string;
+    }>;
+    participantConstraints?: {
+      /**
+       * 허용 최소 인원
+       */
+      min: number;
+      /**
+       * 허용 최대 인원
+       */
+      max: number;
+    };
+    /**
+     * 면접 회차 선택지
+     */
+    rounds: Array<{
+      /**
+       * 회차 코드
+       */
+      code: string;
+      /**
+       * 회차 표시명
+       */
+      label: string;
+    }>;
+  };
+};
+
+export type V1MembersMeParticipationSlots889288482 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 허용 개수 (3)
+     */
+    limit: number;
+    /**
+     * 더 참여할 수 있는 개수. 0 이면 신청 · 수락 · 생성이 E1425 로 거부된다. 음수가 되지 않는다
+     */
+    remaining: number;
+    /**
+     * 활성 룸에서 참여 중(JOINED)인 룸 수. 방장으로 만든 룸도 센다
+     */
+    occupied: number;
+  };
+};
+
+export type V1RoomsRoomIdReviewSkips2104006349 = {
+  /**
+   * 건너뛸 대상 회원 id
+   */
+  targetMemberId: string;
+};
+
+export type V1ClosingResponses2021047633 = {
+  /**
+   * 받은 원 질문 전체의 평가
+   */
+  evaluations: Array<{
+    /**
+     * 실제로 받은 원 질문 id
+     */
+    questionId: number;
+    /**
+     * MEMORABLE | DISAPPOINTING
+     */
+    vote: string;
+  }>;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
+};
+
+export type V1Regions709600108 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 시도 목록
+     */
+    sidos: Array<{
+      /**
+       * 시군구 목록
+       */
+      sigungus: Array<{
+        /**
+         * 시군구 id (오프라인 룸 지역 선택에 사용)
+         */
+        sigunguId: number;
+        /**
+         * 시군구 명칭
+         */
+        name: string;
+      }>;
+      /**
+       * 시도 정식명칭
+       */
+      name: string;
+      /**
+       * 시도 축약명 (표시용, 예: 서울)
+       */
+      shortName: string;
+    }>;
+  };
+};
+
+export type V1Rooms897804324 = {
+  /**
+   * 이력서 원본 공개 여부 (룸 속성, 기본 false)
+   */
+  resumePublic: boolean;
+  /**
+   * 진행 방식 (ONLINE | OFFLINE)
+   */
+  method: string;
+  /**
+   * 룸 설명 (선택, 최대 1000자)
+   */
+  description?: string | null;
+  /**
+   * 룸 제목 (필수, 최대 60자)
+   */
+  title: string;
+  /**
+   * 면접 유형 (JOB | CULTURE_FIT | EXECUTIVE | TECH_ASSIGNMENT, 선택)
+   */
+  type?: string | null;
+  /**
+   * 최소 인원 (방장 포함, 2 이상)
+   */
+  minParticipants: number;
+  /**
+   * 최대 인원 (8 이하, 최소 인원 이상)
+   */
+  maxParticipants: number;
+  schedule?: {
+    /**
+     * 진행 날짜 (yyyy-MM-dd, 미래)
+     */
+    date: string;
+    /**
+     * 예상 소요 시간(분)
+     */
+    durationMinutes: number;
+    /**
+     * 시작 시각 (HH:mm)
+     */
+    startTime: string;
+  };
+  /**
+   * 채용 공고 id (필수, /v1/companies/{companyId}/job-postings 또는 POST /v1/job-postings). 회사는 공고에서 파생
+   */
+  postingId: number;
+  /**
+   * 지역 시군구 id (OFFLINE 일 때, /v1/regions)
+   */
+  sigunguId?: number | null;
+  /**
+   * 방장이 제출할 보관 이력서 id (UUID, /v1/members/me/resumes)
+   */
+  resumeId: string;
+  /**
+   * 면접 회차 (FIRST | SECOND | THIRD | ETC)
+   */
+  round: string;
+  /**
+   * 직무 id (필수, /v1/job-roles)
+   */
+  jobRoleId: number;
+};
+
+export type V1CompaniesCompanyIdJobPostings1890921117 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 채용 공고 목록 (최대 20건)
+     */
+    jobPostings: Array<{
+      /**
+       * 원본 공고 링크 (선택)
+       */
+      sourceUrl?: string | null;
+      /**
+       * 회사 id
+       */
+      companyId: number;
+      /**
+       * 채용 공고 id (룸 생성에 사용)
+       */
+      jobPostingId: number;
+      /**
+       * 운영 검수 여부 (링크 생성분은 false)
+       */
+      verified: boolean;
+      /**
+       * 대표 직무 id (선택, 직무 셀렉트 자동 채움)
+       */
+      jobRoleId?: number | null;
+      /**
+       * 공고명
+       */
+      postingName: string;
+      /**
+       * 대표 직무명 (선택)
+       */
+      jobRoleName?: string | null;
+    }>;
+  };
+};
+
+export type V1MembersMe1349704155 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 프로필 (프로필 수정 응답의 data 와 동일 모양)
+     */
+    profile: {
+      /**
+       * 관심 회사 목록 (미지정이면 빈 배열)
+       */
+      interestCompanies: Array<{
+        /**
+         * 회사 id
+         */
+        companyId: number;
+        /**
+         * 회사명
+         */
+        name: string;
+      }>;
+      /**
+       * 한 줄 소개 (미지정이면 빈 문자열)
+       */
+      bio: string;
+      /**
+       * 관심 직무 id 목록 (미지정이면 빈 배열)
+       */
+      interestJobRoleIds: Array<number>;
+      /**
+       * 회원 식별자 (UUID)
+       */
+      memberId: string;
+    };
+    /**
+     * 닉네임 (가입 시 자동 부여, 변경 가능)
+     */
+    nickname: string;
+    /**
+     * 대표 이메일
+     */
+    email: string;
+    /**
+     * 회원 상태 (ACTIVE | RESTRICTED)
+     */
+    status: string;
+    /**
+     * 회원 식별자 (UUID)
+     */
+    memberId: string;
+  };
+};
+
+export type V1MembersMeNickname346517390 = {
+  /**
+   * 변경할 닉네임 (전체 중복 불가 — 자신 제외)
+   */
+  nickname: string;
+};
+
+export type V1RoomsRoomIdQuestionsQuestionIdFollowUps1317980453 = {
+  /**
+   * 질문 본문 (공백 불가, 최대 500자)
+   */
+  content: string;
+};
+
+export type V1RoomsRoomIdApplicationsApplicationIdReject2057308046 = {
+  /**
+   * 반려 사유 코드 (선택: ROLE_MISMATCH | CAPACITY_FILLED | DIRECTION_MISMATCH, null 은 사유 없음)
+   */
+  reason?: string | null;
+};
+
+export type V1ClosingResponses1424921824 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 최초 클로징 제출 시각
+     */
+    submittedAt: string;
+    /**
+     * 룸 id
+     */
+    roomId: string;
+    /**
+     * 제출자 회원 id
+     */
+    memberId: string;
+  };
+};
+
+export type V1RoundFeedbacks923155903 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 최종 피드백 카드 목록
+     */
+    finalFeedbacks: Array<{
+      author?: {
+        /**
+         * 작성자 역할 (PARTICIPANT)
+         */
+        role: string;
+        /**
+         * 작성자 표시 이름
+         */
+        displayName: string;
+        /**
+         * 작성자 회원 id
+         */
+        memberId: string;
+      };
+      /**
+       * 카드 열람 확인 여부
+       */
+      revealed: boolean;
+      /**
+       * 최종 피드백 id
+       */
+      feedbackId: number;
+      /**
+       * 열람 확인 후 피드백 본문, 확인 전 null
+       */
+      content?: string | null;
+    }>;
+    /**
+     * 자가 피드백, 작성하지 않았으면 null
+     */
+    selfFeedback?: {
+      /**
+       * 자가 피드백 id
+       */
+      feedbackId: number;
+      /**
+       * 자가 피드백 본문
+       */
+      content: string;
+    } | null;
+  };
+};
+
+export type V1MembersMeNickname910352763 = {
+  /**
+   * 처리 결과 (ERROR)
+   */
+  result: string;
+  error?: {
+    /**
+     * 에러 코드 (E 코드, 분기 기준)
+     */
+    code: string;
+    /**
+     * 추가 정보 (검증 오류의 필드별 사유 등, 없으면 null)
+     */
+    data?: {
+      [key: string]: string;
+    } | null;
+    /**
+     * 사용자에게 표시 가능한 메시지
+     */
+    message: string;
+  };
+};
+
+export type V1RoomProgresses1093163669 = {
+  /**
+   * 확정 참여자 전원의 출석 선택
+   */
+  attendances: Array<{
+    /**
+     * ATTENDED | ABSENT
+     */
+    status: string;
+    /**
+     * 참여자 회원 id (UUID)
+     */
+    memberId: string;
+  }>;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
+};
+
+export type V1MembersMeResumesResumeId1837465274 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 회원이 지정한 기본 이력서 여부 (최근 사용 여부와 별개)
      */
     isDefault: boolean;
     file?: {
@@ -53,6 +1337,51 @@ export type V1MembersMeResumesResumeId1190069423 = {
   };
 };
 
+export type V1MembersMeProfile608809462 = {
+  /**
+   * 자기소개 (미지정이면 빈 문자열, 최대 500자)
+   */
+  bio?: string | null;
+  /**
+   * 관심 직무 id 목록 (미지정이면 빈 배열, /v1/job-roles — 전체 교체)
+   */
+  interestJobRoleIds?: Array<number> | null;
+  /**
+   * 관심 회사 id 목록 (미지정이면 빈 배열, /v1/companies 검색 — 전체 교체)
+   */
+  interestCompanyIds?: Array<number> | null;
+};
+
+export type V1RoomProgresses1064909895 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 진행을 시작한 방장 회원 id
+     */
+    hostMemberId: string;
+    /**
+     * 확정된 출석 목록
+     */
+    attendances: Array<{
+      /**
+       * ATTENDED | ABSENT
+       */
+      status: string;
+      /**
+       * 참여자 회원 id
+       */
+      memberId: string;
+    }>;
+    /**
+     * 시작 후 룸 상태 (IN_PROGRESS)
+     */
+    status: string;
+  };
+};
+
 export type V1Companies1839974379 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -75,14 +1404,739 @@ export type V1Companies1839974379 = {
   };
 };
 
-export type V1RoomsRoomIdApplicationsApplicationIdReject2120301028 = {
+export type V1QuestionsQuestionId496267733 = {
   /**
-   * 반려 사유 (선택, 최대 50자)
+   * 라운드 면접자 회원 id (UUID)
    */
-  reason?: string | null;
+  intervieweeMemberId: string;
+  /**
+   * 질문했으면 true, 되돌리면 false
+   */
+  asked: boolean;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
 };
 
-export type V1RoomsRoomIdApplications1231421410 = {
+export type V1RoomsRoomIdApplicationsMe2061746466 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    resume?: {
+      file?: {
+        /**
+         * 제출 당시 파일명
+         */
+        originalName: string;
+        /**
+         * 제출 당시 파일 MIME 타입
+         */
+        contentType: string;
+        /**
+         * 제출 당시 파일 크기 (bytes)
+         */
+        sizeBytes: number;
+      };
+      /**
+       * 제출 원본이 된 보관 이력서 id (UUID)
+       */
+      resumeId: string;
+      aiSummary?: {
+        /**
+         * AI 요약 내용 (DONE일 때 제공)
+         */
+        text?: string | null;
+        /**
+         * AI 요약 상태 (PROCESSING | DONE | FAILED)
+         */
+        status: string;
+      };
+    };
+    /**
+     * 내가 입력한 전달 사항 (미입력 시 빈 문자열)
+     */
+    note: string;
+    /**
+     * 참가 신청 id
+     */
+    applicationId: number;
+    /**
+     * 신청 시각 (yyyy-MM-ddTHH:mm:ss)
+     */
+    appliedAt: string;
+    /**
+     * 신청자에게 표시할 상태명
+     */
+    statusLabel: string;
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+    /**
+     * 신청 상태 (PENDING | ACCEPTED | REJECTED | WITHDRAWN | ROOM_CANCELED | ROOM_CONFIRMED)
+     */
+    status: string;
+  };
+};
+
+export type V1MembersMemberIdProfile655149006 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 신뢰 지표 (활동 이력이 없어도 항상 반환)
+     */
+    trust: {
+      /**
+       * 대표 평가 태그, 받은 횟수 내림차순·문구 오름차순 최대 3개
+       */
+      representativeTags: Array<{
+        /**
+         * 받은 횟수
+         */
+        count: number;
+        /**
+         * 평가 문구
+         */
+        label: string;
+      }>;
+      /**
+       * 활동률 상위 퍼센트 (출석한 완료 룸이 없으면 null)
+       */
+      activityTopPercent: number | null;
+      /**
+       * 최근 완료 룸 출석 결과, 최신순 최대 3건
+       */
+      recentAttendances: Array<"ATTENDED" | "ABSENT">;
+      /**
+       * 완료 룸 누적 불참 횟수
+       */
+      noShowCount: number;
+    };
+    /**
+     * 닉네임
+     */
+    nickname: string;
+    /**
+     * 자기소개 (미지정이면 빈 문자열)
+     */
+    bio: string;
+    /**
+     * 관심 직무 목록
+     */
+    interestJobRoles: Array<{
+      /**
+       * 관심 직무 코드
+       */
+      code: string;
+      /**
+       * 관심 직무 표시명
+       */
+      displayName: string;
+      /**
+       * 관심 직무 식별자
+       */
+      jobRoleId: number;
+    }>;
+    /**
+     * 회원 식별자 (UUID)
+     */
+    memberId: string;
+  };
+};
+
+export type V1RoomsRoomIdQuestionSetsTargetMemberId906553040 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 원 질문 (안정적인 작성 순)
+     */
+    questions: Array<{
+      /**
+       * 꼬리질문 (작성 순)
+       */
+      followUps: Array<{
+        /**
+         * 꼬리질문 id
+         */
+        questionId: number;
+        /**
+         * 진행 중 사용 여부
+         */
+        asked: boolean;
+        author?: {
+          /**
+           * 꼬리질문 작성자 닉네임
+           */
+          nickname: string;
+          /**
+           * 꼬리질문 작성자 회원 id
+           */
+          memberId: string;
+        };
+        /**
+         * 작성 단계 (PREPARATION | IN_PROGRESS)
+         */
+        source: string;
+        /**
+         * 꼬리질문 본문
+         */
+        content: string;
+      }>;
+      /**
+       * 원 질문 id
+       */
+      questionId: number;
+      /**
+       * 진행 중 사용 여부
+       */
+      asked: boolean;
+      author?: {
+        /**
+         * 작성자 닉네임
+         */
+        nickname: string;
+        /**
+         * 작성자 회원 id
+         */
+        memberId: string;
+      };
+      /**
+       * 작성 단계 (PREPARATION | IN_PROGRESS)
+       */
+      source: string;
+      /**
+       * 질문 본문
+       */
+      content: string;
+    }>;
+    resumeSummary?: {
+      /**
+       * AI 요약 내용. DONE이 아니면 null
+       */
+      text?: string | null;
+      /**
+       * AI 요약 상태 (DONE | PROCESSING | FAILED)
+       */
+      status: string;
+    };
+    target?: {
+      /**
+       * 질문 대상 닉네임
+       */
+      nickname: string;
+      /**
+       * 질문 대상 회원 id
+       */
+      memberId: string;
+    };
+  };
+};
+
+export type V1NicknamesAvailability1805856748 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 사용 가능 여부 (중복이면 false)
+     */
+    available: boolean;
+  };
+};
+
+export type V1RoomsRejectReasons1951847967 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    reasons?: Array<{
+      /**
+       * 반려 사유 코드 (ROLE_MISMATCH | CAPACITY_FILLED | DIRECTION_MISMATCH)
+       */
+      code: string;
+      /**
+       * 화면 표시 문구
+       */
+      label: string;
+    }>;
+  };
+};
+
+export type V1QuestionComments469179710 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 다음 페이지 커서, 없으면 null
+     */
+    nextCursor?: {
+      /**
+       * 다음 커서 생성 시각
+       */
+      createdAt?: string | null;
+      /**
+       * 다음 커서 질문 메모 id
+       */
+      id?: number | null;
+    };
+    /**
+     * 오래된 순 질문 메모 목록
+     */
+    comments: Array<{
+      /**
+       * 질문 메모 작성 시각
+       */
+      createdAt: string;
+      author?: {
+        /**
+         * 로그인 회원이 작성했는지 여부
+         */
+        mine: boolean;
+        /**
+         * 작성자 표시 이름
+         */
+        nickname: string;
+        /**
+         * 작성자 회원 id
+         */
+        memberId: string;
+      };
+      /**
+       * 질문 메모 id
+       */
+      commentId: number;
+      /**
+       * MEMO | GOOD_POINT | IMPROVEMENT_POINT
+       */
+      type: string;
+      /**
+       * 질문 메모 본문
+       */
+      content: string;
+    }>;
+  };
+};
+
+export type V1QuestionCommentsCommentId83412404 = {
+  /**
+   * 라운드 면접자 회원 id (UUID)
+   */
+  intervieweeMemberId: string;
+  /**
+   * 원 질문 id
+   */
+  questionId: number;
+  /**
+   * 공백이 아닌 수정 본문
+   */
+  content: string;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
+};
+
+export type V1RoomsRoomIdReviews1356104346 = {
+  /**
+   * 후기 대상 회원 id
+   */
+  targetMemberId: string;
+  /**
+   * 익명 작성 여부. true이면 익명의 참여자로 표시하며, 생략하면 true
+   */
+  anonymous?: boolean | null;
+  /**
+   * 한 줄 후기 (선택)
+   */
+  content?: string | null;
+  /**
+   * 평가 태그 (시간을 잘 지켜요 | 준비가 성실해요 | 질문이 날카로워요 | 피드백이 구체적이에요 | 소통이 원활해요, 선택, 빈 배열 허용)
+   */
+  tags: Array<
+    | {
+        [key: string]: unknown;
+      }
+    | boolean
+    | string
+    | number
+  >;
+};
+
+export type V1FinalFeedbacks317638049 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 생성된 최종 피드백 id
+     */
+    feedbackId: number;
+  };
+};
+
+export type V1RoomsRoomIdParticipantsMe837364537 = {
+  /**
+   * 처리 결과 (ERROR)
+   */
+  result: string;
+  error?: {
+    /**
+     * 에러 코드 (E1423)
+     */
+    code: string;
+    /**
+     * 에러 메시지
+     */
+    message: string;
+  };
+};
+
+export type V1QuestionComments1807061222 = {
+  /**
+   * 라운드 면접자 회원 id (UUID)
+   */
+  intervieweeMemberId: string;
+  /**
+   * 원 질문 id
+   */
+  questionId: number;
+  /**
+   * 최초 유형 MEMO
+   */
+  type: string;
+  /**
+   * 공백이 아닌 메모 본문
+   */
+  content: string;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
+};
+
+export type V1Rooms583341076 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 생성된 룸 id (UUID, 상세로 이동에 사용)
+     */
+    roomId: string;
+    /**
+     * 룸 상태 (RECRUITING)
+     */
+    status: string;
+  };
+};
+
+export type V1JobPostings1848070641 = {
+  /**
+   * 회사 id (필수, /v1/companies 검색 결과)
+   */
+  companyId: number;
+  /**
+   * 확정한 공고명 (필수, 최대 100자)
+   */
+  postingName: string;
+  /**
+   * 원본 공고 링크 (필수, http/https, 최대 2000자)
+   */
+  url: string;
+};
+
+export type V1NicknamesSuggestion679533277 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 추천 닉네임 (중복 아님 보장)
+     */
+    nickname: string;
+  };
+};
+
+export type V1RoomsRoomIdParticipantsMe1338856208 = {
+  /**
+   * 처리 결과 (ERROR)
+   */
+  result: string;
+  error?: {
+    /**
+     * 에러 코드 (E1419)
+     */
+    code: string;
+    /**
+     * 에러 메시지
+     */
+    message: string;
+  };
+};
+
+export type V1FeedbackDisclosuresFeedbackId256087070 = {
+  /**
+   * 라운드 면접자 회원 id (UUID)
+   */
+  intervieweeMemberId: string;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
+};
+
+export type V1SelfFeedbacks784214113 = {
+  /**
+   * 라운드 면접자 회원 id (UUID)
+   */
+  intervieweeMemberId: string;
+  /**
+   * 공백이 아닌 자가 피드백 본문
+   */
+  content: string;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
+};
+
+export type V1QuestionComments32871189 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 생성된 질문 메모 id
+     */
+    commentId: number;
+  };
+};
+
+export type V1RoomsRoomIdQuestionsQuestionIdFollowUps36237129 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 생성된 질문 id
+     */
+    questionId: number;
+  };
+};
+
+export type V1MembersMeProfile934225230 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 관심 회사 (미지정이면 빈 배열)
+     */
+    interestCompanies: Array<{
+      /**
+       * 회사 id
+       */
+      companyId: number;
+      /**
+       * 회사명
+       */
+      name: string;
+    }>;
+    /**
+     * 자기소개 (미지정이면 빈 문자열)
+     */
+    bio: string;
+    /**
+     * 관심 직무 id 목록 (미지정이면 빈 배열)
+     */
+    interestJobRoleIds: Array<number>;
+    /**
+     * 회원 식별자 (UUID)
+     */
+    memberId: string;
+  };
+};
+
+export type V1RoomsRoomIdApplicationsApplicationIdReject855969760 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    recruit?: {
+      /**
+       * 현재 인원 (반려는 변동 없음)
+       */
+      current: number;
+      /**
+       * 최대 인원
+       */
+      max: number;
+      /**
+       * 모집 상태 (RECRUITING | CLOSED)
+       */
+      recruitStatus: string;
+      /**
+       * 모집 상태 표시명
+       */
+      recruitStatusLabel: string;
+    };
+    /**
+     * 처리된 신청 id
+     */
+    applicationId: number;
+    /**
+     * 신청 상태 표시명 (반려)
+     */
+    statusLabel: string;
+    /**
+     * 신청 상태 (REJECTED)
+     */
+    status: string;
+  };
+};
+
+export type V1RoomsRoomIdApplicationsApplicationIdAccept674159690 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    recruit?: {
+      /**
+       * 수락 반영 후 현재 인원
+       */
+      current: number;
+      /**
+       * 최대 인원
+       */
+      max: number;
+      /**
+       * 모집 상태 (RECRUITING | CLOSED, 정원 충족 시 CLOSED)
+       */
+      recruitStatus: string;
+      /**
+       * 모집 상태 표시명
+       */
+      recruitStatusLabel: string;
+    };
+    /**
+     * 처리된 신청 id
+     */
+    applicationId: number;
+    /**
+     * 신청 상태 표시명 (수락 | 참여 슬롯 초과)
+     */
+    statusLabel: string;
+    /**
+     * 신청 상태 (ACCEPTED | SLOT_EXCEEDED)
+     */
+    status: string;
+  };
+};
+
+export type V1MembersMeWebPushSubscriptions1250153706 = {
+  /**
+   * FCM 웹 클라이언트가 발급한 등록 식별자
+   */
+  registration: string;
+};
+
+export type V1JobRoles1436485238 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 직군 목록
+     */
+    groups: Array<{
+      /**
+       * 직군 코드
+       */
+      code: string;
+      /**
+       * 직군 표시명
+       */
+      displayName: string;
+      /**
+       * 직군 내 직무 목록
+       */
+      roles: Array<{
+        /**
+         * 직무 코드
+         */
+        code: string;
+        /**
+         * 직무 표시명
+         */
+        displayName: string;
+        /**
+         * 직무 id (프로필 저장에 사용)
+         */
+        jobRoleId: number;
+      }>;
+    }>;
+  };
+};
+
+export type V1FinalFeedbacks135367546 = {
+  /**
+   * 라운드 면접자 회원 id (UUID)
+   */
+  intervieweeMemberId: string;
+  /**
+   * 공백이 아닌 최종 피드백 본문
+   */
+  content: string;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
+};
+
+export type V1RoomsRoomIdApplications1651584797 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 생성된 참가 신청 id
+     */
+    applicationId: number;
+    /**
+     * 신청 상태 표시명 (대기 중)
+     */
+    statusLabel: string;
+    /**
+     * 신청 상태 (PENDING)
+     */
+    status: string;
+  };
+};
+
+export type V1RoomsRoomIdApplications1094172635 = {
   /**
    * 처리 결과 (SUCCESS)
    */
@@ -144,7 +2198,7 @@ export type V1RoomsRoomIdApplications1231421410 = {
          */
         nickname: string;
         /**
-         * 공개 가능한 활동 정보 (trust 격벽 전까지 null)
+         * 공개 가능한 활동 정보 (이 목록에서는 null, 공개 프로필 API에서 조회)
          */
         activitySummary?: string | null;
         /**
@@ -156,150 +2210,7 @@ export type V1RoomsRoomIdApplications1231421410 = {
   };
 };
 
-export type V1JobPostings1538643122 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 공고 출처 링크
-     */
-    sourceUrl: string;
-    /**
-     * 회사 id
-     */
-    companyId: number;
-    /**
-     * 생성(또는 재사용)된 채용 공고 id (룸 생성에 바로 사용)
-     */
-    jobPostingId: number;
-    /**
-     * 운영 검수 여부 (생성 직후 false)
-     */
-    verified: boolean;
-    /**
-     * 공고명
-     */
-    postingName: string;
-  };
-};
-
-export type V1NicknamesAvailability1805856748 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 사용 가능 여부 (중복이면 false)
-     */
-    available: boolean;
-  };
-};
-
-export type V1JobPostingsLinkMetadata1427693842 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 공고 출처 링크 (og:url, 없으면 요청 url)
-     */
-    sourceUrl: string;
-    /**
-     * 가정한 회사 id (요청 값 echo, 생성 요청에 그대로 사용)
-     */
-    companyId: number;
-    /**
-     * 미리보기 이미지 (og:image, 없으면 null)
-     */
-    imageUrl?: string | null;
-    /**
-     * 미리보기 설명 (og:description, 없으면 null)
-     */
-    description?: string | null;
-    /**
-     * 공고명 후보 (og:title, 사용자가 확인·수정). fetch 실패·OG 없음이면 null → 직접 입력
-     */
-    postingName?: string | null;
-  };
-};
-
-export type V1JobPostingsLinkMetadata34312967 = {
-  /**
-   * 이 링크가 속한다고 가정할 회사 id (필수, /v1/companies 검색 결과)
-   */
-  companyId: number;
-  /**
-   * 메타데이터를 읽을 공고 링크 (필수, http/https, 최대 2000자)
-   */
-  url: string;
-};
-
-export type Post191457252 = {
-  /**
-   * ResultType
-   */
-  result: string;
-  data?: {
-    /**
-     * Result Date
-     */
-    date: string;
-    /**
-     * Result Data
-     */
-    result: string;
-    /**
-     * Result Datetime
-     */
-    datetime: string;
-    /**
-     * Result Items
-     */
-    items: Array<{
-      /**
-       * Result Item
-       */
-      key: string;
-    }>;
-  };
-};
-
-export type V1MembersMeNickname198252895 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-};
-
-export type Post1780624183 = {
-  /**
-   * ExampleBody Data Field
-   */
-  data: string;
-};
-
-export type V1Rooms583341076 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 생성된 룸 id (UUID, 상세로 이동에 사용)
-     */
-    roomId: string;
-    /**
-     * 룸 상태 (RECRUITING)
-     */
-    status: string;
-  };
-};
-
-export type V1Rooms1267570971 = {
+export type V1Rooms1476531183 = {
   /**
    * 처리 결과 (SUCCESS)
    */
@@ -313,6 +2224,30 @@ export type V1Rooms1267570971 = {
      * 룸 목록
      */
     rooms: Array<{
+      /**
+       * 조회자와 이 룸의 관계·행동. 상세와 같은 객체라 렌더러를 하나만 만들면 된다
+       */
+      viewer: {
+        /**
+         * 할 수 있는 것이 하나도 없는 이유 (ROOM_CONFIRMED | ROOM_CANCELED | ROOM_COMPLETED | SCHEDULE_PASSED | APPLICATION_REJECTED | REMOVED_FROM_ROOM | MEMBER_SUSPENDED | PARTICIPATION_SLOT_EXCEEDED | APPLICATION_LIMIT_EXCEEDED). actions 가 비어 있을 때만 값이 있다. 정원 도달은 사유가 아니다 — 확정 전이면 APPLY_WAITLIST 로 접수된다
+         */
+        blockReason?: string | null;
+        /**
+         * 취할 수 있는 행동. 순서가 계약이며 첫 원소가 주 버튼이다 (LOGIN_REQUIRED | APPLY | APPLY_WAITLIST | VIEW_MY_APPLICATION | WITHDRAW_APPLICATION | VIEW_MY_ROOM | MANAGE_ROOM). 표시 문구는 클라이언트가 만든다
+         */
+        actions: Array<
+          | {
+              [key: string]: unknown;
+            }
+          | boolean
+          | string
+          | number
+        >;
+        /**
+         * 조회자와 이 룸의 관계 (ANONYMOUS 비로그인 | NONE 무관계 | APPLIED 신청 대기 | WITHDRAWN 철회 | APPLICATION_CLOSED 시스템이 끝낸 신청(룸 취소·확정·참여 슬롯 초과) | REJECTED 반려 | REMOVED 강퇴 | PARTICIPANT 참여 중 | HOST 방장). 배지(`참여 중`·`내가 만든 룸`)를 이 값으로 그린다
+         */
+        relation: string;
+      };
       /**
        * 진행 방식 코드 (ONLINE | OFFLINE)
        */
@@ -449,659 +2384,6 @@ export type V1Rooms1267570971 = {
   };
 };
 
-export type V1JobPostings1848070641 = {
-  /**
-   * 회사 id (필수, /v1/companies 검색 결과)
-   */
-  companyId: number;
-  /**
-   * 확정한 공고명 (필수, 최대 100자)
-   */
-  postingName: string;
-  /**
-   * 원본 공고 링크 (필수, http/https, 최대 2000자)
-   */
-  url: string;
-};
-
-export type V1MembersMeProfile928465678 = {
-  /**
-   * 선호 지역 시군구 id (미선택이면 null, /v1/regions)
-   */
-  sigunguId?: number | null;
-  /**
-   * 진행 방식 선호 (UNSPECIFIED | ONLINE | OFFLINE | BOTH, 미지정이면 UNSPECIFIED)
-   */
-  meetingPreference?: string | null;
-  /**
-   * 자기소개 (미지정이면 빈 문자열, 최대 500자)
-   */
-  bio?: string | null;
-  /**
-   * 관심 직무 id 목록 (미지정이면 빈 배열, /v1/job-roles — 전체 교체)
-   */
-  interestJobRoleIds?: Array<number> | null;
-  /**
-   * 관심 회사 id 목록 (미지정이면 빈 배열, /v1/companies 검색 — 전체 교체)
-   */
-  interestCompanyIds?: Array<number> | null;
-};
-
-export type V1MembersMeProfile1868087811 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 선호 지역 시군구 id (미선택이면 null)
-     */
-    sigunguId?: number | null;
-    /**
-     * 진행 방식 선호 (UNSPECIFIED | ONLINE | OFFLINE | BOTH)
-     */
-    meetingPreference: string;
-    /**
-     * 관심 회사 (미지정이면 빈 배열)
-     */
-    interestCompanies: Array<{
-      /**
-       * 회사 id
-       */
-      companyId: number;
-      /**
-       * 회사명
-       */
-      name: string;
-    }>;
-    /**
-     * 자기소개 (미지정이면 빈 문자열)
-     */
-    bio: string;
-    /**
-     * 관심 직무 id 목록 (미지정이면 빈 배열)
-     */
-    interestJobRoleIds: Array<number>;
-    /**
-     * 회원 식별자 (UUID)
-     */
-    memberId: string;
-  };
-};
-
-export type V1RoomsRoomIdApplicationsApplicationIdAccept1478496507 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    recruit?: {
-      /**
-       * 수락 반영 후 현재 인원
-       */
-      current: number;
-      /**
-       * 최대 인원
-       */
-      max: number;
-      /**
-       * 모집 상태 (RECRUITING | CLOSED, 정원 충족 시 CLOSED)
-       */
-      recruitStatus: string;
-      /**
-       * 모집 상태 표시명
-       */
-      recruitStatusLabel: string;
-    };
-    /**
-     * 처리된 신청 id
-     */
-    applicationId: number;
-    /**
-     * 신청 상태 표시명 (수락)
-     */
-    statusLabel: string;
-    /**
-     * 신청 상태 (ACCEPTED)
-     */
-    status: string;
-  };
-};
-
-export type V1NicknamesSuggestion679533277 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 추천 닉네임 (중복 아님 보장)
-     */
-    nickname: string;
-  };
-};
-
-export type V1MembersMeResumes893966422 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 삭제되지 않은 보관 이력서 목록 (기본 이력서 우선)
-     */
-    resumes: Array<{
-      /**
-       * 기본 이력서 여부
-       */
-      isDefault: boolean;
-      file?: {
-        /**
-         * 업로드 당시 원본 파일명
-         */
-        originalName: string;
-        /**
-         * 파일 미디어 타입 (application/pdf)
-         */
-        contentType: string;
-        /**
-         * 파일 크기 (byte)
-         */
-        sizeBytes: number;
-      };
-      /**
-       * 이력서 식별자 (UUID, 다른 화면에서 선택할 때 사용)
-       */
-      resumeId: string;
-      aiSummary?: {
-        /**
-         * AI 요약 본문 (준비 중·실패면 null)
-         */
-        text?: string | null;
-        /**
-         * AI 요약 상태 (PROCESSING | DONE | FAILED). PROCESSING이면 단건 조회를 폴링하고 최대 1분 뒤 DONE·FAILED에서 중단
-         */
-        status: string;
-      };
-      /**
-       * 등록 시각 (yyyy-MM-ddTHH:mm:ss)
-       */
-      registeredAt: string;
-      /**
-       * 업로드 당시 원본 파일명과 동일한 이력서 이름
-       */
-      name: string;
-    }>;
-    /**
-     * 최대 보관 가능 개수 (10)
-     */
-    maxCount: number;
-  };
-};
-
-export type V1RoomsFormOptions38619118 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 면접 유형 선택지
-     */
-    types: Array<{
-      /**
-       * 유형 코드
-       */
-      code: string;
-      /**
-       * 유형 표시명
-       */
-      label: string;
-    }>;
-    /**
-     * 진행 방식 선택지
-     */
-    methods: Array<{
-      /**
-       * 진행 방식 코드 (ONLINE | OFFLINE)
-       */
-      code: string;
-      /**
-       * 선택 시 안내 문구
-       */
-      hint: string;
-      /**
-       * 진행 방식 표시명
-       */
-      label: string;
-    }>;
-    /**
-     * 예상 소요 시간 선택지
-     */
-    durations: Array<{
-      /**
-       * 소요 시간(분)
-       */
-      minutes: number;
-      /**
-       * 소요 시간 표시명
-       */
-      label: string;
-    }>;
-    participantConstraints?: {
-      /**
-       * 허용 최소 인원
-       */
-      min: number;
-      /**
-       * 허용 최대 인원
-       */
-      max: number;
-    };
-    /**
-     * 면접 회차 선택지
-     */
-    rounds: Array<{
-      /**
-       * 회차 코드
-       */
-      code: string;
-      /**
-       * 회차 표시명
-       */
-      label: string;
-    }>;
-  };
-};
-
-export type V1RoomsRoomIdApplicationsApplicationIdReject855969760 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    recruit?: {
-      /**
-       * 현재 인원 (반려는 변동 없음)
-       */
-      current: number;
-      /**
-       * 최대 인원
-       */
-      max: number;
-      /**
-       * 모집 상태 (RECRUITING | CLOSED)
-       */
-      recruitStatus: string;
-      /**
-       * 모집 상태 표시명
-       */
-      recruitStatusLabel: string;
-    };
-    /**
-     * 처리된 신청 id
-     */
-    applicationId: number;
-    /**
-     * 신청 상태 표시명 (반려)
-     */
-    statusLabel: string;
-    /**
-     * 신청 상태 (REJECTED)
-     */
-    status: string;
-  };
-};
-
-export type V1Rooms897804324 = {
-  /**
-   * 이력서 원본 공개 여부 (룸 속성, 기본 false)
-   */
-  resumePublic: boolean;
-  /**
-   * 진행 방식 (ONLINE | OFFLINE)
-   */
-  method: string;
-  /**
-   * 룸 설명 (선택, 최대 1000자)
-   */
-  description?: string | null;
-  /**
-   * 룸 제목 (필수, 최대 60자)
-   */
-  title: string;
-  /**
-   * 면접 유형 (JOB | CULTURE_FIT | EXECUTIVE | TECH_ASSIGNMENT, 선택)
-   */
-  type?: string | null;
-  /**
-   * 최소 인원 (방장 포함, 2 이상)
-   */
-  minParticipants: number;
-  /**
-   * 최대 인원 (8 이하, 최소 인원 이상)
-   */
-  maxParticipants: number;
-  schedule?: {
-    /**
-     * 진행 날짜 (yyyy-MM-dd, 미래)
-     */
-    date: string;
-    /**
-     * 예상 소요 시간(분)
-     */
-    durationMinutes: number;
-    /**
-     * 시작 시각 (HH:mm)
-     */
-    startTime: string;
-  };
-  /**
-   * 채용 공고 id (필수, /v1/companies/{companyId}/job-postings 또는 POST /v1/job-postings). 회사는 공고에서 파생
-   */
-  postingId: number;
-  /**
-   * 지역 시군구 id (OFFLINE 일 때, /v1/regions)
-   */
-  sigunguId?: number | null;
-  /**
-   * 방장이 제출할 보관 이력서 id (UUID, /v1/members/me/resumes)
-   */
-  resumeId: string;
-  /**
-   * 면접 회차 (FIRST | SECOND | THIRD | ETC)
-   */
-  round: string;
-  /**
-   * 직무 id (필수, /v1/job-roles)
-   */
-  jobRoleId: number;
-};
-
-export type V1CompaniesCompanyIdJobPostings1890921117 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 채용 공고 목록 (최대 20건)
-     */
-    jobPostings: Array<{
-      /**
-       * 원본 공고 링크 (선택)
-       */
-      sourceUrl?: string | null;
-      /**
-       * 회사 id
-       */
-      companyId: number;
-      /**
-       * 채용 공고 id (룸 생성에 사용)
-       */
-      jobPostingId: number;
-      /**
-       * 운영 검수 여부 (링크 생성분은 false)
-       */
-      verified: boolean;
-      /**
-       * 대표 직무 id (선택, 직무 셀렉트 자동 채움)
-       */
-      jobRoleId?: number | null;
-      /**
-       * 공고명
-       */
-      postingName: string;
-      /**
-       * 대표 직무명 (선택)
-       */
-      jobRoleName?: string | null;
-    }>;
-  };
-};
-
-export type V1RoomsRoomId1541252470 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 방장 회원 식별자 (UUID)
-     */
-    hostMemberId: string;
-    /**
-     * 이력서 원본 공개 여부 (룸 속성)
-     */
-    resumePublic: boolean;
-    /**
-     * 진행 방식 (ONLINE | OFFLINE)
-     */
-    method: string;
-    /**
-     * 룸 설명 (선택)
-     */
-    description?: string | null;
-    /**
-     * 면접 유형 (선택)
-     */
-    type?: string | null;
-    /**
-     * 룸 제목
-     */
-    title: string;
-    /**
-     * 룸 id (UUID)
-     */
-    roomId: string;
-    schedule?: {
-      /**
-       * 예상 소요 시간(분)
-       */
-      durationMinutes: number;
-      /**
-       * 진행 시작 일시 (ISO-8601)
-       */
-      startAt: string;
-    };
-    /**
-     * 오프라인 지역 시군구 id (온라인이면 null)
-     */
-    sigunguId?: number | null;
-    /**
-     * 면접 회차 (FIRST | SECOND | THIRD | ETC)
-     */
-    round: string;
-    /**
-     * 채용 공고 id (회사는 공고에서 파생)
-     */
-    jobPostingId: number;
-    recruit?: {
-      /**
-       * 현재 인원 (활성 참여 수, 방장 포함)
-       */
-      current: number;
-      /**
-       * 최소 인원
-       */
-      min: number;
-      /**
-       * 최대 인원
-       */
-      max: number;
-      /**
-       * 모집 상태 (RECRUITING | CLOSED, 정원 충족 시 CLOSED)
-       */
-      recruitStatus: string;
-    };
-    /**
-     * 직무 id
-     */
-    jobRoleId: number;
-    /**
-     * 면접 유형 표시명 (선택)
-     */
-    typeLabel?: string | null;
-    /**
-     * 면접 회차 표시명
-     */
-    roundLabel: string;
-    /**
-     * 룸 상태 (RECRUITING | CONFIRMED | COMPLETED | CANCELED)
-     */
-    status: string;
-  };
-};
-
-export type V1MembersMeWebPushSubscriptions1250153706 = {
-  /**
-   * FCM 웹 클라이언트가 발급한 등록 식별자
-   */
-  registration: string;
-};
-
-export type V1MembersMeNickname346517390 = {
-  /**
-   * 변경할 닉네임 (전체 중복 불가 — 자신 제외)
-   */
-  nickname: string;
-};
-
-export type V1JobRoles1436485238 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 직군 목록
-     */
-    groups: Array<{
-      /**
-       * 직군 코드
-       */
-      code: string;
-      /**
-       * 직군 표시명
-       */
-      displayName: string;
-      /**
-       * 직군 내 직무 목록
-       */
-      roles: Array<{
-        /**
-         * 직무 코드
-         */
-        code: string;
-        /**
-         * 직무 표시명
-         */
-        displayName: string;
-        /**
-         * 직무 id (프로필 저장에 사용)
-         */
-        jobRoleId: number;
-      }>;
-    }>;
-  };
-};
-
-export type V1MembersMe1954777904 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 프로필 (프로필 수정 응답의 data 와 동일 모양)
-     */
-    profile: {
-      /**
-       * 관심 지역 시군구 id (미선택이면 null)
-       */
-      sigunguId?: number | null;
-      /**
-       * 만남 선호 (UNSPECIFIED | ONLINE | OFFLINE | BOTH)
-       */
-      meetingPreference: string;
-      /**
-       * 관심 회사 목록 (미지정이면 빈 배열)
-       */
-      interestCompanies: Array<
-        | {
-            [key: string]: unknown;
-          }
-        | boolean
-        | string
-        | number
-      >;
-      /**
-       * 한 줄 소개 (미지정이면 빈 문자열)
-       */
-      bio: string;
-      /**
-       * 관심 직무 id 목록 (미지정이면 빈 배열)
-       */
-      interestJobRoleIds: Array<number>;
-      /**
-       * 회원 식별자 (UUID)
-       */
-      memberId: string;
-    };
-    /**
-     * 닉네임 (가입 시 자동 부여, 변경 가능)
-     */
-    nickname: string;
-    /**
-     * 대표 이메일
-     */
-    email: string;
-    /**
-     * 회원 상태 (ACTIVE | RESTRICTED)
-     */
-    status: string;
-    /**
-     * 회원 식별자 (UUID)
-     */
-    memberId: string;
-  };
-};
-
-export type V1Regions1871099627 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 시도 목록
-     */
-    sidos: Array<{
-      /**
-       * 시군구 목록
-       */
-      sigungus: Array<{
-        /**
-         * 시군구 id (프로필 저장에 사용)
-         */
-        sigunguId: number;
-        /**
-         * 시군구 명칭
-         */
-        name: string;
-      }>;
-      /**
-       * 시도 정식명칭
-       */
-      name: string;
-      /**
-       * 시도 축약명 (표시용, 예: 서울)
-       */
-      shortName: string;
-    }>;
-  };
-};
-
 export type V1Terms1673199050 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -1144,81 +2426,63 @@ export type V1Terms1673199050 = {
   };
 };
 
-export type V1MembersMemberIdProfile250325338 = {
+export type V1MembersMeReceivedReviews785981355 = {
   /**
    * 처리 결과 (SUCCESS)
    */
   result: string;
   data?: {
     /**
-     * 신뢰 정보 (목에서만 제공, 실 API는 이번 스프린트에 null)
+     * 현재 페이지의 받은 후기
      */
-    trust?: {
+    reviews: Array<{
       /**
-       * 대표 평가 태그
+       * 작성자 표시명. 익명이면 익명의 참여자, 공개이면 현재 닉네임
        */
-      representativeTags?: Array<{
-        /**
-         * 받은 횟수
-         */
-        count?: number | null;
-        /**
-         * 평가 문구
-         */
-        label?: string | null;
-      }>;
+      authorNickname: string;
       /**
-       * 평균 별점
+       * 후기 id
        */
-      averageRating?: number | null;
+      reviewId: number;
       /**
-       * 완료한 룸 수
+       * 한 줄 후기 (null 가능)
        */
-      completedRoomCount?: number | null;
+      content?: string | null;
       /**
-       * 출석률 (%)
+       * 평가 태그
        */
-      attendanceRate?: number | null;
-      /**
-       * 누적 노쇼 횟수
-       */
-      noShowCount?: number | null;
-    };
-    /**
-     * 최근 공개 활동 (없으면 빈 배열)
-     */
-    recentActivities: Array<{
-      /**
-       * 활동 일자 (yyyy-MM-dd)
-       */
-      date?: string | null;
-      /**
-       * 역할 (PARTICIPANT | HOST)
-       */
-      role?: string | null;
-      /**
-       * 활동 제목
-       */
-      title?: string | null;
+      tags: Array<
+        | {
+            [key: string]: unknown;
+          }
+        | boolean
+        | string
+        | number
+      >;
     }>;
     /**
-     * 직무 (선택, 탈퇴 회원은 null)
+     * 다음 페이지 존재 여부
      */
-    jobTitle?: string | null;
+    hasNext: boolean;
     /**
-     * 닉네임 (탈퇴 회원은 '탈퇴한 사용자')
+     * 공개 가능한 받은 후기 전체 수
      */
-    nickname: string;
+    totalCount: number;
+  };
+};
+
+export type V1AttendancesMe427868787 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
     /**
-     * 탈퇴한 회원 여부
+     * ATTENDED | ABSENT
      */
-    withdrawn: boolean;
+    status: string;
     /**
-     * 자기소개 (선택, 탈퇴 회원은 null)
-     */
-    bio?: string | null;
-    /**
-     * 회원 식별자 (UUID)
+     * 로그인 회원 id
      */
     memberId: string;
   };
@@ -1325,26 +2589,97 @@ export type V1JobRolesSearch1966453570 = {
   };
 };
 
-export type V1Rooms910352763 = {
+export type V1QuestionRecordsMe591289672 = {
   /**
-   * 처리 결과 (ERROR)
+   * 처리 결과 (SUCCESS)
    */
   result: string;
-  error?: {
+  data?: {
     /**
-     * 에러 코드 (E 코드, 분기 기준)
+     * 질문별 내 기록 목록
      */
-    code: string;
+    records: Array<{
+      /**
+       * 원 질문 본문
+       */
+      questionContent: string;
+      /**
+       * 해당 질문에 작성한 내 메모
+       */
+      comments: Array<{
+        /**
+         * 질문 메모 작성 시각
+         */
+        createdAt: string;
+        /**
+         * 질문 메모 id
+         */
+        commentId: number;
+        /**
+         * MEMO | GOOD_POINT | IMPROVEMENT_POINT
+         */
+        type: string;
+        /**
+         * 질문 메모 본문
+         */
+        content: string;
+      }>;
+      /**
+       * 실제로 질문한 원 질문 id
+       */
+      questionId: number;
+    }>;
+  };
+};
+
+export type V1Questions1653829861 = {
+  /**
+   * 라운드 면접자 회원 id (UUID)
+   */
+  intervieweeMemberId: string;
+  /**
+   * 질문 본문 (1~500자)
+   */
+  content: string;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
+};
+
+export type V1RoomsRoomIdQuestionSets2052308651 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
     /**
-     * 추가 정보 (검증 오류의 필드별 사유 등, 없으면 null)
+     * 본인을 제외한 확정 시점 참여자의 카드셋 요약
      */
-    data?: {
-      [key: string]: string;
-    } | null;
+    cardSets: Array<{
+      /**
+       * 활성 원 질문 수
+       */
+      questionCount: number;
+      /**
+       * 활성 꼬리질문 수
+       */
+      followUpQuestionCount: number;
+      target?: {
+        /**
+         * 질문 대상 닉네임. 탈퇴한 경우 '탈퇴한 회원'
+         */
+        nickname: string;
+        /**
+         * 질문 대상 회원 id (UUID)
+         */
+        memberId: string;
+      };
+    }>;
     /**
-     * 사용자에게 표시 가능한 메시지
+     * 내 카드셋에 활성 질문 또는 꼬리질문을 남긴 참여자 수
      */
-    message: string;
+    myCardSetPreparerCount: number;
   };
 };
 
@@ -1353,6 +2688,128 @@ export type V1MembersMeWebPushSubscriptions615785551 = {
    * 해지할 웹 푸시 등록 식별자
    */
   registration: string;
+};
+
+export type V1QuestionCommentTypesCommentId844872488 = {
+  /**
+   * 라운드 면접자 회원 id (UUID)
+   */
+  intervieweeMemberId: string;
+  /**
+   * 원 질문 id
+   */
+  questionId: number;
+  /**
+   * GOOD_POINT | IMPROVEMENT_POINT
+   */
+  type: string;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
+};
+
+export type V1RoomsCreationLimit1772486104 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 같은 공고·직무로 내가 방장인 활성 룸 수 (모집 중 · 진행 확정 · 진행 중). 1 이상이면 경고를 띄운다
+     */
+    activeRoomCount: number;
+    /**
+     * 허용 개수 (3)
+     */
+    limit: number;
+    /**
+     * 더 만들 수 있는 개수. 0 이면 생성이 E1427 로 거부된다. 음수가 되지 않는다
+     */
+    remaining: number;
+  };
+};
+
+export type V1MembersMeResumes1467612549 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 삭제되지 않은 보관 이력서 목록 (최근 사용 이력서 우선)
+     */
+    resumes: Array<{
+      /**
+       * 최근 사용 이력 (한 번도 사용하지 않았으면 null)
+       */
+      lastUsed?: {
+        /**
+         * 최근 사용 시각 (yyyy-MM-ddTHH:mm:ss)
+         */
+        usedAt?: string | null;
+        /**
+         * 최근 사용한 룸 제목 (삭제된 룸이면 '삭제된 면접')
+         */
+        roomTitle?: string | null;
+        /**
+         * 최근 사용한 룸 식별자 (UUID)
+         */
+        roomId?: string | null;
+      };
+      /**
+       * 회원이 지정한 기본 이력서 여부 (최근 사용 여부와 별개)
+       */
+      isDefault: boolean;
+      file?: {
+        /**
+         * 업로드 당시 원본 파일명
+         */
+        originalName: string;
+        /**
+         * 파일 미디어 타입 (application/pdf)
+         */
+        contentType: string;
+        /**
+         * 파일 크기 (byte)
+         */
+        sizeBytes: number;
+      };
+      /**
+       * 이력서 식별자 (UUID, 다른 화면에서 선택할 때 사용)
+       */
+      resumeId: string;
+      aiSummary?: {
+        /**
+         * AI 요약 본문 (준비 중·실패면 null)
+         */
+        text?: string | null;
+        /**
+         * AI 요약 상태 (PROCESSING | DONE | FAILED). PROCESSING이면 단건 조회를 폴링하고 최대 1분 뒤 DONE·FAILED에서 중단
+         */
+        status: string;
+      };
+      /**
+       * 등록 시각 (yyyy-MM-ddTHH:mm:ss)
+       */
+      registeredAt: string;
+      /**
+       * 업로드 당시 원본 파일명과 동일한 이력서 이름
+       */
+      name: string;
+    }>;
+    /**
+     * 최대 보관 가능 개수 (10)
+     */
+    maxCount: number;
+  };
+};
+
+export type V1AuthDevSessions1806235479 = {
+  /**
+   * 개발 환경에서 로그인할 기존 회원 UUID
+   */
+  memberId: string;
 };
 
 export type ExampleGetData = {
@@ -1376,7 +2833,7 @@ export type ExampleGetResponses = {
   /**
    * 200
    */
-  200: Post191457252;
+  200: GetExampleValue191457252;
 };
 
 export type ExampleGetResponse = ExampleGetResponses[keyof ExampleGetResponses];
@@ -1392,10 +2849,49 @@ export type ExamplePostResponses = {
   /**
    * 200
    */
-  200: Post191457252;
+  200: GetExampleValue191457252;
 };
 
 export type ExamplePostResponse = ExamplePostResponses[keyof ExamplePostResponses];
+
+export type SubmitClosingResponseData = {
+  body?: V1ClosingResponses2021047633;
+  path?: never;
+  query?: never;
+  url: "/v1/closing-responses";
+};
+
+export type SubmitClosingResponseErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type SubmitClosingResponseError =
+  SubmitClosingResponseErrors[keyof SubmitClosingResponseErrors];
+
+export type SubmitClosingResponseResponses = {
+  /**
+   * 200
+   */
+  200: V1ClosingResponses1424921824;
+};
+
+export type SubmitClosingResponseResponse =
+  SubmitClosingResponseResponses[keyof SubmitClosingResponseResponses];
 
 export type SearchCompaniesData = {
   body?: never;
@@ -1413,7 +2909,7 @@ export type SearchCompaniesErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
 };
 
 export type SearchCompaniesError = SearchCompaniesErrors[keyof SearchCompaniesErrors];
@@ -1427,6 +2923,84 @@ export type SearchCompaniesResponses = {
 
 export type SearchCompaniesResponse = SearchCompaniesResponses[keyof SearchCompaniesResponses];
 
+export type LeaveFinalRoundFeedbackData = {
+  body?: V1FinalFeedbacks135367546;
+  path?: never;
+  query?: never;
+  url: "/v1/final-feedbacks";
+};
+
+export type LeaveFinalRoundFeedbackErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type LeaveFinalRoundFeedbackError =
+  LeaveFinalRoundFeedbackErrors[keyof LeaveFinalRoundFeedbackErrors];
+
+export type LeaveFinalRoundFeedbackResponses = {
+  /**
+   * 201
+   */
+  201: V1FinalFeedbacks317638049;
+};
+
+export type LeaveFinalRoundFeedbackResponse =
+  LeaveFinalRoundFeedbackResponses[keyof LeaveFinalRoundFeedbackResponses];
+
+export type LeaveProgressFollowUpQuestionData = {
+  body?: V1FollowUpQuestions1363007138;
+  path?: never;
+  query?: never;
+  url: "/v1/follow-up-questions";
+};
+
+export type LeaveProgressFollowUpQuestionErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type LeaveProgressFollowUpQuestionError =
+  LeaveProgressFollowUpQuestionErrors[keyof LeaveProgressFollowUpQuestionErrors];
+
+export type LeaveProgressFollowUpQuestionResponses = {
+  /**
+   * 201
+   */
+  201: V1FollowUpQuestions140122441;
+};
+
+export type LeaveProgressFollowUpQuestionResponse =
+  LeaveProgressFollowUpQuestionResponses[keyof LeaveProgressFollowUpQuestionResponses];
+
 export type CreateJobPostingData = {
   body?: V1JobPostings1848070641;
   path?: never;
@@ -1438,11 +3012,11 @@ export type CreateJobPostingErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
   /**
    * 401
    */
-  401: V1Rooms910352763;
+  401: V1MembersMeNickname910352763;
 };
 
 export type CreateJobPostingError = CreateJobPostingErrors[keyof CreateJobPostingErrors];
@@ -1472,6 +3046,181 @@ export type JobRolesResponses = {
 
 export type JobRolesResponse = JobRolesResponses[keyof JobRolesResponses];
 
+export type GetProgressRailData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+  };
+  url: "/v1/progress-rails";
+};
+
+export type GetProgressRailErrors = {
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type GetProgressRailError = GetProgressRailErrors[keyof GetProgressRailErrors];
+
+export type GetProgressRailResponses = {
+  /**
+   * 200
+   */
+  200: V1ProgressRails60461824;
+};
+
+export type GetProgressRailResponse = GetProgressRailResponses[keyof GetProgressRailResponses];
+
+export type GetQuestionCommentsData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+    /**
+     * 라운드 면접자 회원 id (UUID)
+     */
+    intervieweeMemberId: string;
+    /**
+     * 원 질문 id
+     */
+    questionId: string;
+    /**
+     * 이전 페이지 마지막 생성 시각
+     */
+    cursorCreatedAt?: string;
+    /**
+     * 이전 페이지 마지막 질문 메모 id
+     */
+    cursorId?: string;
+  };
+  url: "/v1/question-comments";
+};
+
+export type GetQuestionCommentsErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type GetQuestionCommentsError = GetQuestionCommentsErrors[keyof GetQuestionCommentsErrors];
+
+export type GetQuestionCommentsResponses = {
+  /**
+   * 200
+   */
+  200: V1QuestionComments469179710;
+};
+
+export type GetQuestionCommentsResponse =
+  GetQuestionCommentsResponses[keyof GetQuestionCommentsResponses];
+
+export type LeaveQuestionCommentData = {
+  body?: V1QuestionComments1807061222;
+  path?: never;
+  query?: never;
+  url: "/v1/question-comments";
+};
+
+export type LeaveQuestionCommentErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type LeaveQuestionCommentError =
+  LeaveQuestionCommentErrors[keyof LeaveQuestionCommentErrors];
+
+export type LeaveQuestionCommentResponses = {
+  /**
+   * 201
+   */
+  201: V1QuestionComments32871189;
+};
+
+export type LeaveQuestionCommentResponse =
+  LeaveQuestionCommentResponses[keyof LeaveQuestionCommentResponses];
+
+export type LeaveProgressQuestionData = {
+  body?: V1Questions1653829861;
+  path?: never;
+  query?: never;
+  url: "/v1/questions";
+};
+
+export type LeaveProgressQuestionErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type LeaveProgressQuestionError =
+  LeaveProgressQuestionErrors[keyof LeaveProgressQuestionErrors];
+
+export type LeaveProgressQuestionResponses = {
+  /**
+   * 201
+   */
+  201: V1Questions1610867609;
+};
+
+export type LeaveProgressQuestionResponse =
+  LeaveProgressQuestionResponses[keyof LeaveProgressQuestionResponses];
+
 export type RegionsData = {
   body?: never;
   path?: never;
@@ -1483,10 +3232,48 @@ export type RegionsResponses = {
   /**
    * 200
    */
-  200: V1Regions1871099627;
+  200: V1Regions709600108;
 };
 
 export type RegionsResponse = RegionsResponses[keyof RegionsResponses];
+
+export type StartRoomProgressData = {
+  body?: V1RoomProgresses1093163669;
+  path?: never;
+  query?: never;
+  url: "/v1/room-progresses";
+};
+
+export type StartRoomProgressErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type StartRoomProgressError = StartRoomProgressErrors[keyof StartRoomProgressErrors];
+
+export type StartRoomProgressResponses = {
+  /**
+   * 200
+   */
+  200: V1RoomProgresses1064909895;
+};
+
+export type StartRoomProgressResponse =
+  StartRoomProgressResponses[keyof StartRoomProgressResponses];
 
 export type RoomsData = {
   body?: never;
@@ -1548,7 +3335,7 @@ export type RoomsErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
 };
 
 export type RoomsError = RoomsErrors[keyof RoomsErrors];
@@ -1557,7 +3344,7 @@ export type RoomsResponses = {
   /**
    * 200
    */
-  200: V1Rooms1267570971;
+  200: V1Rooms1476531183;
 };
 
 export type RoomsResponse = RoomsResponses[keyof RoomsResponses];
@@ -1573,7 +3360,7 @@ export type CreateRoomErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
 };
 
 export type CreateRoomError = CreateRoomErrors[keyof CreateRoomErrors];
@@ -1586,6 +3373,131 @@ export type CreateRoomResponses = {
 };
 
 export type CreateRoomResponse = CreateRoomResponses[keyof CreateRoomResponses];
+
+export type GetIntervieweeRoundFeedbackData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+    /**
+     * 라운드 면접자 회원 id (UUID)
+     */
+    intervieweeMemberId: string;
+  };
+  url: "/v1/round-feedbacks";
+};
+
+export type GetIntervieweeRoundFeedbackErrors = {
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type GetIntervieweeRoundFeedbackError =
+  GetIntervieweeRoundFeedbackErrors[keyof GetIntervieweeRoundFeedbackErrors];
+
+export type GetIntervieweeRoundFeedbackResponses = {
+  /**
+   * 200
+   */
+  200: V1RoundFeedbacks923155903;
+};
+
+export type GetIntervieweeRoundFeedbackResponse =
+  GetIntervieweeRoundFeedbackResponses[keyof GetIntervieweeRoundFeedbackResponses];
+
+export type GetRoundScreenData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+    /**
+     * 라운드 면접자 회원 id (UUID)
+     */
+    intervieweeMemberId: string;
+  };
+  url: "/v1/rounds";
+};
+
+export type GetRoundScreenErrors = {
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type GetRoundScreenError = GetRoundScreenErrors[keyof GetRoundScreenErrors];
+
+export type GetRoundScreenResponses = {
+  /**
+   * 200
+   */
+  200: V1Rounds1524907893;
+};
+
+export type GetRoundScreenResponse = GetRoundScreenResponses[keyof GetRoundScreenResponses];
+
+export type SaveSelfRoundFeedbackData = {
+  body?: V1SelfFeedbacks784214113;
+  path?: never;
+  query?: never;
+  url: "/v1/self-feedbacks";
+};
+
+export type SaveSelfRoundFeedbackErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type SaveSelfRoundFeedbackError =
+  SaveSelfRoundFeedbackErrors[keyof SaveSelfRoundFeedbackErrors];
+
+export type SaveSelfRoundFeedbackResponses = {
+  /**
+   * 200
+   */
+  200: V1SelfFeedbacks342673527;
+};
+
+export type SaveSelfRoundFeedbackResponse =
+  SaveSelfRoundFeedbackResponses[keyof SaveSelfRoundFeedbackResponses];
 
 export type TermsListData = {
   body?: never;
@@ -1602,6 +3514,73 @@ export type TermsListResponses = {
 };
 
 export type TermsListResponse = TermsListResponses[keyof TermsListResponses];
+
+export type GetMyAttendanceData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+  };
+  url: "/v1/attendances/me";
+};
+
+export type GetMyAttendanceErrors = {
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type GetMyAttendanceError = GetMyAttendanceErrors[keyof GetMyAttendanceErrors];
+
+export type GetMyAttendanceResponses = {
+  /**
+   * 200
+   */
+  200: V1AttendancesMe427868787;
+};
+
+export type GetMyAttendanceResponse = GetMyAttendanceResponses[keyof GetMyAttendanceResponses];
+
+export type IssueDevSessionData = {
+  body?: V1AuthDevSessions1806235479;
+  path?: never;
+  query?: never;
+  url: "/v1/auth/dev-sessions";
+};
+
+export type IssueDevSessionErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+};
+
+export type IssueDevSessionError = IssueDevSessionErrors[keyof IssueDevSessionErrors];
+
+export type IssueDevSessionResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type IssueDevSessionResponse = IssueDevSessionResponses[keyof IssueDevSessionResponses];
 
 export type AuthLogoutData = {
   body?: never;
@@ -1630,7 +3609,7 @@ export type AuthRefreshErrors = {
   /**
    * 401
    */
-  401: V1Rooms910352763;
+  401: V1MembersMeNickname910352763;
 };
 
 export type AuthRefreshError = AuthRefreshErrors[keyof AuthRefreshErrors];
@@ -1644,6 +3623,86 @@ export type AuthRefreshResponses = {
 
 export type AuthRefreshResponse = AuthRefreshResponses[keyof AuthRefreshResponses];
 
+export type GetMyClosingQuestionsData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+  };
+  url: "/v1/closing-questions/me";
+};
+
+export type GetMyClosingQuestionsErrors = {
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type GetMyClosingQuestionsError =
+  GetMyClosingQuestionsErrors[keyof GetMyClosingQuestionsErrors];
+
+export type GetMyClosingQuestionsResponses = {
+  /**
+   * 200
+   */
+  200: V1ClosingQuestionsMe207387725;
+};
+
+export type GetMyClosingQuestionsResponse =
+  GetMyClosingQuestionsResponses[keyof GetMyClosingQuestionsResponses];
+
+export type ConfirmRoundFeedbackDisclosureData = {
+  body?: V1FeedbackDisclosuresFeedbackId256087070;
+  path: {
+    /**
+     * 최종 피드백 id
+     */
+    feedbackId: string;
+  };
+  query?: never;
+  url: "/v1/feedback-disclosures/{feedbackId}";
+};
+
+export type ConfirmRoundFeedbackDisclosureErrors = {
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type ConfirmRoundFeedbackDisclosureError =
+  ConfirmRoundFeedbackDisclosureErrors[keyof ConfirmRoundFeedbackDisclosureErrors];
+
+export type ConfirmRoundFeedbackDisclosureResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type ConfirmRoundFeedbackDisclosureResponse =
+  ConfirmRoundFeedbackDisclosureResponses[keyof ConfirmRoundFeedbackDisclosureResponses];
+
 export type JobPostingLinkMetadataData = {
   body?: V1JobPostingsLinkMetadata34312967;
   path?: never;
@@ -1655,7 +3714,7 @@ export type JobPostingLinkMetadataErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
 };
 
 export type JobPostingLinkMetadataError =
@@ -1691,7 +3750,7 @@ export type SearchJobPostingsErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
 };
 
 export type SearchJobPostingsError = SearchJobPostingsErrors[keyof SearchJobPostingsErrors];
@@ -1722,7 +3781,7 @@ export type SearchJobRolesErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
 };
 
 export type SearchJobRolesError = SearchJobRolesErrors[keyof SearchJobRolesErrors];
@@ -1747,11 +3806,11 @@ export type MemberMeErrors = {
   /**
    * 401
    */
-  401: V1Rooms910352763;
+  401: V1MembersMeNickname910352763;
   /**
    * 404
    */
-  404: V1Rooms910352763;
+  404: V1MembersMeNickname910352763;
 };
 
 export type MemberMeError = MemberMeErrors[keyof MemberMeErrors];
@@ -1760,7 +3819,7 @@ export type MemberMeResponses = {
   /**
    * 200
    */
-  200: V1MembersMe1954777904;
+  200: V1MembersMe1349704155;
 };
 
 export type MemberMeResponse = MemberMeResponses[keyof MemberMeResponses];
@@ -1781,7 +3840,7 @@ export type NicknameAvailabilityErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
 };
 
 export type NicknameAvailabilityError =
@@ -1814,6 +3873,356 @@ export type NicknameSuggestionResponses = {
 export type NicknameSuggestionResponse =
   NicknameSuggestionResponses[keyof NicknameSuggestionResponses];
 
+export type ToggleQuestionCommentTypeData = {
+  body?: V1QuestionCommentTypesCommentId844872488;
+  path: {
+    /**
+     * 질문 메모 id
+     */
+    commentId: string;
+  };
+  query?: never;
+  url: "/v1/question-comment-types/{commentId}";
+};
+
+export type ToggleQuestionCommentTypeErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type ToggleQuestionCommentTypeError =
+  ToggleQuestionCommentTypeErrors[keyof ToggleQuestionCommentTypeErrors];
+
+export type ToggleQuestionCommentTypeResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type ToggleQuestionCommentTypeResponse =
+  ToggleQuestionCommentTypeResponses[keyof ToggleQuestionCommentTypeResponses];
+
+export type DeleteQuestionCommentData = {
+  body?: never;
+  path: {
+    /**
+     * 질문 메모 id
+     */
+    commentId: string;
+  };
+  query: {
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+    /**
+     * 라운드 면접자 회원 id (UUID)
+     */
+    intervieweeMemberId: string;
+    /**
+     * 원 질문 id
+     */
+    questionId: string;
+  };
+  url: "/v1/question-comments/{commentId}";
+};
+
+export type DeleteQuestionCommentErrors = {
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type DeleteQuestionCommentError =
+  DeleteQuestionCommentErrors[keyof DeleteQuestionCommentErrors];
+
+export type DeleteQuestionCommentResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type DeleteQuestionCommentResponse =
+  DeleteQuestionCommentResponses[keyof DeleteQuestionCommentResponses];
+
+export type EditQuestionCommentData = {
+  body?: V1QuestionCommentsCommentId83412404;
+  path: {
+    /**
+     * 질문 메모 id
+     */
+    commentId: string;
+  };
+  query?: never;
+  url: "/v1/question-comments/{commentId}";
+};
+
+export type EditQuestionCommentErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type EditQuestionCommentError = EditQuestionCommentErrors[keyof EditQuestionCommentErrors];
+
+export type EditQuestionCommentResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type EditQuestionCommentResponse =
+  EditQuestionCommentResponses[keyof EditQuestionCommentResponses];
+
+export type GetMyRoundQuestionRecordsData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+    /**
+     * 라운드 면접자 회원 id (UUID)
+     */
+    intervieweeMemberId: string;
+  };
+  url: "/v1/question-records/me";
+};
+
+export type GetMyRoundQuestionRecordsErrors = {
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type GetMyRoundQuestionRecordsError =
+  GetMyRoundQuestionRecordsErrors[keyof GetMyRoundQuestionRecordsErrors];
+
+export type GetMyRoundQuestionRecordsResponses = {
+  /**
+   * 200
+   */
+  200: V1QuestionRecordsMe591289672;
+};
+
+export type GetMyRoundQuestionRecordsResponse =
+  GetMyRoundQuestionRecordsResponses[keyof GetMyRoundQuestionRecordsResponses];
+
+export type ChangeQuestionAskedData = {
+  body?: V1QuestionsQuestionId496267733;
+  path: {
+    /**
+     * 질문 또는 꼬리질문 id
+     */
+    questionId: string;
+  };
+  query?: never;
+  url: "/v1/questions/{questionId}";
+};
+
+export type ChangeQuestionAskedErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type ChangeQuestionAskedError = ChangeQuestionAskedErrors[keyof ChangeQuestionAskedErrors];
+
+export type ChangeQuestionAskedResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type ChangeQuestionAskedResponse =
+  ChangeQuestionAskedResponses[keyof ChangeQuestionAskedResponses];
+
+export type DeleteReviewData = {
+  body?: never;
+  path: {
+    /**
+     * 삭제할 후기 id
+     */
+    reviewId: string;
+  };
+  query?: never;
+  url: "/v1/reviews/{reviewId}";
+};
+
+export type DeleteReviewErrors = {
+  /**
+   * 401
+   */
+  401: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type DeleteReviewError = DeleteReviewErrors[keyof DeleteReviewErrors];
+
+export type DeleteReviewResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type DeleteReviewResponse = DeleteReviewResponses[keyof DeleteReviewResponses];
+
+export type UpdateReviewData = {
+  body?: V1ReviewsReviewId292942325;
+  path: {
+    /**
+     * 수정할 후기 id
+     */
+    reviewId: string;
+  };
+  query?: never;
+  url: "/v1/reviews/{reviewId}";
+};
+
+export type UpdateReviewErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 401
+   */
+  401: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type UpdateReviewError = UpdateReviewErrors[keyof UpdateReviewErrors];
+
+export type UpdateReviewResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type UpdateReviewResponse = UpdateReviewResponses[keyof UpdateReviewResponses];
+
+export type RoomCreationLimitData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * 채용 공고 id. 회사는 공고에서 파생되므로 따로 받지 않는다
+     */
+    jobPostingId: string;
+    /**
+     * 직무 id
+     */
+    jobRoleId: string;
+  };
+  url: "/v1/rooms/creation-limit";
+};
+
+export type RoomCreationLimitErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+};
+
+export type RoomCreationLimitError = RoomCreationLimitErrors[keyof RoomCreationLimitErrors];
+
+export type RoomCreationLimitResponses = {
+  /**
+   * 200
+   */
+  200: V1RoomsCreationLimit1772486104;
+};
+
+export type RoomCreationLimitResponse =
+  RoomCreationLimitResponses[keyof RoomCreationLimitResponses];
+
 export type RoomFormOptionsData = {
   body?: never;
   path?: never;
@@ -1829,6 +4238,22 @@ export type RoomFormOptionsResponses = {
 };
 
 export type RoomFormOptionsResponse = RoomFormOptionsResponses[keyof RoomFormOptionsResponses];
+
+export type RejectReasonsData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/v1/rooms/reject-reasons";
+};
+
+export type RejectReasonsResponses = {
+  /**
+   * 200
+   */
+  200: V1RoomsRejectReasons1951847967;
+};
+
+export type RejectReasonsResponse = RejectReasonsResponses[keyof RejectReasonsResponses];
 
 export type RoomDetailData = {
   body?: never;
@@ -1846,7 +4271,7 @@ export type RoomDetailResponses = {
   /**
    * 200
    */
-  200: V1RoomsRoomId1541252470;
+  200: V1RoomsRoomId1165715694;
 };
 
 export type RoomDetailResponse = RoomDetailResponses[keyof RoomDetailResponses];
@@ -1854,9 +4279,6 @@ export type RoomDetailResponse = RoomDetailResponses[keyof RoomDetailResponses];
 export type JobPostingsData = {
   body?: never;
   path: {
-    /**
-     * 공고를 조회할 회사 id (/v1/companies 검색 결과)
-     */
     companyId: string;
   };
   query?: {
@@ -1872,7 +4294,7 @@ export type JobPostingsErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
 };
 
 export type JobPostingsError = JobPostingsErrors[keyof JobPostingsErrors];
@@ -1897,15 +4319,15 @@ export type UpdateNicknameErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
   /**
    * 401
    */
-  401: V1Rooms910352763;
+  401: V1MembersMeNickname910352763;
   /**
    * 409
    */
-  409: V1Rooms910352763;
+  409: V1MembersMeNickname910352763;
 };
 
 export type UpdateNicknameError = UpdateNicknameErrors[keyof UpdateNicknameErrors];
@@ -1919,8 +4341,25 @@ export type UpdateNicknameResponses = {
 
 export type UpdateNicknameResponse = UpdateNicknameResponses[keyof UpdateNicknameResponses];
 
+export type ParticipationSlotsData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/v1/members/me/participation-slots";
+};
+
+export type ParticipationSlotsResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeParticipationSlots889288482;
+};
+
+export type ParticipationSlotsResponse =
+  ParticipationSlotsResponses[keyof ParticipationSlotsResponses];
+
 export type UpdateProfileData = {
-  body?: V1MembersMeProfile928465678;
+  body?: V1MembersMeProfile608809462;
   path?: never;
   query?: never;
   url: "/v1/members/me/profile";
@@ -1930,15 +4369,15 @@ export type UpdateProfileErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
   /**
    * 401
    */
-  401: V1Rooms910352763;
+  401: V1MembersMeNickname910352763;
   /**
    * 404
    */
-  404: V1Rooms910352763;
+  404: V1MembersMeNickname910352763;
 };
 
 export type UpdateProfileError = UpdateProfileErrors[keyof UpdateProfileErrors];
@@ -1947,10 +4386,49 @@ export type UpdateProfileResponses = {
   /**
    * 200
    */
-  200: V1MembersMeProfile1868087811;
+  200: V1MembersMeProfile934225230;
 };
 
 export type UpdateProfileResponse = UpdateProfileResponses[keyof UpdateProfileResponses];
+
+export type GetReceivedReviewsData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * 직전 페이지 마지막 후기 id
+     */
+    lastReviewId: string;
+    /**
+     * 페이지 크기. 허용 범위 1~50 밖이면 기본값 20을 사용한다
+     */
+    size: string;
+  };
+  url: "/v1/members/me/received-reviews";
+};
+
+export type GetReceivedReviewsErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 401
+   */
+  401: V1MembersMeNickname910352763;
+};
+
+export type GetReceivedReviewsError = GetReceivedReviewsErrors[keyof GetReceivedReviewsErrors];
+
+export type GetReceivedReviewsResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeReceivedReviews785981355;
+};
+
+export type GetReceivedReviewsResponse =
+  GetReceivedReviewsResponses[keyof GetReceivedReviewsResponses];
 
 export type ResumesData = {
   body?: never;
@@ -1963,7 +4441,7 @@ export type ResumesErrors = {
   /**
    * 401
    */
-  401: V1Rooms910352763;
+  401: V1MembersMeNickname910352763;
 };
 
 export type ResumesError = ResumesErrors[keyof ResumesErrors];
@@ -1972,7 +4450,7 @@ export type ResumesResponses = {
   /**
    * 200
    */
-  200: V1MembersMeResumes893966422;
+  200: V1MembersMeResumes1467612549;
 };
 
 export type ResumesResponse = ResumesResponses[keyof ResumesResponses];
@@ -1993,11 +4471,11 @@ export type CreateResumeErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
   /**
    * 401
    */
-  401: V1Rooms910352763;
+  401: V1MembersMeNickname910352763;
 };
 
 export type CreateResumeError = CreateResumeErrors[keyof CreateResumeErrors];
@@ -2006,10 +4484,37 @@ export type CreateResumeResponses = {
   /**
    * 201
    */
-  201: V1MembersMeResumesResumeId1190069423;
+  201: V1MembersMeResumesResumeId1837465274;
 };
 
 export type CreateResumeResponse = CreateResumeResponses[keyof CreateResumeResponses];
+
+export type GetInterviewOverviewData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/v1/members/me/rooms";
+};
+
+export type GetInterviewOverviewErrors = {
+  /**
+   * 401
+   */
+  401: V1MembersMeNickname910352763;
+};
+
+export type GetInterviewOverviewError =
+  GetInterviewOverviewErrors[keyof GetInterviewOverviewErrors];
+
+export type GetInterviewOverviewResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeRooms1592819168;
+};
+
+export type GetInterviewOverviewResponse =
+  GetInterviewOverviewResponses[keyof GetInterviewOverviewResponses];
 
 export type UnregisterWebPushSubscriptionData = {
   body?: V1MembersMeWebPushSubscriptions615785551;
@@ -2061,11 +4566,11 @@ export type PublicProfileErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
   /**
    * 404
    */
-  404: V1Rooms910352763;
+  404: V1MembersMeNickname910352763;
 };
 
 export type PublicProfileError = PublicProfileErrors[keyof PublicProfileErrors];
@@ -2074,7 +4579,7 @@ export type PublicProfileResponses = {
   /**
    * 200
    */
-  200: V1MembersMemberIdProfile250325338;
+  200: V1MembersMemberIdProfile655149006;
 };
 
 export type PublicProfileResponse = PublicProfileResponses[keyof PublicProfileResponses];
@@ -2095,10 +4600,335 @@ export type RoomApplicationsResponses = {
   /**
    * 200
    */
-  200: V1RoomsRoomIdApplications1231421410;
+  200: V1RoomsRoomIdApplications1094172635;
 };
 
 export type RoomApplicationsResponse = RoomApplicationsResponses[keyof RoomApplicationsResponses];
+
+export type SubmitRoomApplicationData = {
+  body?: V1RoomsRoomIdApplications240308819;
+  path: {
+    /**
+     * 참가 신청할 룸 id (UUID)
+     */
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/applications";
+};
+
+export type SubmitRoomApplicationErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+};
+
+export type SubmitRoomApplicationError =
+  SubmitRoomApplicationErrors[keyof SubmitRoomApplicationErrors];
+
+export type SubmitRoomApplicationResponses = {
+  /**
+   * 201
+   */
+  201: V1RoomsRoomIdApplications1651584797;
+};
+
+export type SubmitRoomApplicationResponse =
+  SubmitRoomApplicationResponses[keyof SubmitRoomApplicationResponses];
+
+export type CancelRoomData = {
+  body?: never;
+  path: {
+    /**
+     * 취소할 룸 식별자
+     */
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/cancellation";
+};
+
+export type CancelRoomErrors = {
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type CancelRoomError = CancelRoomErrors[keyof CancelRoomErrors];
+
+export type CancelRoomResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type CancelRoomResponse = CancelRoomResponses[keyof CancelRoomResponses];
+
+export type ConfirmRoomData = {
+  body?: never;
+  path: {
+    /**
+     * 확정할 룸 식별자
+     */
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/confirmation";
+};
+
+export type ConfirmRoomErrors = {
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type ConfirmRoomError = ConfirmRoomErrors[keyof ConfirmRoomErrors];
+
+export type ConfirmRoomResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type ConfirmRoomResponse = ConfirmRoomResponses[keyof ConfirmRoomResponses];
+
+export type RoomParticipantsData = {
+  body?: never;
+  path: {
+    /**
+     * 명부를 조회할 룸 id (UUID)
+     */
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/participants";
+};
+
+export type RoomParticipantsErrors = {
+  /**
+   * 403
+   */
+  403: V1RoomsRoomIdParticipantsMe1338856208;
+};
+
+export type RoomParticipantsError = RoomParticipantsErrors[keyof RoomParticipantsErrors];
+
+export type RoomParticipantsResponses = {
+  /**
+   * 200
+   */
+  200: V1RoomsRoomIdParticipants1711899011;
+};
+
+export type RoomParticipantsResponse = RoomParticipantsResponses[keyof RoomParticipantsResponses];
+
+export type GetQuestionCardSetsData = {
+  body?: never;
+  path: {
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/question-sets";
+};
+
+export type GetQuestionCardSetsErrors = {
+  /**
+   * 401
+   */
+  401: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+};
+
+export type GetQuestionCardSetsError = GetQuestionCardSetsErrors[keyof GetQuestionCardSetsErrors];
+
+export type GetQuestionCardSetsResponses = {
+  /**
+   * 200
+   */
+  200: V1RoomsRoomIdQuestionSets2052308651;
+};
+
+export type GetQuestionCardSetsResponse =
+  GetQuestionCardSetsResponses[keyof GetQuestionCardSetsResponses];
+
+export type LeavePreparationQuestionData = {
+  body?: V1RoomsRoomIdQuestions282474051;
+  path: {
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/questions";
+};
+
+export type LeavePreparationQuestionErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type LeavePreparationQuestionError =
+  LeavePreparationQuestionErrors[keyof LeavePreparationQuestionErrors];
+
+export type LeavePreparationQuestionResponses = {
+  /**
+   * 201
+   */
+  201: V1RoomsRoomIdQuestionsQuestionIdFollowUps36237129;
+};
+
+export type LeavePreparationQuestionResponse =
+  LeavePreparationQuestionResponses[keyof LeavePreparationQuestionResponses];
+
+export type SkipReviewData = {
+  body?: V1RoomsRoomIdReviewSkips2104006349;
+  path: {
+    /**
+     * 완료된 룸 id (UUID)
+     */
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/review-skips";
+};
+
+export type SkipReviewErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 401
+   */
+  401: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type SkipReviewError = SkipReviewErrors[keyof SkipReviewErrors];
+
+export type SkipReviewResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type SkipReviewResponse = SkipReviewResponses[keyof SkipReviewResponses];
+
+export type GetReviewTargetsData = {
+  body?: never;
+  path: {
+    /**
+     * 완료된 룸 id (UUID)
+     */
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/review-targets";
+};
+
+export type GetReviewTargetsErrors = {
+  /**
+   * 401
+   */
+  401: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type GetReviewTargetsError = GetReviewTargetsErrors[keyof GetReviewTargetsErrors];
+
+export type GetReviewTargetsResponses = {
+  /**
+   * 200
+   */
+  200: V1RoomsRoomIdReviewTargets2072286757;
+};
+
+export type GetReviewTargetsResponse = GetReviewTargetsResponses[keyof GetReviewTargetsResponses];
+
+export type SubmitReviewData = {
+  body?: V1RoomsRoomIdReviews1356104346;
+  path: {
+    /**
+     * 완료된 룸 id (UUID)
+     */
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/reviews";
+};
+
+export type SubmitReviewErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 401
+   */
+  401: V1MembersMeNickname910352763;
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type SubmitReviewError = SubmitReviewErrors[keyof SubmitReviewErrors];
+
+export type SubmitReviewResponses = {
+  /**
+   * 201
+   */
+  201: V1RoomsRoomIdReviews1785905513;
+};
+
+export type SubmitReviewResponse = SubmitReviewResponses[keyof SubmitReviewResponses];
 
 export type DeleteResumeData = {
   body?: never;
@@ -2116,15 +4946,15 @@ export type DeleteResumeErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
   /**
    * 401
    */
-  401: V1Rooms910352763;
+  401: V1MembersMeNickname910352763;
   /**
    * 404
    */
-  404: V1Rooms910352763;
+  404: V1MembersMeNickname910352763;
 };
 
 export type DeleteResumeError = DeleteResumeErrors[keyof DeleteResumeErrors];
@@ -2154,15 +4984,15 @@ export type ResumeErrors = {
   /**
    * 400
    */
-  400: V1Rooms910352763;
+  400: V1MembersMeNickname910352763;
   /**
    * 401
    */
-  401: V1Rooms910352763;
+  401: V1MembersMeNickname910352763;
   /**
    * 404
    */
-  404: V1Rooms910352763;
+  404: V1MembersMeNickname910352763;
 };
 
 export type ResumeError = ResumeErrors[keyof ResumeErrors];
@@ -2171,10 +5001,144 @@ export type ResumeResponses = {
   /**
    * 200
    */
-  200: V1MembersMeResumesResumeId1190069423;
+  200: V1MembersMeResumesResumeId1837465274;
 };
 
 export type ResumeResponse = ResumeResponses[keyof ResumeResponses];
+
+export type WithdrawRoomApplicationData = {
+  body?: never;
+  path: {
+    /**
+     * 내 참가 신청을 철회할 룸 id (UUID)
+     */
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/applications/me";
+};
+
+export type WithdrawRoomApplicationResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type WithdrawRoomApplicationResponse =
+  WithdrawRoomApplicationResponses[keyof WithdrawRoomApplicationResponses];
+
+export type MyRoomApplicationData = {
+  body?: never;
+  path: {
+    /**
+     * 내 참가 신청을 조회할 룸 id (UUID)
+     */
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/applications/me";
+};
+
+export type MyRoomApplicationResponses = {
+  /**
+   * 200
+   */
+  200: V1RoomsRoomIdApplicationsMe2061746466;
+};
+
+export type MyRoomApplicationResponse =
+  MyRoomApplicationResponses[keyof MyRoomApplicationResponses];
+
+export type RoomLeaveData = {
+  body?: never;
+  path: {
+    /**
+     * 나갈 룸 id (UUID)
+     */
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/participants/me";
+};
+
+export type RoomLeaveErrors = {
+  /**
+   * 403
+   */
+  403: V1RoomsRoomIdParticipantsMe1338856208;
+  /**
+   * 409
+   */
+  409: V1RoomsRoomIdParticipantsMe837364537;
+};
+
+export type RoomLeaveError = RoomLeaveErrors[keyof RoomLeaveErrors];
+
+export type RoomLeaveResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type RoomLeaveResponse = RoomLeaveResponses[keyof RoomLeaveResponses];
+
+export type GetQuestionCardSetData = {
+  body?: never;
+  path: {
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+    /**
+     * 질문 대상 회원 id (UUID)
+     */
+    targetMemberId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/question-sets/{targetMemberId}";
+};
+
+export type GetQuestionCardSetResponses = {
+  /**
+   * 200
+   */
+  200: V1RoomsRoomIdQuestionSetsTargetMemberId906553040;
+};
+
+export type GetQuestionCardSetResponse =
+  GetQuestionCardSetResponses[keyof GetQuestionCardSetResponses];
+
+export type DeletePreparationQuestionData = {
+  body?: never;
+  path: {
+    roomId: string;
+    questionId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/questions/{questionId}";
+};
+
+export type DeletePreparationQuestionErrors = {
+  /**
+   * 409
+   */
+  409: V1MembersMeNickname910352763;
+};
+
+export type DeletePreparationQuestionError =
+  DeletePreparationQuestionErrors[keyof DeletePreparationQuestionErrors];
+
+export type DeletePreparationQuestionResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type DeletePreparationQuestionResponse =
+  DeletePreparationQuestionResponses[keyof DeletePreparationQuestionResponses];
 
 export type RetryResumeSummaryData = {
   body?: never;
@@ -2192,7 +5156,7 @@ export type RetryResumeSummaryErrors = {
   /**
    * 409
    */
-  409: V1Rooms910352763;
+  409: V1MembersMeNickname910352763;
 };
 
 export type RetryResumeSummaryError = RetryResumeSummaryErrors[keyof RetryResumeSummaryErrors];
@@ -2201,7 +5165,7 @@ export type RetryResumeSummaryResponses = {
   /**
    * 200
    */
-  200: V1MembersMeResumesResumeId1190069423;
+  200: V1MembersMeResumesResumeId1837465274;
 };
 
 export type RetryResumeSummaryResponse =
@@ -2227,14 +5191,14 @@ export type AcceptApplicationResponses = {
   /**
    * 200
    */
-  200: V1RoomsRoomIdApplicationsApplicationIdAccept1478496507;
+  200: V1RoomsRoomIdApplicationsApplicationIdAccept674159690;
 };
 
 export type AcceptApplicationResponse =
   AcceptApplicationResponses[keyof AcceptApplicationResponses];
 
 export type RejectApplicationData = {
-  body?: V1RoomsRoomIdApplicationsApplicationIdReject2120301028;
+  body?: V1RoomsRoomIdApplicationsApplicationIdReject2057308046;
   path: {
     /**
      * 룸 id (UUID)
@@ -2249,6 +5213,15 @@ export type RejectApplicationData = {
   url: "/v1/rooms/{roomId}/applications/{applicationId}/reject";
 };
 
+export type RejectApplicationErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+};
+
+export type RejectApplicationError = RejectApplicationErrors[keyof RejectApplicationErrors];
+
 export type RejectApplicationResponses = {
   /**
    * 200
@@ -2258,3 +5231,64 @@ export type RejectApplicationResponses = {
 
 export type RejectApplicationResponse =
   RejectApplicationResponses[keyof RejectApplicationResponses];
+
+export type LeavePreparationFollowUpQuestionData = {
+  body?: V1RoomsRoomIdQuestionsQuestionIdFollowUps1317980453;
+  path: {
+    roomId: string;
+    questionId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/questions/{questionId}/follow-ups";
+};
+
+export type LeavePreparationFollowUpQuestionErrors = {
+  /**
+   * 403
+   */
+  403: V1MembersMeNickname910352763;
+};
+
+export type LeavePreparationFollowUpQuestionError =
+  LeavePreparationFollowUpQuestionErrors[keyof LeavePreparationFollowUpQuestionErrors];
+
+export type LeavePreparationFollowUpQuestionResponses = {
+  /**
+   * 201
+   */
+  201: V1RoomsRoomIdQuestionsQuestionIdFollowUps36237129;
+};
+
+export type LeavePreparationFollowUpQuestionResponse =
+  LeavePreparationFollowUpQuestionResponses[keyof LeavePreparationFollowUpQuestionResponses];
+
+export type GoogleOAuthStartData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/oauth2/authorization/google";
+};
+
+export type GoogleOAuthCallbackData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Google 인가 코드. 성공 콜백에서 전달
+     */
+    code?: string;
+    /**
+     * 로그인 요청 위변조 방지 상태값
+     */
+    state?: string;
+    /**
+     * Google 실패 코드. 클라이언트로 전달하지 않음
+     */
+    error?: string;
+    /**
+     * Google 실패 상세. 로그·프론트 리다이렉트에 원문을 노출하지 않음
+     */
+    error_description?: string;
+  };
+  url: "/login/oauth2/code/google";
+};
