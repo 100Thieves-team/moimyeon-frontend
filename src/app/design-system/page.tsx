@@ -1,3 +1,4 @@
+import { Button, LinkButton } from "@/components/button";
 import { breakpoints, grid, sprinkles, textStyle, vars } from "@/styles";
 import type { Metadata } from "next";
 import * as styles from "./page.css";
@@ -7,6 +8,8 @@ export const metadata: Metadata = {
 };
 
 const SAMPLE_TEXT = "모이면에서 가볍게 만나요 — Aa Gg 0123";
+const BUTTON_VARIANTS = ["primary", "secondary", "ghost"] as const;
+const BUTTON_SIZES = ["sm", "md", "lg"] as const;
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
@@ -137,6 +140,42 @@ export default function DesignSystemPage() {
           )}
         </div>
       </div>
+
+      <section id="button">
+        <SectionTitle>Components — Button</SectionTitle>
+        <div className={styles.componentGrid}>
+          {BUTTON_VARIANTS.map((variant) => (
+            <div className={styles.componentRow} key={variant}>
+              <span className={styles.componentLabel}>{variant}</span>
+              <div className={styles.componentExamples}>
+                {BUTTON_SIZES.map((size) => (
+                  <Button key={size} size={size} variant={variant}>
+                    Button {size}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div className={styles.componentRow}>
+            <span className={styles.componentLabel}>disabled</span>
+            <div className={styles.componentExamples}>
+              <Button disabled focusableWhenDisabled>
+                Disabled
+              </Button>
+            </div>
+          </div>
+          <div className={styles.componentRow}>
+            <span className={styles.componentLabel}>link</span>
+            <div className={styles.componentExamples}>
+              {BUTTON_VARIANTS.map((variant) => (
+                <LinkButton href="/design-system#button" key={variant} variant={variant}>
+                  LinkButton
+                </LinkButton>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       <SectionTitle>Layout</SectionTitle>
       <div className={sprinkles({ display: "flex", flexDirection: "column", gap: "xs" })}>

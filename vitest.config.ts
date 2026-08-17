@@ -9,7 +9,12 @@ const rootDirectory = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   optimizeDeps: {
-    include: ["@vanilla-extract/sprinkles/createRuntimeSprinkles"],
+    include: [
+      "@base-ui/react/button",
+      "@base-ui/react/merge-props",
+      "@vanilla-extract/recipes/createRuntimeFn",
+      "@vanilla-extract/sprinkles/createRuntimeSprinkles",
+    ],
   },
   plugins: [vanillaExtractPlugin(), react()],
   resolve: {
