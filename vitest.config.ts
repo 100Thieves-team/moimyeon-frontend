@@ -10,6 +10,7 @@ const rootDirectory = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   optimizeDeps: {
     include: [
+      "@base-ui/react/avatar",
       "@base-ui/react/button",
       "@base-ui/react/field",
       "@base-ui/react/form",
@@ -40,6 +41,7 @@ export default defineConfig({
           alias: {
             "next/link": path.resolve(rootDirectory, "tests/mocks/next-link.tsx"),
             "next/navigation": path.resolve(rootDirectory, "tests/mocks/next-navigation.ts"),
+            "server-only": path.resolve(rootDirectory, "tests/mocks/server-only.ts"),
           },
         },
         test: {

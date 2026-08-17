@@ -1,5 +1,4 @@
 import { vars } from "@/styles/theme.css";
-import { media } from "@/styles/tokens";
 import { style } from "@vanilla-extract/css";
 
 const mobile = "screen and (max-width: 599px)";
@@ -7,6 +6,7 @@ const mobile = "screen and (max-width: 599px)";
 export const header = style({
   width: "100%",
   height: "6.4rem",
+  flex: "0 0 auto",
   padding: "0 3.2rem",
   borderBottom: `1px solid ${vars.color.strokeLight}`,
   backgroundColor: vars.color.background,
@@ -53,7 +53,6 @@ export const navList = style({
   display: "flex",
   alignItems: "flex-start",
   gap: "2.4rem",
-  overflow: "hidden",
   listStyle: "none",
   color: vars.color.tertiary,
   fontFamily: vars.font.sans,
@@ -68,15 +67,30 @@ export const navList = style({
   },
 });
 
+export const navItem = style({
+  display: "inline-flex",
+  minHeight: "4.4rem",
+  alignItems: "center",
+  borderRadius: vars.radius.control,
+  color: vars.color.tertiary,
+  selectors: {
+    "&:focus-visible": {
+      outline: `2px solid ${vars.color.primary}`,
+      outlineOffset: "2px",
+    },
+  },
+});
+
 export const activeNavItem = style({
   color: vars.color.primary,
+  fontWeight: 500,
 });
 
 export const navActions = style({
   display: "flex",
   flex: "0 0 auto",
   alignItems: "center",
-  gap: "2rem",
+  gap: "1.6rem",
   "@media": {
     [mobile]: {
       gap: "0.8rem",
@@ -84,73 +98,38 @@ export const navActions = style({
   },
 });
 
-export const loginButton = style({
-  minWidth: 0,
-  minHeight: "4.4rem",
-  padding: "0 1.2rem",
-  border: 0,
-  borderRadius: vars.radius.control,
-  background: "transparent",
-  color: vars.color.secondary,
-  fontFamily: vars.font.sans,
-  fontSize: "1.6rem",
-  fontWeight: 400,
-  lineHeight: "2rem",
-  cursor: "pointer",
-  transition: `background-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, transform ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
-  selectors: {
-    "&:focus-visible": {
-      outline: `2px solid ${vars.color.primary}`,
-      outlineOffset: "2px",
-    },
-    "&:active": {
-      transform: "scale(0.98)",
-    },
-  },
-  "@media": {
-    [media.hover]: {
-      ":hover": {
-        backgroundColor: vars.color.fillTertiary,
-        color: vars.color.primary,
-      },
-    },
-    [media.reducedMotion]: {
-      transition: "none",
-    },
-  },
-});
-
-export const createButton = style({
-  minHeight: "4.4rem",
-  padding: "1.2rem 2rem",
-  border: 0,
-  borderRadius: vars.radius.cta,
-  backgroundColor: vars.color.fillPrimary,
-  color: vars.color.background,
-  fontFamily: vars.font.sans,
-  fontSize: "1.5rem",
-  fontWeight: 500,
-  lineHeight: "2rem",
-  whiteSpace: "nowrap",
-  cursor: "pointer",
-  transition: `opacity ${vars.motion.duration.fast} ${vars.motion.ease.fade}, transform ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
+export const avatarLink = style({
+  display: "inline-flex",
+  flex: "0 0 auto",
+  borderRadius: vars.radius.pill,
   selectors: {
     "&:focus-visible": {
       outline: `2px solid ${vars.color.primary}`,
       outlineOffset: "3px",
     },
-    "&:active": {
-      transform: "scale(0.98)",
-    },
   },
-  "@media": {
-    [media.hover]: {
-      ":hover": {
-        opacity: 0.82,
-      },
-    },
-    [media.reducedMotion]: {
-      transition: "none",
-    },
-  },
+});
+
+export const avatarRoot = style({
+  display: "inline-flex",
+  width: "3.4rem",
+  height: "3.4rem",
+  alignItems: "center",
+  justifyContent: "center",
+  overflow: "hidden",
+  borderRadius: vars.radius.pill,
+  backgroundColor: vars.color.yellow10,
+  color: vars.color.brown,
+  fontFamily: vars.font.sans,
+  fontSize: "1.4rem",
+  fontWeight: 700,
+  lineHeight: "1.4rem",
+});
+
+export const avatarFallback = style({
+  display: "inline-flex",
+  width: "100%",
+  height: "100%",
+  alignItems: "center",
+  justifyContent: "center",
 });

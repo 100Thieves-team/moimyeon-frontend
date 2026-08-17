@@ -34,8 +34,9 @@ export function DevLoginForm({ returnTo }: DevLoginFormProps) {
 
   const submitForm = handleSubmit(async ({ memberId }) => {
     const result = await issueDevSession({
+      baseUrl: "/api",
       body: { memberId: memberId.trim() },
-      credentials: "include",
+      credentials: "same-origin",
       throwOnError: false,
     });
 
