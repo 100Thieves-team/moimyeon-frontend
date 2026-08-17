@@ -172,8 +172,9 @@ describe("DevLoginForm", () => {
     await expect.poll(() => navigation.routerReplace).toHaveBeenCalledWith("/interviews/new");
     expect(navigation.routerRefresh).toHaveBeenCalledOnce();
     expect(issueDevSessionMock).toHaveBeenCalledWith({
+      baseUrl: "/api",
       body: { memberId },
-      credentials: "include",
+      credentials: "same-origin",
       throwOnError: false,
     });
   });
