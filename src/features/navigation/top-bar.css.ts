@@ -53,7 +53,6 @@ export const navList = style({
   display: "flex",
   alignItems: "flex-start",
   gap: "2.4rem",
-  overflow: "hidden",
   listStyle: "none",
   color: vars.color.tertiary,
   fontFamily: vars.font.sans,

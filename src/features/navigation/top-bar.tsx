@@ -29,13 +29,6 @@ export async function TopBar() {
               </TopBarNavLink>
             </li>
             <li className={styles.navItem}>내 면접</li>
-            {currentMemberState.status === "authenticated" && (
-              <li>
-                <TopBarNavLink href="/mypage" segment="mypage">
-                  마이페이지
-                </TopBarNavLink>
-              </li>
-            )}
           </ul>
         </div>
 

@@ -35,7 +35,7 @@ beforeEach(async () => {
 });
 
 describe("TopBar", () => {
-  it("로그인 회원에게 마이페이지와 면접 만들기 링크 및 Avatar를 보여준다", async () => {
+  it("로그인 회원에게 면접 만들기와 마이페이지 Avatar를 보여준다", async () => {
     mocks.getCurrentMemberState.mockResolvedValue({
       member: { nickname: "집요한 수달 07" },
       status: "authenticated",
@@ -45,7 +45,7 @@ describe("TopBar", () => {
 
     await expect
       .element(screen.getByRole("link", { exact: true, name: "마이페이지" }))
-      .toHaveAttribute("href", "/mypage");
+      .not.toBeInTheDocument();
     await expect
       .element(screen.getByRole("link", { name: "면접 만들기" }))
       .toHaveAttribute("href", "/interviews/new");
@@ -53,19 +53,15 @@ describe("TopBar", () => {
     await expect.element(avatarLink).toHaveTextContent("집");
   });
 
-  it("현재 레이아웃 세그먼트에 맞는 메뉴를 활성 상태로 표시한다", async () => {
+  it("홈에서 면접 탐색 메뉴를 활성 상태로 표시한다", async () => {
     mocks.getCurrentMemberState.mockResolvedValue({
       member: { nickname: "집요한 수달 07" },
       status: "authenticated",
     });
-    mocks.segment = "mypage";
     const screen = await render(await TopBar());
 
     await expect
-      .element(screen.getByRole("link", { exact: true, name: "마이페이지" }))
-      .toHaveAttribute("aria-current", "page");
-    await expect
       .element(screen.getByRole("link", { name: "면접 탐색" }))
-      .not.toHaveAttribute("aria-current");
+      .toHaveAttribute("aria-current", "page");
   });
 });
