@@ -22,6 +22,7 @@ export default defineConfig({
     {
       name: "@hey-api/client-next",
       runtimeConfigPath: "./src/api/hey-api",
+      throwOnError: true,
     },
   ],
 });

@@ -94,6 +94,9 @@ import type {
   GetRoundScreenResponses,
   GoogleOAuthCallbackData,
   GoogleOAuthStartData,
+  IssueDevSessionData,
+  IssueDevSessionErrors,
+  IssueDevSessionResponses,
   JobPostingLinkMetadataData,
   JobPostingLinkMetadataErrors,
   JobPostingLinkMetadataResponses,
@@ -247,6 +250,7 @@ import {
   zGetReceivedReviewsResponse,
   zGetReviewTargetsResponse,
   zGetRoundScreenResponse,
+  zIssueDevSessionResponse,
   zJobPostingLinkMetadataResponse,
   zJobPostingsResponse,
   zJobRolesResponse,
@@ -317,7 +321,7 @@ export type Options<
  *
  * 경로/쿼리 파라미터를 받아 예제 데이터를 조회한다.
  */
-export const exampleGet = <ThrowOnError extends boolean = false>(
+export const exampleGet = <ThrowOnError extends boolean = true>(
   options: Options<ExampleGetData, ThrowOnError>,
 ): RequestResult<ExampleGetResponses, unknown, ThrowOnError> =>
   (options.client ?? client).get<ExampleGetResponses, unknown, ThrowOnError>({
@@ -331,7 +335,7 @@ export const exampleGet = <ThrowOnError extends boolean = false>(
  *
  * 예제 데이터를 받아 처리 결과를 반환한다.
  */
-export const examplePost = <ThrowOnError extends boolean = false>(
+export const examplePost = <ThrowOnError extends boolean = true>(
   options?: Options<ExamplePostData, ThrowOnError>,
 ): RequestResult<ExamplePostResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).post<ExamplePostResponses, unknown, ThrowOnError>({
@@ -349,7 +353,7 @@ export const examplePost = <ThrowOnError extends boolean = false>(
  *
  * 실제로 받은 모든 원 질문을 평가하고 멱등하게 제출한다. E400, E1405, E1801, E1802, E1803을 응답할 수 있다.
  */
-export const submitClosingResponse = <ThrowOnError extends boolean = false>(
+export const submitClosingResponse = <ThrowOnError extends boolean = true>(
   options?: Options<SubmitClosingResponseData, ThrowOnError>,
 ): RequestResult<SubmitClosingResponseResponses, SubmitClosingResponseErrors, ThrowOnError> =>
   (options?.client ?? client).post<
@@ -371,7 +375,7 @@ export const submitClosingResponse = <ThrowOnError extends boolean = false>(
  *
  * 관심 회사 태그 입력의 검색 소스. 정규화된 회사명의 접두 일치로 검증 완료된 유효(미폐기) 회사를 최대 20건 반환한다. 접두로 찾지 못하면 부분 일치로 다시 찾는다(예: '올리브영' 으로 'CJ올리브영'). 타이핑 중 호출을 전제로 하므로 빈 검색어는 빈 배열 200 이고, 50자 초과만 400(E400)이다.
  */
-export const searchCompanies = <ThrowOnError extends boolean = false>(
+export const searchCompanies = <ThrowOnError extends boolean = true>(
   options?: Options<SearchCompaniesData, ThrowOnError>,
 ): RequestResult<SearchCompaniesResponses, SearchCompaniesErrors, ThrowOnError> =>
   (options?.client ?? client).get<SearchCompaniesResponses, SearchCompaniesErrors, ThrowOnError>({
@@ -385,7 +389,7 @@ export const searchCompanies = <ThrowOnError extends boolean = false>(
  *
  * 참여자가 최종 피드백을 한 건 제출한다. E400, E1405, E1901, E1902, E1903을 응답할 수 있다.
  */
-export const leaveFinalRoundFeedback = <ThrowOnError extends boolean = false>(
+export const leaveFinalRoundFeedback = <ThrowOnError extends boolean = true>(
   options?: Options<LeaveFinalRoundFeedbackData, ThrowOnError>,
 ): RequestResult<LeaveFinalRoundFeedbackResponses, LeaveFinalRoundFeedbackErrors, ThrowOnError> =>
   (options?.client ?? client).post<
@@ -407,7 +411,7 @@ export const leaveFinalRoundFeedback = <ThrowOnError extends boolean = false>(
  *
  * 면접자 외 확정 참여자가 현재 라운드 원 질문에 꼬리질문을 추가한다. E400, E1405, E1502, E1503, E1507, E1703, E1704를 응답할 수 있다.
  */
-export const leaveProgressFollowUpQuestion = <ThrowOnError extends boolean = false>(
+export const leaveProgressFollowUpQuestion = <ThrowOnError extends boolean = true>(
   options?: Options<LeaveProgressFollowUpQuestionData, ThrowOnError>,
 ): RequestResult<
   LeaveProgressFollowUpQuestionResponses,
@@ -434,7 +438,7 @@ export const leaveProgressFollowUpQuestion = <ThrowOnError extends boolean = fal
  *
  * 링크로 공고를 즉시 생성한다(§4.1). 승인 대기 없이 verified=false 로 만들어져 바로 룸 생성에 사용할 수 있다. 회사는 기존 카탈로그 회사 id 로 받고, 공고명은 사용자가 확정한 값을 쓰며, 생성자는 인증 회원으로 기록된다. 같은 URL 재요청은 새로 만들지 않고 기존 공고를 돌려준다(멱등). companyId·url·postingName 누락·형식 오류는 400(E400), 존재하지 않는 회사는 400(E1303), 미인증은 401(E1102).
  */
-export const createJobPosting = <ThrowOnError extends boolean = false>(
+export const createJobPosting = <ThrowOnError extends boolean = true>(
   options?: Options<CreateJobPostingData, ThrowOnError>,
 ): RequestResult<CreateJobPostingResponses, CreateJobPostingErrors, ThrowOnError> =>
   (options?.client ?? client).post<CreateJobPostingResponses, CreateJobPostingErrors, ThrowOnError>(
@@ -454,7 +458,7 @@ export const createJobPosting = <ThrowOnError extends boolean = false>(
  *
  * 프로필 직무 드롭다운 소스. 직군별로 그룹핑된 유효(미폐기) 직무 목록을 반환한다. 크롤러가 관리하는 참조 데이터다.
  */
-export const jobRoles = <ThrowOnError extends boolean = false>(
+export const jobRoles = <ThrowOnError extends boolean = true>(
   options?: Options<JobRolesData, ThrowOnError>,
 ): RequestResult<JobRolesResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).get<JobRolesResponses, unknown, ThrowOnError>({
@@ -468,7 +472,7 @@ export const jobRoles = <ThrowOnError extends boolean = false>(
  *
  * 오프닝, 확정 참여자 순 라운드, 클로징 블록을 반환한다. E1405, E1703, E1704를 응답할 수 있다.
  */
-export const getProgressRail = <ThrowOnError extends boolean = false>(
+export const getProgressRail = <ThrowOnError extends boolean = true>(
   options: Options<GetProgressRailData, ThrowOnError>,
 ): RequestResult<GetProgressRailResponses, GetProgressRailErrors, ThrowOnError> =>
   (options.client ?? client).get<GetProgressRailResponses, GetProgressRailErrors, ThrowOnError>({
@@ -482,7 +486,7 @@ export const getProgressRail = <ThrowOnError extends boolean = false>(
  *
  * 원 질문 메모를 오래된 순으로 조회한다. E400, E1405, E1507, E1509, E1512를 응답할 수 있다.
  */
-export const getQuestionComments = <ThrowOnError extends boolean = false>(
+export const getQuestionComments = <ThrowOnError extends boolean = true>(
   options: Options<GetQuestionCommentsData, ThrowOnError>,
 ): RequestResult<GetQuestionCommentsResponses, GetQuestionCommentsErrors, ThrowOnError> =>
   (options.client ?? client).get<
@@ -500,7 +504,7 @@ export const getQuestionComments = <ThrowOnError extends boolean = false>(
  *
  * 진행 중 원 질문에 최초 MEMO 기록을 남긴다. E400, E1405, E1507, E1509, E1510을 응답할 수 있다.
  */
-export const leaveQuestionComment = <ThrowOnError extends boolean = false>(
+export const leaveQuestionComment = <ThrowOnError extends boolean = true>(
   options?: Options<LeaveQuestionCommentData, ThrowOnError>,
 ): RequestResult<LeaveQuestionCommentResponses, LeaveQuestionCommentErrors, ThrowOnError> =>
   (options?.client ?? client).post<
@@ -522,7 +526,7 @@ export const leaveQuestionComment = <ThrowOnError extends boolean = false>(
  *
  * 면접자 외 확정 참여자가 현재 라운드에 즉석 원 질문을 추가한다. E400, E1405, E1502, E1503, E1703, E1704를 응답할 수 있다.
  */
-export const leaveProgressQuestion = <ThrowOnError extends boolean = false>(
+export const leaveProgressQuestion = <ThrowOnError extends boolean = true>(
   options?: Options<LeaveProgressQuestionData, ThrowOnError>,
 ): RequestResult<LeaveProgressQuestionResponses, LeaveProgressQuestionErrors, ThrowOnError> =>
   (options?.client ?? client).post<
@@ -544,7 +548,7 @@ export const leaveProgressQuestion = <ThrowOnError extends boolean = false>(
  *
  * 오프라인 룸 지역 선택 소스. 시도별로 그룹핑된 유효(미폐기) 시군구 목록을 반환한다(법정동 기준). 크롤러가 관리하는 참조 데이터다.
  */
-export const regions = <ThrowOnError extends boolean = false>(
+export const regions = <ThrowOnError extends boolean = true>(
   options?: Options<RegionsData, ThrowOnError>,
 ): RequestResult<RegionsResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).get<RegionsResponses, unknown, ThrowOnError>({
@@ -558,7 +562,7 @@ export const regions = <ThrowOnError extends boolean = false>(
  *
  * 확정 참여자가 전원의 출석·불참을 제출해 룸을 한 번만 시작한다. E400, E1405, E1701, E1702, E1706을 응답할 수 있다.
  */
-export const startRoomProgress = <ThrowOnError extends boolean = false>(
+export const startRoomProgress = <ThrowOnError extends boolean = true>(
   options?: Options<StartRoomProgressData, ThrowOnError>,
 ): RequestResult<StartRoomProgressResponses, StartRoomProgressErrors, ThrowOnError> =>
   (options?.client ?? client).post<
@@ -580,7 +584,7 @@ export const startRoomProgress = <ThrowOnError extends boolean = false>(
  *
  * 조건에 맞는 모집 중인 룸 목록을 조회한다(「룸 탐색」 §4.1~§4.3). 비로그인도 조회할 수 있다. 필터는 AND 로 결합하고, 완료·취소·일정 경과 룸은 제외된다. 커서 페이지네이션이며 nextCursor 가 null 이면 마지막 페이지다. 커서는 불투명 토큰이라 해석하지 말고 그대로 다시 보낸다. 잘못된 필터·정렬 값은 그 값만 무시하고 나머지 조건으로 조회한다. 회사·공고·직무·지역 표시명은 참조가 끊어졌을 때(회사 미매칭 공고, 폐기된 직무 등) null 로 내려가고 룸 자체는 목록에 남는다.
  */
-export const rooms = <ThrowOnError extends boolean = false>(
+export const rooms = <ThrowOnError extends boolean = true>(
   options?: Options<RoomsData, ThrowOnError>,
 ): RequestResult<RoomsResponses, RoomsErrors, ThrowOnError> =>
   (options?.client ?? client).get<RoomsResponses, RoomsErrors, ThrowOnError>({
@@ -594,7 +598,7 @@ export const rooms = <ThrowOnError extends boolean = false>(
  *
  * 생성 위저드(「룸 생성」 §4.1~§4.8)의 입력을 한 번에 받아 룸을 만들고 즉시 모집(RECRUITING) 상태로 등록한다(§4.8). 공고를 고르면 회사가 함께 확정되므로 룸에는 회사를 따로 저장하지 않는다(공고 → 회사 파생). 직무·지역·이력서는 카탈로그/보관함 참조 id 를 받는다. 더블클릭·재시도로 같은 요청이 중복 전송되면 룸을 새로 만들지 않고 이미 만들어진 룸을 그대로 돌려준다 — 같은 방장의 같은 공고·직무·시각이면 같은 룸으로 본다. 이때 status 는 그 룸의 현재 상태라 RECRUITING 이 아닐 수 있다.
  */
-export const createRoom = <ThrowOnError extends boolean = false>(
+export const createRoom = <ThrowOnError extends boolean = true>(
   options?: Options<CreateRoomData, ThrowOnError>,
 ): RequestResult<CreateRoomResponses, CreateRoomErrors, ThrowOnError> =>
   (options?.client ?? client).post<CreateRoomResponses, CreateRoomErrors, ThrowOnError>({
@@ -612,7 +616,7 @@ export const createRoom = <ThrowOnError extends boolean = false>(
  *
  * 면접자가 피드백 카드 상태를 조회한다. E1405, E1902, E1904를 응답할 수 있다.
  */
-export const getIntervieweeRoundFeedback = <ThrowOnError extends boolean = false>(
+export const getIntervieweeRoundFeedback = <ThrowOnError extends boolean = true>(
   options: Options<GetIntervieweeRoundFeedbackData, ThrowOnError>,
 ): RequestResult<
   GetIntervieweeRoundFeedbackResponses,
@@ -634,7 +638,7 @@ export const getIntervieweeRoundFeedback = <ThrowOnError extends boolean = false
  *
  * 면접자에게는 질문을 숨기고, 나머지 확정 참여자에게는 질문 카드셋을 제공한다. E1405, E1502, E1503, E1703, E1704를 응답할 수 있다.
  */
-export const getRoundScreen = <ThrowOnError extends boolean = false>(
+export const getRoundScreen = <ThrowOnError extends boolean = true>(
   options: Options<GetRoundScreenData, ThrowOnError>,
 ): RequestResult<GetRoundScreenResponses, GetRoundScreenErrors, ThrowOnError> =>
   (options.client ?? client).get<GetRoundScreenResponses, GetRoundScreenErrors, ThrowOnError>({
@@ -648,7 +652,7 @@ export const getRoundScreen = <ThrowOnError extends boolean = false>(
  *
  * 면접자가 자가 피드백을 저장하거나 수정한다. E400, E1405, E1902, E1903을 응답할 수 있다.
  */
-export const saveSelfRoundFeedback = <ThrowOnError extends boolean = false>(
+export const saveSelfRoundFeedback = <ThrowOnError extends boolean = true>(
   options?: Options<SaveSelfRoundFeedbackData, ThrowOnError>,
 ): RequestResult<SaveSelfRoundFeedbackResponses, SaveSelfRoundFeedbackErrors, ThrowOnError> =>
   (options?.client ?? client).put<
@@ -670,7 +674,7 @@ export const saveSelfRoundFeedback = <ThrowOnError extends boolean = false>(
  *
  * 현재 유효한(ACTIVE) 약관 전체를 본문 포함으로 반환한다. 로그인 모달의 약관 링크에서 사용하므로 비로그인 접근을 허용한다.
  */
-export const termsList = <ThrowOnError extends boolean = false>(
+export const termsList = <ThrowOnError extends boolean = true>(
   options?: Options<TermsListData, ThrowOnError>,
 ): RequestResult<TermsListResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).get<TermsListResponses, unknown, ThrowOnError>({
@@ -684,7 +688,7 @@ export const termsList = <ThrowOnError extends boolean = false>(
  *
  * 진행 시작 시 기록된 자신의 출석 결과를 조회한다. E1405, E1703, E1704, E1705를 응답할 수 있다.
  */
-export const getMyAttendance = <ThrowOnError extends boolean = false>(
+export const getMyAttendance = <ThrowOnError extends boolean = true>(
   options: Options<GetMyAttendanceData, ThrowOnError>,
 ): RequestResult<GetMyAttendanceResponses, GetMyAttendanceErrors, ThrowOnError> =>
   (options.client ?? client).get<GetMyAttendanceResponses, GetMyAttendanceErrors, ThrowOnError>({
@@ -694,11 +698,29 @@ export const getMyAttendance = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * 개발 환경 세션 발급
+ *
+ * local·local-dev·dev 프로파일에서 기존 회원 UUID로 Google OAuth를 거치지 않고 환경별 액세스·리프레시 쿠키를 발급한다. 회원이 없거나 탈퇴했으면 404(E1006), 요청 본문 형식이 잘못됐으면 400(E400)으로 응답한다.
+ */
+export const issueDevSession = <ThrowOnError extends boolean = true>(
+  options?: Options<IssueDevSessionData, ThrowOnError>,
+): RequestResult<IssueDevSessionResponses, IssueDevSessionErrors, ThrowOnError> =>
+  (options?.client ?? client).post<IssueDevSessionResponses, IssueDevSessionErrors, ThrowOnError>({
+    responseValidator: async (data) => await zIssueDevSessionResponse.parseAsync(data),
+    url: "/v1/auth/dev-sessions",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  });
+
+/**
  * 로그아웃
  *
  * REFRESH_TOKEN 쿠키의 세션을 폐기하고 ACCESS_TOKEN·REFRESH_TOKEN 쿠키를 만료(Set-Cookie)시킨다. 쿠키가 없어도 성공으로 응답한다.
  */
-export const authLogout = <ThrowOnError extends boolean = false>(
+export const authLogout = <ThrowOnError extends boolean = true>(
   options?: Options<AuthLogoutData, ThrowOnError>,
 ): RequestResult<AuthLogoutResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).post<AuthLogoutResponses, unknown, ThrowOnError>({
@@ -712,7 +734,7 @@ export const authLogout = <ThrowOnError extends boolean = false>(
  *
  * REFRESH_TOKEN 쿠키의 세션 크리덴셜을 검증해 새 액세스 토큰을 ACCESS_TOKEN 쿠키(Set-Cookie)로 재발급한다. 쿠키가 없거나 세션이 만료·폐기됐으면 401(E1104)로 응답하며, FE 는 재로그인으로 보낸다.
  */
-export const authRefresh = <ThrowOnError extends boolean = false>(
+export const authRefresh = <ThrowOnError extends boolean = true>(
   options?: Options<AuthRefreshData, ThrowOnError>,
 ): RequestResult<AuthRefreshResponses, AuthRefreshErrors, ThrowOnError> =>
   (options?.client ?? client).post<AuthRefreshResponses, AuthRefreshErrors, ThrowOnError>({
@@ -726,7 +748,7 @@ export const authRefresh = <ThrowOnError extends boolean = false>(
  *
  * 자기 라운드에서 실제 사용된 원 질문을 조회한다. E1405, E1801, E1802를 응답할 수 있다.
  */
-export const getMyClosingQuestions = <ThrowOnError extends boolean = false>(
+export const getMyClosingQuestions = <ThrowOnError extends boolean = true>(
   options: Options<GetMyClosingQuestionsData, ThrowOnError>,
 ): RequestResult<GetMyClosingQuestionsResponses, GetMyClosingQuestionsErrors, ThrowOnError> =>
   (options.client ?? client).get<
@@ -744,7 +766,7 @@ export const getMyClosingQuestions = <ThrowOnError extends boolean = false>(
  *
  * 면접자가 카드 한 건을 열람 확인한다. E1405, E1902, E1904, E1905를 응답할 수 있다.
  */
-export const confirmRoundFeedbackDisclosure = <ThrowOnError extends boolean = false>(
+export const confirmRoundFeedbackDisclosure = <ThrowOnError extends boolean = true>(
   options: Options<ConfirmRoundFeedbackDisclosureData, ThrowOnError>,
 ): RequestResult<
   ConfirmRoundFeedbackDisclosureResponses,
@@ -771,7 +793,7 @@ export const confirmRoundFeedbackDisclosure = <ThrowOnError extends boolean = fa
  *
  * 목록에 없는 공고를 만들기 전, 링크의 OG 태그를 서버가 읽어 공고명 후보와 미리보기(이미지·설명·출처)를 돌려준다(§4.1). 브라우저는 CORS 로 외부 페이지를 직접 못 읽어 서버가 대신 fetch 한다. 사용자가 고른 companyId 를 함께 받아 '이 링크는 그 회사의 공고'라고 일단 가정하고 그대로 돌려준다(링크·회사 일치나 회사 실존은 미리보기에서 검증하지 않음, 생성에서 검증). fetch 실패·OG 없음·봇 차단·타임아웃이면 postingName 이 null 로 내려가고, 사용자는 공고명을 직접 입력해 생성으로 넘어간다. companyId 누락(양수 아님)·url 형식 오류(http/https 아님)는 400(E400).
  */
-export const jobPostingLinkMetadata = <ThrowOnError extends boolean = false>(
+export const jobPostingLinkMetadata = <ThrowOnError extends boolean = true>(
   options?: Options<JobPostingLinkMetadataData, ThrowOnError>,
 ): RequestResult<JobPostingLinkMetadataResponses, JobPostingLinkMetadataErrors, ThrowOnError> =>
   (options?.client ?? client).post<
@@ -793,7 +815,7 @@ export const jobPostingLinkMetadata = <ThrowOnError extends boolean = false>(
  *
  * 회사와 공고를 하나의 검색 바로 찾는다(MOI-390). 탐색 필터와 룸 생성이 같은 응답을 쓰고, 화면이 회사 행을 다르게 해석한다. 회사명이 맞아도 공고명이 맞아도 결과는 `회사 | 공고명` 형태의 공고 행으로 통일되며, 회사가 매치되면 회사 행도 함께 내려간다. '네이버 백엔드' 처럼 회사와 공고를 함께 친 검색어는 회사로 좁힌 뒤 나머지로 공고를 거른다. 회사가 잡히지 않으면 공고명에서 토큰을 AND 로 찾는다(어순 무관). 미검증 공고와 룸이 없는 공고도 포함되고, 결과 수 상한은 서버가 고정한다. 타이핑 중 호출을 전제로 하므로 빈 입력·최소 길이 미만은 400 이 아니라 빈 배열 200 이며, 50자 초과만 400(E400)이다. 요청 query 를 그대로 echo 하므로 늦게 도착한 이전 응답을 클라이언트가 버릴 수 있다. 붙여 쓴 검색어('네이버백엔드')는 분해되지 않아 결과가 없을 수 있다.
  */
-export const searchJobPostings = <ThrowOnError extends boolean = false>(
+export const searchJobPostings = <ThrowOnError extends boolean = true>(
   options?: Options<SearchJobPostingsData, ThrowOnError>,
 ): RequestResult<SearchJobPostingsResponses, SearchJobPostingsErrors, ThrowOnError> =>
   (options?.client ?? client).get<
@@ -811,7 +833,7 @@ export const searchJobPostings = <ThrowOnError extends boolean = false>(
  *
  * 직무명 부분 일치 검색
  */
-export const searchJobRoles = <ThrowOnError extends boolean = false>(
+export const searchJobRoles = <ThrowOnError extends boolean = true>(
   options: Options<SearchJobRolesData, ThrowOnError>,
 ): RequestResult<SearchJobRolesResponses, SearchJobRolesErrors, ThrowOnError> =>
   (options.client ?? client).get<SearchJobRolesResponses, SearchJobRolesErrors, ThrowOnError>({
@@ -825,7 +847,7 @@ export const searchJobRoles = <ThrowOnError extends boolean = false>(
  *
  * 인증된 회원의 상태와 프로필을 반환한다. 닉네임은 가입 시 자동 부여되는 회원 속성이다. 프로필은 가입 시 빈 상태로 함께 만들어져 회원당 항상 하나 존재한다 — 아직 안 채운 값은 빈 문자열·빈 배열로 내려간다. profile 은 프로필 수정 응답의 data 와 동일한 모양이다. 액세스 토큰이 없거나 유효하지 않으면 401(E1102), 토큰은 유효하지만 회원이 조회되지 않으면(탈퇴 등) 404(E1006)로 응답한다.
  */
-export const memberMe = <ThrowOnError extends boolean = false>(
+export const memberMe = <ThrowOnError extends boolean = true>(
   options?: Options<MemberMeData, ThrowOnError>,
 ): RequestResult<MemberMeResponses, MemberMeErrors, ThrowOnError> =>
   (options?.client ?? client).get<MemberMeResponses, MemberMeErrors, ThrowOnError>({
@@ -839,7 +861,7 @@ export const memberMe = <ThrowOnError extends boolean = false>(
  *
  * 닉네임의 전체 중복 여부를 확인한다. 형식 위반(길이·문자·금칙어)은 available=false 가 아니라 400(E1005)으로, 필수 쿼리 파라미터(nickname) 누락은 400(E400)으로 응답한다.
  */
-export const nicknameAvailability = <ThrowOnError extends boolean = false>(
+export const nicknameAvailability = <ThrowOnError extends boolean = true>(
   options: Options<NicknameAvailabilityData, ThrowOnError>,
 ): RequestResult<NicknameAvailabilityResponses, NicknameAvailabilityErrors, ThrowOnError> =>
   (options.client ?? client).get<
@@ -857,7 +879,7 @@ export const nicknameAvailability = <ThrowOnError extends boolean = false>(
  *
  * 중복되지 않는 닉네임을 새로 생성해 반환한다. 닉네임 변경 폼의 ↻ 새로 만들기 재생성에서 사용한다.
  */
-export const nicknameSuggestion = <ThrowOnError extends boolean = false>(
+export const nicknameSuggestion = <ThrowOnError extends boolean = true>(
   options?: Options<NicknameSuggestionData, ThrowOnError>,
 ): RequestResult<NicknameSuggestionResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).get<NicknameSuggestionResponses, unknown, ThrowOnError>({
@@ -871,7 +893,7 @@ export const nicknameSuggestion = <ThrowOnError extends boolean = false>(
  *
  * 좋아요 또는 아쉬워요 상태를 토글한다. E400, E1405, E1507, E1509, E1510, E1511을 응답할 수 있다.
  */
-export const toggleQuestionCommentType = <ThrowOnError extends boolean = false>(
+export const toggleQuestionCommentType = <ThrowOnError extends boolean = true>(
   options: Options<ToggleQuestionCommentTypeData, ThrowOnError>,
 ): RequestResult<
   ToggleQuestionCommentTypeResponses,
@@ -897,7 +919,7 @@ export const toggleQuestionCommentType = <ThrowOnError extends boolean = false>(
  *
  * 작성자 본인이 질문 메모를 삭제한다. E1405, E1507, E1509, E1510, E1511을 응답할 수 있다.
  */
-export const deleteQuestionComment = <ThrowOnError extends boolean = false>(
+export const deleteQuestionComment = <ThrowOnError extends boolean = true>(
   options: Options<DeleteQuestionCommentData, ThrowOnError>,
 ): RequestResult<DeleteQuestionCommentResponses, DeleteQuestionCommentErrors, ThrowOnError> =>
   (options.client ?? client).delete<
@@ -915,7 +937,7 @@ export const deleteQuestionComment = <ThrowOnError extends boolean = false>(
  *
  * 작성자 본인이 질문 메모를 수정한다. E400, E1405, E1507, E1509, E1510, E1511을 응답할 수 있다.
  */
-export const editQuestionComment = <ThrowOnError extends boolean = false>(
+export const editQuestionComment = <ThrowOnError extends boolean = true>(
   options: Options<EditQuestionCommentData, ThrowOnError>,
 ): RequestResult<EditQuestionCommentResponses, EditQuestionCommentErrors, ThrowOnError> =>
   (options.client ?? client).patch<
@@ -937,7 +959,7 @@ export const editQuestionComment = <ThrowOnError extends boolean = false>(
  *
  * 질문한 원 질문과 내 메모를 조회한다. E1405, E1902, E1903을 응답할 수 있다.
  */
-export const getMyRoundQuestionRecords = <ThrowOnError extends boolean = false>(
+export const getMyRoundQuestionRecords = <ThrowOnError extends boolean = true>(
   options: Options<GetMyRoundQuestionRecordsData, ThrowOnError>,
 ): RequestResult<
   GetMyRoundQuestionRecordsResponses,
@@ -959,7 +981,7 @@ export const getMyRoundQuestionRecords = <ThrowOnError extends boolean = false>(
  *
  * 진행 중 질문했어요 표시를 체크하거나 해제한다. E400, E1405, E1502, E1503, E1507, E1703, E1704를 응답할 수 있다.
  */
-export const changeQuestionAsked = <ThrowOnError extends boolean = false>(
+export const changeQuestionAsked = <ThrowOnError extends boolean = true>(
   options: Options<ChangeQuestionAskedData, ThrowOnError>,
 ): RequestResult<ChangeQuestionAskedResponses, ChangeQuestionAskedErrors, ThrowOnError> =>
   (options.client ?? client).patch<
@@ -981,7 +1003,7 @@ export const changeQuestionAsked = <ThrowOnError extends boolean = false>(
  *
  * 후기 작성자가 공개 기준 시각 전까지 후기를 삭제한다. 삭제 후 같은 대상에게 다시 제출할 수 있다. 미인증 E1102, 후기 없음 E2006, 작성자 불일치 E2007, 수정 창 만료 E2008로 응답한다.
  */
-export const deleteReview = <ThrowOnError extends boolean = false>(
+export const deleteReview = <ThrowOnError extends boolean = true>(
   options: Options<DeleteReviewData, ThrowOnError>,
 ): RequestResult<DeleteReviewResponses, DeleteReviewErrors, ThrowOnError> =>
   (options.client ?? client).delete<DeleteReviewResponses, DeleteReviewErrors, ThrowOnError>({
@@ -995,7 +1017,7 @@ export const deleteReview = <ThrowOnError extends boolean = false>(
  *
  * 후기 작성자가 공개 기준 시각 전까지 태그와 텍스트를 교체한다. 잘못된 태그 E400, 미인증 E1102, 후기 없음 E2006, 작성자 불일치 E2007, 수정 창 만료 E2008로 응답한다.
  */
-export const updateReview = <ThrowOnError extends boolean = false>(
+export const updateReview = <ThrowOnError extends boolean = true>(
   options: Options<UpdateReviewData, ThrowOnError>,
 ): RequestResult<UpdateReviewResponses, UpdateReviewErrors, ThrowOnError> =>
   (options.client ?? client).put<UpdateReviewResponses, UpdateReviewErrors, ThrowOnError>({
@@ -1013,7 +1035,7 @@ export const updateReview = <ThrowOnError extends boolean = false>(
  *
  * 같은 회사·공고·직무로 내가 이미 만든 활성 룸이 몇 개인지 돌려준다(「룸 생성」 §4.7). 생성 화면이 경고를 띄울지 판단하는 데 쓴다. 활성은 모집 중·진행 확정·진행 중이며 취소·완료된 룸은 세지 않는다. 1~2개면 경고만 하고 생성은 통과하고, 3개면 생성이 409(E1427)로 거부된다. remaining 은 일정을 여러 개 골라 일괄 생성할 때의 상한이기도 하다(§4.4). 존재하지 않는 공고·직무 id 를 보내도 404 가 아니라 0개로 답한다 — 참조 검증은 생성 시점의 일이다.
  */
-export const roomCreationLimit = <ThrowOnError extends boolean = false>(
+export const roomCreationLimit = <ThrowOnError extends boolean = true>(
   options: Options<RoomCreationLimitData, ThrowOnError>,
 ): RequestResult<RoomCreationLimitResponses, RoomCreationLimitErrors, ThrowOnError> =>
   (options.client ?? client).get<RoomCreationLimitResponses, RoomCreationLimitErrors, ThrowOnError>(
@@ -1029,7 +1051,7 @@ export const roomCreationLimit = <ThrowOnError extends boolean = false>(
  *
  * 기본 정보·진행 방식(§4.1·§4.2) 폼의 회차·유형·진행 방식·예상 시간·인원 제약 선택지를 한 번에 내려준다. 선택지와 라벨은 서버 enum·상수에서 파생되므로 생성 요청이 받는 값과 항상 일치한다.
  */
-export const roomFormOptions = <ThrowOnError extends boolean = false>(
+export const roomFormOptions = <ThrowOnError extends boolean = true>(
   options?: Options<RoomFormOptionsData, ThrowOnError>,
 ): RequestResult<RoomFormOptionsResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).get<RoomFormOptionsResponses, unknown, ThrowOnError>({
@@ -1043,7 +1065,7 @@ export const roomFormOptions = <ThrowOnError extends boolean = false>(
  *
  * 반려 모달(D·03)의 사유 선택지를 코드와 라벨로 내려준다. 라벨은 서버 소유이며 순서가 곧 화면 순서다. 사유 없이 반려하는 선택지는 목록에 없다. 반려 요청에 null 을 보내는 것이 그 표현이다.
  */
-export const rejectReasons = <ThrowOnError extends boolean = false>(
+export const rejectReasons = <ThrowOnError extends boolean = true>(
   options?: Options<RejectReasonsData, ThrowOnError>,
 ): RequestResult<RejectReasonsResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).get<RejectReasonsResponses, unknown, ThrowOnError>({
@@ -1057,7 +1079,7 @@ export const rejectReasons = <ThrowOnError extends boolean = false>(
  *
  * 룸의 실제 저장 데이터 + 현재 인원 + 방장 식별자를 반환한다(§6 공개 데이터). 현재 인원 = 활성 참여 수, 모집 상태는 정원 충족 여부로 계산한다. 회사·공고·직무 표시명, 방장 프로필/신뢰 지표 enrich 는 별도 이슈. 존재하지 않는 룸은 404(E1405).
  */
-export const roomDetail = <ThrowOnError extends boolean = false>(
+export const roomDetail = <ThrowOnError extends boolean = true>(
   options: Options<RoomDetailData, ThrowOnError>,
 ): RequestResult<RoomDetailResponses, unknown, ThrowOnError> =>
   (options.client ?? client).get<RoomDetailResponses, unknown, ThrowOnError>({
@@ -1071,7 +1093,7 @@ export const roomDetail = <ThrowOnError extends boolean = false>(
  *
  * 기본 정보(「룸 생성」 §4.1)에서 회사를 고르면 그 회사에 속한 활성 공고 목록이 최신순 최대 20건 채워진다. 공고명(query)으로 부분 검색할 수 있고, 공고를 고르면 회사가 확정되며 대표 직무로 직무 셀렉트가 자동 채워질 수 있다. 미검증 공고(verified=false)도 목록에는 포함된다(탐색 필터에서만 숨김, BE-03). query 가 50자를 초과하면 400(E400).
  */
-export const jobPostings = <ThrowOnError extends boolean = false>(
+export const jobPostings = <ThrowOnError extends boolean = true>(
   options: Options<JobPostingsData, ThrowOnError>,
 ): RequestResult<JobPostingsResponses, JobPostingsErrors, ThrowOnError> =>
   (options.client ?? client).get<JobPostingsResponses, JobPostingsErrors, ThrowOnError>({
@@ -1085,7 +1107,7 @@ export const jobPostings = <ThrowOnError extends boolean = false>(
  *
  * 회원의 닉네임을 변경한다. 자신이 쓰던 닉네임 유지는 허용하고, 변경 시 전체 중복을 확인한다. 형식 위반 400(E1005), 인증 정보 없음·무효 401(E1102), 닉네임 중복 409(E1007)로 응답한다.
  */
-export const updateNickname = <ThrowOnError extends boolean = false>(
+export const updateNickname = <ThrowOnError extends boolean = true>(
   options?: Options<UpdateNicknameData, ThrowOnError>,
 ): RequestResult<UpdateNicknameResponses, UpdateNicknameErrors, ThrowOnError> =>
   (options?.client ?? client).put<UpdateNicknameResponses, UpdateNicknameErrors, ThrowOnError>({
@@ -1103,7 +1125,7 @@ export const updateNickname = <ThrowOnError extends boolean = false>(
  *
  * 내가 참여 중인 룸이 몇 개고 몇 개 더 참여할 수 있는지 돌려준다(「룸 참여」 §4.1, 방장 포함). 활성 룸(모집 중 · 진행 확정 · 진행 중)의 참여만 세고 취소 · 완료된 룸과 처리 대기 중인 신청은 세지 않는다. remaining 이 0 이면 신규 신청 · 수락 · 룸 생성이 모두 409(E1425)로 거부된다. 일정을 여러 개 골라 룸을 일괄 생성할 때의 최대 선택 수는 화면이 min(중복 생성 제한 remaining, 이 remaining) 으로 계산한다(「룸 생성」 §4.4). 서버가 min 을 합쳐 주지 않는다: 어느 한도에 걸렸는지에 따라 안내 문구가 갈린다.
  */
-export const participationSlots = <ThrowOnError extends boolean = false>(
+export const participationSlots = <ThrowOnError extends boolean = true>(
   options?: Options<ParticipationSlotsData, ThrowOnError>,
 ): RequestResult<ParticipationSlotsResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).get<ParticipationSlotsResponses, unknown, ThrowOnError>({
@@ -1117,7 +1139,7 @@ export const participationSlots = <ThrowOnError extends boolean = false>(
  *
  * 프로필 전체 교체 저장. 프로필은 가입 시 빈 상태로 함께 만들어져 회원당 항상 하나 존재하므로 별도 생성 API 는 없다. 아직 작성하지 않은 소개는 빈 문자열로 오간다. 관심 직무·관심 회사는 선택 가능한 참조 id 를 받는다. 관심 회사는 검증 완료된 회사만 선택할 수 있다. 요청 형태 오류 400(E400), 존재하지 않는 직무 또는 선택할 수 없는 회사 400(E1301/E1303), 인증 정보 없음·무효 401(E1102), 프로필을 찾을 수 없음 404(E1009)로 응답한다.
  */
-export const updateProfile = <ThrowOnError extends boolean = false>(
+export const updateProfile = <ThrowOnError extends boolean = true>(
   options?: Options<UpdateProfileData, ThrowOnError>,
 ): RequestResult<UpdateProfileResponses, UpdateProfileErrors, ThrowOnError> =>
   (options?.client ?? client).put<UpdateProfileResponses, UpdateProfileErrors, ThrowOnError>({
@@ -1135,7 +1157,7 @@ export const updateProfile = <ThrowOnError extends boolean = false>(
  *
  * 공개 기준 시각이 지난 받은 후기만 마지막 후기 id 기반으로 조회한다. 익명 후기는 익명의 참여자, 공개 후기는 작성자 닉네임을 표시하며 룸 이름과 일자는 응답하지 않는다. 양수가 아닌 마지막 후기 id E400, 미인증 E1102로 응답한다.
  */
-export const getReceivedReviews = <ThrowOnError extends boolean = false>(
+export const getReceivedReviews = <ThrowOnError extends boolean = true>(
   options: Options<GetReceivedReviewsData, ThrowOnError>,
 ): RequestResult<GetReceivedReviewsResponses, GetReceivedReviewsErrors, ThrowOnError> =>
   (options.client ?? client).get<
@@ -1153,7 +1175,7 @@ export const getReceivedReviews = <ThrowOnError extends boolean = false>(
  *
  * 인증 회원의 보관 이력서를 마이페이지·룸 생성·참가 신청에서 함께 사용할 수 있는 동일한 자원 형태로 반환한다. 삭제한 이력서는 목록에서 제외하고 최근 사용순으로 보여준다. 기본 이력서 여부는 최근 사용과 별개로 반환한다. 최대 보관 개수는 최신 PRD 기준 10개다. 신청 화면에서는 선택지를 열 때 조회하며 개별 AI 요약 상태를 확인하는 폴링에는 단건 조회 API를 사용한다. AI 요약은 DONE·PROCESSING·FAILED 상태를 가지며 준비 중이면 text가 null이다. PROCESSING은 시작 후 최대 1분이며, 시간이 지나면 AI를 자동 재호출하지 않고 FAILED로 확정한다. 인증 정보가 없으면 401(E1102)로 응답한다. 목 API는 고정 이력서 4건(DONE 2건, PROCESSING 1건, FAILED 1건)을 반환한다.
  */
-export const resumes = <ThrowOnError extends boolean = false>(
+export const resumes = <ThrowOnError extends boolean = true>(
   options?: Options<ResumesData, ThrowOnError>,
 ): RequestResult<ResumesResponses, ResumesErrors, ThrowOnError> =>
   (options?.client ?? client).get<ResumesResponses, ResumesErrors, ThrowOnError>({
@@ -1167,7 +1189,7 @@ export const resumes = <ThrowOnError extends boolean = false>(
  *
  * PDF 파일을 이력서 보관함에 등록하며 이력서 이름은 업로드한 원본 파일명을 사용한다. PDF만 허용하고 파일 크기는 10MB 이하여야 한다. 등록한 이력서는 수정하지 않으며 내용 변경은 새 등록으로 처리한다. V1은 S3 저장과 AI 요약을 동기 처리한 뒤 응답한다. 요약 성공 시 DONE과 요약문, Bedrock 장애 시에도 등록은 유지하고 FAILED와 null 요약문을 반환한다. 필수 파일 누락·유효하지 않은 파일명·PDF가 아닌 파일·빈 파일·10MB 초과는 400(E400), 인증 정보 없음은 401(E1102)로 응답한다.
  */
-export const createResume = <ThrowOnError extends boolean = false>(
+export const createResume = <ThrowOnError extends boolean = true>(
   options: Options<CreateResumeData, ThrowOnError>,
 ): RequestResult<CreateResumeResponses, CreateResumeErrors, ThrowOnError> =>
   (options.client ?? client).post<CreateResumeResponses, CreateResumeErrors, ThrowOnError>({
@@ -1186,7 +1208,7 @@ export const createResume = <ThrowOnError extends boolean = false>(
  *
  * 인증 회원을 조건으로 처리 대기 신청, 현재 참여 중인 룸, 완료된 룸을 구분해 반환한다(「룸 탐색」 §4.8). 신청 중은 최근 신청 순, 참여 중은 가까운 일정 순, 완료는 최근 일정 순이다. 완료 룸의 reviewStatus는 WRITABLE | WRITTEN | NOT_ELIGIBLE_ABSENT | NOT_ELIGIBLE_NO_TARGET 값이다.
  */
-export const getInterviewOverview = <ThrowOnError extends boolean = false>(
+export const getInterviewOverview = <ThrowOnError extends boolean = true>(
   options?: Options<GetInterviewOverviewData, ThrowOnError>,
 ): RequestResult<GetInterviewOverviewResponses, GetInterviewOverviewErrors, ThrowOnError> =>
   (options?.client ?? client).get<
@@ -1204,7 +1226,7 @@ export const getInterviewOverview = <ThrowOnError extends boolean = false>(
  *
  * 현재 회원이 소유한 브라우저 등록을 물리 삭제한다. 이미 없거나 다른 회원이 소유한 등록이면 성공으로 끝나는 멱등 요청이다.
  */
-export const unregisterWebPushSubscription = <ThrowOnError extends boolean = false>(
+export const unregisterWebPushSubscription = <ThrowOnError extends boolean = true>(
   options?: Options<UnregisterWebPushSubscriptionData, ThrowOnError>,
 ): RequestResult<UnregisterWebPushSubscriptionResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).delete<UnregisterWebPushSubscriptionResponses, unknown, ThrowOnError>(
@@ -1225,7 +1247,7 @@ export const unregisterWebPushSubscription = <ThrowOnError extends boolean = fal
  *
  * 인증 회원의 현재 브라우저에서 발급받은 웹 푸시 등록 식별자를 저장한다. 같은 값을 다시 보내면 마지막 동기화 시각을 갱신하며, 다른 회원으로 로그인한 브라우저라면 현재 회원에게 이전한다.
  */
-export const registerWebPushSubscription = <ThrowOnError extends boolean = false>(
+export const registerWebPushSubscription = <ThrowOnError extends boolean = true>(
   options?: Options<RegisterWebPushSubscriptionData, ThrowOnError>,
 ): RequestResult<RegisterWebPushSubscriptionResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).put<RegisterWebPushSubscriptionResponses, unknown, ThrowOnError>({
@@ -1243,7 +1265,7 @@ export const registerWebPushSubscription = <ThrowOnError extends boolean = false
  *
  * 인증 없이 다른 사용자의 공개 프로필과 신뢰 지표를 조회한다. 닉네임·관심 직무·자기소개만 프로필 정보로 노출하며, 관심 회사·이메일·OAuth 식별자·약관 동의 이력은 담지 않는다. 존재하지 않거나 탈퇴한 회원, 필수 프로필이 없는 회원은 404(E1006), 잘못된 UUID는 400(E400)으로 응답한다.
  */
-export const publicProfile = <ThrowOnError extends boolean = false>(
+export const publicProfile = <ThrowOnError extends boolean = true>(
   options: Options<PublicProfileData, ThrowOnError>,
 ): RequestResult<PublicProfileResponses, PublicProfileErrors, ThrowOnError> =>
   (options.client ?? client).get<PublicProfileResponses, PublicProfileErrors, ThrowOnError>({
@@ -1257,7 +1279,7 @@ export const publicProfile = <ThrowOnError extends boolean = false>(
  *
  * 방장이 룸 관리 화면에서 참가 신청 목록을 확인한다(「룸 참여」 §4.3). 신청자의 공개 정보·전달 사항·처리 상태를 신청 시각 오름차순으로 내려준다. 철회된 신청은 제외된다. 전달 사항은 방장 외 비공개이며, 이력서 원본으로 가는 경로는 없다(§6). 방장만 조회할 수 있다(E1406). 관심 직무는 목록으로 제공한다. 공개 활동 정보는 이 목록에서는 null이며 공개 프로필 API에서 조회한다.
  */
-export const roomApplications = <ThrowOnError extends boolean = false>(
+export const roomApplications = <ThrowOnError extends boolean = true>(
   options: Options<RoomApplicationsData, ThrowOnError>,
 ): RequestResult<RoomApplicationsResponses, unknown, ThrowOnError> =>
   (options.client ?? client).get<RoomApplicationsResponses, unknown, ThrowOnError>({
@@ -1271,7 +1293,7 @@ export const roomApplications = <ThrowOnError extends boolean = false>(
  *
  * 로그인 회원이 보관 중인 이력서 하나와 선택 전달 사항으로 참가 신청을 제출한다(「룸 참여」 §4.2). 신청은 PENDING으로 저장되고 참여 인원은 증가하지 않는다. 전달 사항이 300자를 초과하면 E400, 회원·이력서·룸·중복·재신청·대기 한도 검증 실패는 E1002, E1010, E1405, E1410, E1412, E1413, E1414, E1415, E1416으로 구분한다.
  */
-export const submitRoomApplication = <ThrowOnError extends boolean = false>(
+export const submitRoomApplication = <ThrowOnError extends boolean = true>(
   options: Options<SubmitRoomApplicationData, ThrowOnError>,
 ): RequestResult<SubmitRoomApplicationResponses, SubmitRoomApplicationErrors, ThrowOnError> =>
   (options.client ?? client).post<
@@ -1293,7 +1315,7 @@ export const submitRoomApplication = <ThrowOnError extends boolean = false>(
  *
  * 방장이 모집을 접는다(「룸 참여」 §4.9). 룸 상태가 CANCELED 가 되고, 남아 있던 대기 신청은 같은 트랜잭션에서 일괄 종료된다. 반려가 아니므로 신청자는 재신청 차단에 걸리지 않는다. 방장 외 참여자가 남아 있으면 취소할 수 없다(E1420) — 그때는 나가기로 방장을 넘겨야 한다.
  */
-export const cancelRoom = <ThrowOnError extends boolean = false>(
+export const cancelRoom = <ThrowOnError extends boolean = true>(
   options: Options<CancelRoomData, ThrowOnError>,
 ): RequestResult<CancelRoomResponses, CancelRoomErrors, ThrowOnError> =>
   (options.client ?? client).post<CancelRoomResponses, CancelRoomErrors, ThrowOnError>({
@@ -1307,7 +1329,7 @@ export const cancelRoom = <ThrowOnError extends boolean = false>(
  *
  * 방장이 진행을 확정한다(「진행 확정」 §4.2). 룸 상태가 CONFIRMED 가 되고 참여자·인원이 고정되며, 남아 있던 대기 신청은 같은 트랜잭션에서 일괄 종료된다(반려가 아니므로 재신청 차단에 걸리지 않는다). 확정 이후에는 룸 정보 수정·신규 신청·수락이 모두 막힌다(§4.3). 조건은 룸 상세의 confirmation 블록과 같은 판정을 쓴다 — 인원 미달은 E1421, 일정 경과는 E1422, 이미 확정·취소·완료·진행 중인 룸은 E1410 이다. 같은 요청을 두 번 보내도 한 번만 처리된다.
  */
-export const confirmRoom = <ThrowOnError extends boolean = false>(
+export const confirmRoom = <ThrowOnError extends boolean = true>(
   options: Options<ConfirmRoomData, ThrowOnError>,
 ): RequestResult<ConfirmRoomResponses, ConfirmRoomErrors, ThrowOnError> =>
   (options.client ?? client).post<ConfirmRoomResponses, ConfirmRoomErrors, ThrowOnError>({
@@ -1321,7 +1343,7 @@ export const confirmRoom = <ThrowOnError extends boolean = false>(
  *
  * 룸에 속한 사람이 참여자 명단을 확인한다(「룸 참여」 §4.5). 방장을 맨 위에 두고 참여한 순서로 내려준다. 나가거나 내보내진 참여자는 명부에 없다. AI 이력서 요약은 룸의 원본 공개 여부와 무관하게 같은 룸 참여자에게 공개된다. 이력서 원본 URL 은 응답에 없다 - 제출 식별자와 열람 가능 여부만 내려가고 발급은 별도 API 가 맡는다. 실명·연락처·전달 사항은 어떤 경우에도 내려가지 않는다(§6). 방장과 참여자만 조회할 수 있고 신청자·제3자는 거부된다(E1419). 취소·종료된 룸에서도 이미 속한 사람은 계속 조회할 수 있다.
  */
-export const roomParticipants = <ThrowOnError extends boolean = false>(
+export const roomParticipants = <ThrowOnError extends boolean = true>(
   options: Options<RoomParticipantsData, ThrowOnError>,
 ): RequestResult<RoomParticipantsResponses, RoomParticipantsErrors, ThrowOnError> =>
   (options.client ?? client).get<RoomParticipantsResponses, RoomParticipantsErrors, ThrowOnError>({
@@ -1335,7 +1357,7 @@ export const roomParticipants = <ThrowOnError extends boolean = false>(
  *
  * CONFIRMED 또는 COMPLETED 룸의 현재 참여자가 확정 시점 참여자별 질문 카드셋을 조회한다(「룸 진행 준비」 §3, §4.1). 본인 카드셋의 내용은 반환하지 않고 준비 중인 작성자 수만 제공한다.
  */
-export const getQuestionCardSets = <ThrowOnError extends boolean = false>(
+export const getQuestionCardSets = <ThrowOnError extends boolean = true>(
   options: Options<GetQuestionCardSetsData, ThrowOnError>,
 ): RequestResult<GetQuestionCardSetsResponses, GetQuestionCardSetsErrors, ThrowOnError> =>
   (options.client ?? client).get<
@@ -1353,7 +1375,7 @@ export const getQuestionCardSets = <ThrowOnError extends boolean = false>(
  *
  * CONFIRMED 룸의 현재 참여자가 다른 확정 참여자에게 질문 또는 꼬리질문을 남긴다(「룸 진행 준비」 §4.2). COMPLETED 룸은 읽기 전용이다. 본인이 대상인 원 질문에는 꼬리질문을 남길 수 없으며 E1505로 응답한다.
  */
-export const leavePreparationQuestion = <ThrowOnError extends boolean = false>(
+export const leavePreparationQuestion = <ThrowOnError extends boolean = true>(
   options: Options<LeavePreparationQuestionData, ThrowOnError>,
 ): RequestResult<LeavePreparationQuestionResponses, LeavePreparationQuestionErrors, ThrowOnError> =>
   (options.client ?? client).post<
@@ -1375,7 +1397,7 @@ export const leavePreparationQuestion = <ThrowOnError extends boolean = false>(
  *
  * 후기 대상을 개별로 건너뛴다. 건너뛴 뒤에도 다시 진입해 후기를 제출할 수 있다. 미인증 E1102, 룸 없음 E1405, 완료 전 E2001, 작성자 결석 E2002, 대상 결석 E2003, 본인 대상 E2004로 응답한다.
  */
-export const skipReview = <ThrowOnError extends boolean = false>(
+export const skipReview = <ThrowOnError extends boolean = true>(
   options: Options<SkipReviewData, ThrowOnError>,
 ): RequestResult<SkipReviewResponses, SkipReviewErrors, ThrowOnError> =>
   (options.client ?? client).post<SkipReviewResponses, SkipReviewErrors, ThrowOnError>({
@@ -1393,7 +1415,7 @@ export const skipReview = <ThrowOnError extends boolean = false>(
  *
  * 완료 룸의 출석자 중 본인을 제외한 후기 대상과 제출 진행 상태를 조회한다. 미인증 E1102, 룸 없음 E1405, 완료 전 E2001, 작성자 결석 E2002로 응답한다.
  */
-export const getReviewTargets = <ThrowOnError extends boolean = false>(
+export const getReviewTargets = <ThrowOnError extends boolean = true>(
   options: Options<GetReviewTargetsData, ThrowOnError>,
 ): RequestResult<GetReviewTargetsResponses, GetReviewTargetsErrors, ThrowOnError> =>
   (options.client ?? client).get<GetReviewTargetsResponses, GetReviewTargetsErrors, ThrowOnError>({
@@ -1407,7 +1429,7 @@ export const getReviewTargets = <ThrowOnError extends boolean = false>(
  *
  * 완료 룸의 출석자가 다른 출석자에게 익명 여부, 선택 태그와 선택 텍스트 후기를 제출한다. 잘못된 태그 E400, 미인증 E1102, 룸 없음 E1405, 완료 전 E2001, 작성자 결석 E2002, 대상 결석 E2003, 본인 대상 E2004, 중복 제출 E2005로 응답한다.
  */
-export const submitReview = <ThrowOnError extends boolean = false>(
+export const submitReview = <ThrowOnError extends boolean = true>(
   options: Options<SubmitReviewData, ThrowOnError>,
 ): RequestResult<SubmitReviewResponses, SubmitReviewErrors, ThrowOnError> =>
   (options.client ?? client).post<SubmitReviewResponses, SubmitReviewErrors, ThrowOnError>({
@@ -1425,7 +1447,7 @@ export const submitReview = <ThrowOnError extends boolean = false>(
  *
  * 삭제한 이력서는 이후 룸 생성·참가 신청에서 선택되지 않으며, 이미 제출된 룸의 기록에는 영향을 주지 않는다. 같은 요청을 반복해도 성공하는 멱등 계약이다. 식별자 형식 오류는 400(E400), 존재하지 않거나 본인 소유가 아닌 이력서는 404(E1010), 인증 정보 없음은 401(E1102)로 응답한다.
  */
-export const deleteResume = <ThrowOnError extends boolean = false>(
+export const deleteResume = <ThrowOnError extends boolean = true>(
   options: Options<DeleteResumeData, ThrowOnError>,
 ): RequestResult<DeleteResumeResponses, DeleteResumeErrors, ThrowOnError> =>
   (options.client ?? client).delete<DeleteResumeResponses, DeleteResumeErrors, ThrowOnError>({
@@ -1439,7 +1461,7 @@ export const deleteResume = <ThrowOnError extends boolean = false>(
  *
  * 인증 회원이 소유한 이력서 한 건을 조회한다. AI 요약이 PROCESSING이면 클라이언트는 이 API를 일정 간격으로 폴링하고 DONE 또는 FAILED가 되면 중단한다. PROCESSING은 시작 후 최대 1분이며 시간 초과 시 자동 재처리 없이 FAILED가 된다. SSE는 제공하지 않는다. 식별자 형식 오류는 400(E400), 존재하지 않거나 본인 소유가 아닌 이력서는 404(E1010), 인증 정보 없음은 401(E1102)로 응답한다.
  */
-export const resume = <ThrowOnError extends boolean = false>(
+export const resume = <ThrowOnError extends boolean = true>(
   options: Options<ResumeData, ThrowOnError>,
 ): RequestResult<ResumeResponses, ResumeErrors, ThrowOnError> =>
   (options.client ?? client).get<ResumeResponses, ResumeErrors, ThrowOnError>({
@@ -1453,7 +1475,7 @@ export const resume = <ThrowOnError extends boolean = false>(
  *
  * 로그인 회원이 방장 처리 전 PENDING 신청을 철회한다. 신청이 없으면 E1408, 이미 처리됐으면 E1409를 반환한다.
  */
-export const withdrawRoomApplication = <ThrowOnError extends boolean = false>(
+export const withdrawRoomApplication = <ThrowOnError extends boolean = true>(
   options: Options<WithdrawRoomApplicationData, ThrowOnError>,
 ): RequestResult<WithdrawRoomApplicationResponses, unknown, ThrowOnError> =>
   (options.client ?? client).delete<WithdrawRoomApplicationResponses, unknown, ThrowOnError>({
@@ -1467,7 +1489,7 @@ export const withdrawRoomApplication = <ThrowOnError extends boolean = false>(
  *
  * 로그인 회원이 해당 룸에 가장 최근 제출한 신청의 상태, 전달 사항, 제출 당시 이력서와 AI 요약을 확인한다. 신청이 없으면 E1408을 반환한다.
  */
-export const myRoomApplication = <ThrowOnError extends boolean = false>(
+export const myRoomApplication = <ThrowOnError extends boolean = true>(
   options: Options<MyRoomApplicationData, ThrowOnError>,
 ): RequestResult<MyRoomApplicationResponses, unknown, ThrowOnError> =>
   (options.client ?? client).get<MyRoomApplicationResponses, unknown, ThrowOnError>({
@@ -1481,7 +1503,7 @@ export const myRoomApplication = <ThrowOnError extends boolean = false>(
  *
  * 참여 중이 아니면 나갈 수 없다(E1419). 신청만 넣은 사용자와 이미 나간 사람이 모두 여기에 해당한다.
  */
-export const roomLeave = <ThrowOnError extends boolean = false>(
+export const roomLeave = <ThrowOnError extends boolean = true>(
   options: Options<RoomLeaveData, ThrowOnError>,
 ): RequestResult<RoomLeaveResponses, RoomLeaveErrors, ThrowOnError> =>
   (options.client ?? client).delete<RoomLeaveResponses, RoomLeaveErrors, ThrowOnError>({
@@ -1495,7 +1517,7 @@ export const roomLeave = <ThrowOnError extends boolean = false>(
  *
  * CONFIRMED 또는 COMPLETED 룸의 현재 참여자가 확정 시점 참여자별 질문 카드셋을 조회한다(「룸 진행 준비」 §3, §4.1). 본인 카드셋의 내용은 반환하지 않고 준비 중인 작성자 수만 제공한다. 대상의 제출 이력서 원본은 제공하지 않고 AI 요약 상태와 내용만 제공한다.
  */
-export const getQuestionCardSet = <ThrowOnError extends boolean = false>(
+export const getQuestionCardSet = <ThrowOnError extends boolean = true>(
   options: Options<GetQuestionCardSetData, ThrowOnError>,
 ): RequestResult<GetQuestionCardSetResponses, unknown, ThrowOnError> =>
   (options.client ?? client).get<GetQuestionCardSetResponses, unknown, ThrowOnError>({
@@ -1509,7 +1531,7 @@ export const getQuestionCardSet = <ThrowOnError extends boolean = false>(
  *
  * 다른 작성자의 활성 꼬리질문이 달린 원 질문은 삭제하지 않는다.
  */
-export const deletePreparationQuestion = <ThrowOnError extends boolean = false>(
+export const deletePreparationQuestion = <ThrowOnError extends boolean = true>(
   options: Options<DeletePreparationQuestionData, ThrowOnError>,
 ): RequestResult<
   DeletePreparationQuestionResponses,
@@ -1531,7 +1553,7 @@ export const deletePreparationQuestion = <ThrowOnError extends boolean = false>(
  *
  * AI 요약이 FAILED인 이력서만 재시도한다. 저장된 S3 원본으로 Bedrock 요약을 동기 실행하고 DONE 또는 FAILED 결과를 반환한다. 1분을 넘긴 PROCESSING은 먼저 FAILED로 확정하며 백그라운드에서 자동 재시도하지 않는다. 이미 PROCESSING이거나 DONE인 요약은 409(E1013), 존재하지 않거나 본인 소유가 아닌 이력서는 404(E1010)로 응답한다.
  */
-export const retryResumeSummary = <ThrowOnError extends boolean = false>(
+export const retryResumeSummary = <ThrowOnError extends boolean = true>(
   options: Options<RetryResumeSummaryData, ThrowOnError>,
 ): RequestResult<RetryResumeSummaryResponses, RetryResumeSummaryErrors, ThrowOnError> =>
   (options.client ?? client).post<
@@ -1549,7 +1571,7 @@ export const retryResumeSummary = <ThrowOnError extends boolean = false>(
  *
  * 방장이 대기 중인 신청을 수락한다(「룸 참여」 §4.4). 서버가 정원을 최종 확인한 뒤 신청자를 참여자로 등록하고 현재 인원을 증가시킨다. 정원에 도달하면 모집 상태가 마감(CLOSED)으로 계산된다. 마지막 자리를 두고 동시 수락이 몰려도 1건만 성공한다(룸 행 잠금). 방장만 처리할 수 있고(E1406), 이미 처리된 신청(E1409)·모집 중이 아닌 방(E1410)·정원 초과(E1411)는 거부된다. 신청자의 참여 슬롯이 이미 차 있으면(참여 중인 룸 3개, 「룸 참여」 §4.1) 참여자로 등록하지 않고 그 신청을 SLOT_EXCEEDED 로 정리한다. 방장의 요청은 실패하지 않으므로 200 이며, 결과는 status 로 구분한다.
  */
-export const acceptApplication = <ThrowOnError extends boolean = false>(
+export const acceptApplication = <ThrowOnError extends boolean = true>(
   options: Options<AcceptApplicationData, ThrowOnError>,
 ): RequestResult<AcceptApplicationResponses, unknown, ThrowOnError> =>
   (options.client ?? client).post<AcceptApplicationResponses, unknown, ThrowOnError>({
@@ -1563,7 +1585,7 @@ export const acceptApplication = <ThrowOnError extends boolean = false>(
  *
  * 방장이 대기 중인 신청을 반려한다(§4.4). 사유는 선택이며 GET /v1/rooms/reject-reasons 가 내려주는 코드 중 하나다. null 또는 본문 생략은 사유 없음이고, 목록에 없는 코드는 E400 이다. 반려는 정원·참여자 목록에 영향이 없다. 반려된 사용자는 같은 룸에 재신청할 수 없다. 방장만 처리할 수 있다(E1406).
  */
-export const rejectApplication = <ThrowOnError extends boolean = false>(
+export const rejectApplication = <ThrowOnError extends boolean = true>(
   options: Options<RejectApplicationData, ThrowOnError>,
 ): RequestResult<RejectApplicationResponses, RejectApplicationErrors, ThrowOnError> =>
   (options.client ?? client).post<
@@ -1585,7 +1607,7 @@ export const rejectApplication = <ThrowOnError extends boolean = false>(
  *
  * CONFIRMED 룸의 현재 참여자가 다른 확정 참여자에게 질문 또는 꼬리질문을 남긴다(「룸 진행 준비」 §4.2). COMPLETED 룸은 읽기 전용이다. 본인이 대상인 원 질문에는 꼬리질문을 남길 수 없으며 E1505로 응답한다.
  */
-export const leavePreparationFollowUpQuestion = <ThrowOnError extends boolean = false>(
+export const leavePreparationFollowUpQuestion = <ThrowOnError extends boolean = true>(
   options: Options<LeavePreparationFollowUpQuestionData, ThrowOnError>,
 ): RequestResult<
   LeavePreparationFollowUpQuestionResponses,
@@ -1612,7 +1634,7 @@ export const leavePreparationFollowUpQuestion = <ThrowOnError extends boolean = 
  *
  * 브라우저 전체 페이지 이동으로 호출한다. 서버는 Google 동의 화면으로 302 리다이렉트한다.
  */
-export const googleOAuthStart = <ThrowOnError extends boolean = false>(
+export const googleOAuthStart = <ThrowOnError extends boolean = true>(
   options?: Options<GoogleOAuthStartData, ThrowOnError>,
 ): RequestResult<unknown, unknown, ThrowOnError> =>
   (options?.client ?? client).get<unknown, unknown, ThrowOnError>({
@@ -1625,7 +1647,7 @@ export const googleOAuthStart = <ThrowOnError extends boolean = false>(
  *
  * Google 전용 콜백이다. 성공하면 ACCESS_TOKEN·REFRESH_TOKEN 쿠키를 함께 발급한 뒤 프론트 성공 콜백으로 이동한다. Google 거절·state 검증 실패 또는 회원·세션 처리 실패 시 새 인증 쿠키 없이 고정된 프론트 실패 URL로 이동하며 내부 원인은 노출하지 않는다.
  */
-export const googleOAuthCallback = <ThrowOnError extends boolean = false>(
+export const googleOAuthCallback = <ThrowOnError extends boolean = true>(
   options?: Options<GoogleOAuthCallbackData, ThrowOnError>,
 ): RequestResult<unknown, unknown, ThrowOnError> =>
   (options?.client ?? client).get<unknown, unknown, ThrowOnError>({

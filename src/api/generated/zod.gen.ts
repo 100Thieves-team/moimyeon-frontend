@@ -2,14 +2,14 @@
 
 import * as z from "zod";
 
-export const zV1ReviewsReviewId292942325 = z.object({
-  content: z.string().nullish(),
-  tags: z.array(z.union([z.record(z.string(), z.unknown()), z.boolean(), z.string(), z.number()])),
-});
-
 export const zV1RoomsRoomIdApplications240308819 = z.object({
   note: z.string().nullish(),
   resumeId: z.string(),
+});
+
+export const zV1ReviewsReviewId292942325 = z.object({
+  content: z.string().nullish(),
+  tags: z.array(z.union([z.record(z.string(), z.unknown()), z.boolean(), z.string(), z.number()])),
 });
 
 export const zV1JobPostings1538643122 = z.object({
@@ -232,13 +232,13 @@ export const zV1FollowUpQuestions140122441 = z.object({
     .optional(),
 });
 
-export const zPost1780624183 = z.object({
-  data: z.string(),
-});
-
 export const zV1RoomsRoomIdQuestions282474051 = z.object({
   targetMemberId: z.string(),
   content: z.string(),
+});
+
+export const zPost1780624183 = z.object({
+  data: z.string(),
 });
 
 export const zV1RoomsRoomId1165715694 = z.object({
@@ -610,6 +610,12 @@ export const zV1MembersMeResumesResumeId1837465274 = z.object({
     .optional(),
 });
 
+export const zV1MembersMeProfile608809462 = z.object({
+  bio: z.string().nullish(),
+  interestJobRoleIds: z.array(z.number()).nullish(),
+  interestCompanyIds: z.array(z.number()).nullish(),
+});
+
 export const zV1RoomProgresses1064909895 = z.object({
   result: z.string(),
   data: z
@@ -626,12 +632,6 @@ export const zV1RoomProgresses1064909895 = z.object({
     .optional(),
 });
 
-export const zV1MembersMeProfile608809462 = z.object({
-  bio: z.string().nullish(),
-  interestJobRoleIds: z.array(z.number()).nullish(),
-  interestCompanyIds: z.array(z.number()).nullish(),
-});
-
 export const zV1Companies1839974379 = z.object({
   result: z.string(),
   data: z
@@ -644,6 +644,12 @@ export const zV1Companies1839974379 = z.object({
       ),
     })
     .optional(),
+});
+
+export const zV1QuestionsQuestionId496267733 = z.object({
+  intervieweeMemberId: z.string(),
+  asked: z.boolean(),
+  roomId: z.string(),
 });
 
 export const zV1RoomsRoomIdApplicationsMe2061746466 = z.object({
@@ -676,12 +682,6 @@ export const zV1RoomsRoomIdApplicationsMe2061746466 = z.object({
       status: z.string(),
     })
     .optional(),
-});
-
-export const zV1QuestionsQuestionId496267733 = z.object({
-  intervieweeMemberId: z.string(),
-  asked: z.boolean(),
-  roomId: z.string(),
 });
 
 export const zV1MembersMemberIdProfile655149006 = z.object({
@@ -1331,6 +1331,10 @@ export const zV1MembersMeResumes1467612549 = z.object({
     .optional(),
 });
 
+export const zV1AuthDevSessions1806235479 = z.object({
+  memberId: z.string(),
+});
+
 export const zExampleGetPath = z.object({
   exampleValue: z.string(),
 });
@@ -1508,6 +1512,13 @@ export const zGetMyAttendanceQuery = z.object({
  * 200
  */
 export const zGetMyAttendanceResponse = zV1AttendancesMe427868787;
+
+export const zIssueDevSessionBody = zV1AuthDevSessions1806235479;
+
+/**
+ * 200
+ */
+export const zIssueDevSessionResponse = zV1MembersMeNickname198252895;
 
 /**
  * 200

@@ -19,6 +19,7 @@ export default async function Home({ searchParams }: HomeProps) {
       <LoginDialog
         defaultOpen={hasLoginError}
         errorMessage={hasLoginError ? "로그인에 실패했어요. 다시 시도해 주세요." : undefined}
+        showDevLogin={process.env.NODE_ENV === "development"}
       />
     </div>
   );

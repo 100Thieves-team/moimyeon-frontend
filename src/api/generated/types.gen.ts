@@ -4,6 +4,17 @@ export type ClientOptions = {
   baseUrl: "http://localhost:8080" | "https://api.dev.moimyeon.plady.io" | (string & {});
 };
 
+export type V1RoomsRoomIdApplications240308819 = {
+  /**
+   * 방장에게 전할 말 (선택, 최대 300자, 미입력 시 빈 문자열)
+   */
+  note?: string | null;
+  /**
+   * 제출할 본인 보관 이력서 id (UUID)
+   */
+  resumeId: string;
+};
+
 export type V1ReviewsReviewId292942325 = {
   /**
    * 교체할 한 줄 후기 (선택)
@@ -20,17 +31,6 @@ export type V1ReviewsReviewId292942325 = {
     | string
     | number
   >;
-};
-
-export type V1RoomsRoomIdApplications240308819 = {
-  /**
-   * 방장에게 전할 말 (선택, 최대 300자, 미입력 시 빈 문자열)
-   */
-  note?: string | null;
-  /**
-   * 제출할 본인 보관 이력서 id (UUID)
-   */
-  resumeId: string;
 };
 
 export type V1JobPostings1538643122 = {
@@ -542,13 +542,6 @@ export type V1FollowUpQuestions140122441 = {
   };
 };
 
-export type Post1780624183 = {
-  /**
-   * ExampleBody Data Field
-   */
-  data: string;
-};
-
 export type V1RoomsRoomIdQuestions282474051 = {
   /**
    * 질문 대상 회원 id (UUID)
@@ -558,6 +551,13 @@ export type V1RoomsRoomIdQuestions282474051 = {
    * 질문 본문 (공백 불가, 최대 500자)
    */
   content: string;
+};
+
+export type Post1780624183 = {
+  /**
+   * ExampleBody Data Field
+   */
+  data: string;
 };
 
 export type V1RoomsRoomId1165715694 = {
@@ -1337,6 +1337,21 @@ export type V1MembersMeResumesResumeId1837465274 = {
   };
 };
 
+export type V1MembersMeProfile608809462 = {
+  /**
+   * 자기소개 (미지정이면 빈 문자열, 최대 500자)
+   */
+  bio?: string | null;
+  /**
+   * 관심 직무 id 목록 (미지정이면 빈 배열, /v1/job-roles — 전체 교체)
+   */
+  interestJobRoleIds?: Array<number> | null;
+  /**
+   * 관심 회사 id 목록 (미지정이면 빈 배열, /v1/companies 검색 — 전체 교체)
+   */
+  interestCompanyIds?: Array<number> | null;
+};
+
 export type V1RoomProgresses1064909895 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -1367,21 +1382,6 @@ export type V1RoomProgresses1064909895 = {
   };
 };
 
-export type V1MembersMeProfile608809462 = {
-  /**
-   * 자기소개 (미지정이면 빈 문자열, 최대 500자)
-   */
-  bio?: string | null;
-  /**
-   * 관심 직무 id 목록 (미지정이면 빈 배열, /v1/job-roles — 전체 교체)
-   */
-  interestJobRoleIds?: Array<number> | null;
-  /**
-   * 관심 회사 id 목록 (미지정이면 빈 배열, /v1/companies 검색 — 전체 교체)
-   */
-  interestCompanyIds?: Array<number> | null;
-};
-
 export type V1Companies1839974379 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -1402,6 +1402,21 @@ export type V1Companies1839974379 = {
       name: string;
     }>;
   };
+};
+
+export type V1QuestionsQuestionId496267733 = {
+  /**
+   * 라운드 면접자 회원 id (UUID)
+   */
+  intervieweeMemberId: string;
+  /**
+   * 질문했으면 true, 되돌리면 false
+   */
+  asked: boolean;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
 };
 
 export type V1RoomsRoomIdApplicationsMe2061746466 = {
@@ -1465,21 +1480,6 @@ export type V1RoomsRoomIdApplicationsMe2061746466 = {
      */
     status: string;
   };
-};
-
-export type V1QuestionsQuestionId496267733 = {
-  /**
-   * 라운드 면접자 회원 id (UUID)
-   */
-  intervieweeMemberId: string;
-  /**
-   * 질문했으면 true, 되돌리면 false
-   */
-  asked: boolean;
-  /**
-   * 룸 id (UUID)
-   */
-  roomId: string;
 };
 
 export type V1MembersMemberIdProfile655149006 = {
@@ -2805,6 +2805,13 @@ export type V1MembersMeResumes1467612549 = {
   };
 };
 
+export type V1AuthDevSessions1806235479 = {
+  /**
+   * 개발 환경에서 로그인할 기존 회원 UUID
+   */
+  memberId: string;
+};
+
 export type ExampleGetData = {
   body?: never;
   path: {
@@ -3545,6 +3552,35 @@ export type GetMyAttendanceResponses = {
 };
 
 export type GetMyAttendanceResponse = GetMyAttendanceResponses[keyof GetMyAttendanceResponses];
+
+export type IssueDevSessionData = {
+  body?: V1AuthDevSessions1806235479;
+  path?: never;
+  query?: never;
+  url: "/v1/auth/dev-sessions";
+};
+
+export type IssueDevSessionErrors = {
+  /**
+   * 400
+   */
+  400: V1MembersMeNickname910352763;
+  /**
+   * 404
+   */
+  404: V1MembersMeNickname910352763;
+};
+
+export type IssueDevSessionError = IssueDevSessionErrors[keyof IssueDevSessionErrors];
+
+export type IssueDevSessionResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNickname198252895;
+};
+
+export type IssueDevSessionResponse = IssueDevSessionResponses[keyof IssueDevSessionResponses];
 
 export type AuthLogoutData = {
   body?: never;

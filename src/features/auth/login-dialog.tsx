@@ -2,10 +2,10 @@
 
 import { Dialog } from "@base-ui/react/dialog";
 import type { ReactNode } from "react";
-import type { LoginIntent, LoginReturnTo } from "./auth-intent";
+import type { LoginReturnTo } from "./auth-intent";
+import { DevLoginForm } from "./dev-login-form";
+import { loginDialog } from "./login-dialog-handle";
 import * as styles from "./login-dialog.css";
-
-const loginDialog = Dialog.createHandle<LoginIntent>();
 
 type LoginTriggerProps = {
   children: ReactNode;
@@ -16,6 +16,7 @@ type LoginTriggerProps = {
 type LoginDialogProps = {
   defaultOpen?: boolean;
   errorMessage?: string;
+  showDevLogin?: boolean;
 };
 
 export function LoginTrigger({ children, className, returnTo }: LoginTriggerProps) {
@@ -26,7 +27,11 @@ export function LoginTrigger({ children, className, returnTo }: LoginTriggerProp
   );
 }
 
-export function LoginDialog({ defaultOpen = false, errorMessage }: LoginDialogProps) {
+export function LoginDialog({
+  defaultOpen = false,
+  errorMessage,
+  showDevLogin = false,
+}: LoginDialogProps) {
   return (
     <Dialog.Root defaultOpen={defaultOpen} handle={loginDialog}>
       {({ payload }) => {
@@ -69,6 +74,8 @@ export function LoginDialog({ defaultOpen = false, errorMessage }: LoginDialogPr
                   {errorMessage}
                 </p>
               )}
+
+              {showDevLogin && <DevLoginForm returnTo={returnTo} />}
 
               <Dialog.Description className={styles.terms}>
                 계속하면{" "}
