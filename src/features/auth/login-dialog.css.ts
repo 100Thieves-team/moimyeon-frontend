@@ -242,11 +242,11 @@ export const devSubmit = style({
 
 export const close = style({
   position: "absolute",
-  top: "1.2rem",
-  right: "1.2rem",
+  top: "1.8rem",
+  right: "1.8rem",
   display: "grid",
-  width: "4.4rem",
-  height: "4.4rem",
+  width: "3.2rem",
+  height: "3.2rem",
   padding: 0,
   border: 0,
   borderRadius: vars.radius.pill,
@@ -254,20 +254,17 @@ export const close = style({
   color: vars.color.secondary,
   cursor: "pointer",
   placeItems: "center",
-  transition: `background-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, transform ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
+  transition: `color ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
   selectors: {
     "&:focus-visible": {
       outline: `2px solid ${vars.color.primary}`,
       outlineOffset: "3px",
     },
-    "&:active": {
-      transform: "scale(0.92)",
-    },
   },
   "@media": {
     [media.hover]: {
       ":hover": {
-        backgroundColor: vars.color.fillTertiary,
+        color: vars.color.primary,
       },
     },
     [media.reducedMotion]: {

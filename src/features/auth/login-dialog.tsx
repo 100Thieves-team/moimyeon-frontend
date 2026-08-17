@@ -50,7 +50,7 @@ export function LoginDialog({
             <Dialog.Backdrop className={styles.backdrop} />
             <Dialog.Popup className={styles.popup}>
               <Dialog.Close aria-label="로그인 창 닫기" className={styles.close} type="button">
-                <X aria-hidden="true" size={20} strokeWidth={2} />
+                <X aria-hidden="true" size={16} strokeWidth={1.5} />
               </Dialog.Close>
 
               <Dialog.Title className={styles.title}>
