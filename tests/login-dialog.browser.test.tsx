@@ -26,6 +26,11 @@ function LoginFixture({ showDevLogin = false }: { showDevLogin?: boolean }) {
 
 type TriggerName = "로그인" | "면접 만들기";
 
+const dialogTitleByTrigger: Record<TriggerName, string> = {
+  로그인: "로그인하고 함께 면접을 준비해 보세요",
+  "면접 만들기": "로그인하고 면접을 만들어 보세요",
+};
+
 beforeEach(async () => {
   vi.resetAllMocks();
   await page.viewport(1440, 1024);
@@ -34,13 +39,14 @@ beforeEach(async () => {
 async function openLoginDialog(triggerName: TriggerName, showDevLogin = false) {
   const screen = await render(<LoginFixture showDevLogin={showDevLogin} />);
   const trigger = screen.getByRole("button", {
+    exact: true,
     name: triggerName,
   });
 
   await trigger.click();
 
   const dialog = screen.getByRole("dialog", {
-    name: "로그인하고 면접을 만들 수 있어요",
+    name: dialogTitleByTrigger[triggerName],
   });
   await expect.element(dialog).toBeVisible();
 
@@ -48,7 +54,7 @@ async function openLoginDialog(triggerName: TriggerName, showDevLogin = false) {
 }
 
 describe("LoginDialog", () => {
-  it("로그인 의도를 홈 OAuth 시작 주소로 전달한다", async () => {
+  it("로그인 클릭 시 함께 면접을 준비하는 문구와 홈 OAuth 의도를 표시한다", async () => {
     const { dialog, screen } = await openLoginDialog("로그인");
     const googleAction = screen.getByRole("link", {
       name: "Google로 계속하기",
@@ -58,12 +64,12 @@ describe("LoginDialog", () => {
     await expect
       .element(screen.getByRole("heading", { name: "개발 환경 전용 로그인" }))
       .not.toBeInTheDocument();
-    await screen.getByRole("button", { name: "다음에 할게요" }).click();
+    await screen.getByRole("button", { name: "로그인 창 닫기" }).click();
 
     await expect.element(dialog).not.toBeInTheDocument();
   });
 
-  it("생성 의도를 OAuth 시작 주소로 전달한다", async () => {
+  it("면접 만들기 클릭 시 면접 생성 문구와 생성 OAuth 의도를 표시한다", async () => {
     const { dialog, screen } = await openLoginDialog("면접 만들기");
     const googleAction = screen.getByRole("link", {
       name: "Google로 계속하기",
@@ -73,17 +79,20 @@ describe("LoginDialog", () => {
       .element(googleAction)
       .toHaveAttribute("href", "/auth/google/start?returnTo=%2Finterviews%2Fnew");
 
-    await screen.getByRole("button", { name: "다음에 할게요" }).click();
+    await screen.getByRole("button", { name: "로그인 창 닫기" }).click();
     await expect.element(dialog).not.toBeInTheDocument();
   });
 
   it("개발 로그인을 활성화하면 UUID 폼을 표시한다", async () => {
-    const { screen } = await openLoginDialog("로그인", true);
+    const { dialog, screen } = await openLoginDialog("로그인", true);
 
     await expect
       .element(screen.getByRole("heading", { name: "개발 환경 전용 로그인" }))
       .toBeVisible();
     await expect.element(screen.getByRole("textbox", { name: "회원 UUID" })).toBeVisible();
+
+    await screen.getByRole("button", { name: "로그인 창 닫기" }).click();
+    await expect.element(dialog).not.toBeInTheDocument();
   });
 
   it("개발 로그인에 성공하면 Dialog를 닫고 원래 경로로 이동한다", async () => {
