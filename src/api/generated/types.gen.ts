@@ -166,6 +166,13 @@ export type V1JobPostingsLinkMetadata34312967 = {
   url: string;
 };
 
+export type V1RoomsRoomIdComments1160873406 = {
+  /**
+   * 글 내용 (trim 후 1~1000자, 텍스트만)
+   */
+  content: string;
+};
+
 export type GetExampleValue191457252 = {
   /**
    * ResultType
@@ -196,7 +203,74 @@ export type GetExampleValue191457252 = {
   };
 };
 
-export type V1MembersMeNickname198252895 = {
+export type V1RoomsRoomIdComments1495367468 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 다음 페이지 커서 토큰. 마지막 페이지면 null
+     */
+    nextCursor?: string | null;
+    /**
+     * 읽기 전용 전환(예정) 시각. writable=true 와 함께 오면 전환 예고 배너 조합, 활성 룸은 null
+     */
+    readOnlyAt?: string | null;
+    /**
+     * 최신순 글 목록
+     */
+    comments: Array<{
+      /**
+       * 작성 시각
+       */
+      createdAt: string;
+      /**
+       * 삭제된 글 여부. true 면 tombstone - 작성자·내용이 가려진다
+       */
+      isDeleted: boolean;
+      /**
+       * 작성자. 삭제된 글은 null
+       */
+      author?: {
+        /**
+         * 현재 방장 여부 (위임되면 새 방장 글만 true)
+         */
+        isHost?: boolean | null;
+        /**
+         * 퇴장 여부 - (퇴장) 표시
+         */
+        hasLeft?: boolean | null;
+        /**
+         * 작성자 닉네임. 탈퇴 회원은 "탈퇴한 회원"
+         */
+        nickname?: string | null;
+        /**
+         * 작성자 회원 id
+         */
+        memberId?: string | null;
+      };
+      /**
+       * 글 id
+       */
+      commentId: number;
+      /**
+       * 내가 쓴 글 여부 - '나' 뱃지·삭제 버튼 판정
+       */
+      isMine: boolean;
+      /**
+       * 글 내용. 삭제된 글은 null
+       */
+      content?: string | null;
+    }>;
+    /**
+     * 작성 가능 여부. false 면 읽기 전용
+     */
+    writable: boolean;
+  };
+};
+
+export type V1AuthDevSessions198252895 = {
   /**
    * 처리 결과 (SUCCESS)
    */
@@ -1150,13 +1224,6 @@ export type V1MembersMe1349704155 = {
   };
 };
 
-export type V1MembersMeNickname346517390 = {
-  /**
-   * 변경할 닉네임 (전체 중복 불가 — 자신 제외)
-   */
-  nickname: string;
-};
-
 export type V1RoomsRoomIdQuestionsQuestionIdFollowUps1317980453 = {
   /**
    * 질문 본문 (공백 불가, 최대 500자)
@@ -1245,7 +1312,7 @@ export type V1RoundFeedbacks923155903 = {
   };
 };
 
-export type V1MembersMeNickname910352763 = {
+export type V1AuthDevSessions910352763 = {
   /**
    * 처리 결과 (ERROR)
    */
@@ -1337,21 +1404,6 @@ export type V1MembersMeResumesResumeId1837465274 = {
   };
 };
 
-export type V1MembersMeProfile608809462 = {
-  /**
-   * 자기소개 (미지정이면 빈 문자열, 최대 500자)
-   */
-  bio?: string | null;
-  /**
-   * 관심 직무 id 목록 (미지정이면 빈 배열, /v1/job-roles — 전체 교체)
-   */
-  interestJobRoleIds?: Array<number> | null;
-  /**
-   * 관심 회사 id 목록 (미지정이면 빈 배열, /v1/companies 검색 — 전체 교체)
-   */
-  interestCompanyIds?: Array<number> | null;
-};
-
 export type V1RoomProgresses1064909895 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -1382,6 +1434,25 @@ export type V1RoomProgresses1064909895 = {
   };
 };
 
+export type V1MembersMeProfile466680720 = {
+  /**
+   * 변경할 닉네임 (전체 중복 불가, 자신 제외)
+   */
+  nickname: string;
+  /**
+   * 자기소개 (미지정이면 빈 문자열, 최대 500자)
+   */
+  bio?: string | null;
+  /**
+   * 관심 직무 id 목록 (미지정이면 빈 배열, /v1/job-roles — 전체 교체)
+   */
+  interestJobRoleIds?: Array<number> | null;
+  /**
+   * 관심 회사 id 목록 (미지정이면 빈 배열, /v1/companies 검색 — 전체 교체)
+   */
+  interestCompanyIds?: Array<number> | null;
+};
+
 export type V1Companies1839974379 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -1402,21 +1473,6 @@ export type V1Companies1839974379 = {
       name: string;
     }>;
   };
-};
-
-export type V1QuestionsQuestionId496267733 = {
-  /**
-   * 라운드 면접자 회원 id (UUID)
-   */
-  intervieweeMemberId: string;
-  /**
-   * 질문했으면 true, 되돌리면 false
-   */
-  asked: boolean;
-  /**
-   * 룸 id (UUID)
-   */
-  roomId: string;
 };
 
 export type V1RoomsRoomIdApplicationsMe2061746466 = {
@@ -1480,6 +1536,21 @@ export type V1RoomsRoomIdApplicationsMe2061746466 = {
      */
     status: string;
   };
+};
+
+export type V1QuestionsQuestionId496267733 = {
+  /**
+   * 라운드 면접자 회원 id (UUID)
+   */
+  intervieweeMemberId: string;
+  /**
+   * 질문했으면 true, 되돌리면 false
+   */
+  asked: boolean;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
 };
 
 export type V1MembersMemberIdProfile655149006 = {
@@ -1747,6 +1818,23 @@ export type V1QuestionCommentsCommentId83412404 = {
    * 룸 id (UUID)
    */
   roomId: string;
+};
+
+export type V1RoomsRoomIdComments876888201 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 작성 시각
+     */
+    createdAt: string;
+    /**
+     * 생성된(또는 멱등 반환된 기존) 글 id
+     */
+    commentId: number;
+  };
 };
 
 export type V1RoomsRoomIdReviews1356104346 = {
@@ -2865,19 +2953,19 @@ export type SubmitClosingResponseErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type SubmitClosingResponseError =
@@ -2909,7 +2997,7 @@ export type SearchCompaniesErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
 };
 
 export type SearchCompaniesError = SearchCompaniesErrors[keyof SearchCompaniesErrors];
@@ -2934,19 +3022,19 @@ export type LeaveFinalRoundFeedbackErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type LeaveFinalRoundFeedbackError =
@@ -2973,19 +3061,19 @@ export type LeaveProgressFollowUpQuestionErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type LeaveProgressFollowUpQuestionError =
@@ -3012,11 +3100,11 @@ export type CreateJobPostingErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
 };
 
 export type CreateJobPostingError = CreateJobPostingErrors[keyof CreateJobPostingErrors];
@@ -3062,15 +3150,15 @@ export type GetProgressRailErrors = {
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type GetProgressRailError = GetProgressRailErrors[keyof GetProgressRailErrors];
@@ -3116,19 +3204,19 @@ export type GetQuestionCommentsErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type GetQuestionCommentsError = GetQuestionCommentsErrors[keyof GetQuestionCommentsErrors];
@@ -3154,19 +3242,19 @@ export type LeaveQuestionCommentErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type LeaveQuestionCommentError =
@@ -3193,19 +3281,19 @@ export type LeaveProgressQuestionErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type LeaveProgressQuestionError =
@@ -3248,19 +3336,19 @@ export type StartRoomProgressErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type StartRoomProgressError = StartRoomProgressErrors[keyof StartRoomProgressErrors];
@@ -3335,7 +3423,7 @@ export type RoomsErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
 };
 
 export type RoomsError = RoomsErrors[keyof RoomsErrors];
@@ -3360,7 +3448,7 @@ export type CreateRoomErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
 };
 
 export type CreateRoomError = CreateRoomErrors[keyof CreateRoomErrors];
@@ -3394,15 +3482,15 @@ export type GetIntervieweeRoundFeedbackErrors = {
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type GetIntervieweeRoundFeedbackError =
@@ -3438,15 +3526,15 @@ export type GetRoundScreenErrors = {
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type GetRoundScreenError = GetRoundScreenErrors[keyof GetRoundScreenErrors];
@@ -3471,19 +3559,19 @@ export type SaveSelfRoundFeedbackErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type SaveSelfRoundFeedbackError =
@@ -3531,15 +3619,15 @@ export type GetMyAttendanceErrors = {
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type GetMyAttendanceError = GetMyAttendanceErrors[keyof GetMyAttendanceErrors];
@@ -3564,11 +3652,11 @@ export type IssueDevSessionErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
 };
 
 export type IssueDevSessionError = IssueDevSessionErrors[keyof IssueDevSessionErrors];
@@ -3577,7 +3665,7 @@ export type IssueDevSessionResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type IssueDevSessionResponse = IssueDevSessionResponses[keyof IssueDevSessionResponses];
@@ -3593,7 +3681,7 @@ export type AuthLogoutResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type AuthLogoutResponse = AuthLogoutResponses[keyof AuthLogoutResponses];
@@ -3609,7 +3697,7 @@ export type AuthRefreshErrors = {
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
 };
 
 export type AuthRefreshError = AuthRefreshErrors[keyof AuthRefreshErrors];
@@ -3618,7 +3706,7 @@ export type AuthRefreshResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type AuthRefreshResponse = AuthRefreshResponses[keyof AuthRefreshResponses];
@@ -3639,15 +3727,15 @@ export type GetMyClosingQuestionsErrors = {
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type GetMyClosingQuestionsError =
@@ -3679,15 +3767,15 @@ export type ConfirmRoundFeedbackDisclosureErrors = {
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type ConfirmRoundFeedbackDisclosureError =
@@ -3697,7 +3785,7 @@ export type ConfirmRoundFeedbackDisclosureResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type ConfirmRoundFeedbackDisclosureResponse =
@@ -3714,7 +3802,7 @@ export type JobPostingLinkMetadataErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
 };
 
 export type JobPostingLinkMetadataError =
@@ -3750,7 +3838,7 @@ export type SearchJobPostingsErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
 };
 
 export type SearchJobPostingsError = SearchJobPostingsErrors[keyof SearchJobPostingsErrors];
@@ -3781,7 +3869,7 @@ export type SearchJobRolesErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
 };
 
 export type SearchJobRolesError = SearchJobRolesErrors[keyof SearchJobRolesErrors];
@@ -3806,11 +3894,11 @@ export type MemberMeErrors = {
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
 };
 
 export type MemberMeError = MemberMeErrors[keyof MemberMeErrors];
@@ -3840,7 +3928,7 @@ export type NicknameAvailabilityErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
 };
 
 export type NicknameAvailabilityError =
@@ -3889,19 +3977,19 @@ export type ToggleQuestionCommentTypeErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type ToggleQuestionCommentTypeError =
@@ -3911,7 +3999,7 @@ export type ToggleQuestionCommentTypeResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type ToggleQuestionCommentTypeResponse =
@@ -3946,15 +4034,15 @@ export type DeleteQuestionCommentErrors = {
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type DeleteQuestionCommentError =
@@ -3964,7 +4052,7 @@ export type DeleteQuestionCommentResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type DeleteQuestionCommentResponse =
@@ -3986,19 +4074,19 @@ export type EditQuestionCommentErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type EditQuestionCommentError = EditQuestionCommentErrors[keyof EditQuestionCommentErrors];
@@ -4007,7 +4095,7 @@ export type EditQuestionCommentResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type EditQuestionCommentResponse =
@@ -4033,15 +4121,15 @@ export type GetMyRoundQuestionRecordsErrors = {
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type GetMyRoundQuestionRecordsError =
@@ -4073,19 +4161,19 @@ export type ChangeQuestionAskedErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type ChangeQuestionAskedError = ChangeQuestionAskedErrors[keyof ChangeQuestionAskedErrors];
@@ -4094,7 +4182,7 @@ export type ChangeQuestionAskedResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type ChangeQuestionAskedResponse =
@@ -4116,19 +4204,19 @@ export type DeleteReviewErrors = {
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type DeleteReviewError = DeleteReviewErrors[keyof DeleteReviewErrors];
@@ -4137,7 +4225,7 @@ export type DeleteReviewResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type DeleteReviewResponse = DeleteReviewResponses[keyof DeleteReviewResponses];
@@ -4158,23 +4246,23 @@ export type UpdateReviewErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type UpdateReviewError = UpdateReviewErrors[keyof UpdateReviewErrors];
@@ -4183,7 +4271,7 @@ export type UpdateReviewResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type UpdateReviewResponse = UpdateReviewResponses[keyof UpdateReviewResponses];
@@ -4208,7 +4296,7 @@ export type RoomCreationLimitErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
 };
 
 export type RoomCreationLimitError = RoomCreationLimitErrors[keyof RoomCreationLimitErrors];
@@ -4294,7 +4382,7 @@ export type JobPostingsErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
 };
 
 export type JobPostingsError = JobPostingsErrors[keyof JobPostingsErrors];
@@ -4307,39 +4395,6 @@ export type JobPostingsResponses = {
 };
 
 export type JobPostingsResponse = JobPostingsResponses[keyof JobPostingsResponses];
-
-export type UpdateNicknameData = {
-  body?: V1MembersMeNickname346517390;
-  path?: never;
-  query?: never;
-  url: "/v1/members/me/nickname";
-};
-
-export type UpdateNicknameErrors = {
-  /**
-   * 400
-   */
-  400: V1MembersMeNickname910352763;
-  /**
-   * 401
-   */
-  401: V1MembersMeNickname910352763;
-  /**
-   * 409
-   */
-  409: V1MembersMeNickname910352763;
-};
-
-export type UpdateNicknameError = UpdateNicknameErrors[keyof UpdateNicknameErrors];
-
-export type UpdateNicknameResponses = {
-  /**
-   * 200
-   */
-  200: V1MembersMeNickname198252895;
-};
-
-export type UpdateNicknameResponse = UpdateNicknameResponses[keyof UpdateNicknameResponses];
 
 export type ParticipationSlotsData = {
   body?: never;
@@ -4359,7 +4414,7 @@ export type ParticipationSlotsResponse =
   ParticipationSlotsResponses[keyof ParticipationSlotsResponses];
 
 export type UpdateProfileData = {
-  body?: V1MembersMeProfile608809462;
+  body?: V1MembersMeProfile466680720;
   path?: never;
   query?: never;
   url: "/v1/members/me/profile";
@@ -4369,15 +4424,19 @@ export type UpdateProfileErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
+  /**
+   * 409
+   */
+  409: V1AuthDevSessions910352763;
 };
 
 export type UpdateProfileError = UpdateProfileErrors[keyof UpdateProfileErrors];
@@ -4411,11 +4470,11 @@ export type GetReceivedReviewsErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
 };
 
 export type GetReceivedReviewsError = GetReceivedReviewsErrors[keyof GetReceivedReviewsErrors];
@@ -4441,7 +4500,7 @@ export type ResumesErrors = {
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
 };
 
 export type ResumesError = ResumesErrors[keyof ResumesErrors];
@@ -4471,11 +4530,11 @@ export type CreateResumeErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
 };
 
 export type CreateResumeError = CreateResumeErrors[keyof CreateResumeErrors];
@@ -4500,7 +4559,7 @@ export type GetInterviewOverviewErrors = {
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
 };
 
 export type GetInterviewOverviewError =
@@ -4527,7 +4586,7 @@ export type UnregisterWebPushSubscriptionResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type UnregisterWebPushSubscriptionResponse =
@@ -4544,7 +4603,7 @@ export type RegisterWebPushSubscriptionResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type RegisterWebPushSubscriptionResponse =
@@ -4566,11 +4625,11 @@ export type PublicProfileErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
 };
 
 export type PublicProfileError = PublicProfileErrors[keyof PublicProfileErrors];
@@ -4621,11 +4680,11 @@ export type SubmitRoomApplicationErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
 };
 
 export type SubmitRoomApplicationError =
@@ -4657,7 +4716,7 @@ export type CancelRoomErrors = {
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type CancelRoomError = CancelRoomErrors[keyof CancelRoomErrors];
@@ -4666,10 +4725,86 @@ export type CancelRoomResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type CancelRoomResponse = CancelRoomResponses[keyof CancelRoomResponses];
+
+export type GetRoomCommentsData = {
+  body?: never;
+  path: {
+    roomId: string;
+  };
+  query?: {
+    /**
+     * 이전 응답의 nextCursor 를 그대로 되돌려주는 불투명 토큰. 첫 페이지는 생략
+     */
+    cursor?: string;
+    /**
+     * 페이지 크기 (기본 20, 최대 50)
+     */
+    size?: string;
+  };
+  url: "/v1/rooms/{roomId}/comments";
+};
+
+export type GetRoomCommentsErrors = {
+  /**
+   * 400
+   */
+  400: V1AuthDevSessions910352763;
+  /**
+   * 403
+   */
+  403: V1AuthDevSessions910352763;
+};
+
+export type GetRoomCommentsError = GetRoomCommentsErrors[keyof GetRoomCommentsErrors];
+
+export type GetRoomCommentsResponses = {
+  /**
+   * 200
+   */
+  200: V1RoomsRoomIdComments1495367468;
+};
+
+export type GetRoomCommentsResponse = GetRoomCommentsResponses[keyof GetRoomCommentsResponses];
+
+export type CreateRoomCommentData = {
+  body?: V1RoomsRoomIdComments1160873406;
+  path: {
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/comments";
+};
+
+export type CreateRoomCommentErrors = {
+  /**
+   * 400
+   */
+  400: V1AuthDevSessions910352763;
+  /**
+   * 403
+   */
+  403: V1AuthDevSessions910352763;
+  /**
+   * 409
+   */
+  409: V1AuthDevSessions910352763;
+};
+
+export type CreateRoomCommentError = CreateRoomCommentErrors[keyof CreateRoomCommentErrors];
+
+export type CreateRoomCommentResponses = {
+  /**
+   * 200
+   */
+  200: V1RoomsRoomIdComments876888201;
+};
+
+export type CreateRoomCommentResponse =
+  CreateRoomCommentResponses[keyof CreateRoomCommentResponses];
 
 export type ConfirmRoomData = {
   body?: never;
@@ -4687,7 +4822,7 @@ export type ConfirmRoomErrors = {
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type ConfirmRoomError = ConfirmRoomErrors[keyof ConfirmRoomErrors];
@@ -4696,7 +4831,7 @@ export type ConfirmRoomResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type ConfirmRoomResponse = ConfirmRoomResponses[keyof ConfirmRoomResponses];
@@ -4744,11 +4879,11 @@ export type GetQuestionCardSetsErrors = {
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
 };
 
 export type GetQuestionCardSetsError = GetQuestionCardSetsErrors[keyof GetQuestionCardSetsErrors];
@@ -4776,11 +4911,11 @@ export type LeavePreparationQuestionErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type LeavePreparationQuestionError =
@@ -4812,23 +4947,23 @@ export type SkipReviewErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type SkipReviewError = SkipReviewErrors[keyof SkipReviewErrors];
@@ -4837,7 +4972,7 @@ export type SkipReviewResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type SkipReviewResponse = SkipReviewResponses[keyof SkipReviewResponses];
@@ -4858,19 +4993,19 @@ export type GetReviewTargetsErrors = {
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type GetReviewTargetsError = GetReviewTargetsErrors[keyof GetReviewTargetsErrors];
@@ -4900,23 +5035,23 @@ export type SubmitReviewErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type SubmitReviewError = SubmitReviewErrors[keyof SubmitReviewErrors];
@@ -4946,15 +5081,15 @@ export type DeleteResumeErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
 };
 
 export type DeleteResumeError = DeleteResumeErrors[keyof DeleteResumeErrors];
@@ -4963,7 +5098,7 @@ export type DeleteResumeResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type DeleteResumeResponse = DeleteResumeResponses[keyof DeleteResumeResponses];
@@ -4984,15 +5119,15 @@ export type ResumeErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
   /**
    * 401
    */
-  401: V1MembersMeNickname910352763;
+  401: V1AuthDevSessions910352763;
   /**
    * 404
    */
-  404: V1MembersMeNickname910352763;
+  404: V1AuthDevSessions910352763;
 };
 
 export type ResumeError = ResumeErrors[keyof ResumeErrors];
@@ -5022,7 +5157,7 @@ export type WithdrawRoomApplicationResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type WithdrawRoomApplicationResponse =
@@ -5049,6 +5184,43 @@ export type MyRoomApplicationResponses = {
 
 export type MyRoomApplicationResponse =
   MyRoomApplicationResponses[keyof MyRoomApplicationResponses];
+
+export type DeleteRoomCommentData = {
+  body?: never;
+  path: {
+    roomId: string;
+    commentId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/comments/{commentId}";
+};
+
+export type DeleteRoomCommentErrors = {
+  /**
+   * 403
+   */
+  403: V1AuthDevSessions910352763;
+  /**
+   * 404
+   */
+  404: V1AuthDevSessions910352763;
+  /**
+   * 409
+   */
+  409: V1AuthDevSessions910352763;
+};
+
+export type DeleteRoomCommentError = DeleteRoomCommentErrors[keyof DeleteRoomCommentErrors];
+
+export type DeleteRoomCommentResponses = {
+  /**
+   * 200
+   */
+  200: V1AuthDevSessions198252895;
+};
+
+export type DeleteRoomCommentResponse =
+  DeleteRoomCommentResponses[keyof DeleteRoomCommentResponses];
 
 export type RoomLeaveData = {
   body?: never;
@@ -5079,7 +5251,7 @@ export type RoomLeaveResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type RoomLeaveResponse = RoomLeaveResponses[keyof RoomLeaveResponses];
@@ -5124,7 +5296,7 @@ export type DeletePreparationQuestionErrors = {
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type DeletePreparationQuestionError =
@@ -5134,7 +5306,7 @@ export type DeletePreparationQuestionResponses = {
   /**
    * 200
    */
-  200: V1MembersMeNickname198252895;
+  200: V1AuthDevSessions198252895;
 };
 
 export type DeletePreparationQuestionResponse =
@@ -5156,7 +5328,7 @@ export type RetryResumeSummaryErrors = {
   /**
    * 409
    */
-  409: V1MembersMeNickname910352763;
+  409: V1AuthDevSessions910352763;
 };
 
 export type RetryResumeSummaryError = RetryResumeSummaryErrors[keyof RetryResumeSummaryErrors];
@@ -5217,7 +5389,7 @@ export type RejectApplicationErrors = {
   /**
    * 400
    */
-  400: V1MembersMeNickname910352763;
+  400: V1AuthDevSessions910352763;
 };
 
 export type RejectApplicationError = RejectApplicationErrors[keyof RejectApplicationErrors];
@@ -5246,7 +5418,7 @@ export type LeavePreparationFollowUpQuestionErrors = {
   /**
    * 403
    */
-  403: V1MembersMeNickname910352763;
+  403: V1AuthDevSessions910352763;
 };
 
 export type LeavePreparationFollowUpQuestionError =

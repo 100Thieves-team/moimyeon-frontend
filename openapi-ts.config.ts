@@ -19,6 +19,7 @@ export default defineConfig({
       name: "zod",
       compatibilityVersion: 4,
     },
+    "@tanstack/react-query",
     {
       name: "@hey-api/client-next",
       runtimeConfigPath: "./src/api/hey-api",

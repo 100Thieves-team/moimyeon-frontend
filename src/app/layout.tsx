@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { QueryProvider } from "@/api/query-provider";
 import "@/styles/global.css";
 import { app } from "./layout.css";
 
@@ -42,7 +43,9 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${pretendard.variable} ${notoSansMonoCjkKr.variable}`}>
       <body>
-        <div className={app}>{children}</div>
+        <QueryProvider>
+          <div className={app}>{children}</div>
+        </QueryProvider>
       </body>
     </html>
   );
