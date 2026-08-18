@@ -18,7 +18,7 @@ function createLoginFailureResponse(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const isAuthenticated = await hasAuthenticatedMember(request);
+    const isAuthenticated = await hasAuthenticatedMember();
 
     if (!isAuthenticated) {
       return createLoginFailureResponse(request);

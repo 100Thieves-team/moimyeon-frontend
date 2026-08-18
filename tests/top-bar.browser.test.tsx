@@ -15,6 +15,9 @@ const mocks = vi.hoisted(() => ({
 vi.mock("@/api", () => ({
   issueDevSession: mocks.issueDevSession,
 }));
+vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
+  issueDevSessionMutation: vi.fn(),
+}));
 vi.mock("server-only", () => ({}));
 vi.mock("@/features/auth/current-member-server", () => ({
   getCurrentMemberState: mocks.getCurrentMemberState,
@@ -35,6 +38,13 @@ beforeEach(async () => {
 });
 
 describe("TopBar", () => {
+  it("비로그인 회원에게 로그인과 면접 만들기 액션을 표시한다", async () => {
+    const screen = await render(await TopBar());
+
+    await expect.element(screen.getByRole("button", { exact: true, name: "로그인" })).toBeVisible();
+    await expect.element(screen.getByRole("button", { name: "면접 만들기" })).toBeVisible();
+  });
+
   it("로그인 회원에게 면접 만들기와 마이페이지 Avatar를 보여준다", async () => {
     mocks.getCurrentMemberState.mockResolvedValue({
       member: { nickname: "집요한 수달 07" },

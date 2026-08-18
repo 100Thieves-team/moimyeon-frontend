@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LoginDialog } from "@/features/auth/login-dialog";
 import { LoginDialogController } from "@/features/auth/login-dialog-controller";
 import { DevLoginForm } from "@/features/auth/dev-login-form";
@@ -18,8 +19,22 @@ const { issueDevSessionMock, navigation } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@/api", () => ({
-  issueDevSession: issueDevSessionMock,
+vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
+  issueDevSessionMutation: (options: Record<string, unknown>) => ({
+    mutationFn: async (fnOptions: Record<string, unknown>) => {
+      const result = await issueDevSessionMock({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      return result.data;
+    },
+  }),
 }));
 vi.mock("server-only", () => ({}));
 vi.mock("@/features/auth/current-member-server", () => ({
@@ -49,8 +64,18 @@ beforeEach(async () => {
   await page.viewport(1440, 1024);
 });
 
+function renderWithQueryClient(ui: React.ReactNode) {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false, staleTime: Number.POSITIVE_INFINITY },
+    },
+  });
+
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
+}
+
 async function openLoginDialog(triggerName: TriggerName, showDevLogin = false) {
-  const screen = await render(
+  const screen = await renderWithQueryClient(
     <>
       {await TopBar()}
       <LoginDialog showDevLogin={showDevLogin} />
@@ -103,13 +128,14 @@ describe("LoginDialog", () => {
 
   it("OAuth 로그인 실패를 사용자에게 알린다", async () => {
     navigation.searchParams = new URLSearchParams("authError=login_failed");
-    const screen = await render(<LoginDialogController />);
+    const screen = await renderWithQueryClient(<LoginDialogController />);
 
     await expect
       .element(screen.getByRole("alert"))
       .toHaveTextContent("로그인에 실패했어요. 다시 시도해 주세요.");
     await screen.getByRole("button", { name: "로그인 창 닫기" }).click();
   });
+
   it("개발 로그인을 활성화하면 UUID 폼을 표시한다", async () => {
     const { dialog, screen } = await openLoginDialog("로그인", true);
 
@@ -141,7 +167,7 @@ describe("DevLoginForm", () => {
   const memberId = "518d3feb-5351-66b1-7ce1-3a32d6a50f0b";
 
   async function submitDevLogin(returnTo: "/" | "/interviews/new" = "/interviews/new") {
-    const screen = await render(<DevLoginForm returnTo={returnTo} />);
+    const screen = await renderWithQueryClient(<DevLoginForm returnTo={returnTo} />);
 
     await screen.getByRole("textbox", { name: "회원 UUID" }).fill(memberId);
     await screen.getByRole("button", { name: "dev 계정으로 로그인" }).click();
@@ -153,7 +179,7 @@ describe("DevLoginForm", () => {
     ["비어 있으면", ""],
     ["공백뿐이면", "   "],
   ])("회원 UUID가 %s 오류를 안내하고 세션을 요청하지 않는다", async (_condition, value) => {
-    const screen = await render(<DevLoginForm returnTo="/" />);
+    const screen = await renderWithQueryClient(<DevLoginForm returnTo="/" />);
 
     await screen.getByRole("textbox", { name: "회원 UUID" }).fill(value);
     await screen.getByRole("button", { name: "dev 계정으로 로그인" }).click();
@@ -175,7 +201,7 @@ describe("DevLoginForm", () => {
       baseUrl: "/api",
       body: { memberId },
       credentials: "same-origin",
-      throwOnError: false,
+      throwOnError: true,
     });
   });
 

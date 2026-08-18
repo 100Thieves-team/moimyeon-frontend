@@ -1,9 +1,7 @@
-import { termsList, type TermsListResponse } from "@/api/generated";
 import * as styles from "./terms-page.css";
+import { termsList } from "@/api/generated/sdk.gen";
 
 type TermsType = "SERVICE" | "PRIVACY";
-
-type Term = NonNullable<TermsListResponse["data"]>["terms"][number];
 
 type TermsPageProps = {
   type: TermsType;
@@ -21,21 +19,13 @@ function formatEffectiveDate(value: string) {
   }).format(date);
 }
 
-async function loadTerm(type: TermsType): Promise<Term | null> {
-  try {
-    const { data: response } = await termsList({
-      cache: "no-store",
-      throwOnError: true,
-    });
-
-    return response.data?.terms.find((candidate) => candidate.type === type) ?? null;
-  } catch {
-    return null;
-  }
-}
-
 export async function TermsPage({ type }: TermsPageProps) {
-  const term = await loadTerm(type);
+  const { data: response } = await termsList({
+    cache: "no-store",
+    throwOnError: false,
+  });
+
+  const term = response?.data?.terms.find((candidate) => candidate.type === type) ?? null;
 
   return (
     <div className={styles.page}>

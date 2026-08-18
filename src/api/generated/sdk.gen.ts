@@ -35,6 +35,9 @@ import type {
   CreateResumeData,
   CreateResumeErrors,
   CreateResumeResponses,
+  CreateRoomCommentData,
+  CreateRoomCommentErrors,
+  CreateRoomCommentResponses,
   CreateRoomData,
   CreateRoomErrors,
   CreateRoomResponses,
@@ -50,6 +53,9 @@ import type {
   DeleteReviewData,
   DeleteReviewErrors,
   DeleteReviewResponses,
+  DeleteRoomCommentData,
+  DeleteRoomCommentErrors,
+  DeleteRoomCommentResponses,
   EditQuestionCommentData,
   EditQuestionCommentErrors,
   EditQuestionCommentResponses,
@@ -89,6 +95,9 @@ import type {
   GetReviewTargetsData,
   GetReviewTargetsErrors,
   GetReviewTargetsResponses,
+  GetRoomCommentsData,
+  GetRoomCommentsErrors,
+  GetRoomCommentsResponses,
   GetRoundScreenData,
   GetRoundScreenErrors,
   GetRoundScreenResponses,
@@ -208,9 +217,6 @@ import type {
   ToggleQuestionCommentTypeResponses,
   UnregisterWebPushSubscriptionData,
   UnregisterWebPushSubscriptionResponses,
-  UpdateNicknameData,
-  UpdateNicknameErrors,
-  UpdateNicknameResponses,
   UpdateProfileData,
   UpdateProfileErrors,
   UpdateProfileResponses,
@@ -230,11 +236,13 @@ import {
   zConfirmRoundFeedbackDisclosureResponse,
   zCreateJobPostingResponse,
   zCreateResumeResponse,
+  zCreateRoomCommentResponse,
   zCreateRoomResponse,
   zDeletePreparationQuestionResponse,
   zDeleteQuestionCommentResponse,
   zDeleteResumeResponse,
   zDeleteReviewResponse,
+  zDeleteRoomCommentResponse,
   zEditQuestionCommentResponse,
   zExampleGetResponse,
   zExamplePostResponse,
@@ -249,6 +257,7 @@ import {
   zGetQuestionCommentsResponse,
   zGetReceivedReviewsResponse,
   zGetReviewTargetsResponse,
+  zGetRoomCommentsResponse,
   zGetRoundScreenResponse,
   zIssueDevSessionResponse,
   zJobPostingLinkMetadataResponse,
@@ -292,7 +301,6 @@ import {
   zTermsListResponse,
   zToggleQuestionCommentTypeResponse,
   zUnregisterWebPushSubscriptionResponse,
-  zUpdateNicknameResponse,
   zUpdateProfileResponse,
   zUpdateReviewResponse,
   zWithdrawRoomApplicationResponse,
@@ -1103,24 +1111,6 @@ export const jobPostings = <ThrowOnError extends boolean = true>(
   });
 
 /**
- * 닉네임 변경
- *
- * 회원의 닉네임을 변경한다. 자신이 쓰던 닉네임 유지는 허용하고, 변경 시 전체 중복을 확인한다. 형식 위반 400(E1005), 인증 정보 없음·무효 401(E1102), 닉네임 중복 409(E1007)로 응답한다.
- */
-export const updateNickname = <ThrowOnError extends boolean = true>(
-  options?: Options<UpdateNicknameData, ThrowOnError>,
-): RequestResult<UpdateNicknameResponses, UpdateNicknameErrors, ThrowOnError> =>
-  (options?.client ?? client).put<UpdateNicknameResponses, UpdateNicknameErrors, ThrowOnError>({
-    responseValidator: async (data) => await zUpdateNicknameResponse.parseAsync(data),
-    url: "/v1/members/me/nickname",
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
-  });
-
-/**
  * 참여 슬롯 여유분 조회
  *
  * 내가 참여 중인 룸이 몇 개고 몇 개 더 참여할 수 있는지 돌려준다(「룸 참여」 §4.1, 방장 포함). 활성 룸(모집 중 · 진행 확정 · 진행 중)의 참여만 세고 취소 · 완료된 룸과 처리 대기 중인 신청은 세지 않는다. remaining 이 0 이면 신규 신청 · 수락 · 룸 생성이 모두 409(E1425)로 거부된다. 일정을 여러 개 골라 룸을 일괄 생성할 때의 최대 선택 수는 화면이 min(중복 생성 제한 remaining, 이 remaining) 으로 계산한다(「룸 생성」 §4.4). 서버가 min 을 합쳐 주지 않는다: 어느 한도에 걸렸는지에 따라 안내 문구가 갈린다.
@@ -1137,7 +1127,7 @@ export const participationSlots = <ThrowOnError extends boolean = true>(
 /**
  * 프로필 수정
  *
- * 프로필 전체 교체 저장. 프로필은 가입 시 빈 상태로 함께 만들어져 회원당 항상 하나 존재하므로 별도 생성 API 는 없다. 아직 작성하지 않은 소개는 빈 문자열로 오간다. 관심 직무·관심 회사는 선택 가능한 참조 id 를 받는다. 관심 회사는 검증 완료된 회사만 선택할 수 있다. 요청 형태 오류 400(E400), 존재하지 않는 직무 또는 선택할 수 없는 회사 400(E1301/E1303), 인증 정보 없음·무효 401(E1102), 프로필을 찾을 수 없음 404(E1009)로 응답한다.
+ * 닉네임과 프로필을 한 번에 전체 교체 저장한다. 프로필은 가입 시 빈 상태로 함께 만들어져 회원당 항상 하나 존재하므로 별도 생성 API 는 없다. 아직 작성하지 않은 소개는 빈 문자열로 오간다. 관심 직무·관심 회사는 선택 가능한 참조 id 를 받는다. 관심 회사는 검증 완료된 회사만 선택할 수 있다. 요청 형태 또는 닉네임 형식 오류 400(E400/E1005), 닉네임 중복 409(E1007), 존재하지 않는 직무 또는 선택할 수 없는 회사 400(E1301/E1303), 인증 정보 없음·무효 401(E1102), 프로필을 찾을 수 없음 404(E1009)로 응답한다.
  */
 export const updateProfile = <ThrowOnError extends boolean = true>(
   options?: Options<UpdateProfileData, ThrowOnError>,
@@ -1325,6 +1315,42 @@ export const cancelRoom = <ThrowOnError extends boolean = true>(
   });
 
 /**
+ * 룸 방명록 글 목록 조회
+ *
+ * 룸 참여자(방장 포함)가 방명록 글을 최신순으로 조회한다. 커서는 불투명 토큰으로, 이전 응답의 nextCursor 를 그대로 되돌려준다. writable=false 면 읽기 전용이고, writable=true 인데 readOnlyAt 이 있으면 곧 읽기 전용으로 바뀐다는 예고다. 삭제된 글은 isDeleted=true tombstone 으로 남고 작성자·내용이 가려진다. 비참여자·신청자·퇴장자·존재하지 않는 룸은 403 E1419 로 끊는다(존재 비공개). 깨진 커서 토큰·size 범위(1~50) 위반은 400 E400.
+ */
+export const getRoomComments = <ThrowOnError extends boolean = true>(
+  options: Options<GetRoomCommentsData, ThrowOnError>,
+): RequestResult<GetRoomCommentsResponses, GetRoomCommentsErrors, ThrowOnError> =>
+  (options.client ?? client).get<GetRoomCommentsResponses, GetRoomCommentsErrors, ThrowOnError>({
+    responseValidator: async (data) => await zGetRoomCommentsResponse.parseAsync(data),
+    url: "/v1/rooms/{roomId}/comments",
+    ...options,
+  });
+
+/**
+ * 룸 방명록 글 작성
+ *
+ * 룸 참여자가 텍스트 글을 남긴다(trim 후 1~1000자). 직전 글과 같은 내용을 10초 안에 다시 보내면 새로 만들지 않고 기존 글을 돌려준다(멱등 - 에러가 아니라 200). 400 E400 내용 규칙 위반, 403 E1419 비참여자, 409 E2101 읽기 전용 전환 후 작성.
+ */
+export const createRoomComment = <ThrowOnError extends boolean = true>(
+  options: Options<CreateRoomCommentData, ThrowOnError>,
+): RequestResult<CreateRoomCommentResponses, CreateRoomCommentErrors, ThrowOnError> =>
+  (options.client ?? client).post<
+    CreateRoomCommentResponses,
+    CreateRoomCommentErrors,
+    ThrowOnError
+  >({
+    responseValidator: async (data) => await zCreateRoomCommentResponse.parseAsync(data),
+    url: "/v1/rooms/{roomId}/comments",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
  * 룸 진행 확정
  *
  * 방장이 진행을 확정한다(「진행 확정」 §4.2). 룸 상태가 CONFIRMED 가 되고 참여자·인원이 고정되며, 남아 있던 대기 신청은 같은 트랜잭션에서 일괄 종료된다(반려가 아니므로 재신청 차단에 걸리지 않는다). 확정 이후에는 룸 정보 수정·신규 신청·수락이 모두 막힌다(§4.3). 조건은 룸 상세의 confirmation 블록과 같은 판정을 쓴다 — 인원 미달은 E1421, 일정 경과는 E1422, 이미 확정·취소·완료·진행 중인 룸은 E1410 이다. 같은 요청을 두 번 보내도 한 번만 처리된다.
@@ -1495,6 +1521,24 @@ export const myRoomApplication = <ThrowOnError extends boolean = true>(
   (options.client ?? client).get<MyRoomApplicationResponses, unknown, ThrowOnError>({
     responseValidator: async (data) => await zMyRoomApplicationResponse.parseAsync(data),
     url: "/v1/rooms/{roomId}/applications/me",
+    ...options,
+  });
+
+/**
+ * 룸 방명록 글 삭제
+ *
+ * 내가 쓴 글을 소프트 삭제한다. 목록에서 빠지지 않고 tombstone 으로 남는다. 이미 삭제된 글의 재삭제는 200(멱등). 403 E1419 비참여자, 403 E2102 내 글 아님, 404 E2103 글 없음, 409 E2101 읽기 전용 전환 후에는 삭제도 불가.
+ */
+export const deleteRoomComment = <ThrowOnError extends boolean = true>(
+  options: Options<DeleteRoomCommentData, ThrowOnError>,
+): RequestResult<DeleteRoomCommentResponses, DeleteRoomCommentErrors, ThrowOnError> =>
+  (options.client ?? client).delete<
+    DeleteRoomCommentResponses,
+    DeleteRoomCommentErrors,
+    ThrowOnError
+  >({
+    responseValidator: async (data) => await zDeleteRoomCommentResponse.parseAsync(data),
+    url: "/v1/rooms/{roomId}/comments/{commentId}",
     ...options,
   });
 

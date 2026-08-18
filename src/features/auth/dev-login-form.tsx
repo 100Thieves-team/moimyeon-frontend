@@ -2,9 +2,11 @@
 
 import { Field } from "@base-ui/react/field";
 import { Form } from "@base-ui/react/form";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { issueDevSession } from "@/api";
+import { issueDevSessionMutation } from "@/api/generated/@tanstack/react-query.gen";
+import type { IssueDevSessionError } from "@/api/generated";
 import { Button } from "@/components/button";
 import type { LoginReturnTo } from "./auth-intent";
 import * as styles from "./login-dialog.css";
@@ -20,10 +22,16 @@ type DevLoginValues = {
 
 export function DevLoginForm({ returnTo }: DevLoginFormProps) {
   const router = useRouter();
+  const issueDevSession = useMutation(
+    issueDevSessionMutation({
+      baseUrl: "/api",
+      credentials: "same-origin",
+    }),
+  );
   const {
     clearErrors,
     control,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     handleSubmit,
     setError,
   } = useForm<DevLoginValues>({
@@ -33,36 +41,33 @@ export function DevLoginForm({ returnTo }: DevLoginFormProps) {
   });
 
   const submitForm = handleSubmit(async ({ memberId }) => {
-    const result = await issueDevSession({
-      baseUrl: "/api",
-      body: { memberId: memberId.trim() },
-      credentials: "same-origin",
-      throwOnError: false,
-    });
+    try {
+      await issueDevSession.mutateAsync({
+        body: { memberId: memberId.trim() },
+      });
+    } catch (error) {
+      const errorCode = (error as IssueDevSessionError).error?.code;
 
-    const errorCode = result.error?.error?.code;
+      if (errorCode === "E400") {
+        setError(
+          "memberId",
+          { message: "회원 UUID 형식을 확인해 주세요.", type: "server" },
+          { shouldFocus: true },
+        );
 
-    if (errorCode === "E400") {
-      setError(
-        "memberId",
-        { message: "회원 UUID 형식을 확인해 주세요.", type: "server" },
-        { shouldFocus: true },
-      );
+        return;
+      }
 
-      return;
-    }
+      if (errorCode === "E1006") {
+        setError(
+          "memberId",
+          { message: "dev 환경에 존재하지 않는 회원이에요.", type: "server" },
+          { shouldFocus: true },
+        );
 
-    if (errorCode === "E1006") {
-      setError(
-        "memberId",
-        { message: "dev 환경에 존재하지 않는 회원이에요.", type: "server" },
-        { shouldFocus: true },
-      );
+        return;
+      }
 
-      return;
-    }
-
-    if (result.error) {
       setError("root.serverError", {
         type: "server",
         message: "dev 로그인에 실패했어요. 잠시 후 다시 시도해 주세요.",
@@ -135,8 +140,8 @@ export function DevLoginForm({ returnTo }: DevLoginFormProps) {
           </p>
         )}
 
-        <Button className={styles.devSubmit} disabled={isSubmitting} type="submit">
-          {isSubmitting ? "로그인 중..." : "dev 계정으로 로그인"}
+        <Button className={styles.devSubmit} disabled={issueDevSession.isPending} type="submit">
+          {issueDevSession.isPending ? "로그인 중..." : "dev 계정으로 로그인"}
         </Button>
       </Form>
     </section>

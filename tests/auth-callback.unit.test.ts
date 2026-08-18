@@ -2,12 +2,17 @@ import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/auth/callback/route";
 
-const { memberMeMock } = vi.hoisted(() => ({
+const { createServerClientMock, memberMeMock, serverClientMock } = vi.hoisted(() => ({
+  createServerClientMock: vi.fn(),
   memberMeMock: vi.fn(),
+  serverClientMock: { get: vi.fn() },
 }));
 
 vi.mock("@/api", () => ({
   memberMe: memberMeMock,
+}));
+vi.mock("@/api/server-client", () => ({
+  createServerClient: createServerClientMock,
 }));
 
 vi.mock("server-only", () => ({}));
@@ -32,6 +37,7 @@ function expectLoginIntentCleared(response: Response) {
 beforeEach(() => {
   vi.resetAllMocks();
   vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "https://api.dev.moimyeon.plady.io");
+  createServerClientMock.mockResolvedValue(serverClientMock);
   memberMeMock.mockResolvedValue({
     data: {
       data: {
@@ -55,9 +61,9 @@ describe("OAuth callback", () => {
     expect(response.headers.get("Location")).toBe("https://moimyeon.plady.io/interviews/new");
     expect(memberMeMock).toHaveBeenCalledWith({
       cache: "no-store",
+      client: serverClientMock,
       headers: {
         Accept: "application/json",
-        Cookie: "moimyeon_return_to=/interviews/new",
       },
       throwOnError: false,
     });
