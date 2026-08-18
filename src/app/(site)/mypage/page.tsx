@@ -1,0 +1,49 @@
+import type { Metadata } from "next";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Suspense } from "react";
+import {
+  jobRolesOptions,
+  memberMeOptions,
+  publicProfileOptions,
+} from "@/api/generated/@tanstack/react-query.gen";
+import { getQueryClient } from "@/api/query-client";
+import { createServerClient } from "@/api/server-client";
+import { MyPageContent } from "@/features/mypage/mypage-content";
+
+export const metadata: Metadata = {
+  title: "마이페이지",
+};
+
+export default async function MyPage() {
+  const queryClient = getQueryClient();
+  const serverClient = await createServerClient();
+  const requestOptions = {
+    cache: "no-store" as const,
+    client: serverClient,
+  };
+  const memberQuery = memberMeOptions(requestOptions);
+
+  await Promise.all([
+    queryClient.prefetchQuery(memberQuery),
+    queryClient.prefetchQuery(jobRolesOptions(requestOptions)),
+  ]);
+
+  const member = queryClient.getQueryData(memberQuery.queryKey)?.data;
+
+  if (member !== undefined) {
+    queryClient.prefetchQuery(
+      publicProfileOptions({
+        ...requestOptions,
+        path: { memberId: member.memberId },
+      }),
+    );
+  }
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Suspense fallback={null}>
+        <MyPageContent />
+      </Suspense>
+    </HydrationBoundary>
+  );
+}
