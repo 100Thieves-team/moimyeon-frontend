@@ -2,16 +2,11 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+First, copy the local environment file and run the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+cp .env.example .env.local
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -22,11 +17,17 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## API Client
 
-Create a local environment file before using the generated API client:
+The generated client calls the published development API. For authenticated server rendering during local development:
+
+1. Sign in with a dev account.
+2. Copy the `ACCESS_TOKEN` value from the dev API cookies in browser DevTools.
+3. Set it in `.env.local` without the `NEXT_PUBLIC_` prefix:
 
 ```bash
-cp .env.example .env.local
+DEV_ACCESS_TOKEN=eyJ...
 ```
+
+Restart `pnpm dev` after changing the token. Access tokens expire, so repeat these steps when server-rendered requests begin returning `401`. Never commit the token value or write it to `.env.example`.
 
 Generate the typed Next.js Fetch client and SDK from the published development OpenAPI schema:
 
