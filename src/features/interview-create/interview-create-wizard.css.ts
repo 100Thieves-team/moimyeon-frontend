@@ -227,3 +227,60 @@ export const previewLink = style({
   gap: "0.4rem",
   color: vars.color.secondary,
 });
+export const segmented = style({
+  display: "grid",
+  gridTemplateColumns: "repeat(2, 1fr)",
+  gap: "0.8rem",
+});
+export const segment = style({
+  display: "grid",
+  placeItems: "center",
+  minHeight: "4.4rem",
+  border: `1px solid ${vars.color.strokeMedium}`,
+  borderRadius: vars.radius.control,
+  cursor: "pointer",
+  selectors: {
+    '&[data-selected="true"]': {
+      borderColor: vars.color.primary,
+      boxShadow: `inset 0 0 0 1px ${vars.color.primary}`,
+    },
+  },
+});
+export const labelRow = style({
+  display: "flex",
+  justifyContent: "space-between",
+  color: vars.color.secondary,
+});
+export const sliderControl = style({
+  display: "flex",
+  alignItems: "center",
+  height: "3.2rem",
+  touchAction: "none",
+});
+export const sliderTrack = style({
+  position: "relative",
+  width: "100%",
+  height: "0.4rem",
+  borderRadius: vars.radius.pill,
+  background: vars.color.fillSecondary,
+});
+export const sliderIndicator = style({
+  borderRadius: vars.radius.pill,
+  background: vars.color.fillPrimary,
+});
+export const sliderThumb = style({
+  width: "2rem",
+  height: "2rem",
+  border: `1px solid ${vars.color.strokeMedium}`,
+  borderRadius: vars.radius.pill,
+  background: vars.color.background,
+  boxShadow: vars.shadow.cardRaise,
+});
+export const scheduleList = style({ display: "grid", gap: "0.8rem" });
+export const scheduleRow = style({
+  display: "grid",
+  gridTemplateColumns: "1.4fr 1fr 1fr auto",
+  gap: "0.8rem",
+  alignItems: "start",
+  "@media": { "screen and (max-width: 599px)": { gridTemplateColumns: "1fr" } },
+});

@@ -17,6 +17,7 @@ import {
   type SelectedPosting,
 } from "./interview-create-model";
 import { JobPostingLinkDialog } from "./job-posting-link-dialog";
+import { InterviewScheduleStep } from "./interview-schedule-step";
 import * as styles from "./interview-create-wizard.css";
 
 const steps = ["면접 정보", "진행 방식과 일정", "소개와 이력서", "최종 확인"] as const;
@@ -299,8 +300,12 @@ export function InterviewCreateWizard() {
   const [step, setStep] = useState(0);
 
   const goNext = async () => {
-    const valid = await methods.trigger(["posting", "jobRole", "round"]);
-    if (valid) setStep(1);
+    const fields =
+      step === 0
+        ? (["posting", "jobRole", "round"] as const)
+        : (["method", "sigunguId", "schedules"] as const);
+    const valid = await methods.trigger(fields);
+    if (valid) setStep((current) => Math.min(current + 1, 2));
   };
 
   return (
@@ -333,6 +338,8 @@ export function InterviewCreateWizard() {
           <form className={styles.main} onSubmit={(event) => event.preventDefault()}>
             {step === 0 ? (
               <InformationStep />
+            ) : step === 1 ? (
+              <InterviewScheduleStep />
             ) : (
               <>
                 <h1 className={styles.title}>다음 단계가 이어질 예정이에요</h1>
@@ -347,7 +354,7 @@ export function InterviewCreateWizard() {
               >
                 <ArrowLeft aria-hidden="true" size={16} /> {step === 0 ? "나가기" : "이전"}
               </Button>
-              {step === 0 ? (
+              {step < 2 ? (
                 <Button onClick={goNext} type="button">
                   다음 <ArrowRight aria-hidden="true" size={16} />
                 </Button>
