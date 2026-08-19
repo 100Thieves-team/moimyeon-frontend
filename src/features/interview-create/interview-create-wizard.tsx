@@ -60,13 +60,13 @@ type StepDefinition = {
 };
 
 const stepEnterTransition = {
-  duration: 0.25,
+  duration: 0.18,
   ease: motionValues.ease.out,
   type: "tween",
 } satisfies Transition;
 
 const stepExitTransition = {
-  duration: motionValues.duration.fast,
+  duration: 0.1,
   ease: motionValues.ease.out,
   type: "tween",
 } satisfies Transition;
@@ -76,12 +76,16 @@ const stepVariants = {
     opacity: 0,
     // Motion cannot interpolate a CSS variable nested inside a transform string.
     transform: "translateY(0.4rem)",
-    transition: stepExitTransition,
   },
   visible: {
     opacity: 1,
     transform: "translateY(0rem)",
     transition: stepEnterTransition,
+  },
+  exit: {
+    opacity: 0,
+    transform: "translateY(0rem)",
+    transition: stepExitTransition,
   },
 } satisfies Variants;
 
@@ -316,7 +320,7 @@ export function InterviewCreateWizard({
                     <m.div
                       animate="visible"
                       className={styles.stepContent}
-                      exit="hidden"
+                      exit="exit"
                       initial="hidden"
                       key={step.slug}
                       variants={stepVariants}
