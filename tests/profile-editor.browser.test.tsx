@@ -23,6 +23,15 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
       return result.data;
     },
   }),
+  nicknameSuggestionOptions: () => ({
+    queryKey: ["nicknameSuggestion"],
+    queryFn: async ({ signal }: { signal: AbortSignal }) => {
+      const result = await mocks.nicknameSuggestion({ signal, throwOnError: true });
+      if (result.error) throw result.error;
+      return result.data;
+    },
+  }),
+  nicknameSuggestionQueryKey: () => ["nicknameSuggestion"],
   publicProfileQueryKey: ({ path }: { path: { memberId: string } }) => [
     "publicProfile",
     path.memberId,
@@ -43,10 +52,6 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
       return result.data;
     },
   }),
-}));
-
-vi.mock("@/api/generated", () => ({
-  nicknameSuggestion: mocks.nicknameSuggestion,
 }));
 
 const myPageData: MyPageData = {
@@ -95,9 +100,7 @@ function success(data: Record<string, unknown> = {}) {
 }
 
 function renderProfileEditor() {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false, staleTime: Number.POSITIVE_INFINITY } },
-  });
+  const queryClient = new QueryClient();
 
   return render(
     <QueryClientProvider client={queryClient}>

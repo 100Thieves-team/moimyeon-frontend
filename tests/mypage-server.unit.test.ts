@@ -90,13 +90,14 @@ describe("MyPage server prefetch", () => {
     );
   });
 
-  it("회원 prefetch가 실패해도 페이지를 반환하고 공개 프로필 prefetch는 생략한다", async () => {
-    mocks.memberMe.mockRejectedValue({
+  it("회원 조회가 실패하면 원본 오류를 전파하고 공개 프로필 조회는 생략한다", async () => {
+    const error = {
       error: { code: "E1102", message: "인증이 필요합니다." },
       result: "ERROR",
-    });
+    };
+    mocks.memberMe.mockRejectedValue(error);
 
-    await expect(MyPage()).resolves.toBeDefined();
+    await expect(MyPage()).rejects.toBe(error);
     expect(mocks.jobRoles).toHaveBeenCalledOnce();
     expect(mocks.publicProfile).not.toHaveBeenCalled();
   });

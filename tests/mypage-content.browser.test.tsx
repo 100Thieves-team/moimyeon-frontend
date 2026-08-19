@@ -21,10 +21,6 @@ const mocks = vi.hoisted(() => ({
   updateProfile: vi.fn(),
 }));
 
-vi.mock("@/api/generated", () => ({
-  nicknameSuggestion: mocks.nicknameSuggestion,
-}));
-
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
   authLogoutMutation: () => ({ mutationFn: mocks.authLogout }),
   jobRolesOptions: () => ({
@@ -40,6 +36,11 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
     queryFn: vi.fn(),
     queryKey: ["nicknameAvailability", options],
   }),
+  nicknameSuggestionOptions: () => ({
+    queryFn: mocks.nicknameSuggestion,
+    queryKey: ["nicknameSuggestion"],
+  }),
+  nicknameSuggestionQueryKey: () => ["nicknameSuggestion"],
   publicProfileOptions: ({ path }: { path: { memberId: string } }) => ({
     queryFn: mocks.publicProfile,
     queryKey: ["publicProfile", path.memberId],

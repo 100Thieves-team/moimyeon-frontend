@@ -23,18 +23,16 @@ export default async function MyPage() {
   };
   const memberQuery = memberMeOptions(requestOptions);
 
-  await Promise.all([
-    queryClient.prefetchQuery(memberQuery),
-    queryClient.prefetchQuery(jobRolesOptions(requestOptions)),
+  const [memberResponse] = await Promise.all([
+    queryClient.ensureQueryData(memberQuery),
+    queryClient.ensureQueryData(jobRolesOptions(requestOptions)),
   ]);
 
-  const member = queryClient.getQueryData(memberQuery.queryKey)?.data;
-
-  if (member !== undefined) {
+  if (memberResponse?.data !== undefined) {
     queryClient.prefetchQuery(
       publicProfileOptions({
         ...requestOptions,
-        path: { memberId: member.memberId },
+        path: { memberId: memberResponse.data.memberId },
       }),
     );
   }

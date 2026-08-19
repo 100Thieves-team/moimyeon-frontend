@@ -4,19 +4,25 @@ import { Combobox } from "@base-ui/react/combobox";
 import { Field } from "@base-ui/react/field";
 import { Form } from "@base-ui/react/form";
 import { Toast } from "@base-ui/react/toast";
-import { isCancelledError, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  isCancelledError,
+  useIsFetching,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { Check, RotateCcw, X } from "lucide-react";
 import { Fragment, useRef, useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   memberMeQueryKey,
   nicknameAvailabilityOptions,
+  nicknameSuggestionOptions,
+  nicknameSuggestionQueryKey,
   publicProfileQueryKey,
   searchCompaniesOptions,
   searchCompaniesQueryKey,
   updateProfileMutation,
 } from "@/api/generated/@tanstack/react-query.gen";
-import { nicknameSuggestion } from "@/api/generated";
 import { Button } from "@/components/button";
 import type { MyPageData, ProfileCompany } from "./mypage-model";
 import * as styles from "./profile-editor.css";
@@ -232,6 +238,8 @@ function CompanyCombobox({ name, onBlur, onChange, value }: CompanyComboboxProps
 
 export function ProfileEditor({ jobRoleGroups, member }: ProfileEditorProps) {
   const queryClient = useQueryClient();
+  const isNicknameSuggestionFetching =
+    useIsFetching({ queryKey: nicknameSuggestionQueryKey(), exact: true }) > 0;
   const updateProfile = useMutation({
     ...updateProfileMutation(),
     onSuccess: () => {
@@ -262,31 +270,27 @@ export function ProfileEditor({ jobRoleGroups, member }: ProfileEditorProps) {
     },
     values: formValues,
   });
-  const nicknameSuggestionMutation = useMutation({
-    mutationFn: async () => {
-      const { data } = await nicknameSuggestion({ throwOnError: true });
-      const suggestedNickname = data.data?.nickname;
+  const suggestNickname = async () => {
+    try {
+      const result = await queryClient.fetchQuery(nicknameSuggestionOptions());
+      const suggestedNickname = result.data?.nickname;
 
       if (!suggestedNickname) {
         throw new Error("Nickname suggestion response did not include a nickname.");
       }
 
-      return suggestedNickname;
-    },
-    onError: () => {
-      setError("nickname", {
-        message: "새 닉네임을 만들지 못했어요. 잠시 후 다시 시도해 주세요.",
-        type: "suggestion",
-      });
-    },
-    onSuccess: (suggestedNickname) => {
       setValue("nickname", suggestedNickname, {
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true,
       });
-    },
-  });
+    } catch {
+      setError("nickname", {
+        message: "새 닉네임을 만들지 못했어요. 잠시 후 다시 시도해 주세요.",
+        type: "suggestion",
+      });
+    }
+  };
   const submitError = errors.root?.serverError?.message;
 
   const submitForm = handleSubmit((values) => {
@@ -382,14 +386,14 @@ export function ProfileEditor({ jobRoleGroups, member }: ProfileEditorProps) {
                 />
                 <Button
                   className={styles.suggestionButton}
-                  disabled={nicknameSuggestionMutation.isPending}
-                  onClick={() => nicknameSuggestionMutation.mutate()}
+                  disabled={isNicknameSuggestionFetching}
+                  onClick={() => void suggestNickname()}
                   size="sm"
                   type="button"
                   variant="ghost"
                 >
                   <RotateCcw aria-hidden="true" size={14} strokeWidth={2} />
-                  {nicknameSuggestionMutation.isPending ? "만드는 중..." : "새로 만들기"}
+                  {isNicknameSuggestionFetching ? "만드는 중..." : "새로 만들기"}
                 </Button>
               </div>
               <Field.Error
