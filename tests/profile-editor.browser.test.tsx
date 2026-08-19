@@ -64,6 +64,11 @@ const myPageData: MyPageData = {
         { code: "BACKEND", displayName: "백엔드", jobRoleId: 20 },
       ],
     },
+    {
+      code: "DATA",
+      displayName: "데이터",
+      roles: [{ code: "DATA_ANALYST", displayName: "데이터분석가", jobRoleId: 30 }],
+    },
   ],
   member: {
     email: "otter@example.com",
@@ -99,16 +104,23 @@ function success(data: Record<string, unknown> = {}) {
   };
 }
 
-function renderProfileEditor() {
+function renderProfileEditor(data: MyPageData = myPageData) {
   const queryClient = new QueryClient();
 
   return render(
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
-        <ProfileEditor jobRoleGroups={myPageData.jobRoleGroups} member={myPageData.member} />
+        <ProfileEditor jobRoleGroups={data.jobRoleGroups} member={data.member} />
       </ToastProvider>
     </QueryClientProvider>,
   );
+}
+
+async function openJobRoleDialog(screen: Awaited<ReturnType<typeof renderProfileEditor>>) {
+  await screen.getByRole("button", { name: "관심 직무" }).click();
+  const dialog = screen.getByRole("dialog", { name: "직무 추가" });
+  await expect.element(dialog).toBeVisible();
+  return dialog;
 }
 
 beforeEach(async () => {
@@ -121,34 +133,130 @@ beforeEach(async () => {
 });
 
 describe("ProfileEditor", () => {
-  it("관심 직무는 현재 선택값만 읽기 전용으로 보여준다", async () => {
+  it("관심 직무 필드를 클릭하면 기존 선택으로 직무 추가 Dialog를 연다", async () => {
     const screen = await renderProfileEditor();
-    const interestJobRoleInput = screen.getByLabelText("관심 직무");
 
     await expect.element(screen.getByLabelText("닉네임")).toBeVisible();
-    await expect.element(interestJobRoleInput).toBeVisible();
-    await expect.element(interestJobRoleInput).toHaveValue("프론트엔드");
-    await expect.element(interestJobRoleInput).toHaveAttribute("readonly");
-    await expect.element(screen.getByText("직무 추가")).not.toBeInTheDocument();
+    await expect.element(screen.getByText("프론트엔드", { exact: true })).toBeVisible();
+    await expect.element(screen.getByRole("button", { name: "프론트엔드 삭제" })).toBeVisible();
+
+    await openJobRoleDialog(screen);
+
     await expect
-      .element(screen.getByRole("button", { name: "프론트엔드 삭제" }))
-      .not.toBeInTheDocument();
+      .element(screen.getByRole("tab", { name: "개발 1개 선택" }))
+      .toHaveAttribute("data-active");
+    await expect
+      .element(screen.getByRole("button", { exact: true, name: "프론트엔드" }))
+      .toHaveAttribute("aria-pressed", "true");
+    await screen.getByRole("button", { name: "직무 선택 닫기" }).click();
   });
 
   it("닉네임과 관심 직무 입력 영역의 높이가 같다", async () => {
     const screen = await renderProfileEditor();
     const nicknameInput = screen.getByLabelText("닉네임").element();
-    const interestJobRoleInput = screen.getByLabelText("관심 직무").element();
+    const interestJobRoleTrigger = screen.getByRole("button", { name: "관심 직무" }).element();
     const nicknameInputGroup = nicknameInput.parentElement;
+    const interestJobRoleFrame = interestJobRoleTrigger.parentElement;
 
     expect(nicknameInputGroup).not.toBeNull();
+    expect(interestJobRoleFrame).not.toBeNull();
     expect(nicknameInputGroup?.getBoundingClientRect().height).toBe(
-      interestJobRoleInput.getBoundingClientRect().height,
+      interestJobRoleFrame?.getBoundingClientRect().height,
     );
   });
 
-  it("수정한 프로필을 저장하면서 기존 관심 직무 ID를 보존한다", async () => {
+  it("관심 직무 Pill의 X 버튼으로 Dialog 없이 직무를 삭제해 저장한다", async () => {
     const screen = await renderProfileEditor();
+
+    await screen.getByRole("button", { name: "프론트엔드 삭제" }).click();
+
+    await expect.element(screen.getByRole("dialog", { name: "직무 추가" })).not.toBeInTheDocument();
+    await expect.element(screen.getByText("관심 직무를 선택해 주세요.")).toBeVisible();
+    await screen.getByRole("button", { name: "저장하기" }).click();
+
+    await expect.poll(() => mocks.updateProfile.mock.calls.length).toBe(1);
+    expect(mocks.updateProfile).toHaveBeenCalledWith({
+      body: expect.objectContaining({ interestJobRoleIds: [] }),
+      throwOnError: true,
+    });
+  });
+
+  it("여러 직군에서 직무를 선택 완료하면 Pill과 저장 값에 반영한다", async () => {
+    const screen = await renderProfileEditor();
+    await openJobRoleDialog(screen);
+
+    await screen.getByRole("button", { name: "백엔드" }).click();
+    await screen.getByRole("tab", { name: "데이터" }).click();
+    await screen.getByRole("button", { name: "데이터분석가" }).click();
+    await screen.getByRole("button", { name: "선택 완료" }).click();
+
+    await expect.element(screen.getByRole("button", { name: "백엔드 삭제" })).toBeVisible();
+    await expect.element(screen.getByRole("button", { name: "데이터분석가 삭제" })).toBeVisible();
+    await screen.getByRole("button", { name: "저장하기" }).click();
+
+    await expect.poll(() => mocks.updateProfile.mock.calls.length).toBe(1);
+    expect(mocks.updateProfile).toHaveBeenCalledWith({
+      body: expect.objectContaining({ interestJobRoleIds: [10, 20, 30] }),
+      throwOnError: true,
+    });
+  });
+
+  it("Dialog를 닫으면 완료하지 않은 직무 변경을 버린다", async () => {
+    const screen = await renderProfileEditor();
+    await openJobRoleDialog(screen);
+
+    await screen.getByRole("button", { name: "백엔드" }).click();
+    await screen.getByRole("button", { name: "직무 선택 닫기" }).click();
+    await openJobRoleDialog(screen);
+
+    await expect
+      .element(screen.getByRole("button", { exact: true, name: "프론트엔드" }))
+      .toHaveAttribute("aria-pressed", "true");
+    await expect
+      .element(screen.getByRole("button", { name: "백엔드" }))
+      .toHaveAttribute("aria-pressed", "false");
+    await screen.getByRole("button", { name: "직무 선택 닫기" }).click();
+  });
+
+  it("기존 관심 직무가 없으면 아무 직군도 선택하지 않는다", async () => {
+    const screen = await renderProfileEditor({
+      ...myPageData,
+      member: {
+        ...myPageData.member,
+        profile: { ...myPageData.member.profile, interestJobRoleIds: [] },
+      },
+    });
+
+    await openJobRoleDialog(screen);
+
+    await expect.element(screen.getByText("직군을 선택해 주세요.")).toBeVisible();
+    await expect
+      .element(screen.getByRole("tab", { name: "개발" }))
+      .not.toHaveAttribute("data-active");
+    await expect
+      .element(screen.getByRole("tab", { name: "데이터" }))
+      .not.toHaveAttribute("data-active");
+    await screen.getByRole("button", { name: "직무 선택 닫기" }).click();
+  });
+
+  it("Dialog에서 초기화하고 완료하면 관심 직무를 모두 제거한다", async () => {
+    const screen = await renderProfileEditor();
+    await openJobRoleDialog(screen);
+
+    await screen.getByRole("button", { name: "초기화" }).click();
+    await screen.getByRole("button", { name: "선택 완료" }).click();
+
+    await expect.element(screen.getByText("관심 직무를 선택해 주세요.")).toBeVisible();
+  });
+
+  it("Dialog를 확정하지 않은 저장에서는 카탈로그에 없는 기존 관심 직무 ID를 보존한다", async () => {
+    const screen = await renderProfileEditor({
+      ...myPageData,
+      member: {
+        ...myPageData.member,
+        profile: { ...myPageData.member.profile, interestJobRoleIds: [10, 999] },
+      },
+    });
 
     await screen.getByLabelText("자기소개").fill("구체적인 피드백을 좋아해요.");
     await screen.getByRole("button", { name: "저장하기" }).click();
@@ -159,13 +267,33 @@ describe("ProfileEditor", () => {
         nickname: "집요한 수달 07",
         bio: "구체적인 피드백을 좋아해요.",
         interestCompanyIds: [1],
-        interestJobRoleIds: [10],
+        interestJobRoleIds: [10, 999],
       },
       throwOnError: true,
     });
     await expect
       .element(screen.getByRole("dialog", { name: "프로필을 저장했어요." }))
       .toBeVisible();
+  });
+
+  it("Dialog에서 새 선택을 확정하면 카탈로그에 없는 기존 관심 직무 ID를 제외한다", async () => {
+    const screen = await renderProfileEditor({
+      ...myPageData,
+      member: {
+        ...myPageData.member,
+        profile: { ...myPageData.member.profile, interestJobRoleIds: [10, 999] },
+      },
+    });
+
+    await openJobRoleDialog(screen);
+    await screen.getByRole("button", { name: "선택 완료" }).click();
+    await screen.getByRole("button", { name: "저장하기" }).click();
+
+    await expect.poll(() => mocks.updateProfile.mock.calls.length).toBe(1);
+    expect(mocks.updateProfile).toHaveBeenCalledWith({
+      body: expect.objectContaining({ interestJobRoleIds: [10] }),
+      throwOnError: true,
+    });
   });
 
   it("프로필 저장에 실패하면 폼 오류만 보여준다", async () => {

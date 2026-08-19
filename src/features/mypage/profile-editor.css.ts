@@ -106,74 +106,8 @@ export const bioInput = style({
   },
 });
 
-export const readonlyInput = style({
-  ...inputFrame,
-  height: "4.6rem",
-  boxSizing: "border-box",
-  paddingInline: "1.6rem",
-  outline: 0,
-  selectors: {
-    ...inputFrame.selectors,
-    "&::placeholder": {
-      color: vars.color.tertiary,
-      opacity: 1,
-    },
-  },
-});
-
-export const comboboxInputGroup = style({
-  ...inputFrame,
+export const companyPillFrame = style({
   padding: "0.9rem 1.2rem",
-});
-
-export const chips = style({
-  display: "flex",
-  width: "100%",
-  minWidth: 0,
-  flexWrap: "wrap",
-  alignItems: "center",
-  gap: vars.spacing.sm,
-});
-
-export const chip = style({
-  display: "inline-flex",
-  minHeight: "3rem",
-  alignItems: "center",
-  gap: "0.4rem",
-  padding: "0.6rem 1rem 0.6rem 1.2rem",
-  borderRadius: vars.radius.pill,
-  backgroundColor: vars.color.fillSecondary,
-  color: vars.color.primary,
-  fontSize: "1.3rem",
-  fontWeight: 500,
-  lineHeight: "1.7rem",
-});
-
-export const chipRemove = style({
-  display: "inline-flex",
-  width: "2rem",
-  height: "2rem",
-  alignItems: "center",
-  justifyContent: "center",
-  border: 0,
-  borderRadius: vars.radius.pill,
-  backgroundColor: "transparent",
-  color: vars.color.tertiary,
-  cursor: "pointer",
-  selectors: {
-    "&:focus-visible": {
-      outline: `2px solid ${vars.color.primary}`,
-    },
-  },
-  "@media": {
-    [media.hover]: {
-      selectors: {
-        "&:hover": {
-          backgroundColor: vars.color.fillSecondaryHover,
-        },
-      },
-    },
-  },
 });
 
 export const companyInput = style({
