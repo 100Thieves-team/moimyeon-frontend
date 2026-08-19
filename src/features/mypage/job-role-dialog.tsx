@@ -12,11 +12,21 @@ import * as styles from "./job-role-field.css";
 import { JobRolePill } from "./job-role-pill";
 import type { JobRoleGroup } from "./mypage-model";
 
-type JobRoleDialogProps = {
+type MultipleJobRoleDialogProps = {
   groups: JobRoleGroup[];
+  mode: "multiple";
   onValueChange: (value: number[]) => void;
   value: number[];
 };
+
+type SingleJobRoleDialogProps = {
+  groups: JobRoleGroup[];
+  mode: "single";
+  onValueChange: (value: number | null) => void;
+  value: number | null;
+};
+
+export type JobRoleDialogProps = MultipleJobRoleDialogProps | SingleJobRoleDialogProps;
 
 function getOrderedRoles(groups: JobRoleGroup[]) {
   return groups.flatMap((group) => group.roles);
@@ -33,9 +43,15 @@ function haveSameIds(left: readonly number[], right: readonly number[]) {
   return left.length === right.length && left.every((id) => right.includes(id));
 }
 
-export function JobRoleDialog({ groups, onValueChange, value }: JobRoleDialogProps) {
+function getSelectedIds(value: JobRoleDialogProps["value"]) {
+  return Array.isArray(value) ? value : value === null ? [] : [value];
+}
+
+export function JobRoleDialog(props: JobRoleDialogProps) {
+  const { groups, value } = props;
+  const selectedIds = getSelectedIds(value);
   const orderedRoles = useMemo(() => getOrderedRoles(groups), [groups]);
-  const [draftIds, setDraftIds] = useState<Set<number>>(() => new Set(value));
+  const [draftIds, setDraftIds] = useState<Set<number>>(() => new Set(selectedIds));
   const [activeGroupCode, setActiveGroupCode] = useState<string | null>(null);
   const activeGroup = groups.find((group) => group.code === activeGroupCode) ?? null;
   const draftRoles = orderedRoles.filter((role) => draftIds.has(role.jobRoleId));
@@ -43,9 +59,9 @@ export function JobRoleDialog({ groups, onValueChange, value }: JobRoleDialogPro
   const handleOpenChange = (open: boolean) => {
     if (open) {
       /* Dialog가 열릴 때마다 관심 직무를 초기화 */
-      const selectedIds = new Set(value);
-      setDraftIds(selectedIds);
-      setActiveGroupCode(getInitialGroupCode(groups, selectedIds));
+      const nextSelectedIds = new Set(getSelectedIds(value));
+      setDraftIds(nextSelectedIds);
+      setActiveGroupCode(getInitialGroupCode(groups, nextSelectedIds));
     }
   };
 
@@ -62,6 +78,12 @@ export function JobRoleDialog({ groups, onValueChange, value }: JobRoleDialogPro
       return;
     }
 
+    if (props.mode === "single") {
+      const nextValue = nextValues.at(-1);
+      setDraftIds(new Set(nextValue === undefined ? [] : [Number(nextValue)]));
+      return;
+    }
+
     const activeGroupIds = new Set(activeGroup.roles.map((role) => role.jobRoleId));
     setDraftIds((current) => {
       const next = new Set([...current].filter((id) => !activeGroupIds.has(id)));
@@ -75,8 +97,17 @@ export function JobRoleDialog({ groups, onValueChange, value }: JobRoleDialogPro
       .filter((role) => draftIds.has(role.jobRoleId))
       .map((role) => role.jobRoleId);
 
-    if (!haveSameIds(value, nextValue)) {
-      onValueChange(nextValue);
+    if (props.mode === "single") {
+      const nextId = nextValue[0] ?? null;
+
+      if (value !== nextId) {
+        props.onValueChange(nextId);
+      }
+      return;
+    }
+
+    if (!haveSameIds(props.value, nextValue)) {
+      props.onValueChange(nextValue);
     }
   };
 
@@ -124,7 +155,7 @@ export function JobRoleDialog({ groups, onValueChange, value }: JobRoleDialogPro
                   <ToggleGroup
                     aria-label={`${activeGroup.displayName} 직무`}
                     className={styles.roleList}
-                    multiple
+                    multiple={props.mode !== "single"}
                     onValueChange={updateActiveGroup}
                     value={activeGroup.roles
                       .filter((role) => draftIds.has(role.jobRoleId))

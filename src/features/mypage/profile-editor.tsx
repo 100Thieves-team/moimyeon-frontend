@@ -470,6 +470,7 @@ export function ProfileEditor({ jobRoleGroups, member }: ProfileEditorProps) {
                 </Field.Root>
                 <JobRoleDialog
                   groups={jobRoleGroups}
+                  mode="multiple"
                   onValueChange={handleValueChange}
                   value={field.value}
                 />
