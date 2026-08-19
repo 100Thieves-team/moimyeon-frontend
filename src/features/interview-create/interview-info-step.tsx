@@ -219,7 +219,7 @@ function ChoiceLabel({ children, optional }: { children: string; optional?: bool
 }
 
 export function InterviewInfoStep({ jobRoleGroups, options }: InterviewInfoStepProps) {
-  const { clearErrors, control, setValue } = useFormContext<InterviewCreateFormValues>();
+  const { clearErrors, control } = useFormContext<InterviewCreateFormValues>();
 
   return (
     <div className={styles.formCard}>
@@ -241,11 +241,7 @@ export function InterviewInfoStep({ jobRoleGroups, options }: InterviewInfoStepP
               onBlur={field.onBlur}
               onChange={(nextPosting) => {
                 field.onChange(nextPosting);
-                setValue("jobRoleId", nextPosting?.jobRoleId ?? null, {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                });
-                clearErrors(["posting", "jobRoleId"]);
+                clearErrors("posting");
               }}
               value={field.value}
             />

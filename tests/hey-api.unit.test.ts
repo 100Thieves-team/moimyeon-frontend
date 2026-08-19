@@ -6,6 +6,7 @@ type ClientConfigOptions = {
   apiBaseUrl?: string;
   browser?: boolean;
   nodeEnv?: string;
+  requestFetch?: typeof fetch;
   token?: string;
 };
 
@@ -13,6 +14,7 @@ async function createConfig({
   apiBaseUrl = DEV_API_BASE_URL,
   browser = false,
   nodeEnv = "development",
+  requestFetch,
   token = "test-access-token",
 }: ClientConfigOptions = {}) {
   vi.resetModules();
@@ -26,7 +28,10 @@ async function createConfig({
 
   const { createClientConfig } = await import("@/api/hey-api");
 
-  return createClientConfig({ headers: { "X-Test-Header": "preserved" } });
+  return createClientConfig({
+    ...(requestFetch ? { fetch: requestFetch } : {}),
+    headers: { "X-Test-Header": "preserved" },
+  });
 }
 
 afterEach(() => {
@@ -55,5 +60,46 @@ describe("API client development access token", () => {
 
     expect(headers.has("Authorization")).toBe(false);
     expect(headers.get("X-Test-Header")).toBe("preserved");
+  });
+});
+
+describe("API response compatibility", () => {
+  it("이력서 응답의 default와 null lastUsed를 생성 스키마 형태로 정규화한다", async () => {
+    const requestFetch = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            maxCount: 10,
+            resumes: [
+              {
+                aiSummary: { status: "DONE", text: "요약" },
+                default: true,
+                file: {
+                  contentType: "application/pdf",
+                  originalName: "resume.pdf",
+                  sizeBytes: 1_024,
+                },
+                lastUsed: null,
+                name: "resume.pdf",
+                registeredAt: "2026-08-20T12:00:00",
+                resumeId: "resume-1",
+              },
+            ],
+          },
+          result: "SUCCESS",
+        }),
+        { headers: { "Content-Type": "application/json" } },
+      ),
+    );
+    const config = await createConfig({ requestFetch });
+
+    const response = await config.fetch!("https://api.dev.moimyeon.plady.io/v1/members/me/resumes");
+    const body = await response.json();
+    const resume = body.data.resumes[0];
+    const { zResumesResponse } = await import("@/api/generated/zod.gen");
+
+    expect(resume.isDefault).toBe(true);
+    expect(resume).not.toHaveProperty("lastUsed");
+    expect(() => zResumesResponse.parse(body)).not.toThrow();
   });
 });

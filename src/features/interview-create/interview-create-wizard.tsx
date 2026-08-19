@@ -1,8 +1,9 @@
 "use client";
 
 import { Form } from "@base-ui/react/form";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { Toast } from "@base-ui/react/toast";
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import {
   AnimatePresence,
   domAnimation,
@@ -13,22 +14,35 @@ import {
 } from "motion/react";
 import * as m from "motion/react-m";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { useCallback, useEffect, useMemo } from "react";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { Button } from "@/components/button";
-import { resumesOptions } from "@/api/generated/@tanstack/react-query.gen";
+import {
+  createRoomMutation,
+  participationSlotsQueryKey,
+  resumesOptions,
+  resumesQueryKey,
+  roomCreationLimitOptions,
+  roomCreationLimitQueryKey,
+  roomsQueryKey,
+} from "@/api/generated/@tanstack/react-query.gen";
 import type { JobRoleGroup } from "@/features/mypage/mypage-model";
 import { motionValues } from "@/styles";
 import { InterviewInfoStep } from "./interview-info-step";
 import {
   getInterviewCreateDefaultValues,
   getResumesData,
+  isInterviewInfoStepComplete,
+  isIntroductionAndResumeStepComplete,
+  isMethodAndScheduleStepComplete,
+  toCreateRoomBody,
   type InterviewCreateFormValues,
   type ParticipationSlots,
   type Regions,
   type RoomFormOptions,
 } from "./interview-create-model";
 import * as styles from "./interview-create-wizard.css";
+import { FinalReviewStep } from "./final-review-step";
 import { IntroductionAndResumeStep } from "./introduction-and-resume-step";
 import { MethodAndScheduleStep } from "./method-and-schedule-step";
 
@@ -40,8 +54,6 @@ type InterviewCreateWizardProps = {
 };
 
 type StepDefinition = {
-  description: string;
-  fields: readonly (keyof InterviewCreateFormValues)[];
   label: string;
   slug: string;
   title: string;
@@ -75,44 +87,42 @@ const stepVariants = {
 
 const steps = [
   {
-    description: "공고와 직무, 면접 차수를 선택해요.",
-    fields: ["posting", "jobRoleId", "round"],
     label: "면접 정보",
     slug: "interview-info",
     title: "어떤 면접을 준비하나요?",
   },
   {
-    description: "진행 방식과 가능한 일정을 정해요.",
-    fields: ["method", "minParticipants", "maxParticipants", "schedules", "sigunguId"],
     label: "진행 방식과 일정",
     slug: "method-and-schedule",
     title: "진행 방식과 일정을 정해요",
   },
   {
-    description: "면접 소개와 이력서를 준비해요.",
-    fields: ["title", "description", "resumeId"],
     label: "소개와 이력서",
     slug: "introduction-and-resume",
     title: "참여할 사람들에게 면접을 소개해요",
   },
   {
-    description: "입력한 내용을 마지막으로 확인해요.",
-    fields: [],
     label: "최종 확인",
     slug: "final-review",
-    title: "입력한 내용을 확인해 주세요",
+    title: "만들기 전에 같이 확인해요",
   },
 ] as const satisfies readonly StepDefinition[];
 
 export type InterviewCreateStepLabel = (typeof steps)[number]["label"];
 
-function PendingStep({ step }: { step: StepDefinition }) {
-  return (
-    <section className={`${styles.formCard} ${styles.pendingCard}`}>
-      <p className={styles.pendingLabel}>{step.label}</p>
-      <p className={styles.pendingDescription}>{step.description}</p>
-    </section>
-  );
+function getErrorMessage(error: unknown) {
+  const fallback = "면접을 만들지 못했어요. 입력한 내용을 확인하고 다시 시도해 주세요.";
+
+  if (typeof error !== "object" || error === null || !("error" in error)) {
+    return fallback;
+  }
+
+  const detail = error.error;
+  if (typeof detail !== "object" || detail === null || !("message" in detail)) {
+    return fallback;
+  }
+
+  return typeof detail.message === "string" ? detail.message : fallback;
 }
 
 export function InterviewCreateWizard({
@@ -123,14 +133,64 @@ export function InterviewCreateWizard({
 }: InterviewCreateWizardProps) {
   const { data: resumesResponse } = useSuspenseQuery(resumesOptions());
   const resumes = getResumesData(resumesResponse);
+  const queryClient = useQueryClient();
+  const toastManager = Toast.useToastManager();
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
   const methods = useForm<InterviewCreateFormValues>({
     defaultValues: getInterviewCreateDefaultValues(options, resumes),
-    mode: "onBlur",
-    reValidateMode: "onChange",
+    mode: "onChange",
   });
+  useWatch({ control: methods.control });
+  const values = methods.getValues();
+  const validJobRoleIds = useMemo(
+    () => new Set(jobRoleGroups.flatMap((group) => group.roles.map((role) => role.jobRoleId))),
+    [jobRoleGroups],
+  );
+  const hasCreationLimitParams = values.posting !== null && values.jobRoleId !== null;
+  const creationLimitRequest = {
+    query: {
+      jobPostingId: String(values.posting?.jobPostingId ?? ""),
+      jobRoleId: String(values.jobRoleId ?? ""),
+    },
+  };
+  const creationLimitQuery = useQuery({
+    ...roomCreationLimitOptions(creationLimitRequest),
+    enabled: hasCreationLimitParams,
+  });
+  const createRoom = useMutation({
+    ...createRoomMutation(),
+    onError: (error) => {
+      methods.setError("root.serverError", {
+        message: getErrorMessage(error),
+        type: "server",
+      });
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: roomsQueryKey() }),
+        queryClient.invalidateQueries({ queryKey: participationSlotsQueryKey() }),
+        queryClient.invalidateQueries({ queryKey: resumesQueryKey() }),
+        queryClient.invalidateQueries({
+          queryKey: roomCreationLimitQueryKey(creationLimitRequest),
+        }),
+      ]);
+      toastManager.add({ title: "1개의 면접을 만들었어요" });
+      router.replace("/");
+    },
+  });
+  const canCreateRoom =
+    creationLimitQuery.data?.data !== undefined &&
+    creationLimitQuery.data.data.remaining > 0 &&
+    participationSlots.remaining > 0;
+  const completedSteps = [
+    isInterviewInfoStepComplete(values, options, validJobRoleIds),
+    isMethodAndScheduleStepComplete(values, options, regions, canCreateRoom),
+    isIntroductionAndResumeStepComplete(values, resumes),
+    false,
+  ];
+  const isFormComplete = completedSteps.slice(0, 3).every(Boolean);
   const stepParam = searchParams.get("step");
   const step = steps.find((item) => item.slug === stepParam) ?? steps[0];
   const currentStep: InterviewCreateStepLabel = step.label;
@@ -153,6 +213,18 @@ export function InterviewCreateWizard({
     [createStepUrl, router],
   );
 
+  const moveToStepSlug = useCallback(
+    (slug: string) => {
+      const nextStep = steps.find((item) => item.slug === slug);
+
+      if (nextStep) {
+        methods.clearErrors("root.serverError");
+        moveToStep(nextStep);
+      }
+    },
+    [methods, moveToStep],
+  );
+
   useEffect(() => {
     if (steps.some((item) => item.slug === stepParam)) {
       return;
@@ -161,13 +233,10 @@ export function InterviewCreateWizard({
     router.replace(createStepUrl(steps[0]), { scroll: false });
   }, [createStepUrl, router, stepParam]);
 
-  const goNext = async () => {
-    const isValid =
-      currentStep === "면접 정보" ||
-      (await methods.trigger([...step.fields], { shouldFocus: true }));
+  const goNext = () => {
     const nextStep = steps[currentStepIndex + 1];
 
-    if (isValid && nextStep) {
+    if (nextStep) {
       moveToStep(nextStep);
     }
   };
@@ -179,6 +248,11 @@ export function InterviewCreateWizard({
       moveToStep(previousStep);
     }
   };
+
+  const submitCreateRoom = methods.handleSubmit((formValues) => {
+    methods.clearErrors("root.serverError");
+    createRoom.mutate({ body: toCreateRoomBody(formValues) });
+  });
 
   return (
     <main className={styles.page}>
@@ -197,7 +271,16 @@ export function InterviewCreateWizard({
                     onClick={() => moveToStep(item)}
                     type="button"
                   >
-                    <span className={styles.stepNumber}>{String(index + 1).padStart(2, "0")}</span>
+                    <span className={styles.stepNumber}>
+                      {completedSteps[index] ? (
+                        <>
+                          <Check aria-hidden="true" size={14} strokeWidth={2} />
+                          <span className={styles.visuallyHidden}>완료</span>
+                        </>
+                      ) : (
+                        String(index + 1).padStart(2, "0")
+                      )}
+                    </span>
                     <span className={styles.stepLabel}>{item.label}</span>
                   </button>
                 </li>
@@ -220,7 +303,11 @@ export function InterviewCreateWizard({
               className={styles.form}
               onSubmit={(event) => {
                 event.preventDefault();
-                void goNext();
+                if (currentStepIndex === steps.length - 1) {
+                  void submitCreateRoom();
+                } else {
+                  goNext();
+                }
               }}
             >
               <LazyMotion features={domAnimation} strict>
@@ -239,6 +326,10 @@ export function InterviewCreateWizard({
                         <InterviewInfoStep jobRoleGroups={jobRoleGroups} options={options} />
                       ) : currentStep === "진행 방식과 일정" ? (
                         <MethodAndScheduleStep
+                          creationLimit={creationLimitQuery.data?.data}
+                          creationLimitIsError={creationLimitQuery.isError}
+                          creationLimitIsPending={creationLimitQuery.isPending}
+                          hasCreationLimitParams={hasCreationLimitParams}
                           options={options}
                           participationSlots={participationSlots}
                           regions={regions}
@@ -246,7 +337,14 @@ export function InterviewCreateWizard({
                       ) : currentStep === "소개와 이력서" ? (
                         <IntroductionAndResumeStep />
                       ) : (
-                        <PendingStep step={step} />
+                        <FinalReviewStep
+                          jobRoleGroups={jobRoleGroups}
+                          onEdit={moveToStepSlug}
+                          options={options}
+                          regions={regions}
+                          resumes={resumes}
+                          submitError={methods.formState.errors.root?.serverError?.message ?? null}
+                        />
                       )}
                     </m.div>
                   </AnimatePresence>
@@ -261,10 +359,28 @@ export function InterviewCreateWizard({
                       이전
                     </Button>
                   ) : null}
-                  <Button className={styles.nextButton} size="sm" type="submit">
-                    {currentStepIndex === steps.length - 1 ? "확인" : "다음"}
-                    <ArrowRight aria-hidden="true" size={16} />
-                  </Button>
+                  {currentStepIndex === steps.length - 1 ? (
+                    <Button
+                      className={styles.nextButton}
+                      disabled={!isFormComplete || createRoom.isPending}
+                      key="submit"
+                      size="sm"
+                      type="submit"
+                    >
+                      {createRoom.isPending ? "면접 만드는 중..." : "면접 만들기"}
+                    </Button>
+                  ) : (
+                    <Button
+                      className={styles.nextButton}
+                      key="next"
+                      onClick={goNext}
+                      size="sm"
+                      type="button"
+                    >
+                      다음
+                      <ArrowRight aria-hidden="true" size={16} />
+                    </Button>
+                  )}
                 </div>
               </footer>
             </Form>
