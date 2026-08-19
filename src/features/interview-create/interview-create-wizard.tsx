@@ -1,6 +1,7 @@
 "use client";
 
 import { Form } from "@base-ui/react/form";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import {
   AnimatePresence,
@@ -15,17 +16,20 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Button } from "@/components/button";
+import { resumesOptions } from "@/api/generated/@tanstack/react-query.gen";
 import type { JobRoleGroup } from "@/features/mypage/mypage-model";
 import { motionValues } from "@/styles";
 import { InterviewInfoStep } from "./interview-info-step";
 import {
   getInterviewCreateDefaultValues,
+  getResumesData,
   type InterviewCreateFormValues,
   type ParticipationSlots,
   type Regions,
   type RoomFormOptions,
 } from "./interview-create-model";
 import * as styles from "./interview-create-wizard.css";
+import { IntroductionAndResumeStep } from "./introduction-and-resume-step";
 import { MethodAndScheduleStep } from "./method-and-schedule-step";
 
 type InterviewCreateWizardProps = {
@@ -86,10 +90,10 @@ const steps = [
   },
   {
     description: "면접 소개와 이력서를 준비해요.",
-    fields: [],
+    fields: ["title", "description", "resumeId"],
     label: "소개와 이력서",
     slug: "introduction-and-resume",
-    title: "면접을 소개해 주세요",
+    title: "참여할 사람들에게 면접을 소개해요",
   },
   {
     description: "입력한 내용을 마지막으로 확인해요.",
@@ -117,11 +121,13 @@ export function InterviewCreateWizard({
   participationSlots,
   regions,
 }: InterviewCreateWizardProps) {
+  const { data: resumesResponse } = useSuspenseQuery(resumesOptions());
+  const resumes = getResumesData(resumesResponse);
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
   const methods = useForm<InterviewCreateFormValues>({
-    defaultValues: getInterviewCreateDefaultValues(options),
+    defaultValues: getInterviewCreateDefaultValues(options, resumes),
     mode: "onBlur",
     reValidateMode: "onChange",
   });
@@ -237,6 +243,8 @@ export function InterviewCreateWizard({
                           participationSlots={participationSlots}
                           regions={regions}
                         />
+                      ) : currentStep === "소개와 이력서" ? (
+                        <IntroductionAndResumeStep />
                       ) : (
                         <PendingStep step={step} />
                       )}

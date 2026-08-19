@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   jobRoles: vi.fn(),
   participationSlots: vi.fn(),
   regions: vi.fn(),
+  resumes: vi.fn(),
   roomFormOptions: vi.fn(),
 }));
 
@@ -43,6 +44,13 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
     },
     queryKey: ["regions"],
   }),
+  resumesOptions: (options: QueryOptions = {}) => ({
+    queryFn: async ({ signal }: { signal: AbortSignal }) => {
+      const result = await mocks.resumes({ ...options, signal, throwOnError: true });
+      return result.data;
+    },
+    queryKey: ["resumes"],
+  }),
   roomFormOptionsOptions: (options: QueryOptions = {}) => ({
     queryFn: async ({ signal }: { signal: AbortSignal }) => {
       const result = await mocks.roomFormOptions({ ...options, signal, throwOnError: true });
@@ -72,6 +80,7 @@ beforeEach(() => {
   mocks.jobRoles.mockResolvedValue(sdkSuccess({ groups: [] }));
   mocks.participationSlots.mockResolvedValue(sdkSuccess({ limit: 3, occupied: 0, remaining: 3 }));
   mocks.regions.mockResolvedValue(sdkSuccess({ sidos: [] }));
+  mocks.resumes.mockResolvedValue(sdkSuccess({ maxCount: 10, resumes: [] }));
   mocks.roomFormOptions.mockResolvedValue(sdkSuccess({ rounds: [], types: [] }));
 });
 
@@ -89,6 +98,9 @@ describe("NewInterviewPage server prefetch", () => {
       expect.objectContaining({ cache: "no-store", client: serverClient, throwOnError: true }),
     );
     expect(mocks.participationSlots).toHaveBeenCalledWith(
+      expect.objectContaining({ cache: "no-store", client: serverClient, throwOnError: true }),
+    );
+    expect(mocks.resumes).toHaveBeenCalledWith(
       expect.objectContaining({ cache: "no-store", client: serverClient, throwOnError: true }),
     );
   });

@@ -5,6 +5,7 @@ import {
   jobRolesOptions,
   participationSlotsOptions,
   regionsOptions,
+  resumesOptions,
   roomFormOptionsOptions,
 } from "@/api/generated/@tanstack/react-query.gen";
 import { getQueryClient } from "@/api/query-client";
@@ -27,6 +28,7 @@ export default async function NewInterviewPage() {
   queryClient.prefetchQuery(jobRolesOptions(requestOptions));
   queryClient.prefetchQuery(regionsOptions(requestOptions));
   queryClient.prefetchQuery(participationSlotsOptions(requestOptions));
+  queryClient.prefetchQuery(resumesOptions(requestOptions));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
