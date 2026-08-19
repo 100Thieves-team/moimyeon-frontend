@@ -30,12 +30,11 @@ const controlFrame = {
 } as const;
 
 export const page = style({
-  display: "flex",
   width: "100%",
   flex: "1 1 auto",
-  padding: "2.4rem 1.6rem 0",
+  padding: `5.2rem 1.6rem max(8.8rem, env(safe-area-inset-bottom))`,
   "@media": {
-    [media.md]: { padding: "4rem 3.2rem 0" },
+    [media.md]: { paddingInline: "3.2rem" },
     [media.lg]: { paddingInline: "6.4rem" },
   },
 });
@@ -44,7 +43,6 @@ export const layout = style({
   display: "grid",
   width: "100%",
   maxWidth: "98rem",
-  flex: "1 1 auto",
   marginInline: "auto",
   alignItems: "start",
   gap: vars.spacing.xl,
@@ -152,14 +150,13 @@ export const wizardMain = style({
   width: "100%",
   minWidth: 0,
   flexDirection: "column",
-  alignSelf: "stretch",
+  gap: vars.spacing.xl,
 });
 
 export const mobileProgress = style({
   display: "flex",
   alignItems: "center",
   gap: vars.spacing.sm,
-  marginBottom: vars.spacing.md,
   color: vars.color.secondary,
   fontSize: "1.3rem",
   fontWeight: 600,
@@ -177,7 +174,6 @@ export const mobileStepNumber = style({
 });
 
 export const title = style({
-  marginBottom: vars.spacing.xl,
   outline: 0,
   color: vars.color.primary,
   fontSize: "2.6rem",
@@ -192,9 +188,8 @@ export const title = style({
 export const form = style({
   display: "flex",
   width: "100%",
-  flex: "1 1 auto",
   flexDirection: "column",
-  gap: vars.spacing.base,
+  gap: vars.spacing.xl,
 });
 
 export const stepContent = style({
@@ -450,8 +445,6 @@ export const footer = style({
   alignItems: "center",
   justifyContent: "flex-end",
   gap: vars.spacing.base,
-  marginTop: "auto",
-  padding: `${vars.spacing.sm} 0 max(${vars.spacing["2xl"]}, env(safe-area-inset-bottom))`,
 });
 
 export const navigationActions = style({
