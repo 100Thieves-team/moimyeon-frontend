@@ -4,7 +4,12 @@ import {
   createGlobalThemeContract,
   globalStyle,
 } from "@vanilla-extract/css";
-import { media } from "./tokens";
+import { media, motionValues } from "./tokens";
+
+const toCubicBezier = ([x1, y1, x2, y2]: [number, number, number, number]) =>
+  `cubic-bezier(${x1}, ${y1}, ${x2}, ${y2})`;
+
+const toMilliseconds = (seconds: number) => `${seconds * 1000}ms`;
 
 // 다크 모드에서 교체되는 시맨틱 컬러
 const themeContract = createGlobalThemeContract({
@@ -100,6 +105,7 @@ const staticContract = createGlobalThemeContract({
   },
   motion: {
     ease: {
+      out: "motion-ease-out",
       site: "motion-ease-site",
       underline: "motion-ease-underline",
       fade: "motion-ease-fade",
@@ -186,14 +192,15 @@ createGlobalTheme(":root", staticContract, {
   },
   motion: {
     ease: {
-      site: "cubic-bezier(0.87, 0, 0.13, 1)",
-      underline: "cubic-bezier(0.77, 0, 0.175, 1)",
-      fade: "cubic-bezier(0.5, 1, 0.9, 1)",
+      out: toCubicBezier(motionValues.ease.out),
+      site: toCubicBezier(motionValues.ease.site),
+      underline: toCubicBezier(motionValues.ease.underline),
+      fade: toCubicBezier(motionValues.ease.fade),
     },
     duration: {
-      fast: "150ms",
-      base: "200ms",
-      slow: "400ms",
+      fast: toMilliseconds(motionValues.duration.fast),
+      base: toMilliseconds(motionValues.duration.base),
+      slow: toMilliseconds(motionValues.duration.slow),
     },
   },
 });

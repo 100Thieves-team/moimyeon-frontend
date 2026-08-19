@@ -1,10 +1,5 @@
-import { keyframes, style } from "@vanilla-extract/css";
+import { style } from "@vanilla-extract/css";
 import { media, vars } from "@/styles";
-
-const enterStep = keyframes({
-  from: { opacity: 0, transform: "scale(0.97) translateY(0.8rem)" },
-  to: { opacity: 1, transform: "scale(1) translateY(0)" },
-});
 
 const controlFrame = {
   width: "100%",
@@ -193,11 +188,7 @@ export const form = style({
 });
 
 export const stepContent = style({
-  transformOrigin: "50% 0",
-  animation: `${enterStep} ${vars.motion.duration.slow} ${vars.motion.ease.fade} both`,
-  "@media": {
-    [media.reducedMotion]: { animation: "none" },
-  },
+  width: "100%",
 });
 
 export const formCard = style({

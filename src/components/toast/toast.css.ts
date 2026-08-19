@@ -1,6 +1,9 @@
 import { style } from "@vanilla-extract/css";
 import { media, vars } from "@/styles";
 
+const stackTransition = `transform ${vars.motion.duration.slow} ${vars.motion.ease.site}, opacity ${vars.motion.duration.base} ${vars.motion.ease.out}, height ${vars.motion.duration.fast} ${vars.motion.ease.fade}`;
+const swipeExitTransition = `transform ${vars.motion.duration.base} ${vars.motion.ease.out}, opacity ${vars.motion.duration.base} ${vars.motion.ease.out}, height ${vars.motion.duration.fast} ${vars.motion.ease.fade}`;
+
 export const viewport = style({
   position: "fixed",
   zIndex: 50,
@@ -39,7 +42,7 @@ export const root = style({
   transform:
     "translateX(var(--toast-swipe-movement-x)) translateY(calc(var(--toast-swipe-movement-y) + (var(--toast-index) * var(--peek)) + (var(--shrink) * var(--height)))) scale(var(--scale))",
   transformOrigin: "top center",
-  transition: `transform ${vars.motion.duration.slow} ${vars.motion.ease.site}, opacity ${vars.motion.duration.base} ${vars.motion.ease.fade}, height ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
+  transition: stackTransition,
   userSelect: "none",
   selectors: {
     "&[data-expanded]": {
@@ -48,23 +51,23 @@ export const root = style({
     },
     "&[data-starting-style]": {
       opacity: 0,
-      transform: "translateY(-150%)",
     },
     "&[data-limited]": {
       opacity: 0,
     },
     "&[data-ending-style]:not([data-limited]):not([data-swipe-direction])": {
       opacity: 0,
-      transform: "translateY(-150%)",
     },
     "&[data-ending-style][data-swipe-direction='up']": {
       opacity: 0,
       transform: "translateY(calc(var(--toast-swipe-movement-y) - 150%))",
+      transition: swipeExitTransition,
     },
     "&[data-ending-style][data-swipe-direction='right']": {
       opacity: 0,
       transform:
         "translateX(calc(var(--toast-swipe-movement-x) + 150%)) translateY(var(--offset-y))",
+      transition: swipeExitTransition,
     },
     "&:focus-visible": {
       outline: `2px solid ${vars.color.primary}`,
@@ -82,6 +85,10 @@ export const root = style({
   "@media": {
     [media.reducedMotion]: {
       transition: "none",
+      selectors: {
+        "&[data-ending-style][data-swipe-direction='up']": { transition: "none" },
+        "&[data-ending-style][data-swipe-direction='right']": { transition: "none" },
+      },
     },
   },
 });
@@ -92,8 +99,15 @@ export const content = style({
   alignItems: "center",
   gap: vars.spacing.md,
   padding: vars.spacing.md,
-  transition: `opacity ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
+  transform: "translateY(0)",
+  transition: `opacity ${vars.motion.duration.fast} ${vars.motion.ease.fade}, transform ${vars.motion.duration.base} ${vars.motion.ease.out}`,
   selectors: {
+    [`${root}[data-starting-style] &`]: {
+      transform: `translateY(calc(0rem - ${vars.spacing.sm}))`,
+    },
+    [`${root}[data-ending-style]:not([data-swipe-direction]) &`]: {
+      transform: `translateY(calc(0rem - ${vars.spacing.sm}))`,
+    },
     "&[data-behind]": {
       opacity: 0,
     },
@@ -104,6 +118,12 @@ export const content = style({
   "@media": {
     [media.reducedMotion]: {
       transition: "none",
+      selectors: {
+        [`${root}[data-starting-style] &`]: { transform: "translateY(0)" },
+        [`${root}[data-ending-style]:not([data-swipe-direction]) &`]: {
+          transform: "translateY(0)",
+        },
+      },
     },
   },
 });

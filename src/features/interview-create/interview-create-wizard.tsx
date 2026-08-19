@@ -2,11 +2,21 @@
 
 import { Form } from "@base-ui/react/form";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import {
+  AnimatePresence,
+  domAnimation,
+  LazyMotion,
+  MotionConfig,
+  type Transition,
+  type Variants,
+} from "motion/react";
+import * as m from "motion/react-m";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Button } from "@/components/button";
 import type { JobRoleGroup } from "@/features/mypage/mypage-model";
+import { motionValues, vars } from "@/styles";
 import { InterviewInfoStep } from "./interview-info-step";
 import {
   getInterviewCreateDefaultValues,
@@ -27,6 +37,23 @@ type StepDefinition = {
   slug: string;
   title: string;
 };
+
+const stepTransition = {
+  duration: motionValues.duration.base,
+  ease: motionValues.ease.out,
+  type: "tween",
+} satisfies Transition;
+
+const stepVariants = {
+  hidden: {
+    opacity: 0,
+    transform: `translateY(${vars.spacing.xs})`,
+  },
+  visible: {
+    opacity: 1,
+    transform: "translateY(0)",
+  },
+} satisfies Variants;
 
 const steps = [
   {
@@ -171,13 +198,27 @@ export function InterviewCreateWizard({ jobRoleGroups, options }: InterviewCreat
                 void goNext();
               }}
             >
-              <div className={styles.stepContent} key={currentStep}>
-                {currentStep === "면접 정보" ? (
-                  <InterviewInfoStep jobRoleGroups={jobRoleGroups} options={options} />
-                ) : (
-                  <PendingStep step={step} />
-                )}
-              </div>
+              <LazyMotion features={domAnimation} strict>
+                <MotionConfig reducedMotion="user">
+                  <AnimatePresence initial={false} mode="popLayout">
+                    <m.div
+                      animate="visible"
+                      className={styles.stepContent}
+                      exit="hidden"
+                      initial="hidden"
+                      key={step.slug}
+                      transition={stepTransition}
+                      variants={stepVariants}
+                    >
+                      {currentStep === "면접 정보" ? (
+                        <InterviewInfoStep jobRoleGroups={jobRoleGroups} options={options} />
+                      ) : (
+                        <PendingStep step={step} />
+                      )}
+                    </m.div>
+                  </AnimatePresence>
+                </MotionConfig>
+              </LazyMotion>
 
               <footer className={styles.footer}>
                 <div className={styles.navigationActions}>

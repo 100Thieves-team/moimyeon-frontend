@@ -46,7 +46,7 @@ export const popup = style({
   boxShadow: vars.shadow.cardSoft,
   opacity: 1,
   transform: "translate(-50%, -50%)",
-  transition: `opacity ${vars.motion.duration.base} ${vars.motion.ease.site}, transform ${vars.motion.duration.base} ${vars.motion.ease.site}`,
+  transition: `opacity ${vars.motion.duration.base} ${vars.motion.ease.out}, transform ${vars.motion.duration.base} ${vars.motion.ease.out}`,
   selectors: {
     "&[data-starting-style]": {
       opacity: 0,
