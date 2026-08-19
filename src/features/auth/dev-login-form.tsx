@@ -22,12 +22,7 @@ type DevLoginValues = {
 
 export function DevLoginForm({ returnTo }: DevLoginFormProps) {
   const router = useRouter();
-  const issueDevSession = useMutation(
-    issueDevSessionMutation({
-      baseUrl: "/api",
-      credentials: "same-origin",
-    }),
-  );
+  const issueDevSession = useMutation(issueDevSessionMutation());
   const {
     clearErrors,
     control,

@@ -20,7 +20,7 @@ const { issueDevSessionMock, navigation } = vi.hoisted(() => ({
 }));
 
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
-  issueDevSessionMutation: (options: Record<string, unknown>) => ({
+  issueDevSessionMutation: (options: Record<string, unknown> = {}) => ({
     mutationFn: async (fnOptions: Record<string, unknown>) => {
       const result = await issueDevSessionMock({
         ...options,
@@ -198,9 +198,7 @@ describe("DevLoginForm", () => {
     await expect.poll(() => navigation.routerReplace).toHaveBeenCalledWith("/interviews/new");
     expect(navigation.routerRefresh).toHaveBeenCalledOnce();
     expect(issueDevSessionMock).toHaveBeenCalledWith({
-      baseUrl: "/api",
       body: { memberId },
-      credentials: "same-origin",
       throwOnError: true,
     });
   });
