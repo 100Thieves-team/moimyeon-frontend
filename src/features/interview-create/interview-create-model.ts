@@ -1,5 +1,12 @@
-import type { RoomFormOptionsResponse, SearchJobPostingsResponse } from "@/api";
+import type {
+  ParticipationSlotsResponse,
+  RegionsResponse,
+  RoomFormOptionsResponse,
+  SearchJobPostingsResponse,
+} from "@/api";
 
+export type ParticipationSlots = NonNullable<ParticipationSlotsResponse["data"]>;
+export type Regions = NonNullable<RegionsResponse["data"]>;
 export type RoomFormOptions = NonNullable<RoomFormOptionsResponse["data"]>;
 export type SelectedJobPosting = NonNullable<
   SearchJobPostingsResponse["data"]
@@ -22,6 +29,7 @@ export type InterviewCreateFormValues = {
   resumePublic: boolean;
   round: string;
   schedules: InterviewSchedule[];
+  sido: string | null;
   sigunguId: number | null;
   title: string;
   type: string | null;
@@ -32,15 +40,12 @@ export function getInterviewCreateDefaultValues(
 ): InterviewCreateFormValues {
   const minParticipants = options.participantConstraints?.min ?? 2;
   const participantLimit = options.participantConstraints?.max ?? 8;
-  const defaultDuration =
-    options.durations.find((duration) => duration.minutes === 60)?.minutes ??
-    options.durations[0]?.minutes ??
-    60;
+  const defaultDuration = options.durations[0]?.minutes ?? 60;
 
   return {
     description: "",
     jobRoleId: null,
-    maxParticipants: Math.min(Math.max(4, minParticipants), participantLimit),
+    maxParticipants: participantLimit,
     method: "",
     minParticipants,
     posting: null,
@@ -48,6 +53,7 @@ export function getInterviewCreateDefaultValues(
     resumePublic: false,
     round: "",
     schedules: [{ date: "", durationMinutes: defaultDuration, startTime: "" }],
+    sido: null,
     sigunguId: null,
     title: "",
     type: null,
