@@ -1,4 +1,4 @@
-import { style } from "@vanilla-extract/css";
+import { globalStyle, style } from "@vanilla-extract/css";
 import { textStyle, vars } from "@/styles";
 
 export const page = style({ flex: "1 1 auto", padding: "5.2rem 2.4rem 8.8rem" });
@@ -302,14 +302,12 @@ export const resumeCard = style({
   padding: "1.2rem",
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.control,
-  selectors: { "& p": { margin: "0.4rem 0 0", color: vars.color.tertiary } },
 });
 export const aiSummary = style({
   padding: "1.6rem",
   borderRadius: vars.radius.control,
   background: vars.color.blue10,
   color: vars.color.primary,
-  selectors: { "& strong": { color: vars.color.blue }, "& p": { margin: "0.8rem 0 0" } },
 });
 export const resumeList = style({ display: "grid", gap: "0.8rem" });
 export const resumeOption = style({
@@ -325,10 +323,7 @@ export const resumeOption = style({
   color: vars.color.primary,
   textAlign: "left",
   cursor: "pointer",
-  selectors: {
-    '&[data-selected="true"]': { borderColor: vars.color.primary },
-    "& small": { display: "block", marginTop: "0.4rem", color: vars.color.tertiary },
-  },
+  selectors: { '&[data-selected="true"]': { borderColor: vars.color.primary } },
 });
 export const switchRow = style({
   display: "flex",
@@ -338,7 +333,6 @@ export const switchRow = style({
   padding: "1.2rem",
   borderRadius: vars.radius.control,
   background: vars.color.fillTertiary,
-  selectors: { "& small": { display: "block", marginTop: "0.4rem", color: vars.color.tertiary } },
 });
 export const switchRoot = style({
   width: "4rem",
@@ -359,3 +353,62 @@ export const switchThumb = style({
   transition: "transform 150ms",
   selectors: { "[data-checked] &": { transform: "translateX(1.6rem)" } },
 });
+export const reviewCard = style({
+  overflow: "hidden",
+  border: `1px solid ${vars.color.strokeLight}`,
+  borderRadius: vars.radius.media,
+  background: vars.color.trueWhite,
+  boxShadow: vars.shadow.cardRaise,
+});
+export const summaryRow = style({
+  display: "grid",
+  gridTemplateColumns: "12rem 1fr auto",
+  gap: "2rem",
+  alignItems: "start",
+  padding: "1.7rem 2.6rem",
+  borderBottom: `1px solid ${vars.color.strokeLight}`,
+  whiteSpace: "pre-line",
+  "@media": { "screen and (max-width: 599px)": { gridTemplateColumns: "1fr", gap: "0.6rem" } },
+});
+export const reviewDescription = style({
+  padding: "1.7rem 2.6rem",
+  background: vars.color.blue10,
+});
+export const submitError = style({
+  margin: "1.6rem 0 0",
+  padding: "1.2rem",
+  borderRadius: vars.radius.control,
+  background: vars.color.red10,
+  color: vars.color.red,
+});
+export const finalAction = style({
+  display: "flex",
+  justifyContent: "flex-end",
+  marginTop: "1.6rem",
+});
+
+globalStyle(`${resumeCard} p`, { margin: "0.4rem 0 0", color: vars.color.tertiary });
+globalStyle(`${aiSummary} strong`, { color: vars.color.blue });
+globalStyle(`${aiSummary} p`, { margin: "0.8rem 0 0" });
+globalStyle(`${resumeOption} small`, {
+  display: "block",
+  marginTop: "0.4rem",
+  color: vars.color.tertiary,
+});
+globalStyle(`${switchRow} small`, {
+  display: "block",
+  marginTop: "0.4rem",
+  color: vars.color.tertiary,
+});
+globalStyle(`${summaryRow} > span`, { color: vars.color.tertiary });
+globalStyle(`${summaryRow} > button`, {
+  padding: 0,
+  border: 0,
+  background: "transparent",
+  color: vars.color.tertiary,
+  textDecoration: "underline",
+  cursor: "pointer",
+});
+globalStyle(`${summaryRow} > button:disabled`, { opacity: 0.4, cursor: "default" });
+globalStyle(`${reviewDescription} > strong`, { color: vars.color.blue });
+globalStyle(`${reviewDescription} > p`, { margin: "0.8rem 0 0" });

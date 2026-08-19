@@ -19,6 +19,7 @@ import {
 import { JobPostingLinkDialog } from "./job-posting-link-dialog";
 import { InterviewScheduleStep } from "./interview-schedule-step";
 import { InterviewResumeStep } from "./interview-resume-step";
+import { InterviewReviewStep } from "./interview-review-step";
 import * as styles from "./interview-create-wizard.css";
 
 const steps = ["면접 정보", "진행 방식과 일정", "소개와 이력서", "최종 확인"] as const;
@@ -346,10 +347,7 @@ export function InterviewCreateWizard() {
             ) : step === 2 ? (
               <InterviewResumeStep />
             ) : (
-              <>
-                <h1 className={styles.title}>다음 단계가 이어질 예정이에요</h1>
-                <section className={styles.card}>현재 PR은 면접 정보 단계까지 포함합니다.</section>
-              </>
+              <InterviewReviewStep onEdit={setStep} />
             )}
             <div className={styles.actions}>
               <Button
