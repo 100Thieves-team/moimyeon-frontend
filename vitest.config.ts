@@ -18,6 +18,7 @@ export default defineConfig({
       "@base-ui/react/form",
       "@base-ui/react/merge-props",
       "@base-ui/react/slider",
+      "@base-ui/react/switch",
       "@base-ui/react/tabs",
       "@base-ui/react/toast",
       "@vanilla-extract/recipes/createRuntimeFn",

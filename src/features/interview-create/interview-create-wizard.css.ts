@@ -284,3 +284,78 @@ export const scheduleRow = style({
   alignItems: "start",
   "@media": { "screen and (max-width: 599px)": { gridTemplateColumns: "1fr" } },
 });
+export const textarea = style({
+  minHeight: "10rem",
+  resize: "vertical",
+  padding: "1.2rem",
+  border: `1px solid ${vars.color.strokeMedium}`,
+  borderRadius: vars.radius.control,
+  background: "transparent",
+  color: vars.color.primary,
+  font: "inherit",
+});
+export const resumeCard = style({
+  display: "grid",
+  gridTemplateColumns: "auto 1fr auto",
+  alignItems: "center",
+  gap: "1.2rem",
+  padding: "1.2rem",
+  border: `1px solid ${vars.color.strokeLight}`,
+  borderRadius: vars.radius.control,
+  selectors: { "& p": { margin: "0.4rem 0 0", color: vars.color.tertiary } },
+});
+export const aiSummary = style({
+  padding: "1.6rem",
+  borderRadius: vars.radius.control,
+  background: vars.color.blue10,
+  color: vars.color.primary,
+  selectors: { "& strong": { color: vars.color.blue }, "& p": { margin: "0.8rem 0 0" } },
+});
+export const resumeList = style({ display: "grid", gap: "0.8rem" });
+export const resumeOption = style({
+  display: "grid",
+  gridTemplateColumns: "auto 1fr",
+  alignItems: "center",
+  gap: "1rem",
+  width: "100%",
+  padding: "1.2rem",
+  border: `1px solid ${vars.color.strokeLight}`,
+  borderRadius: vars.radius.control,
+  background: "transparent",
+  color: vars.color.primary,
+  textAlign: "left",
+  cursor: "pointer",
+  selectors: {
+    '&[data-selected="true"]': { borderColor: vars.color.primary },
+    "& small": { display: "block", marginTop: "0.4rem", color: vars.color.tertiary },
+  },
+});
+export const switchRow = style({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: "2rem",
+  padding: "1.2rem",
+  borderRadius: vars.radius.control,
+  background: vars.color.fillTertiary,
+  selectors: { "& small": { display: "block", marginTop: "0.4rem", color: vars.color.tertiary } },
+});
+export const switchRoot = style({
+  width: "4rem",
+  height: "2.4rem",
+  padding: "0.2rem",
+  border: 0,
+  borderRadius: vars.radius.pill,
+  background: vars.color.fillSecondary,
+  transition: "background 150ms",
+  selectors: { "&[data-checked]": { background: vars.color.fillPrimary } },
+});
+export const switchThumb = style({
+  display: "block",
+  width: "2rem",
+  height: "2rem",
+  borderRadius: vars.radius.pill,
+  background: vars.color.background,
+  transition: "transform 150ms",
+  selectors: { "[data-checked] &": { transform: "translateX(1.6rem)" } },
+});

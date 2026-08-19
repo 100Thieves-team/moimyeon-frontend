@@ -3,6 +3,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import {
   participationSlotsOptions,
   regionsOptions,
+  resumesOptions,
   roomFormOptionsOptions,
 } from "@/api/generated/@tanstack/react-query.gen";
 import { getQueryClient } from "@/api/query-client";
@@ -22,6 +23,7 @@ export default async function NewInterviewPage() {
     queryClient.ensureQueryData(roomFormOptionsOptions(requestOptions)),
     queryClient.ensureQueryData(regionsOptions(requestOptions)),
     queryClient.ensureQueryData(participationSlotsOptions(requestOptions)),
+    queryClient.ensureQueryData(resumesOptions(requestOptions)),
   ]);
 
   return (
