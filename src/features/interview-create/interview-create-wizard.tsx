@@ -21,13 +21,18 @@ import { InterviewInfoStep } from "./interview-info-step";
 import {
   getInterviewCreateDefaultValues,
   type InterviewCreateFormValues,
+  type ParticipationSlots,
+  type Regions,
   type RoomFormOptions,
 } from "./interview-create-model";
 import * as styles from "./interview-create-wizard.css";
+import { MethodAndScheduleStep } from "./method-and-schedule-step";
 
 type InterviewCreateWizardProps = {
   jobRoleGroups: JobRoleGroup[];
   options: RoomFormOptions;
+  participationSlots: ParticipationSlots;
+  regions: Regions;
 };
 
 type StepDefinition = {
@@ -74,7 +79,7 @@ const steps = [
   },
   {
     description: "진행 방식과 가능한 일정을 정해요.",
-    fields: [],
+    fields: ["method", "minParticipants", "maxParticipants", "schedules", "sigunguId"],
     label: "진행 방식과 일정",
     slug: "method-and-schedule",
     title: "진행 방식과 일정을 정해요",
@@ -106,7 +111,12 @@ function PendingStep({ step }: { step: StepDefinition }) {
   );
 }
 
-export function InterviewCreateWizard({ jobRoleGroups, options }: InterviewCreateWizardProps) {
+export function InterviewCreateWizard({
+  jobRoleGroups,
+  options,
+  participationSlots,
+  regions,
+}: InterviewCreateWizardProps) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -146,7 +156,9 @@ export function InterviewCreateWizard({ jobRoleGroups, options }: InterviewCreat
   }, [createStepUrl, router, stepParam]);
 
   const goNext = async () => {
-    const isValid = await methods.trigger([...step.fields], { shouldFocus: true });
+    const isValid =
+      currentStep === "면접 정보" ||
+      (await methods.trigger([...step.fields], { shouldFocus: true }));
     const nextStep = steps[currentStepIndex + 1];
 
     if (isValid && nextStep) {
@@ -169,14 +181,13 @@ export function InterviewCreateWizard({ jobRoleGroups, options }: InterviewCreat
           <ol className={styles.stepList}>
             {steps.map((item, index) => {
               const isCurrent = item.label === currentStep;
-              const isPrevious = index < currentStepIndex;
 
               return (
                 <li className={styles.stepItem} key={item.label}>
                   <button
                     aria-current={isCurrent ? "step" : undefined}
                     className={styles.stepButton}
-                    disabled={!isPrevious}
+                    disabled={isCurrent}
                     onClick={() => moveToStep(item)}
                     type="button"
                   >
@@ -220,6 +231,12 @@ export function InterviewCreateWizard({ jobRoleGroups, options }: InterviewCreat
                       <h1 className={styles.title}>{step.title}</h1>
                       {currentStep === "면접 정보" ? (
                         <InterviewInfoStep jobRoleGroups={jobRoleGroups} options={options} />
+                      ) : currentStep === "진행 방식과 일정" ? (
+                        <MethodAndScheduleStep
+                          options={options}
+                          participationSlots={participationSlots}
+                          regions={regions}
+                        />
                       ) : (
                         <PendingStep step={step} />
                       )}
@@ -231,12 +248,12 @@ export function InterviewCreateWizard({ jobRoleGroups, options }: InterviewCreat
               <footer className={styles.footer}>
                 <div className={styles.navigationActions}>
                   {currentStepIndex > 0 ? (
-                    <Button onClick={goPrevious} size="sm" type="button" variant="secondary">
+                    <Button onClick={goPrevious} size="sm" type="button" variant="ghost">
                       <ArrowLeft aria-hidden="true" size={16} />
                       이전
                     </Button>
                   ) : null}
-                  <Button size="sm" type="submit">
+                  <Button className={styles.nextButton} size="sm" type="submit">
                     {currentStepIndex === steps.length - 1 ? "확인" : "다음"}
                     <ArrowRight aria-hidden="true" size={16} />
                   </Button>

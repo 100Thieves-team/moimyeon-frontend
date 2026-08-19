@@ -413,6 +413,418 @@ export const choicePill = style({
   },
 });
 
+export const methodScheduleStack = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.spacing.base,
+});
+
+export const methodChoiceGroup = style({
+  display: "grid",
+  gridTemplateColumns: "minmax(0, 1fr)",
+  gap: vars.spacing.sm,
+  "@media": {
+    [media.sm]: { gridTemplateColumns: "repeat(2, minmax(0, 1fr))" },
+  },
+});
+
+export const methodChoice = style({
+  display: "flex",
+  minHeight: "5.2rem",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  justifyContent: "center",
+  padding: "1.6rem",
+  border: `1px solid ${vars.color.strokeMedium}`,
+  borderRadius: vars.radius.control,
+  backgroundColor: "transparent",
+  color: vars.color.secondary,
+  fontFamily: vars.font.sans,
+  textAlign: "left",
+  cursor: "pointer",
+  transition: `background-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, border-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, color ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
+  selectors: {
+    "&[data-checked]": {
+      borderColor: vars.color.primary,
+      backgroundColor: vars.color.fillTertiary,
+      color: vars.color.primary,
+    },
+    "&:focus-visible": {
+      outline: `2px solid ${vars.color.primary}`,
+      outlineOffset: "2px",
+    },
+  },
+  "@media": {
+    [media.hover]: {
+      selectors: {
+        "&:hover:not([data-checked])": { backgroundColor: vars.color.fillTertiary },
+      },
+    },
+    [media.reducedMotion]: { transition: "none" },
+  },
+});
+
+export const methodChoiceLabel = style({
+  fontSize: "1.5rem",
+  fontWeight: 700,
+  lineHeight: "2rem",
+});
+
+export const regionFields = style({
+  display: "grid",
+  gridTemplateColumns: "minmax(0, 1fr)",
+  gap: vars.spacing.base,
+  "@media": {
+    [media.sm]: { gridTemplateColumns: "repeat(2, minmax(0, 1fr))" },
+  },
+});
+
+export const participantSection = style({ minWidth: 0 });
+
+export const participantSliderField = style({
+  display: "flex",
+  minWidth: 0,
+  flexDirection: "column",
+  gap: vars.spacing.sm,
+});
+
+export const participantSlider = style({
+  display: "flex",
+  width: "100%",
+  minWidth: 0,
+  flexDirection: "column",
+  gap: "2.4rem",
+});
+
+export const participantHeading = style({
+  display: "flex",
+  alignItems: "baseline",
+  justifyContent: "space-between",
+  gap: vars.spacing.base,
+});
+
+export const participantValue = style({
+  color: vars.color.secondary,
+  fontSize: "1.3rem",
+  fontWeight: 500,
+  lineHeight: "1.7rem",
+});
+
+export const sliderBody = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: "1.2rem",
+  paddingInline: "1.1rem",
+});
+
+export const sliderControl = style({
+  position: "relative",
+  display: "flex",
+  width: "100%",
+  height: "2.2rem",
+  alignItems: "center",
+  touchAction: "none",
+  userSelect: "none",
+});
+
+export const sliderTrack = style({
+  position: "relative",
+  width: "100%",
+  height: "0.6rem",
+  borderRadius: vars.radius.pill,
+  backgroundColor: vars.color.primary10,
+});
+
+export const sliderIndicator = style({
+  borderRadius: vars.radius.pill,
+  backgroundColor: vars.color.primary,
+});
+
+export const sliderThumb = style({
+  width: "2.2rem",
+  height: "2.2rem",
+  border: `0.2rem solid ${vars.color.background}`,
+  borderRadius: "50%",
+  backgroundColor: vars.color.primary,
+  boxShadow: `0 0 0 1px ${vars.color.strokeLight}`,
+  cursor: "grab",
+  selectors: {
+    "&[data-dragging]": { cursor: "grabbing" },
+    "&:has(input:focus-visible)": {
+      outline: `2px solid ${vars.color.primary}`,
+      outlineOffset: "2px",
+    },
+  },
+});
+
+export const sliderTicks = style({
+  display: "flex",
+  justifyContent: "space-between",
+  color: vars.color.tertiary,
+  fontFamily: vars.font.mono,
+  fontSize: "1.2rem",
+  lineHeight: "1.6rem",
+});
+
+export const selectTrigger = style({
+  ...controlFrame,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: vars.spacing.sm,
+  padding: "1.3rem 1.6rem",
+  textAlign: "left",
+  cursor: "pointer",
+  selectors: {
+    "&:focus-visible": {
+      borderColor: vars.color.primary50,
+      outline: `2px solid ${vars.color.primary10}`,
+      outlineOffset: 0,
+    },
+    "&[data-placeholder]": { color: vars.color.tertiary, fontWeight: 400 },
+    "&[data-disabled]": { opacity: 0.45, cursor: "not-allowed" },
+    "&[data-invalid]": { borderColor: vars.color.red },
+  },
+});
+
+export const selectValue = style({
+  minWidth: 0,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+});
+
+export const selectIcon = style({
+  display: "inline-flex",
+  flex: "0 0 auto",
+  color: vars.color.tertiary,
+});
+
+export const selectPositioner = style({
+  zIndex: 30,
+  width: "var(--anchor-width)",
+});
+
+export const selectPopup = style({
+  maxHeight: "26rem",
+  overflowY: "auto",
+  padding: vars.spacing.sm,
+  border: `1px solid ${vars.color.strokeMedium}`,
+  borderRadius: vars.radius.control,
+  backgroundColor: vars.color.background,
+  boxShadow: vars.shadow.tooltip,
+  opacity: 1,
+  transform: "scale(1)",
+  transformOrigin: "var(--transform-origin)",
+  transition: `opacity ${vars.motion.duration.fast} ${vars.motion.ease.fade}, transform ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
+  selectors: {
+    "&[data-starting-style], &[data-ending-style]": { opacity: 0, transform: "scale(0.98)" },
+  },
+  "@media": {
+    [media.reducedMotion]: { transition: "none" },
+  },
+});
+
+export const selectList = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.2rem",
+});
+
+export const selectItem = style({
+  display: "flex",
+  minHeight: "4rem",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: vars.spacing.sm,
+  padding: "0.8rem 1rem",
+  borderRadius: vars.radius.control,
+  color: vars.color.primary,
+  fontSize: "1.4rem",
+  lineHeight: "1.8rem",
+  cursor: "pointer",
+  selectors: {
+    "&[data-highlighted]": { backgroundColor: vars.color.fillSecondary },
+  },
+});
+
+export const selectIndicator = style({
+  display: "inline-flex",
+  width: "1.6rem",
+  height: "1.6rem",
+  flex: "0 0 auto",
+  alignItems: "center",
+  justifyContent: "center",
+});
+
+export const scheduleSection = style({
+  display: "flex",
+  minWidth: 0,
+  flexDirection: "column",
+  gap: vars.spacing.base,
+});
+
+export const scheduleColumnHeader = style({
+  display: "none",
+  color: vars.color.tertiary,
+  fontSize: "1.3rem",
+  fontWeight: 500,
+  lineHeight: "1.7rem",
+  "@media": {
+    [media.md]: {
+      display: "grid",
+      gridTemplateColumns: "minmax(0, 208fr) minmax(0, 148fr) minmax(0, 148fr) 3.6rem",
+      gap: "1.2rem",
+    },
+  },
+});
+
+export const limitNotice = style({
+  padding: "1.2rem 1.4rem",
+  borderRadius: vars.radius.control,
+  backgroundColor: vars.color.fillTertiary,
+  color: vars.color.secondary,
+  fontSize: "1.25rem",
+  lineHeight: "1.8rem",
+});
+
+export const warningNotice = style({
+  color: vars.color.secondary,
+  fontSize: "1.25rem",
+  lineHeight: "1.8rem",
+});
+
+export const scheduleList = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.spacing.sm,
+});
+
+export const scheduleRow = style({
+  display: "grid",
+  minWidth: 0,
+  gridTemplateColumns: "minmax(0, 1fr)",
+  alignItems: "start",
+  gap: vars.spacing.base,
+  "@media": {
+    [media.md]: {
+      gridTemplateColumns: "minmax(0, 208fr) minmax(0, 148fr) minmax(0, 148fr) 3.6rem",
+      gap: "1.2rem",
+    },
+  },
+});
+
+export const scheduleField = style({
+  display: "flex",
+  minWidth: 0,
+  flexDirection: "column",
+  gap: vars.spacing.sm,
+});
+
+export const scheduleFieldLabel = style({
+  color: vars.color.primary,
+  fontSize: "1.3rem",
+  fontWeight: 700,
+  lineHeight: "1.7rem",
+  "@media": {
+    [media.md]: {
+      position: "absolute",
+      width: "1px",
+      height: "1px",
+      padding: 0,
+      overflow: "hidden",
+      clipPath: "inset(50%)",
+      whiteSpace: "nowrap",
+    },
+  },
+});
+
+export const scheduleRemoveButton = style({
+  display: "inline-flex",
+  width: "3.6rem",
+  height: "3.6rem",
+  alignItems: "center",
+  justifyContent: "center",
+  border: 0,
+  borderRadius: vars.radius.control,
+  backgroundColor: "transparent",
+  color: vars.color.tertiary,
+  cursor: "pointer",
+  "@media": {
+    [media.md]: { marginTop: "0.5rem" },
+    [media.hover]: {
+      selectors: {
+        "&:hover": { backgroundColor: vars.color.fillTertiary, color: vars.color.primary },
+      },
+    },
+  },
+  selectors: {
+    "&:focus-visible": {
+      outline: `2px solid ${vars.color.primary}`,
+      outlineOffset: "2px",
+    },
+  },
+});
+
+export const scheduleRemovePlaceholder = style({
+  display: "none",
+  "@media": {
+    [media.md]: { display: "block", width: "3.6rem", height: "3.6rem" },
+  },
+});
+
+export const scheduleControl = style({
+  height: "4.6rem",
+  minHeight: "4.6rem",
+});
+
+export const nativeInput = style({
+  ...controlFrame,
+  height: "4.6rem",
+  minHeight: "4.6rem",
+  padding: "1.3rem 1.6rem",
+  outline: 0,
+  selectors: {
+    "&:focus-visible": {
+      borderColor: vars.color.primary50,
+      boxShadow: `0 0 0 2px ${vars.color.primary10}`,
+    },
+    "&[data-invalid]": { borderColor: vars.color.red },
+  },
+});
+
+export const scheduleAddButton = style({
+  display: "inline-flex",
+  width: "100%",
+  minHeight: "4.4rem",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: vars.spacing.sm,
+  border: `1px dashed ${vars.color.strokeMedium}`,
+  borderRadius: vars.radius.media,
+  backgroundColor: "transparent",
+  color: vars.color.secondary,
+  fontFamily: vars.font.sans,
+  fontSize: "1.4rem",
+  fontWeight: 600,
+  lineHeight: "1.8rem",
+  cursor: "pointer",
+  selectors: {
+    "&:focus-visible": {
+      outline: `2px solid ${vars.color.primary}`,
+      outlineOffset: "2px",
+    },
+    "&:disabled": { opacity: 0.45, cursor: "not-allowed" },
+  },
+  "@media": {
+    [media.hover]: {
+      selectors: {
+        "&:not(:disabled):hover": { backgroundColor: vars.color.fillTertiary },
+      },
+    },
+  },
+});
+
 export const pendingCard = style({
   minHeight: "28rem",
   alignItems: "center",
@@ -443,7 +855,11 @@ export const footer = style({
 
 export const navigationActions = style({
   display: "flex",
+  width: "100%",
   alignItems: "center",
   gap: vars.spacing.sm,
+});
+
+export const nextButton = style({
   marginLeft: "auto",
 });

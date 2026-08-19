@@ -5,6 +5,8 @@ const mocks = vi.hoisted(() => ({
   createServerClient: vi.fn(),
   getQueryClient: vi.fn(),
   jobRoles: vi.fn(),
+  participationSlots: vi.fn(),
+  regions: vi.fn(),
   roomFormOptions: vi.fn(),
 }));
 
@@ -26,6 +28,20 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
       return result.data;
     },
     queryKey: ["jobRoles"],
+  }),
+  participationSlotsOptions: (options: QueryOptions = {}) => ({
+    queryFn: async ({ signal }: { signal: AbortSignal }) => {
+      const result = await mocks.participationSlots({ ...options, signal, throwOnError: true });
+      return result.data;
+    },
+    queryKey: ["participationSlots"],
+  }),
+  regionsOptions: (options: QueryOptions = {}) => ({
+    queryFn: async ({ signal }: { signal: AbortSignal }) => {
+      const result = await mocks.regions({ ...options, signal, throwOnError: true });
+      return result.data;
+    },
+    queryKey: ["regions"],
   }),
   roomFormOptionsOptions: (options: QueryOptions = {}) => ({
     queryFn: async ({ signal }: { signal: AbortSignal }) => {
@@ -54,6 +70,8 @@ beforeEach(() => {
   mocks.createServerClient.mockResolvedValue(serverClient);
   mocks.getQueryClient.mockReturnValue(queryClient);
   mocks.jobRoles.mockResolvedValue(sdkSuccess({ groups: [] }));
+  mocks.participationSlots.mockResolvedValue(sdkSuccess({ limit: 3, occupied: 0, remaining: 3 }));
+  mocks.regions.mockResolvedValue(sdkSuccess({ sidos: [] }));
   mocks.roomFormOptions.mockResolvedValue(sdkSuccess({ rounds: [], types: [] }));
 });
 
@@ -65,6 +83,12 @@ describe("NewInterviewPage server prefetch", () => {
       expect.objectContaining({ cache: "no-store", client: serverClient, throwOnError: true }),
     );
     expect(mocks.jobRoles).toHaveBeenCalledWith(
+      expect.objectContaining({ cache: "no-store", client: serverClient, throwOnError: true }),
+    );
+    expect(mocks.regions).toHaveBeenCalledWith(
+      expect.objectContaining({ cache: "no-store", client: serverClient, throwOnError: true }),
+    );
+    expect(mocks.participationSlots).toHaveBeenCalledWith(
       expect.objectContaining({ cache: "no-store", client: serverClient, throwOnError: true }),
     );
   });
