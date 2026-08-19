@@ -5,27 +5,17 @@ import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { Select } from "@base-ui/react/select";
 import { Slider } from "@base-ui/react/slider";
-import { useQuery } from "@tanstack/react-query";
-import { Check, ChevronDown, Plus, Trash2 } from "lucide-react";
-import { useEffect, useMemo, type Ref } from "react";
-import {
-  Controller,
-  useFieldArray,
-  useFormContext,
-  useWatch,
-  type FieldError,
-} from "react-hook-form";
-import { roomCreationLimitOptions } from "@/api/generated/@tanstack/react-query.gen";
+import { Check, ChevronDown } from "lucide-react";
+import { useMemo, type Ref } from "react";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import type {
   InterviewCreateFormValues,
-  InterviewSchedule,
   ParticipationSlots,
   Regions,
   RoomFormOptions,
 } from "./interview-create-model";
+import { validateInterviewSchedule, validateParticipantRange } from "./interview-create-model";
 import * as styles from "./interview-create-wizard.css";
-
-const SCHEDULE_HARD_LIMIT = 3;
 
 type SelectItem<Value extends number | string> = {
   label: string;
@@ -116,70 +106,30 @@ function formatLocalDate(date: Date) {
   return `${year}-${month}-${day}`;
 }
 
-function getScheduleTimestamp(schedule: InterviewSchedule) {
-  const [year, month, day] = schedule.date.split("-").map(Number);
-  const [hour, minute] = schedule.startTime.split(":").map(Number);
-
-  if ([year, month, day, hour, minute].some((value) => !Number.isInteger(value))) {
-    return null;
-  }
-
-  const date = new Date(year, month - 1, day, hour, minute);
-
-  if (
-    date.getFullYear() !== year ||
-    date.getMonth() !== month - 1 ||
-    date.getDate() !== day ||
-    date.getHours() !== hour ||
-    date.getMinutes() !== minute
-  ) {
-    return null;
-  }
-
-  return date.getTime();
-}
-
-function getScheduleKey(schedule: InterviewSchedule) {
-  return schedule.date && schedule.startTime ? `${schedule.date}T${schedule.startTime}` : null;
-}
-
 type MethodAndScheduleStepProps = {
+  creationLimit?: { activeRoomCount: number; remaining: number };
+  creationLimitIsError: boolean;
+  creationLimitIsPending: boolean;
+  hasCreationLimitParams: boolean;
   options: RoomFormOptions;
   participationSlots: ParticipationSlots;
   regions: Regions;
 };
 
 export function MethodAndScheduleStep({
+  creationLimit,
+  creationLimitIsError,
+  creationLimitIsPending,
+  hasCreationLimitParams,
   options,
   participationSlots,
   regions,
 }: MethodAndScheduleStepProps) {
-  const {
-    clearErrors,
-    control,
-    formState: { errors },
-    setValue,
-    trigger,
-  } = useFormContext<InterviewCreateFormValues>();
-  const posting = useWatch({ control, name: "posting" });
-  const jobRoleId = useWatch({ control, name: "jobRoleId" });
+  const { clearErrors, control, setValue } = useFormContext<InterviewCreateFormValues>();
   const method = useWatch({ control, name: "method" });
   const sido = useWatch({ control, name: "sido" });
-  const hasCreationLimitParams = posting !== null && jobRoleId !== null;
-  const creationLimitQuery = useQuery({
-    ...roomCreationLimitOptions({
-      query: {
-        jobPostingId: String(posting?.jobPostingId ?? ""),
-        jobRoleId: String(jobRoleId ?? ""),
-      },
-    }),
-    enabled: hasCreationLimitParams,
-  });
-  const creationLimit = creationLimitQuery.data?.data;
-  const scheduleLimit = creationLimit
-    ? Math.min(creationLimit.remaining, participationSlots.remaining, SCHEDULE_HARD_LIMIT)
-    : null;
-  const defaultDuration = options.durations[0]?.minutes ?? 60;
+  const canCreateRoom =
+    creationLimit !== undefined && creationLimit.remaining > 0 && participationSlots.remaining > 0;
   const selectedSido = regions.sidos.find((region) => region.name === sido) ?? null;
   const participantMinimum = options.participantConstraints?.min ?? 2;
   const participantMaximum = options.participantConstraints?.max ?? 8;
@@ -199,68 +149,16 @@ export function MethodAndScheduleStep({
     label: region.shortName,
     value: region.name,
   }));
-  const { append, fields, remove } = useFieldArray({
-    control,
-    name: "schedules",
-    rules: {
-      minLength: { message: "일정을 한 개 이상 입력해 주세요.", value: 1 },
-      validate: {
-        duplicate: (schedules) => {
-          const keys = schedules.map(getScheduleKey).filter((key): key is string => key !== null);
-          return new Set(keys).size === keys.length || "같은 날짜와 시작 시간은 중복할 수 없어요.";
-        },
-        limit: (schedules) => {
-          if (!hasCreationLimitParams) {
-            return "이전 단계에서 채용 공고와 직무를 먼저 선택해 주세요.";
-          }
-
-          if (creationLimitQuery.isPending) {
-            return "생성 가능한 일정 수를 확인하고 있어요.";
-          }
-
-          if (creationLimitQuery.isError || scheduleLimit === null) {
-            return "생성 가능한 일정 수를 확인하지 못했어요. 다시 시도해 주세요.";
-          }
-
-          return (
-            schedules.length <= scheduleLimit ||
-            `일정은 최대 ${scheduleLimit}개까지 추가할 수 있어요.`
-          );
-        },
-      },
-    },
-  });
-  const scheduleRootError = errors.schedules?.root as FieldError | undefined;
-  const hasScheduleRootError = Boolean(scheduleRootError);
   const today = formatLocalDate(new Date());
-  const canAddSchedule = scheduleLimit !== null && fields.length < scheduleLimit;
   const scheduleLimitMessage = !hasCreationLimitParams
     ? null
-    : creationLimitQuery.isPending
-      ? "생성 가능한 일정 수를 확인하고 있어요."
-      : creationLimitQuery.isError || scheduleLimit === null
-        ? "생성 가능한 일정 수를 확인하지 못했어요. 잠시 후 다시 시도해 주세요."
-        : scheduleLimit === 0
-          ? "현재는 새 면접 일정을 만들 수 없어요."
-          : scheduleLimit < SCHEDULE_HARD_LIMIT || fields.length >= scheduleLimit
-            ? `현재 일정은 최대 ${scheduleLimit}개까지 추가할 수 있어요.`
-            : null;
-
-  useEffect(() => {
-    if (hasScheduleRootError) {
-      void trigger("schedules");
-    }
-  }, [
-    scheduleLimit,
-    creationLimitQuery.isError,
-    creationLimitQuery.isPending,
-    hasScheduleRootError,
-    trigger,
-  ]);
-
-  const revalidateSchedules = () => {
-    queueMicrotask(() => void trigger("schedules"));
-  };
+    : creationLimitIsPending
+      ? "면접을 만들 수 있는지 확인하고 있어요."
+      : creationLimitIsError
+        ? "면접 생성 가능 여부를 확인하지 못했어요. 잠시 후 다시 시도해 주세요."
+        : !canCreateRoom
+          ? "현재는 새 면접을 만들 수 없어요."
+          : null;
 
   return (
     <div className={styles.methodScheduleStack}>
@@ -396,20 +294,14 @@ export function MethodAndScheduleStep({
             control={control}
             name="minParticipants"
             rules={{
-              validate: (value) =>
-                (value >= participantMinimum && value <= participantMaximum) ||
-                `${participantMinimum}명부터 ${participantMaximum}명까지 선택해 주세요.`,
+              validate: (_, formValues) => validateParticipantRange(formValues, options),
             }}
             render={({ field: minField, fieldState: minFieldState }) => (
               <Controller
                 control={control}
                 name="maxParticipants"
                 rules={{
-                  validate: (value, formValues) =>
-                    (value >= participantMinimum &&
-                      value <= participantMaximum &&
-                      value >= formValues.minParticipants) ||
-                    `${participantMinimum}명부터 ${participantMaximum}명까지 선택해 주세요.`,
+                  validate: (_, formValues) => validateParticipantRange(formValues, options),
                 }}
                 render={({ field: maxField, fieldState: maxFieldState }) => (
                   <div className={styles.participantSliderField}>
@@ -492,164 +384,101 @@ export function MethodAndScheduleStep({
             <span>날짜</span>
             <span>시작 시각</span>
             <span>예상 시간</span>
-            <span />
           </div>
 
-          <div className={styles.scheduleList}>
-            {fields.map((scheduleField, index) => (
-              <div className={styles.scheduleRow} key={scheduleField.id}>
-                <Controller
-                  control={control}
-                  name={`schedules.${index}.date`}
-                  rules={{ required: "날짜를 선택해 주세요." }}
-                  render={({ field, fieldState }) => (
-                    <Field.Root
-                      className={styles.scheduleField}
-                      dirty={fieldState.isDirty}
-                      invalid={fieldState.invalid}
-                      name={field.name}
-                      touched={fieldState.isTouched}
-                    >
-                      <Field.Label
-                        className={styles.scheduleFieldLabel}
-                      >{`날짜 ${index + 1}`}</Field.Label>
-                      <Field.Control
-                        className={styles.nativeInput}
-                        min={today}
-                        onBlur={field.onBlur}
-                        onChange={(event) => {
-                          field.onChange(event);
-                          revalidateSchedules();
-                        }}
-                        ref={field.ref}
-                        type="date"
-                        value={field.value}
-                      />
-                      <Field.Error className={styles.fieldError} match={Boolean(fieldState.error)}>
-                        {fieldState.error?.message}
-                      </Field.Error>
-                    </Field.Root>
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name={`schedules.${index}.startTime`}
-                  rules={{
-                    required: "시작 시간을 선택해 주세요.",
-                    validate: (value, formValues) => {
-                      const schedule = formValues.schedules[index];
-
-                      if (!schedule.date || !value) {
-                        return true;
-                      }
-
-                      const timestamp = getScheduleTimestamp(schedule);
-                      return (
-                        (timestamp !== null && timestamp > Date.now()) ||
-                        "현재보다 이후 시간을 선택해 주세요."
-                      );
-                    },
-                  }}
-                  render={({ field, fieldState }) => (
-                    <Field.Root
-                      className={styles.scheduleField}
-                      dirty={fieldState.isDirty}
-                      invalid={fieldState.invalid}
-                      name={field.name}
-                      touched={fieldState.isTouched}
-                    >
-                      <Field.Label
-                        className={styles.scheduleFieldLabel}
-                      >{`시작 시간 ${index + 1}`}</Field.Label>
-                      <Field.Control
-                        className={styles.nativeInput}
-                        onBlur={field.onBlur}
-                        onChange={(event) => {
-                          field.onChange(event);
-                          revalidateSchedules();
-                        }}
-                        ref={field.ref}
-                        type="time"
-                        value={field.value}
-                      />
-                      <Field.Error className={styles.fieldError} match={Boolean(fieldState.error)}>
-                        {fieldState.error?.message}
-                      </Field.Error>
-                    </Field.Root>
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name={`schedules.${index}.durationMinutes`}
-                  rules={{ required: "예상 소요 시간을 선택해 주세요." }}
-                  render={({ field, fieldState }) => (
-                    <Field.Root
-                      className={styles.scheduleField}
-                      dirty={fieldState.isDirty}
-                      invalid={fieldState.invalid}
-                      name={field.name}
-                      touched={fieldState.isTouched}
-                    >
-                      <Field.Label
-                        className={styles.scheduleFieldLabel}
-                      >{`예상 소요 시간 ${index + 1}`}</Field.Label>
-                      <SelectControl
-                        ariaLabel={`예상 소요 시간 ${index + 1}`}
-                        className={styles.scheduleControl}
-                        inputRef={field.ref}
-                        items={durationItems}
-                        name={field.name}
-                        onBlur={field.onBlur}
-                        onChange={field.onChange}
-                        placeholder="소요 시간"
-                        value={field.value}
-                      />
-                      <Field.Error className={styles.fieldError} match={Boolean(fieldState.error)}>
-                        {fieldState.error?.message}
-                      </Field.Error>
-                    </Field.Root>
-                  )}
-                />
-                {fields.length > 1 ? (
-                  <button
-                    aria-label={`${index + 1}번째 일정 삭제`}
-                    className={styles.scheduleRemoveButton}
-                    onClick={() => {
-                      remove(index);
-                      revalidateSchedules();
-                    }}
-                    type="button"
-                  >
-                    <Trash2 aria-hidden="true" size={17} />
-                  </button>
-                ) : (
-                  <span aria-hidden="true" className={styles.scheduleRemovePlaceholder} />
-                )}
-              </div>
-            ))}
+          <div className={styles.scheduleRow}>
+            <Controller
+              control={control}
+              name="schedule.date"
+              rules={{ required: "날짜를 선택해 주세요." }}
+              render={({ field, fieldState }) => (
+                <Field.Root
+                  className={styles.scheduleField}
+                  dirty={fieldState.isDirty}
+                  invalid={fieldState.invalid}
+                  name={field.name}
+                  touched={fieldState.isTouched}
+                >
+                  <Field.Label className={styles.scheduleFieldLabel}>날짜</Field.Label>
+                  <Field.Control
+                    className={styles.nativeInput}
+                    min={today}
+                    onBlur={field.onBlur}
+                    onChange={field.onChange}
+                    ref={field.ref}
+                    type="date"
+                    value={field.value}
+                  />
+                  <Field.Error className={styles.fieldError} match={Boolean(fieldState.error)}>
+                    {fieldState.error?.message}
+                  </Field.Error>
+                </Field.Root>
+              )}
+            />
+            <Controller
+              control={control}
+              name="schedule.startTime"
+              rules={{
+                validate: (_, formValues) =>
+                  validateInterviewSchedule(formValues.schedule, options),
+              }}
+              render={({ field, fieldState }) => (
+                <Field.Root
+                  className={styles.scheduleField}
+                  dirty={fieldState.isDirty}
+                  invalid={fieldState.invalid}
+                  name={field.name}
+                  touched={fieldState.isTouched}
+                >
+                  <Field.Label className={styles.scheduleFieldLabel}>시작 시간</Field.Label>
+                  <Field.Control
+                    className={styles.nativeInput}
+                    onBlur={field.onBlur}
+                    onChange={field.onChange}
+                    ref={field.ref}
+                    type="time"
+                    value={field.value}
+                  />
+                  <Field.Error className={styles.fieldError} match={Boolean(fieldState.error)}>
+                    {fieldState.error?.message}
+                  </Field.Error>
+                </Field.Root>
+              )}
+            />
+            <Controller
+              control={control}
+              name="schedule.durationMinutes"
+              rules={{ required: "예상 소요 시간을 선택해 주세요." }}
+              render={({ field, fieldState }) => (
+                <Field.Root
+                  className={styles.scheduleField}
+                  dirty={fieldState.isDirty}
+                  invalid={fieldState.invalid}
+                  name={field.name}
+                  touched={fieldState.isTouched}
+                >
+                  <Field.Label className={styles.scheduleFieldLabel}>예상 소요 시간</Field.Label>
+                  <SelectControl
+                    ariaLabel="예상 소요 시간"
+                    className={styles.scheduleControl}
+                    inputRef={field.ref}
+                    items={durationItems}
+                    name={field.name}
+                    onBlur={field.onBlur}
+                    onChange={field.onChange}
+                    placeholder="소요 시간"
+                    value={field.value}
+                  />
+                  <Field.Error className={styles.fieldError} match={Boolean(fieldState.error)}>
+                    {fieldState.error?.message}
+                  </Field.Error>
+                </Field.Root>
+              )}
+            />
           </div>
-
-          <button
-            className={styles.scheduleAddButton}
-            disabled={!canAddSchedule}
-            onClick={() => {
-              append({ date: "", durationMinutes: defaultDuration, startTime: "" });
-              revalidateSchedules();
-            }}
-            type="button"
-          >
-            <Plus aria-hidden="true" size={16} />
-            일정 추가
-          </button>
 
           {scheduleLimitMessage ? (
             <output className={styles.limitNotice}>{scheduleLimitMessage}</output>
-          ) : null}
-
-          {scheduleRootError?.message ? (
-            <p className={styles.fieldError} role="alert">
-              {scheduleRootError.message}
-            </p>
           ) : null}
         </section>
       </section>

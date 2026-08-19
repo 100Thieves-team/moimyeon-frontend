@@ -5,10 +5,12 @@ import { page, userEvent } from "vitest/browser";
 import type { Resumes, RoomFormOptions } from "@/features/interview-create/interview-create-model";
 import { InterviewCreateWizard } from "@/features/interview-create/interview-create-wizard";
 import type { JobRoleGroup } from "@/features/mypage/mypage-model";
+import { ToastProvider } from "@/components/toast";
 import "@/styles/global.css";
 
 const mocks = vi.hoisted(() => ({
   createResume: vi.fn(),
+  createRoom: vi.fn(),
   resumes: vi.fn(),
   roomCreationLimit: vi.fn(),
   searchJobPostings: vi.fn(),
@@ -22,6 +24,14 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
       return result.data;
     },
   }),
+  createRoomMutation: () => ({
+    mutationFn: async (options: { body: Record<string, unknown> }) => {
+      const result = await mocks.createRoom({ ...options, throwOnError: true });
+      if (result.error) throw result.error;
+      return result.data;
+    },
+  }),
+  participationSlotsQueryKey: () => ["participationSlots"],
   resumesOptions: () => ({
     queryFn: async ({ signal }: { signal: AbortSignal }) => {
       const result = await mocks.resumes({ signal, throwOnError: true });
@@ -39,6 +49,11 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
     },
     queryKey: ["roomCreationLimit", options.query.jobPostingId, options.query.jobRoleId],
   }),
+  roomCreationLimitQueryKey: (options: { query: { jobPostingId: string; jobRoleId: string } }) => [
+    "roomCreationLimit",
+    options.query.jobPostingId,
+    options.query.jobRoleId,
+  ],
   searchJobPostingsOptions: (options: { query?: { query?: string } }) => ({
     queryFn: async ({ signal }: { signal: AbortSignal }) => {
       const result = await mocks.searchJobPostings({ ...options, signal, throwOnError: true });
@@ -48,6 +63,7 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
     queryKey: ["searchJobPostings", options.query?.query],
   }),
   searchJobPostingsQueryKey: () => ["searchJobPostings"],
+  roomsQueryKey: () => ["rooms"],
 }));
 
 const options: RoomFormOptions = {
@@ -177,28 +193,55 @@ function renderWizard({ resumeData = resumes, slots = participationSlots } = {})
 
   return render(
     <QueryClientProvider client={queryClient}>
-      <InterviewCreateWizard
-        jobRoleGroups={jobRoleGroups}
-        options={options}
-        participationSlots={slots}
-        regions={regions}
-      />
+      <ToastProvider>
+        <InterviewCreateWizard
+          jobRoleGroups={jobRoleGroups}
+          options={options}
+          participationSlots={slots}
+          regions={regions}
+        />
+      </ToastProvider>
     </QueryClientProvider>,
   );
 }
 
 type RenderedWizard = Awaited<ReturnType<typeof renderWizard>>;
 
+async function selectJobRole(screen: RenderedWizard, name = "프론트엔드") {
+  await screen.getByRole("button", { name: "직무", exact: true }).click();
+  await screen.getByRole("tab", { name: "개발" }).click();
+  await screen.getByRole("button", { name }).click();
+  await screen.getByRole("button", { name: "선택 완료" }).click();
+}
+
 async function moveToMethodAndScheduleStep(screen: RenderedWizard) {
   await screen.getByRole("combobox", { name: "채용 공고" }).fill("달빛");
   await expect.poll(() => mocks.searchJobPostings.mock.calls.length).toBe(1);
   await screen.getByRole("option", { name: /프론트엔드 개발자/ }).click();
+  await selectJobRole(screen);
   await screen.getByRole("radio", { name: "1차" }).click();
   await screen.getByRole("button", { name: "다음" }).click();
   await expect
     .element(screen.getByRole("heading", { name: "진행 방식과 일정을 정해요" }))
     .toBeVisible();
   await expect.poll(() => mocks.roomCreationLimit.mock.calls.length).toBe(1);
+  await expect.element(screen.getByRole("button", { name: "다음" })).toBeEnabled();
+}
+
+async function moveToFinalReviewStep(screen: RenderedWizard) {
+  await moveToMethodAndScheduleStep(screen);
+  await screen.getByRole("radio", { name: "온라인" }).click();
+  await screen.getByLabelText("날짜").fill("2099-12-31");
+  await screen.getByLabelText("시작 시간").fill("10:00");
+  await screen.getByRole("button", { name: "다음" }).click();
+  await expect
+    .element(screen.getByRole("heading", { name: "참여할 사람들에게 면접을 소개해요" }))
+    .toBeVisible();
+  await screen.getByRole("textbox", { name: "면접 제목" }).fill("달빛페이 실전 면접");
+  await screen.getByRole("button", { name: "다음" }).click();
+  await expect
+    .element(screen.getByRole("heading", { name: "만들기 전에 같이 확인해요" }))
+    .toBeVisible();
 }
 
 async function renderIntroductionStep(renderOptions?: Parameters<typeof renderWizard>[0]) {
@@ -242,6 +285,7 @@ beforeEach(async () => {
   );
   mocks.resumes.mockResolvedValue(sdkSuccess(resumes));
   mocks.createResume.mockResolvedValue(sdkSuccess(uploadedResume));
+  mocks.createRoom.mockResolvedValue(sdkSuccess({ roomId: "room-created", status: "RECRUITING" }));
   await page.viewport(1000, 900);
 });
 
@@ -261,7 +305,6 @@ describe("InterviewCreateWizard", () => {
       .element(screen.getByRole("heading", { name: "진행 방식과 일정을 정해요" }))
       .toBeVisible();
     expect(new URLSearchParams(window.location.search).get("step")).toBe("method-and-schedule");
-    await expect.element(screen.getByRole("button", { name: "일정 추가" })).toBeDisabled();
     await expect
       .element(
         screen.getByText(
@@ -272,12 +315,13 @@ describe("InterviewCreateWizard", () => {
     expect(mocks.roomCreationLimit).not.toHaveBeenCalled();
   });
 
-  it("공고의 대표 직무를 반영하고 다음 단계에서 돌아와도 입력값을 보존한다", async () => {
+  it("공고와 직무를 각각 선택하고 다음 단계에서 돌아와도 입력값을 보존한다", async () => {
     const screen = await renderWizard();
 
     await screen.getByRole("combobox", { name: "채용 공고" }).fill("달빛");
     await expect.poll(() => mocks.searchJobPostings.mock.calls.length).toBe(1);
     await screen.getByRole("option", { name: /프론트엔드 개발자/ }).click();
+    await selectJobRole(screen);
 
     await expect.element(screen.getByText("프론트엔드", { exact: true })).toBeVisible();
     await screen.getByRole("radio", { name: "1차" }).click();
@@ -299,6 +343,22 @@ describe("InterviewCreateWizard", () => {
       .toHaveValue("[달빛페이] 프론트엔드 개발자");
     await expect.element(screen.getByText("프론트엔드", { exact: true })).toBeVisible();
     await expect.element(screen.getByRole("radio", { name: "1차" })).toBeChecked();
+  });
+
+  it("채용 공고를 지워도 선택한 직무를 유지한다", async () => {
+    const screen = await renderWizard();
+
+    await selectJobRole(screen, "백엔드");
+    const posting = screen.getByRole("combobox", { name: "채용 공고" });
+    await posting.fill("달빛");
+    await expect.poll(() => mocks.searchJobPostings.mock.calls.length).toBe(1);
+    await screen.getByRole("option", { name: /프론트엔드 개발자/ }).click();
+    await expect.element(screen.getByText("백엔드", { exact: true })).toBeVisible();
+
+    await posting.fill("");
+
+    await expect.element(posting).toHaveValue("");
+    await expect.element(screen.getByText("백엔드", { exact: true })).toBeVisible();
   });
 
   it("유효한 단계 URL로 직접 진입하면 해당 단계를 표시한다", async () => {
@@ -323,8 +383,9 @@ describe("InterviewCreateWizard", () => {
     await screen.getByRole("button", { name: /최종 확인/ }).click();
 
     await expect
-      .element(screen.getByRole("heading", { name: "입력한 내용을 확인해 주세요" }))
+      .element(screen.getByRole("heading", { name: "만들기 전에 같이 확인해요" }))
       .toBeVisible();
+    await expect.element(screen.getByRole("button", { name: "면접 만들기" })).toBeDisabled();
     expect(new URLSearchParams(window.location.search).get("step")).toBe("final-review");
 
     await screen.getByRole("button", { name: /진행 방식과 일정/ }).click();
@@ -354,6 +415,7 @@ describe("InterviewCreateWizard", () => {
     await screen.getByRole("combobox", { name: "채용 공고" }).fill("달빛");
     await expect.poll(() => mocks.searchJobPostings.mock.calls.length).toBe(1);
     await screen.getByRole("option", { name: /프론트엔드 개발자/ }).click();
+    await selectJobRole(screen);
     await screen.getByRole("radio", { name: "1차" }).click();
     await screen.getByRole("button", { name: "다음" }).click();
     await expect
@@ -412,17 +474,22 @@ describe("InterviewCreateWizard", () => {
       .toHaveTextContent("강남구");
   });
 
-  it("오프라인은 시군구를 선택해야 다음 단계로 이동한다", async () => {
+  it("오프라인 시군구가 없어도 다음 단계로 이동하되 완료 표시하지 않는다", async () => {
+    await page.viewport(1200, 900);
     const screen = await renderWizard();
 
     await moveToMethodAndScheduleStep(screen);
     await screen.getByRole("radio", { name: "오프라인" }).click();
-    await screen.getByLabelText("날짜 1").fill("2099-12-31");
-    await screen.getByLabelText("시작 시간 1").fill("10:00");
+    await screen.getByLabelText("날짜").fill("2099-12-31");
+    await screen.getByLabelText("시작 시간").fill("10:00");
     await screen.getByRole("button", { name: "다음" }).click();
 
-    await expect.element(screen.getByText("시군구를 선택해 주세요.")).toBeVisible();
-    expect(new URLSearchParams(window.location.search).get("step")).toBe("method-and-schedule");
+    await expect
+      .element(screen.getByRole("heading", { name: "참여할 사람들에게 면접을 소개해요" }))
+      .toBeVisible();
+    await expect
+      .element(screen.getByRole("button", { name: /진행 방식과 일정/ }))
+      .not.toHaveTextContent("완료");
   });
 
   it("모집 인원은 서버 허용 범위로 시작하고 슬라이더로 조정한다", async () => {
@@ -441,67 +508,57 @@ describe("InterviewCreateWizard", () => {
     await userEvent.keyboard("{ArrowLeft}");
     await expect.element(screen.getByText("최소 3명 · 최대 7명")).toBeVisible();
     await expect
-      .element(screen.getByRole("combobox", { name: "예상 소요 시간 1" }))
+      .element(screen.getByRole("combobox", { name: "예상 소요 시간" }))
       .toHaveTextContent("90분");
   });
 
-  it("일정은 서버 잔여 수와 관계없이 최대 3개까지만 추가한다", async () => {
-    mocks.roomCreationLimit.mockResolvedValue(
-      sdkSuccess({ activeRoomCount: 0, limit: 10, remaining: 10 }),
-    );
+  it("진행 일정은 하나만 입력한다", async () => {
     const screen = await renderWizard();
 
     await moveToMethodAndScheduleStep(screen);
-    await screen.getByRole("button", { name: "일정 추가" }).click();
-    await screen.getByRole("button", { name: "일정 추가" }).click();
-
-    await expect.element(screen.getByLabelText("날짜 3")).toBeVisible();
-    await expect
-      .element(screen.getByText("현재 일정은 최대 3개까지 추가할 수 있어요."))
-      .toBeVisible();
-    await expect.element(screen.getByRole("button", { name: "일정 추가" })).toBeDisabled();
-
-    await screen.getByRole("button", { name: "3번째 일정 삭제" }).click();
-    await expect.element(screen.getByRole("button", { name: "일정 추가" })).toBeEnabled();
+    await expect.element(screen.getByLabelText("날짜")).toBeVisible();
+    await expect.element(screen.getByRole("button", { name: "일정 추가" })).not.toBeInTheDocument();
   });
 
-  it("일정 상한은 생성 잔여와 참여 슬롯 잔여 중 더 작은 값을 따른다", async () => {
+  it("생성 또는 참여 슬롯이 없어도 다음 단계로 이동하되 완료 표시하지 않는다", async () => {
+    await page.viewport(1200, 900);
     mocks.roomCreationLimit.mockResolvedValue(
       sdkSuccess({ activeRoomCount: 1, limit: 3, remaining: 2 }),
     );
-    const screen = await renderWizard({ slots: { limit: 3, occupied: 2, remaining: 1 } });
+    const screen = await renderWizard({ slots: { limit: 3, occupied: 3, remaining: 0 } });
 
     await moveToMethodAndScheduleStep(screen);
-
-    await expect
-      .element(screen.getByText("현재 일정은 최대 1개까지 추가할 수 있어요."))
-      .toBeVisible();
-    await expect.element(screen.getByRole("button", { name: "일정 추가" })).toBeDisabled();
+    await screen.getByRole("radio", { name: "온라인" }).click();
+    await screen.getByLabelText("날짜").fill("2099-12-31");
+    await screen.getByLabelText("시작 시간").fill("10:00");
+    await expect.element(screen.getByText("현재는 새 면접을 만들 수 없어요.")).toBeVisible();
     await expect
       .element(screen.getByText("같은 공고와 직무로 진행 중인 면접이 1개 있어요."))
       .toBeVisible();
+    await screen.getByRole("button", { name: "다음" }).click();
+    await expect
+      .element(screen.getByRole("heading", { name: "참여할 사람들에게 면접을 소개해요" }))
+      .toBeVisible();
+    await expect
+      .element(screen.getByRole("button", { name: /진행 방식과 일정/ }))
+      .not.toHaveTextContent("완료");
   });
 
-  it("과거 일정과 같은 날짜·시간의 중복 일정을 허용하지 않는다", async () => {
+  it("과거 일정이어도 다음 단계로 이동하되 완료 표시하지 않는다", async () => {
+    await page.viewport(1200, 900);
     const screen = await renderWizard();
 
     await moveToMethodAndScheduleStep(screen);
     await screen.getByRole("radio", { name: "온라인" }).click();
-    await screen.getByLabelText("날짜 1").fill("2000-01-01");
-    await screen.getByLabelText("시작 시간 1").fill("10:00");
+    await screen.getByLabelText("날짜").fill("2000-01-01");
+    await screen.getByLabelText("시작 시간").fill("10:00");
     await screen.getByRole("button", { name: "다음" }).click();
-    await expect.element(screen.getByText("현재보다 이후 시간을 선택해 주세요.")).toBeVisible();
-
-    await screen.getByLabelText("날짜 1").fill("2099-12-31");
-    await screen.getByRole("button", { name: "일정 추가" }).click();
-    await screen.getByLabelText("날짜 2").fill("2099-12-31");
-    await screen.getByLabelText("시작 시간 2").fill("10:00");
-    await screen.getByRole("button", { name: "다음" }).click();
-
     await expect
-      .element(screen.getByText("같은 날짜와 시작 시간은 중복할 수 없어요."))
+      .element(screen.getByRole("heading", { name: "참여할 사람들에게 면접을 소개해요" }))
       .toBeVisible();
-    expect(new URLSearchParams(window.location.search).get("step")).toBe("method-and-schedule");
+    await expect
+      .element(screen.getByRole("button", { name: /진행 방식과 일정/ }))
+      .not.toHaveTextContent("완료");
   });
 
   it("기존 직무 Dialog에서 한 개의 직무만 선택한다", async () => {
@@ -531,14 +588,15 @@ describe("InterviewCreateWizard", () => {
       .toBeChecked();
   });
 
-  it("제목과 이력서가 없으면 최종 확인 단계로 이동하지 않는다", async () => {
+  it("제목과 이력서가 없어도 최종 확인 단계로 이동하며 생성 버튼은 비활성화한다", async () => {
     const screen = await renderIntroductionStep({ resumeData: { maxCount: 10, resumes: [] } });
 
     await screen.getByRole("button", { name: "다음" }).click();
 
-    await expect.element(screen.getByText("면접 제목을 입력해 주세요.")).toBeVisible();
-    await expect.element(screen.getByText("이력서를 선택해 주세요.")).toBeVisible();
-    expect(new URLSearchParams(window.location.search).get("step")).toBe("introduction-and-resume");
+    await expect
+      .element(screen.getByRole("heading", { name: "만들기 전에 같이 확인해요" }))
+      .toBeVisible();
+    await expect.element(screen.getByRole("button", { name: "면접 만들기" })).toBeDisabled();
   });
 
   it("Dialog에서 취소한 선택은 버리고 확정한 실패 이력서는 그대로 사용한다", async () => {
@@ -561,8 +619,72 @@ describe("InterviewCreateWizard", () => {
 
     await screen.getByRole("button", { name: "다음" }).click();
     await expect
-      .element(screen.getByRole("heading", { name: "입력한 내용을 확인해 주세요" }))
+      .element(screen.getByRole("heading", { name: "만들기 전에 같이 확인해요" }))
       .toBeVisible();
+  });
+
+  it("각 단계의 모든 필드가 유효하면 현재 위치와 관계없이 체크 표시한다", async () => {
+    await page.viewport(1200, 900);
+    const screen = await renderWizard();
+
+    await screen.getByRole("combobox", { name: "채용 공고" }).fill("달빛");
+    await expect.poll(() => mocks.searchJobPostings.mock.calls.length).toBe(1);
+    await screen.getByRole("option", { name: /프론트엔드 개발자/ }).click();
+    await selectJobRole(screen);
+    await screen.getByRole("radio", { name: "1차" }).click();
+
+    const completedStep = screen.getByRole("button", { name: /면접 정보/ });
+    await expect.element(completedStep).toHaveTextContent("완료");
+    expect(completedStep.element().querySelector("svg")).not.toBeNull();
+  });
+
+  it("최종 확인에서 단일 면접을 만들고 완료 후 이동한다", async () => {
+    const screen = await renderWizard();
+    await moveToFinalReviewStep(screen);
+
+    await expect.element(screen.getByText("[달빛페이] 프론트엔드 개발자")).toBeVisible();
+    await expect.element(screen.getByText(/2099년 12월 31일.+오전 10:00 · 90분/)).toBeVisible();
+    await screen.getByRole("button", { name: "면접 만들기" }).click();
+
+    await expect.poll(() => mocks.createRoom.mock.calls.length).toBe(1);
+    expect(mocks.createRoom).toHaveBeenCalledWith({
+      body: {
+        description: null,
+        jobRoleId: 10,
+        maxParticipants: 8,
+        method: "ONLINE",
+        minParticipants: 2,
+        postingId: 101,
+        resumeId: "resume-done",
+        resumePublic: true,
+        round: "FIRST",
+        schedule: { date: "2099-12-31", durationMinutes: 90, startTime: "10:00" },
+        sigunguId: null,
+        title: "달빛페이 실전 면접",
+        type: null,
+      },
+      throwOnError: true,
+    });
+    await expect.poll(() => window.location.pathname).toBe("/");
+    await expect.element(screen.getByText("1개의 면접을 만들었어요")).toBeVisible();
+  });
+
+  it("면접 생성이 실패하면 입력값과 최종 확인 단계를 유지한다", async () => {
+    mocks.createRoom.mockResolvedValue({
+      data: undefined,
+      error: { error: { message: "면접 생성 한도를 초과했어요." } },
+      response: new Response(null, { status: 400 }),
+    });
+    const screen = await renderWizard();
+    await moveToFinalReviewStep(screen);
+
+    await screen.getByRole("button", { name: "면접 만들기" }).click();
+
+    await expect
+      .element(screen.getByRole("alert"))
+      .toHaveTextContent("면접 생성 한도를 초과했어요.");
+    expect(new URLSearchParams(window.location.search).get("step")).toBe("final-review");
+    expect(mocks.createRoom).toHaveBeenCalledTimes(1);
   });
 
   it("요약 생성 중인 이력서는 목록 폴링 후 완성된 요약을 표시한다", async () => {

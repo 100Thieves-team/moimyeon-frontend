@@ -125,6 +125,9 @@ export const stepButton = style({
 });
 
 export const stepNumber = style({
+  display: "flex",
+  height: "1.6rem",
+  alignItems: "center",
   paddingTop: "0.1rem",
   fontFamily: vars.font.mono,
   fontSize: "1.2rem",
@@ -673,7 +676,7 @@ export const scheduleColumnHeader = style({
   "@media": {
     [media.md]: {
       display: "grid",
-      gridTemplateColumns: "minmax(0, 208fr) minmax(0, 148fr) minmax(0, 148fr) 3.6rem",
+      gridTemplateColumns: "minmax(0, 208fr) minmax(0, 148fr) minmax(0, 148fr)",
       gap: "1.2rem",
     },
   },
@@ -694,12 +697,6 @@ export const warningNotice = style({
   lineHeight: "1.8rem",
 });
 
-export const scheduleList = style({
-  display: "flex",
-  flexDirection: "column",
-  gap: vars.spacing.sm,
-});
-
 export const scheduleRow = style({
   display: "grid",
   minWidth: 0,
@@ -708,7 +705,7 @@ export const scheduleRow = style({
   gap: vars.spacing.base,
   "@media": {
     [media.md]: {
-      gridTemplateColumns: "minmax(0, 208fr) minmax(0, 148fr) minmax(0, 148fr) 3.6rem",
+      gridTemplateColumns: "minmax(0, 208fr) minmax(0, 148fr) minmax(0, 148fr)",
       gap: "1.2rem",
     },
   },
@@ -739,40 +736,6 @@ export const scheduleFieldLabel = style({
   },
 });
 
-export const scheduleRemoveButton = style({
-  display: "inline-flex",
-  width: "3.6rem",
-  height: "3.6rem",
-  alignItems: "center",
-  justifyContent: "center",
-  border: 0,
-  borderRadius: vars.radius.control,
-  backgroundColor: "transparent",
-  color: vars.color.tertiary,
-  cursor: "pointer",
-  "@media": {
-    [media.md]: { marginTop: "0.5rem" },
-    [media.hover]: {
-      selectors: {
-        "&:hover": { backgroundColor: vars.color.fillTertiary, color: vars.color.primary },
-      },
-    },
-  },
-  selectors: {
-    "&:focus-visible": {
-      outline: `2px solid ${vars.color.primary}`,
-      outlineOffset: "2px",
-    },
-  },
-});
-
-export const scheduleRemovePlaceholder = style({
-  display: "none",
-  "@media": {
-    [media.md]: { display: "block", width: "3.6rem", height: "3.6rem" },
-  },
-});
-
 export const scheduleControl = style({
   height: "4.6rem",
   minHeight: "4.6rem",
@@ -790,38 +753,6 @@ export const nativeInput = style({
       boxShadow: `0 0 0 2px ${vars.color.primary10}`,
     },
     "&[data-invalid]": { borderColor: vars.color.red },
-  },
-});
-
-export const scheduleAddButton = style({
-  display: "inline-flex",
-  width: "100%",
-  minHeight: "4.4rem",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: vars.spacing.sm,
-  border: `1px dashed ${vars.color.strokeMedium}`,
-  borderRadius: vars.radius.media,
-  backgroundColor: "transparent",
-  color: vars.color.secondary,
-  fontFamily: vars.font.sans,
-  fontSize: "1.4rem",
-  fontWeight: 600,
-  lineHeight: "1.8rem",
-  cursor: "pointer",
-  selectors: {
-    "&:focus-visible": {
-      outline: `2px solid ${vars.color.primary}`,
-      outlineOffset: "2px",
-    },
-    "&:disabled": { opacity: 0.45, cursor: "not-allowed" },
-  },
-  "@media": {
-    [media.hover]: {
-      selectors: {
-        "&:not(:disabled):hover": { backgroundColor: vars.color.fillTertiary },
-      },
-    },
   },
 });
 
@@ -1297,6 +1228,118 @@ export const pendingDescription = style({
   color: vars.color.tertiary,
   fontSize: "1.4rem",
   lineHeight: "2rem",
+});
+
+export const reviewStack = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.spacing.base,
+});
+
+export const reviewCard = style({
+  width: "100%",
+  overflow: "hidden",
+  border: `1px solid ${vars.color.strokeLight}`,
+  borderRadius: vars.radius.media,
+  backgroundColor: vars.color.background,
+  boxShadow: vars.shadow.cardSoft,
+});
+
+export const reviewRow = style({
+  display: "grid",
+  gridTemplateColumns: "minmax(0, 1fr) auto",
+  alignItems: "center",
+  gap: vars.spacing.sm,
+  padding: "1.7rem 2rem",
+  borderBottom: `1px solid ${vars.color.strokeLight}`,
+  "@media": {
+    [media.md]: {
+      gridTemplateColumns: "12rem minmax(0, 1fr) auto",
+      gap: "2rem",
+      paddingInline: "2.6rem",
+    },
+  },
+});
+
+export const reviewLabel = style({
+  color: vars.color.tertiary,
+  fontSize: "1.3rem",
+  lineHeight: "1.8rem",
+  "@media": {
+    [media.md]: { gridColumn: "1" },
+  },
+});
+
+export const reviewValue = style({
+  minWidth: 0,
+  gridColumn: "1 / -1",
+  color: vars.color.primary,
+  fontSize: "1.5rem",
+  fontWeight: 500,
+  lineHeight: "2.1rem",
+  overflowWrap: "anywhere",
+  "@media": {
+    [media.md]: { gridColumn: "2" },
+  },
+});
+
+export const reviewEdit = style({
+  gridColumn: "2",
+  gridRow: "1",
+  padding: "0.4rem",
+  border: 0,
+  borderRadius: vars.radius.control,
+  backgroundColor: "transparent",
+  color: vars.color.tertiary,
+  fontFamily: vars.font.sans,
+  fontSize: "1.3rem",
+  lineHeight: "1.7rem",
+  textDecoration: "underline",
+  textUnderlineOffset: "0.15em",
+  cursor: "pointer",
+  selectors: {
+    "&:focus-visible": {
+      outline: `2px solid ${vars.color.primary}`,
+      outlineOffset: "2px",
+    },
+  },
+  "@media": {
+    [media.md]: { gridColumn: "3", gridRow: "1" },
+    [media.hover]: {
+      selectors: { "&:hover": { color: vars.color.primary } },
+    },
+  },
+});
+
+export const reviewSummary = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.spacing.sm,
+  padding: "1.8rem 2rem",
+  backgroundColor: vars.color.blue10,
+  "@media": {
+    [media.md]: { paddingInline: "2.6rem" },
+  },
+});
+
+export const reviewSummaryLabel = style({
+  color: vars.color.blue,
+  fontFamily: vars.font.mono,
+  fontSize: "1.1rem",
+  lineHeight: "1.5rem",
+  letterSpacing: "0.08em",
+});
+
+export const reviewSummaryText = style({
+  color: vars.color.primary,
+  fontSize: "1.45rem",
+  lineHeight: "2.1rem",
+});
+
+export const submitError = style({
+  color: vars.color.red,
+  fontSize: "1.3rem",
+  lineHeight: "1.8rem",
 });
 
 export const footer = style({
