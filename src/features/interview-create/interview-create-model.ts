@@ -1,6 +1,7 @@
 import type {
   ParticipationSlotsResponse,
   RegionsResponse,
+  ResumesResponse,
   RoomFormOptionsResponse,
   SearchJobPostingsResponse,
 } from "@/api";
@@ -8,6 +9,8 @@ import type {
 export type ParticipationSlots = NonNullable<ParticipationSlotsResponse["data"]>;
 export type Regions = NonNullable<RegionsResponse["data"]>;
 export type RoomFormOptions = NonNullable<RoomFormOptionsResponse["data"]>;
+export type Resumes = NonNullable<ResumesResponse["data"]>;
+export type ResumeItem = Resumes["resumes"][number];
 export type SelectedJobPosting = NonNullable<
   SearchJobPostingsResponse["data"]
 >["jobPostings"][number];
@@ -35,8 +38,17 @@ export type InterviewCreateFormValues = {
   type: string | null;
 };
 
+export function getResumesData(response: ResumesResponse): Resumes {
+  if (response.data === undefined) {
+    throw new Error("Failed to load resumes");
+  }
+
+  return response.data;
+}
+
 export function getInterviewCreateDefaultValues(
   options: RoomFormOptions,
+  resumes: Resumes,
 ): InterviewCreateFormValues {
   const minParticipants = options.participantConstraints?.min ?? 2;
   const participantLimit = options.participantConstraints?.max ?? 8;
@@ -49,8 +61,8 @@ export function getInterviewCreateDefaultValues(
     method: "",
     minParticipants,
     posting: null,
-    resumeId: "",
-    resumePublic: false,
+    resumeId: resumes.resumes[0]?.resumeId ?? "",
+    resumePublic: true,
     round: "",
     schedules: [{ date: "", durationMinutes: defaultDuration, startTime: "" }],
     sido: null,

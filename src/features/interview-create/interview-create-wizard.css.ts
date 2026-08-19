@@ -825,6 +825,460 @@ export const scheduleAddButton = style({
   },
 });
 
+export const introductionInput = style({
+  ...controlFrame,
+  minHeight: "4.6rem",
+  padding: "1.3rem 1.6rem",
+  outline: 0,
+  selectors: {
+    "&:focus-visible": {
+      borderColor: vars.color.primary50,
+      boxShadow: `0 0 0 2px ${vars.color.primary10}`,
+    },
+    "&[data-invalid]": { borderColor: vars.color.red },
+  },
+});
+
+export const introductionTextarea = style({
+  ...controlFrame,
+  minHeight: "8.8rem",
+  padding: "1.3rem 1.6rem",
+  outline: 0,
+  fontSize: "1.5rem",
+  fontWeight: 400,
+  lineHeight: "2.3rem",
+  resize: "vertical",
+  selectors: {
+    "&:focus-visible": {
+      borderColor: vars.color.primary50,
+      boxShadow: `0 0 0 2px ${vars.color.primary10}`,
+    },
+    "&[data-invalid]": { borderColor: vars.color.red },
+  },
+});
+
+export const resumeFileRow = style({
+  display: "flex",
+  minWidth: 0,
+  alignItems: "center",
+  gap: "1.4rem",
+  padding: "1.6rem 1.8rem",
+  border: `1px solid ${vars.color.strokeMedium}`,
+  borderRadius: vars.radius.cta,
+  backgroundColor: vars.color.background,
+});
+
+export const resumePdfBadge = style({
+  flex: "0 0 auto",
+  padding: "0.4rem 0.8rem",
+  borderRadius: "0.5rem",
+  backgroundColor: vars.color.fillSecondary,
+  color: vars.color.secondary,
+  fontFamily: vars.font.mono,
+  fontSize: "1rem",
+  fontWeight: 700,
+  lineHeight: "1.4rem",
+  letterSpacing: "0.06em",
+});
+
+export const resumeFileInfo = style({
+  display: "flex",
+  minWidth: 0,
+  flex: "1 1 auto",
+  flexDirection: "column",
+  gap: "0.2rem",
+});
+
+export const resumeFileName = style({
+  overflow: "hidden",
+  color: vars.color.primary,
+  fontSize: "1.45rem",
+  fontWeight: 500,
+  lineHeight: "1.9rem",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+});
+
+export const resumeFileMeta = style({
+  overflow: "hidden",
+  color: vars.color.tertiary,
+  fontSize: "1.25rem",
+  lineHeight: "1.6rem",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+});
+
+export const resumeChangeButton = style({
+  display: "inline-flex",
+  minHeight: "3.4rem",
+  flex: "0 0 auto",
+  alignItems: "center",
+  justifyContent: "center",
+  paddingInline: "1.4rem",
+  border: `1px solid ${vars.color.strokeMedium}`,
+  borderRadius: "1rem",
+  backgroundColor: "transparent",
+  color: vars.color.secondary,
+  fontFamily: vars.font.sans,
+  fontSize: "1.3rem",
+  fontWeight: 500,
+  cursor: "pointer",
+  selectors: {
+    "&:focus-visible": {
+      outline: `2px solid ${vars.color.primary}`,
+      outlineOffset: "2px",
+    },
+  },
+  "@media": {
+    [media.hover]: {
+      selectors: {
+        "&:hover": { backgroundColor: vars.color.fillTertiary },
+      },
+    },
+  },
+});
+
+export const resumeEmptyTrigger = style({
+  display: "inline-flex",
+  width: "100%",
+  minHeight: "6.9rem",
+  alignItems: "center",
+  justifyContent: "center",
+  border: `1px dashed ${vars.color.strokeMedium}`,
+  borderRadius: vars.radius.cta,
+  backgroundColor: "transparent",
+  color: vars.color.secondary,
+  fontFamily: vars.font.sans,
+  fontSize: "1.4rem",
+  fontWeight: 500,
+  cursor: "pointer",
+  selectors: {
+    "&:focus-visible": {
+      outline: `2px solid ${vars.color.primary}`,
+      outlineOffset: "2px",
+    },
+  },
+  "@media": {
+    [media.hover]: {
+      selectors: {
+        "&:hover": { backgroundColor: vars.color.fillTertiary },
+      },
+    },
+  },
+});
+
+export const resumeSummary = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.spacing.sm,
+  padding: "1.8rem 2rem",
+  borderRadius: vars.radius.cta,
+  backgroundColor: vars.color.blue10,
+});
+
+export const resumeSummaryLabel = style({
+  color: vars.color.blue,
+  fontFamily: vars.font.mono,
+  fontSize: "1.1rem",
+  lineHeight: "1.5rem",
+  letterSpacing: "0.1em",
+});
+
+export const resumeSummaryText = style({
+  color: vars.color.primary,
+  fontSize: "1.45rem",
+  lineHeight: "2.1rem",
+});
+
+export const resumeShareRow = style({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: vars.spacing.base,
+  padding: "1.4rem 1.8rem",
+  border: `1px solid ${vars.color.strokeLight}`,
+  borderRadius: vars.radius.cta,
+  backgroundColor: "transparent",
+});
+
+export const resumeShareCopy = style({
+  display: "flex",
+  minWidth: 0,
+  flexDirection: "column",
+  gap: "0.2rem",
+});
+
+export const resumeShareTitle = style({
+  color: vars.color.primary,
+  fontSize: "1.45rem",
+  fontWeight: 500,
+  lineHeight: "1.9rem",
+});
+
+export const resumeShareDescription = style({
+  color: vars.color.tertiary,
+  fontSize: "1.25rem",
+  lineHeight: "1.7rem",
+});
+
+export const resumeShareSwitch = style({
+  position: "relative",
+  display: "inline-flex",
+  width: "4rem",
+  height: "2.4rem",
+  flex: "0 0 auto",
+  alignItems: "center",
+  padding: "0.3rem",
+  border: 0,
+  borderRadius: vars.radius.pill,
+  backgroundColor: vars.color.fillSecondary,
+  cursor: "pointer",
+  transition: `background-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
+  selectors: {
+    "&[data-checked]": { backgroundColor: vars.color.fillPrimary },
+    "&[data-focused]": {
+      outline: `2px solid ${vars.color.primary}`,
+      outlineOffset: "2px",
+    },
+  },
+  "@media": {
+    [media.reducedMotion]: { transition: "none" },
+  },
+});
+
+export const resumeShareThumb = style({
+  display: "block",
+  width: "1.8rem",
+  height: "1.8rem",
+  borderRadius: "50%",
+  backgroundColor: vars.color.background,
+  boxShadow: `0 0 0 1px ${vars.color.strokeLight}`,
+  transform: "translateX(0)",
+  transition: `transform ${vars.motion.duration.fast} ${vars.motion.ease.out}`,
+  selectors: {
+    [`${resumeShareSwitch}[data-checked] &`]: { transform: "translateX(1.6rem)" },
+  },
+  "@media": {
+    [media.reducedMotion]: { transition: "none" },
+  },
+});
+
+export const resumeDialogBackdrop = style({
+  position: "fixed",
+  inset: 0,
+  zIndex: 50,
+  backgroundColor: "rgba(0,0,0,0.38)",
+  opacity: 1,
+  transition: `opacity ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
+  selectors: {
+    "&[data-starting-style], &[data-ending-style]": { opacity: 0 },
+  },
+  "@media": {
+    [media.reducedMotion]: { transition: "none" },
+  },
+});
+
+export const resumeDialogPopup = style({
+  position: "fixed",
+  top: "50%",
+  left: "50%",
+  zIndex: 51,
+  display: "flex",
+  width: "min(47.2rem, calc(100vw - 3.2rem))",
+  maxHeight: "calc(100dvh - 3.2rem)",
+  flexDirection: "column",
+  overflow: "hidden",
+  borderRadius: "2rem",
+  backgroundColor: vars.color.background,
+  boxShadow: vars.shadow.cardSoft,
+  opacity: 1,
+  transform: "translate(-50%, -50%) scale(1)",
+  transition: `opacity ${vars.motion.duration.fast} ${vars.motion.ease.fade}, transform ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
+  selectors: {
+    "&[data-starting-style], &[data-ending-style]": {
+      opacity: 0,
+      transform: "translate(-50%, -50%) scale(0.98)",
+    },
+  },
+  "@media": {
+    [media.reducedMotion]: { transition: "none" },
+  },
+});
+
+export const resumeDialogHeader = style({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: vars.spacing.base,
+  padding: "2.2rem 2.4rem 0",
+});
+
+export const resumeDialogTitle = style({
+  color: vars.color.primary,
+  fontSize: "1.7rem",
+  fontWeight: 500,
+  lineHeight: "2.3rem",
+  letterSpacing: "-0.01em",
+});
+
+export const resumeDialogClose = style({
+  display: "inline-flex",
+  width: "2.8rem",
+  height: "2.8rem",
+  alignItems: "center",
+  justifyContent: "center",
+  border: 0,
+  borderRadius: vars.radius.control,
+  backgroundColor: "transparent",
+  color: vars.color.tertiary,
+  cursor: "pointer",
+  selectors: {
+    "&:focus-visible": {
+      outline: `2px solid ${vars.color.primary}`,
+      outlineOffset: "2px",
+    },
+  },
+  "@media": {
+    [media.hover]: {
+      selectors: { "&:hover": { backgroundColor: vars.color.fillTertiary } },
+    },
+  },
+});
+
+export const resumeDialogBody = style({
+  display: "flex",
+  minHeight: 0,
+  flexDirection: "column",
+  gap: vars.spacing.sm,
+  overflowY: "auto",
+  padding: "1.6rem 2.4rem 2rem",
+});
+
+export const resumeOptionList = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.spacing.sm,
+});
+
+export const resumeOption = style({
+  display: "flex",
+  width: "100%",
+  minWidth: 0,
+  alignItems: "center",
+  gap: vars.spacing.md,
+  padding: "1.4rem 1.6rem",
+  border: `1px solid ${vars.color.strokeMedium}`,
+  borderRadius: "1.2rem",
+  color: vars.color.primary,
+  cursor: "pointer",
+  selectors: {
+    "&[data-checked]": { borderColor: vars.color.primary, borderWidth: "1.5px" },
+    "&[data-focused]": {
+      outline: `2px solid ${vars.color.primary}`,
+      outlineOffset: "2px",
+    },
+  },
+  "@media": {
+    [media.hover]: {
+      selectors: {
+        "&:hover:not([data-checked])": { backgroundColor: vars.color.fillTertiary },
+      },
+    },
+  },
+});
+
+export const resumeOptionCopy = style({
+  display: "flex",
+  minWidth: 0,
+  flex: "1 1 auto",
+  flexDirection: "column",
+  gap: "0.3rem",
+});
+
+export const resumeOptionHeading = style({
+  display: "flex",
+  minWidth: 0,
+  alignItems: "center",
+  gap: vars.spacing.sm,
+});
+
+export const resumeOptionName = style({
+  minWidth: 0,
+  overflow: "hidden",
+  fontSize: "1.45rem",
+  fontWeight: 500,
+  lineHeight: "1.9rem",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+});
+
+export const resumeRecentBadge = style({
+  flex: "0 0 auto",
+  padding: "0.2rem 0.8rem",
+  borderRadius: vars.radius.pill,
+  backgroundColor: vars.color.lightGrey,
+  color: vars.color.secondary,
+  fontSize: "1.1rem",
+  fontWeight: 500,
+  lineHeight: "1.5rem",
+});
+
+export const resumeOptionMeta = style({
+  overflow: "hidden",
+  color: vars.color.tertiary,
+  fontSize: "1.25rem",
+  lineHeight: "1.7rem",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+});
+
+export const resumeOptionCheck = style({
+  flex: "0 0 auto",
+  opacity: 0,
+  selectors: {
+    [`${resumeOption}[data-checked] &`]: { opacity: 1 },
+  },
+});
+
+export const resumeDialogEmpty = style({
+  padding: "2rem",
+  color: vars.color.tertiary,
+  fontSize: "1.35rem",
+  lineHeight: "1.9rem",
+  textAlign: "center",
+});
+
+export const visuallyHidden = style({
+  position: "absolute",
+  width: "1px",
+  height: "1px",
+  padding: 0,
+  overflow: "hidden",
+  border: 0,
+  clipPath: "inset(50%)",
+  whiteSpace: "nowrap",
+});
+
+export const resumeUploadButton = style({
+  width: "100%",
+  borderStyle: "dashed",
+});
+
+export const resumeUploadError = style({
+  color: vars.color.red,
+  fontSize: "1.2rem",
+  lineHeight: "1.6rem",
+});
+
+export const resumeDialogFooter = style({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
+  gap: vars.spacing.sm,
+  padding: "1.4rem 2.4rem",
+  borderTop: `1px solid ${vars.color.strokeLight}`,
+});
+
 export const pendingCard = style({
   minHeight: "28rem",
   alignItems: "center",
