@@ -1,7 +1,19 @@
-import { environmentManager, QueryClient } from "@tanstack/react-query";
+import {
+  defaultShouldDehydrateQuery,
+  environmentManager,
+  QueryClient,
+} from "@tanstack/react-query";
 
 function makeQueryClient() {
-  return new QueryClient();
+  return new QueryClient({
+    defaultOptions: {
+      dehydrate: {
+        shouldDehydrateQuery: (query) =>
+          defaultShouldDehydrateQuery(query) || query.state.status === "pending",
+        shouldRedactErrors: () => false,
+      },
+    },
+  });
 }
 
 let browserQueryClient: QueryClient | undefined;
