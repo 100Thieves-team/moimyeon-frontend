@@ -188,7 +188,10 @@ export const form = style({
 });
 
 export const stepContent = style({
+  display: "flex",
   width: "100%",
+  flexDirection: "column",
+  gap: vars.spacing.xl,
 });
 
 export const formCard = style({

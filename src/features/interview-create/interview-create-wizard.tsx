@@ -16,7 +16,7 @@ import { useCallback, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Button } from "@/components/button";
 import type { JobRoleGroup } from "@/features/mypage/mypage-model";
-import { motionValues, vars } from "@/styles";
+import { motionValues } from "@/styles";
 import { InterviewInfoStep } from "./interview-info-step";
 import {
   getInterviewCreateDefaultValues,
@@ -38,8 +38,14 @@ type StepDefinition = {
   title: string;
 };
 
-const stepTransition = {
-  duration: motionValues.duration.base,
+const stepEnterTransition = {
+  duration: 0.25,
+  ease: motionValues.ease.out,
+  type: "tween",
+} satisfies Transition;
+
+const stepExitTransition = {
+  duration: motionValues.duration.fast,
   ease: motionValues.ease.out,
   type: "tween",
 } satisfies Transition;
@@ -47,11 +53,14 @@ const stepTransition = {
 const stepVariants = {
   hidden: {
     opacity: 0,
-    transform: `translateY(${vars.spacing.xs})`,
+    // Motion cannot interpolate a CSS variable nested inside a transform string.
+    transform: "translateY(0.4rem)",
+    transition: stepExitTransition,
   },
   visible: {
     opacity: 1,
-    transform: "translateY(0)",
+    transform: "translateY(0rem)",
+    transition: stepEnterTransition,
   },
 } satisfies Variants;
 
@@ -188,7 +197,6 @@ export function InterviewCreateWizard({ jobRoleGroups, options }: InterviewCreat
             </span>
             <span>{step.label}</span>
           </div>
-          <h1 className={styles.title}>{step.title}</h1>
 
           <FormProvider {...methods}>
             <Form
@@ -200,16 +208,16 @@ export function InterviewCreateWizard({ jobRoleGroups, options }: InterviewCreat
             >
               <LazyMotion features={domAnimation} strict>
                 <MotionConfig reducedMotion="user">
-                  <AnimatePresence initial={false} mode="popLayout">
+                  <AnimatePresence initial={false} mode="wait">
                     <m.div
                       animate="visible"
                       className={styles.stepContent}
                       exit="hidden"
                       initial="hidden"
                       key={step.slug}
-                      transition={stepTransition}
                       variants={stepVariants}
                     >
+                      <h1 className={styles.title}>{step.title}</h1>
                       {currentStep === "면접 정보" ? (
                         <InterviewInfoStep jobRoleGroups={jobRoleGroups} options={options} />
                       ) : (
