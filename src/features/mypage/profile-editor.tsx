@@ -1,6 +1,7 @@
 "use client";
 
 import { Combobox } from "@base-ui/react/combobox";
+import { Dialog } from "@base-ui/react/dialog";
 import { Field } from "@base-ui/react/field";
 import { Form } from "@base-ui/react/form";
 import { Toast } from "@base-ui/react/toast";
@@ -10,7 +11,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Check, RotateCcw, X } from "lucide-react";
+import { Check, ChevronDown, RotateCcw, X } from "lucide-react";
 import { Fragment, useRef, useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -24,7 +25,12 @@ import {
   updateProfileMutation,
 } from "@/api/generated/@tanstack/react-query.gen";
 import { Button } from "@/components/button";
+import { JobRoleDialog } from "./job-role-dialog";
+import { jobRoleDialog } from "./job-role-dialog-handle";
+import * as jobRoleStyles from "./job-role-field.css";
+import { JobRolePill } from "./job-role-pill";
 import type { MyPageData, ProfileCompany } from "./mypage-model";
+import * as pillFieldStyles from "./profile-pill-field.css";
 import * as styles from "./profile-editor.css";
 
 type ProfileFormValues = {
@@ -177,21 +183,21 @@ function CompanyCombobox({ name, onBlur, onChange, value }: CompanyComboboxProps
       }}
       value={value}
     >
-      <Combobox.InputGroup className={styles.comboboxInputGroup}>
-        <Combobox.Chips className={styles.chips}>
+      <Combobox.InputGroup className={`${pillFieldStyles.frame} ${styles.companyPillFrame}`}>
+        <Combobox.Chips className={pillFieldStyles.pills}>
           <Combobox.Value>
             {(selectedCompanies: ProfileCompany[]) => (
               <Fragment>
                 {selectedCompanies.map((company) => (
                   <Combobox.Chip
                     aria-label={company.name}
-                    className={styles.chip}
+                    className={pillFieldStyles.pill}
                     key={company.companyId}
                   >
                     {company.name}
                     <Combobox.ChipRemove
                       aria-label={`${company.name} 삭제`}
-                      className={styles.chipRemove}
+                      className={pillFieldStyles.pillRemove}
                     >
                       <X aria-hidden="true" size={12} strokeWidth={2} />
                     </Combobox.ChipRemove>
@@ -410,29 +416,64 @@ export function ProfileEditor({ jobRoleGroups, member }: ProfileEditorProps) {
           control={control}
           name="interestJobRoleIds"
           render={({ field, fieldState }) => {
-            const selectedIds = new Set(field.value);
-            const selectedJobRoles = jobRoleGroups.flatMap((group) =>
-              group.roles.filter((role) => selectedIds.has(role.jobRoleId)),
-            );
+            const selectedJobRoles = jobRoleGroups
+              .flatMap((group) => group.roles)
+              .filter((role) => field.value.includes(role.jobRoleId));
+            const handleValueChange = (nextValue: number[]) => {
+              field.onChange(nextValue);
+              clearErrors("root.serverError");
+            };
 
             return (
-              <Field.Root
-                className={styles.field}
-                dirty={fieldState.isDirty}
-                invalid={fieldState.invalid}
-                name={field.name}
-                touched={fieldState.isTouched}
-              >
-                <Field.Label className={styles.label}>관심 직무</Field.Label>
-                <Field.Control
-                  className={styles.readonlyInput}
-                  onBlur={field.onBlur}
-                  placeholder="선택한 직무가 없어요."
-                  readOnly
-                  ref={field.ref}
-                  value={selectedJobRoles.map((jobRole) => jobRole.displayName).join(", ")}
+              <Fragment>
+                <Field.Root
+                  className={styles.field}
+                  dirty={fieldState.isDirty}
+                  invalid={fieldState.invalid}
+                  name={field.name}
+                  touched={fieldState.isTouched}
+                >
+                  <Field.Label className={styles.label}>관심 직무</Field.Label>
+                  <div className={jobRoleStyles.fieldFrame}>
+                    <Field.Control
+                      className={jobRoleStyles.fieldTrigger}
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                      render={<Dialog.Trigger handle={jobRoleDialog} />}
+                      type="button"
+                      value={field.value.join(",")}
+                    />
+                    <div className={jobRoleStyles.fieldContent}>
+                      {selectedJobRoles.length > 0 ? (
+                        selectedJobRoles.map((role) => (
+                          <JobRolePill
+                            key={role.jobRoleId}
+                            onRemove={() =>
+                              handleValueChange(field.value.filter((id) => id !== role.jobRoleId))
+                            }
+                            role={role}
+                            variant="field"
+                          />
+                        ))
+                      ) : (
+                        <span className={pillFieldStyles.placeholder}>
+                          관심 직무를 선택해 주세요.
+                        </span>
+                      )}
+                      <ChevronDown
+                        aria-hidden="true"
+                        className={jobRoleStyles.fieldChevron}
+                        size={16}
+                      />
+                    </div>
+                  </div>
+                </Field.Root>
+                <JobRoleDialog
+                  groups={jobRoleGroups}
+                  onValueChange={handleValueChange}
+                  value={field.value}
                 />
-              </Field.Root>
+              </Fragment>
             );
           }}
         />
