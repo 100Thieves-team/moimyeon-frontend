@@ -16,6 +16,7 @@ import {
   type SelectedJobRole,
   type SelectedPosting,
 } from "./interview-create-model";
+import { JobPostingLinkDialog } from "./job-posting-link-dialog";
 import * as styles from "./interview-create-wizard.css";
 
 const steps = ["면접 정보", "진행 방식과 일정", "소개와 이력서", "최종 확인"] as const;
@@ -131,7 +132,7 @@ function PostingSearch() {
             </>
           )}
           <p className={styles.help} id="posting-help">
-            찾는 공고가 없나요? 다음 PR에서 링크로 추가할 수 있어요.
+            찾는 공고가 없나요? <JobPostingLinkDialog onCreated={field.onChange} />
           </p>
           {fieldState.error ? (
             <p className={styles.error} id="posting-error">

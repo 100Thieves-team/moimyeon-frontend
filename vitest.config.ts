@@ -13,6 +13,7 @@ export default defineConfig({
       "@base-ui/react/avatar",
       "@base-ui/react/button",
       "@base-ui/react/combobox",
+      "@base-ui/react/dialog",
       "@base-ui/react/field",
       "@base-ui/react/form",
       "@base-ui/react/merge-props",

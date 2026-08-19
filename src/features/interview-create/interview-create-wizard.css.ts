@@ -160,3 +160,70 @@ export const actions = style({
   justifyContent: "space-between",
   marginTop: "1.6rem",
 });
+export const inlineLink = style({
+  padding: 0,
+  border: 0,
+  background: "transparent",
+  color: vars.color.secondary,
+  textDecoration: "underline",
+  cursor: "pointer",
+});
+export const dialogBackdrop = style({
+  position: "fixed",
+  inset: 0,
+  zIndex: 20,
+  background: vars.color.black50,
+});
+export const dialogPopup = style({
+  position: "fixed",
+  top: "50%",
+  left: "50%",
+  zIndex: 21,
+  width: "min(52rem, calc(100vw - 3.2rem))",
+  maxHeight: "calc(100dvh - 3.2rem)",
+  overflowY: "auto",
+  transform: "translate(-50%, -50%)",
+  borderRadius: vars.radius.floating,
+  background: vars.color.background,
+  boxShadow: vars.shadow.cardSoft,
+});
+export const dialogHeader = style({
+  display: "flex",
+  alignItems: "start",
+  justifyContent: "space-between",
+  gap: "2rem",
+  padding: "2.4rem",
+  borderBottom: `1px solid ${vars.color.strokeLight}`,
+});
+export const dialogTitle = style([textStyle.h4, { margin: 0 }]);
+export const dialogDescription = style({ margin: "0.8rem 0 0", color: vars.color.tertiary });
+export const dialogBody = style({ display: "grid", gap: "1.2rem", padding: "2.4rem" });
+export const dialogRow = style({ display: "grid", gridTemplateColumns: "1fr auto", gap: "0.8rem" });
+export const iconButton = style({
+  display: "grid",
+  placeItems: "center",
+  width: "3.6rem",
+  height: "3.6rem",
+  border: 0,
+  borderRadius: vars.radius.pill,
+  background: "transparent",
+  color: vars.color.primary,
+  cursor: "pointer",
+});
+export const backLink = style({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "0.4rem",
+  justifySelf: "start",
+  padding: 0,
+  border: 0,
+  background: "transparent",
+  color: vars.color.secondary,
+  cursor: "pointer",
+});
+export const previewLink = style({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "0.4rem",
+  color: vars.color.secondary,
+});
