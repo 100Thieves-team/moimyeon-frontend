@@ -58,7 +58,9 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
+  usePathname: () => "/mypage",
   useRouter: () => ({ refresh: vi.fn(), replace: vi.fn() }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 const member = {

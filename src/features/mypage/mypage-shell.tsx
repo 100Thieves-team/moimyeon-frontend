@@ -1,13 +1,18 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { Tabs } from "@base-ui/react/tabs";
 import { CalendarCheck, Sprout } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { MyPageData, ProfileTrust } from "./mypage-model";
 import { LogoutButton } from "./logout-button";
 import * as styles from "./mypage-shell.css";
 
 type MyPageShellProps = {
+  activityContent?: ReactNode;
   children: ReactNode;
   publicProfile: MyPageData["publicProfile"];
+  resumeContent?: ReactNode;
 };
 
 type TrustStatsProps = {
@@ -76,7 +81,17 @@ function TrustStats({ trust }: TrustStatsProps) {
   );
 }
 
-export function MyPageShell({ children, publicProfile }: MyPageShellProps) {
+export function MyPageShell({
+  activityContent = null,
+  children,
+  publicProfile,
+  resumeContent = null,
+}: MyPageShellProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const activeTab = tabParam === "resumes" || tabParam === "activity" ? tabParam : "profile";
   const jobTitle = publicProfile.interestJobRoles.map((jobRole) => jobRole.displayName).join(" · ");
   const avatarLabel = Array.from(publicProfile.nickname.trim())[0] ?? "?";
 
@@ -104,15 +119,23 @@ export function MyPageShell({ children, publicProfile }: MyPageShellProps) {
           </div>
         </aside>
 
-        <Tabs.Root className={styles.editorColumn} defaultValue="profile">
+        <Tabs.Root
+          className={styles.editorColumn}
+          onValueChange={(value) => {
+            const params = new URLSearchParams(searchParams.toString());
+            params.set("tab", String(value));
+            router.replace(`${pathname}?${params.toString()}`);
+          }}
+          value={activeTab}
+        >
           <Tabs.List aria-label="마이페이지 메뉴" className={styles.tabList}>
             <Tabs.Tab className={styles.tab} value="profile">
               프로필 수정
             </Tabs.Tab>
-            <Tabs.Tab className={styles.tab} disabled value="resume">
+            <Tabs.Tab className={styles.tab} value="resumes">
               이력서 관리
             </Tabs.Tab>
-            <Tabs.Tab className={styles.tab} disabled value="activity">
+            <Tabs.Tab className={styles.tab} value="activity">
               활동과 후기
             </Tabs.Tab>
           </Tabs.List>
@@ -120,6 +143,14 @@ export function MyPageShell({ children, publicProfile }: MyPageShellProps) {
           <Tabs.Panel className={styles.editorCard} value="profile">
             <h2 className={styles.editorTitle}>프로필 수정</h2>
             {children}
+          </Tabs.Panel>
+          <Tabs.Panel className={styles.editorCard} value="resumes">
+            <h2 className={styles.editorTitle}>이력서 관리</h2>
+            {resumeContent}
+          </Tabs.Panel>
+          <Tabs.Panel className={styles.editorCard} value="activity">
+            <h2 className={styles.editorTitle}>활동과 후기</h2>
+            {activityContent}
           </Tabs.Panel>
         </Tabs.Root>
       </div>

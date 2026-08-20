@@ -74,4 +74,16 @@ describe("TopBar", () => {
       .element(screen.getByRole("link", { name: "면접 탐색" }))
       .toHaveAttribute("aria-current", "page");
   });
+
+  it("내 면접 경로에서 내 면접 메뉴를 활성 상태로 표시한다", async () => {
+    mocks.segment = "my-interviews";
+    const screen = await render(await TopBar());
+
+    await expect
+      .element(screen.getByRole("link", { name: "내 면접" }))
+      .toHaveAttribute("href", "/my-interviews");
+    await expect
+      .element(screen.getByRole("link", { name: "내 면접" }))
+      .toHaveAttribute("aria-current", "page");
+  });
 });

@@ -9,6 +9,7 @@ import {
 import type { MemberMeResponse } from "@/api/generated";
 import { MyPageShell } from "./mypage-shell";
 import { ProfileEditor } from "./profile-editor";
+import { MockActivityReviews, MockResumeManager } from "@/features/interview-mock/mock-mypage-tabs";
 
 type Member = NonNullable<MemberMeResponse["data"]>;
 
@@ -32,7 +33,11 @@ function MyPageDetails({ member }: MyPageDetailsProps) {
   }
 
   return (
-    <MyPageShell publicProfile={publicProfile}>
+    <MyPageShell
+      activityContent={<MockActivityReviews />}
+      publicProfile={publicProfile}
+      resumeContent={<MockResumeManager />}
+    >
       <ProfileEditor jobRoleGroups={jobRoles.groups} member={member} />
     </MyPageShell>
   );

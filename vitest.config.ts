@@ -11,6 +11,7 @@ export default defineConfig({
   optimizeDeps: {
     include: [
       "@base-ui/react/avatar",
+      "@base-ui/react/accordion",
       "@base-ui/react/button",
       "@base-ui/react/combobox",
       "@base-ui/react/dialog",

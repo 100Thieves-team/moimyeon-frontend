@@ -28,7 +28,11 @@ export async function TopBar() {
                 면접 탐색
               </TopBarNavLink>
             </li>
-            <li className={styles.navItem}>내 면접</li>
+            <li>
+              <TopBarNavLink href="/my-interviews" segment="my-interviews">
+                내 면접
+              </TopBarNavLink>
+            </li>
           </ul>
         </div>
 
