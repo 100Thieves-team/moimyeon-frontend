@@ -613,9 +613,7 @@ describe("InterviewCreateWizard", () => {
     await screen.getByRole("button", { name: "이 이력서 쓰기" }).click();
 
     await expect.element(screen.getByText("포트폴리오_2026.pdf", { exact: true })).toBeVisible();
-    await expect
-      .element(screen.getByText("AI 요약을 만들지 못했어요. 이력서는 그대로 사용할 수 있어요."))
-      .toBeVisible();
+    await expect.element(screen.getByText("AI 요약을 만들지 못했어요.")).toBeVisible();
 
     await screen.getByRole("button", { name: "다음" }).click();
     await expect

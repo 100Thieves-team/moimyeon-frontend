@@ -92,10 +92,10 @@ export function FinalReviewStep({
     resume?.aiSummary?.status === "DONE" && resume.aiSummary.text
       ? resume.aiSummary.text
       : resume?.aiSummary?.status === "PROCESSING"
-        ? "AI 요약을 만들고 있어요 — 잠깐이면 돼요."
+        ? "AI 요약을 만들고 있어요"
         : resume?.aiSummary?.status === "FAILED"
-          ? "AI 요약을 만들지 못했어요. 이력서는 그대로 사용할 수 있어요."
-          : "AI 요약 정보가 아직 없어요. 이력서는 그대로 사용할 수 있어요.";
+          ? "AI 요약을 만들지 못했어요."
+          : "AI 요약 정보가 아직 없어요.";
   const methodLabel =
     values.method === "OFFLINE" && sigungu
       ? `${method?.label ?? "오프라인"} · ${sigungu.sidoShortName} ${sigungu.name}`

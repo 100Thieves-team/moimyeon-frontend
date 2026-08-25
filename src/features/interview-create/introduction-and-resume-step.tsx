@@ -83,7 +83,7 @@ function formatResumeMeta(resume: ResumeItem) {
     return `${fileSize} · ${usedDate}에 사용`;
   }
 
-  return `${fileSize} · 저장된 이력서에서 가져왔어요`;
+  return fileSize;
 }
 
 function upsertResume(
@@ -119,10 +119,10 @@ function ResumeSummary({ resume }: { resume: ResumeItem }) {
     status === "DONE" && resume.aiSummary?.text
       ? resume.aiSummary.text
       : status === "PROCESSING"
-        ? "AI 요약을 만들고 있어요 — 잠깐이면 돼요."
+        ? "AI 요약을 만들고 있어요"
         : status === "FAILED"
-          ? "AI 요약을 만들지 못했어요. 이력서는 그대로 사용할 수 있어요."
-          : "AI 요약 정보가 아직 없어요. 이력서는 그대로 사용할 수 있어요.";
+          ? "AI 요약을 만들지 못했어요."
+          : "AI 요약 정보가 아직 없어요.";
 
   return (
     <div className={styles.resumeSummary}>
