@@ -3,12 +3,14 @@
 import { Collapsible } from "@base-ui/react/collapsible";
 import { Check, ChevronDown } from "lucide-react";
 import { isSubmittedTarget, type ReviewTarget } from "./review-model";
+import { ReviewForm } from "./review-form";
 import * as styles from "./target-row.css";
 
 type TargetRowProps = {
   expanded: boolean;
   isHost: boolean;
   onExpandedChange: (expanded: boolean) => void;
+  roomId: string;
   target: ReviewTarget;
 };
 
@@ -28,7 +30,7 @@ function TargetRowHead({ isHost, target }: Pick<TargetRowProps, "isHost" | "targ
   );
 }
 
-export function TargetRow({ expanded, isHost, onExpandedChange, target }: TargetRowProps) {
+export function TargetRow({ expanded, isHost, onExpandedChange, roomId, target }: TargetRowProps) {
   if (isSubmittedTarget(target)) {
     return (
       <div className={styles.row}>
@@ -57,7 +59,9 @@ export function TargetRow({ expanded, isHost, onExpandedChange, target }: Target
         />
       </Collapsible.Trigger>
       <Collapsible.Panel className={styles.panel}>
-        <div className={styles.panelContent} />
+        <div className={styles.panelContent}>
+          <ReviewForm onCompleted={() => onExpandedChange(false)} roomId={roomId} target={target} />
+        </div>
       </Collapsible.Panel>
     </Collapsible.Root>
   );

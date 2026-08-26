@@ -1,0 +1,188 @@
+"use client";
+
+import { Field } from "@base-ui/react/field";
+import { Form } from "@base-ui/react/form";
+import { Toast } from "@base-ui/react/toast";
+import { Toggle } from "@base-ui/react/toggle";
+import { ToggleGroup } from "@base-ui/react/toggle-group";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Controller, useForm } from "react-hook-form";
+import {
+  getReviewTargetsQueryKey,
+  skipReviewMutation,
+  submitReviewMutation,
+} from "@/api/generated/@tanstack/react-query.gen";
+import type { SkipReviewError, SubmitReviewError } from "@/api/generated";
+import { Button } from "@/components/button";
+import { REVIEW_TAG_LABELS, type ReviewTarget } from "./review-model";
+import * as styles from "./review-form.css";
+
+type ReviewFormProps = {
+  onCompleted: () => void;
+  roomId: string;
+  target: ReviewTarget;
+};
+
+type ReviewFormValues = {
+  content: string;
+  tags: string[];
+};
+
+function getApiErrorMessage(error: unknown) {
+  const apiError = (error as SkipReviewError | SubmitReviewError).error;
+
+  return apiError?.message ?? "요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.";
+}
+
+export function ReviewForm({ onCompleted, roomId, target }: ReviewFormProps) {
+  const queryClient = useQueryClient();
+  const toastManager = Toast.useToastManager();
+  const submitReview = useMutation(submitReviewMutation());
+  const skipReview = useMutation(skipReviewMutation());
+  const {
+    clearErrors,
+    control,
+    formState: { errors, isSubmitting },
+    handleSubmit,
+    setError,
+  } = useForm<ReviewFormValues>({
+    defaultValues: {
+      content: "",
+      tags: [],
+    },
+  });
+  const isBusy = isSubmitting || skipReview.isPending;
+
+  const invalidateTargets = () =>
+    queryClient.invalidateQueries({
+      queryKey: getReviewTargetsQueryKey({ path: { roomId } }),
+    });
+
+  const submitForm = handleSubmit(async ({ content, tags }) => {
+    try {
+      await submitReview.mutateAsync({
+        body: {
+          /* dev API가 anonymous 누락 시 E400을 반환한다(계약상 optional·기본 true지만 필수로 동작) */
+          anonymous: true,
+          content: content.trim() === "" ? null : content.trim(),
+          tags,
+          targetMemberId: target.memberId,
+        },
+        path: { roomId },
+      });
+    } catch (error) {
+      setError("root", { message: getApiErrorMessage(error), type: "server" });
+
+      return;
+    }
+
+    await invalidateTargets();
+    toastManager.add({ title: `${target.nickname} 님에게 후기를 남겼어요` });
+    onCompleted();
+  });
+
+  const skipTarget = async () => {
+    clearErrors("root");
+
+    try {
+      await skipReview.mutateAsync({
+        body: { targetMemberId: target.memberId },
+        path: { roomId },
+      });
+    } catch (error) {
+      setError("root", { message: getApiErrorMessage(error), type: "server" });
+
+      return;
+    }
+
+    await invalidateTargets();
+    toastManager.add({ title: "이번엔 건너뛰었어요" });
+    onCompleted();
+  };
+
+  return (
+    <Form className={styles.form} onSubmit={submitForm}>
+      <Controller
+        control={control}
+        name="tags"
+        render={({ field, fieldState }) => (
+          <Field.Root
+            className={styles.field}
+            dirty={fieldState.isDirty}
+            invalid={fieldState.invalid}
+            name={field.name}
+            touched={fieldState.isTouched}
+          >
+            <div className={styles.fieldLabelRow}>
+              <Field.Label className={styles.fieldLabel}>이런 점이 좋았어요</Field.Label>
+              <span className={styles.fieldOptional}>선택</span>
+            </div>
+            <ToggleGroup
+              aria-label="이런 점이 좋았어요"
+              className={styles.tagChips}
+              multiple
+              onValueChange={(nextValue) => {
+                clearErrors("root");
+                field.onChange(nextValue);
+              }}
+              value={field.value}
+            >
+              {REVIEW_TAG_LABELS.map((label) => (
+                <Toggle className={styles.tagChip} key={label} value={label}>
+                  {label}
+                </Toggle>
+              ))}
+            </ToggleGroup>
+          </Field.Root>
+        )}
+      />
+      <Controller
+        control={control}
+        name="content"
+        rules={{
+          maxLength: { message: "한 줄 후기는 200자까지 입력할 수 있어요.", value: 200 },
+        }}
+        render={({ field, fieldState }) => (
+          <Field.Root
+            className={styles.field}
+            dirty={fieldState.isDirty}
+            invalid={fieldState.invalid}
+            name={field.name}
+            touched={fieldState.isTouched}
+          >
+            <div className={styles.fieldLabelRow}>
+              <Field.Label className={styles.fieldLabel}>한 줄 후기</Field.Label>
+              <span className={styles.fieldOptional}>선택</span>
+            </div>
+            <Field.Control
+              className={styles.textarea}
+              maxLength={200}
+              name={field.name}
+              onBlur={field.onBlur}
+              onChange={(event) => {
+                clearErrors("root");
+                field.onChange(event);
+              }}
+              placeholder="어땠는지 한 줄이면 충분해요. 후기 원문은 상대에게만 보여요."
+              ref={field.ref}
+              render={<textarea rows={2} />}
+              value={field.value}
+            />
+            <Field.Error className={styles.fieldError} match={Boolean(fieldState.error)}>
+              {fieldState.error?.message}
+            </Field.Error>
+          </Field.Root>
+        )}
+      />
+      {errors.root !== undefined && <p className={styles.rootError}>{errors.root.message}</p>}
+      <div className={styles.footer}>
+        <Button disabled={isBusy} onClick={skipTarget} size="md" type="button" variant="ghost">
+          건너뛰기
+        </Button>
+        <Button disabled={isBusy} size="md" type="submit" variant="primary">
+          후기 제출하기
+        </Button>
+      </div>
+    </Form>
+  );
+}

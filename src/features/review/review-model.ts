@@ -36,3 +36,12 @@ export function formatCompletedDate(startAt: string | undefined) {
 export function isSubmittedTarget(target: ReviewTarget) {
   return target.status === "SUBMITTED";
 }
+
+/* 서버가 태그를 한글 라벨 그대로 검증한다 (ReviewTagOption.labels) */
+export const REVIEW_TAG_LABELS = [
+  "시간을 잘 지켜요",
+  "준비가 성실해요",
+  "질문이 날카로워요",
+  "피드백이 구체적이에요",
+  "소통이 원활해요",
+] as const;

@@ -1,0 +1,104 @@
+import { style } from "@vanilla-extract/css";
+import { vars } from "@/styles";
+
+export const form = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.spacing.lg,
+  width: "100%",
+});
+
+export const field = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.spacing.sm,
+  width: "100%",
+});
+
+export const fieldLabelRow = style({
+  display: "flex",
+  alignItems: "baseline",
+  gap: vars.spacing.sm,
+});
+
+export const fieldLabel = style({
+  fontSize: "1.3rem",
+  fontWeight: 700,
+  color: vars.color.primary,
+});
+
+export const fieldOptional = style({
+  fontFamily: vars.font.mono,
+  fontSize: "1.05rem",
+  letterSpacing: "0.06em",
+  color: vars.color.tertiary,
+});
+
+export const tagChips = style({
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "0.6rem",
+});
+
+export const tagChip = style({
+  padding: "0.8rem 1.3rem",
+  borderRadius: vars.radius.pill,
+  border: `1px solid ${vars.color.strokeMedium}`,
+  backgroundColor: "transparent",
+  fontSize: "1.3rem",
+  fontWeight: 500,
+  color: vars.color.secondary,
+  cursor: "pointer",
+  transition: `border-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, background-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, color ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
+  selectors: {
+    "&[data-pressed]": {
+      borderColor: vars.color.primary,
+      backgroundColor: vars.color.blue10,
+      color: vars.color.primary,
+    },
+    "&:focus-visible": {
+      outline: `2px solid ${vars.color.primary}`,
+      outlineOffset: "2px",
+    },
+  },
+});
+
+export const textarea = style({
+  width: "100%",
+  padding: "1.3rem 1.6rem",
+  borderRadius: vars.radius.control,
+  border: `1px solid ${vars.color.strokeMedium}`,
+  backgroundColor: vars.color.white,
+  fontFamily: vars.font.sans,
+  fontSize: "1.5rem",
+  lineHeight: 1.5,
+  color: vars.color.primary,
+  resize: "vertical",
+  "::placeholder": {
+    color: vars.color.tertiary,
+  },
+  selectors: {
+    "&:focus-visible": {
+      outline: `2px solid ${vars.color.primary}`,
+      outlineOffset: "1px",
+    },
+  },
+});
+
+export const fieldError = style({
+  fontSize: "1.25rem",
+  color: vars.color.red,
+});
+
+export const rootError = style({
+  fontSize: "1.25rem",
+  color: vars.color.red,
+});
+
+export const footer = style({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  paddingTop: vars.spacing.md,
+  borderTop: `1px solid ${vars.color.strokeLight}`,
+});
