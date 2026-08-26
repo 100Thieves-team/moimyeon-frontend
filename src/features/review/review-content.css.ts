@@ -29,7 +29,7 @@ export const sessionCard = style({
   padding: `${vars.spacing.md} ${vars.spacing.lg}`,
   borderRadius: vars.radius.media,
   border: `1px solid ${vars.color.strokeLight}`,
-  backgroundColor: vars.color.white,
+  backgroundColor: vars.color.background,
 });
 
 export const sessionAvatar = style({
@@ -78,5 +78,5 @@ export const targetList = style({
   padding: `0 ${vars.spacing.lg}`,
   borderRadius: "2rem",
   border: `1px solid ${vars.color.strokeLight}`,
-  backgroundColor: vars.color.white,
+  backgroundColor: vars.color.background,
 });

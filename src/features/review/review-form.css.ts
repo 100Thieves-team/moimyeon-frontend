@@ -68,7 +68,7 @@ export const textarea = style({
   padding: "1.3rem 1.6rem",
   borderRadius: vars.radius.control,
   border: `1px solid ${vars.color.strokeMedium}`,
-  backgroundColor: vars.color.white,
+  backgroundColor: vars.color.background,
   fontFamily: vars.font.sans,
   fontSize: "1.5rem",
   lineHeight: 1.5,
