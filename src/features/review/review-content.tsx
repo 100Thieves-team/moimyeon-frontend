@@ -1,11 +1,14 @@
 "use client";
 
 import { useSuspenseQueries } from "@tanstack/react-query";
+import { useState } from "react";
 import {
   getReviewTargetsOptions,
   roomDetailOptions,
 } from "@/api/generated/@tanstack/react-query.gen";
+import { formatCompletedDate } from "./review-model";
 import * as styles from "./review-content.css";
+import { TargetRow } from "./target-row";
 
 type ReviewContentProps = {
   roomId: string;
@@ -18,6 +21,7 @@ export function ReviewContent({ roomId }: ReviewContentProps) {
       getReviewTargetsOptions({ path: { roomId } }),
     ],
   });
+  const [expandedMemberId, setExpandedMemberId] = useState<string | null>(null);
   const room = roomResponse.data;
   const reviewTargets = targetsResponse.data;
 
@@ -29,24 +33,35 @@ export function ReviewContent({ roomId }: ReviewContentProps) {
     throw new Error("Failed to load review targets");
   }
 
+  const completedDate = formatCompletedDate(room.schedule?.startAt);
+
   return (
     <main className={styles.page}>
       <div className={styles.column}>
         <h1 className={styles.title}>함께한 분들의 후기를 남겨요</h1>
         <section aria-label="면접 정보" className={styles.sessionCard}>
-          <p className={styles.sessionTitle}>{room.title}</p>
+          <span aria-hidden="true" className={styles.sessionAvatar}>
+            {room.title.charAt(0)}
+          </span>
+          <div className={styles.sessionInfo}>
+            <p className={styles.sessionTitle}>{room.title}</p>
+            {completedDate !== null && <p className={styles.sessionDate}>{completedDate}</p>}
+          </div>
           <p className={styles.sessionProgress}>
             {reviewTargets.submittedCount} / {reviewTargets.totalCount} 작성함
           </p>
         </section>
         <section aria-label="후기 작성 대상" className={styles.targetList}>
           {reviewTargets.targets.map((target) => (
-            <div className={styles.targetRow} key={target.memberId}>
-              <p className={styles.targetNickname}>{target.nickname}</p>
-              <p className={styles.targetStatus}>
-                {target.status === "SUBMITTED" ? "제출함" : "작성 가능"}
-              </p>
-            </div>
+            <TargetRow
+              expanded={expandedMemberId === target.memberId}
+              isHost={target.memberId === room.hostMemberId}
+              key={target.memberId}
+              onExpandedChange={(expanded) => {
+                setExpandedMemberId(expanded ? target.memberId : null);
+              }}
+              target={target}
+            />
           ))}
         </section>
       </div>

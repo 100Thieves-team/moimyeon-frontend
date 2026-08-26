@@ -25,12 +25,33 @@ export const title = style({
 export const sessionCard = style({
   display: "flex",
   alignItems: "center",
-  justifyContent: "space-between",
   gap: vars.spacing.md,
   padding: `${vars.spacing.md} ${vars.spacing.lg}`,
   borderRadius: vars.radius.media,
   border: `1px solid ${vars.color.strokeLight}`,
   backgroundColor: vars.color.white,
+});
+
+export const sessionAvatar = style({
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexShrink: 0,
+  width: "3.8rem",
+  height: "3.8rem",
+  borderRadius: "1.1rem",
+  backgroundColor: vars.color.blue10,
+  fontSize: "1.3rem",
+  fontWeight: 700,
+  color: vars.color.blue,
+});
+
+export const sessionInfo = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.2rem",
+  flex: "1 0 0",
+  minWidth: "0.1rem",
 });
 
 export const sessionTitle = style({
@@ -39,7 +60,13 @@ export const sessionTitle = style({
   color: vars.color.primary,
 });
 
+export const sessionDate = style({
+  fontSize: "1.25rem",
+  color: vars.color.tertiary,
+});
+
 export const sessionProgress = style({
+  flexShrink: 0,
   fontSize: "1.25rem",
   fontWeight: 500,
   color: vars.color.secondary,
@@ -49,31 +76,7 @@ export const targetList = style({
   display: "flex",
   flexDirection: "column",
   padding: `0 ${vars.spacing.lg}`,
-  borderRadius: vars.radius.media,
+  borderRadius: "2rem",
   border: `1px solid ${vars.color.strokeLight}`,
   backgroundColor: vars.color.white,
-});
-
-export const targetRow = style({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: vars.spacing.md,
-  padding: `${vars.spacing.md} 0`,
-  selectors: {
-    "&:not(:first-child)": {
-      borderTop: `1px solid ${vars.color.strokeLight}`,
-    },
-  },
-});
-
-export const targetNickname = style({
-  fontSize: "1.45rem",
-  fontWeight: 500,
-  color: vars.color.primary,
-});
-
-export const targetStatus = style({
-  fontSize: "1.25rem",
-  color: vars.color.tertiary,
 });
