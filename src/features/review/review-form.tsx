@@ -1,11 +1,13 @@
 "use client";
 
+import { Checkbox } from "@base-ui/react/checkbox";
 import { Field } from "@base-ui/react/field";
 import { Form } from "@base-ui/react/form";
 import { Toast } from "@base-ui/react/toast";
 import { Toggle } from "@base-ui/react/toggle";
 import { ToggleGroup } from "@base-ui/react/toggle-group";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Check } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import {
   getReviewTargetsQueryKey,
@@ -24,6 +26,7 @@ type ReviewFormProps = {
 };
 
 type ReviewFormValues = {
+  anonymous: boolean;
   content: string;
   tags: string[];
 };
@@ -47,6 +50,7 @@ export function ReviewForm({ onCompleted, roomId, target }: ReviewFormProps) {
     setError,
   } = useForm<ReviewFormValues>({
     defaultValues: {
+      anonymous: true,
       content: "",
       tags: [],
     },
@@ -58,12 +62,12 @@ export function ReviewForm({ onCompleted, roomId, target }: ReviewFormProps) {
       queryKey: getReviewTargetsQueryKey({ path: { roomId } }),
     });
 
-  const submitForm = handleSubmit(async ({ content, tags }) => {
+  const submitForm = handleSubmit(async ({ anonymous, content, tags }) => {
     try {
       await submitReview.mutateAsync({
         body: {
-          /* dev API가 anonymous 누락 시 E400을 반환한다(계약상 optional·기본 true지만 필수로 동작) */
-          anonymous: true,
+          /* dev API가 anonymous 누락 시 E400을 반환하므로 항상 명시한다(계약상 optional·기본 true지만 필수로 동작) */
+          anonymous,
           content: content.trim() === "" ? null : content.trim(),
           tags,
           targetMemberId: target.memberId,
@@ -172,6 +176,29 @@ export function ReviewForm({ onCompleted, roomId, target }: ReviewFormProps) {
               {fieldState.error?.message}
             </Field.Error>
           </Field.Root>
+        )}
+      />
+      <Controller
+        control={control}
+        name="anonymous"
+        render={({ field }) => (
+          <label className={styles.anonymousRow} htmlFor={`review-anonymous-${target.memberId}`}>
+            <Checkbox.Root
+              checked={field.value}
+              className={styles.checkbox}
+              id={`review-anonymous-${target.memberId}`}
+              inputRef={field.ref}
+              name={field.name}
+              onBlur={field.onBlur}
+              onCheckedChange={(checked) => field.onChange(checked)}
+            >
+              <Checkbox.Indicator className={styles.checkboxIndicator}>
+                <Check size={12} strokeWidth={3} />
+              </Checkbox.Indicator>
+            </Checkbox.Root>
+            <span className={styles.anonymousLabel}>익명으로 남기기</span>
+            <span className={styles.anonymousHint}>끄면 상대에게 닉네임이 공개돼요</span>
+          </label>
         )}
       />
       {errors.root !== undefined && <p className={styles.rootError}>{errors.root.message}</p>}

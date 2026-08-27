@@ -85,6 +85,55 @@ export const textarea = style({
   },
 });
 
+export const anonymousRow = style({
+  display: "flex",
+  alignItems: "center",
+  gap: "0.8rem",
+  cursor: "pointer",
+  width: "fit-content",
+});
+
+export const checkbox = style({
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexShrink: 0,
+  width: "1.8rem",
+  height: "1.8rem",
+  padding: 0,
+  borderRadius: "0.5rem",
+  border: `1px solid ${vars.color.strokeMedium}`,
+  backgroundColor: "transparent",
+  cursor: "pointer",
+  transition: `background-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, border-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
+  selectors: {
+    "&[data-checked]": {
+      borderColor: vars.color.fillPrimary,
+      backgroundColor: vars.color.fillPrimary,
+    },
+    "&:focus-visible": {
+      outline: `2px solid ${vars.color.primary}`,
+      outlineOffset: "2px",
+    },
+  },
+});
+
+export const checkboxIndicator = style({
+  display: "inline-flex",
+  color: vars.color.background,
+});
+
+export const anonymousLabel = style({
+  fontSize: "1.3rem",
+  fontWeight: 500,
+  color: vars.color.primary,
+});
+
+export const anonymousHint = style({
+  fontSize: "1.2rem",
+  color: vars.color.tertiary,
+});
+
 export const fieldError = style({
   fontSize: "1.25rem",
   color: vars.color.red,
