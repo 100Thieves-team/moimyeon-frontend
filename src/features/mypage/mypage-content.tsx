@@ -10,7 +10,7 @@ import { Suspense } from "react";
 import type { MemberMeResponse } from "@/api/generated";
 import { MyPageShell } from "./mypage-shell";
 import { ProfileEditor } from "./profile-editor";
-import { ReceivedReviews } from "./received-reviews";
+import { ReceivedReviews, ReceivedReviewsFallback } from "./received-reviews";
 
 type Member = NonNullable<MemberMeResponse["data"]>;
 
@@ -36,7 +36,7 @@ function MyPageDetails({ member }: MyPageDetailsProps) {
   return (
     <MyPageShell
       activity={
-        <Suspense fallback={null}>
+        <Suspense fallback={<ReceivedReviewsFallback />}>
           <ReceivedReviews />
         </Suspense>
       }

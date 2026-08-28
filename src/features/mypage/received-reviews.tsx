@@ -7,7 +7,7 @@ import { getReceivedReviewsQueryKey } from "@/api/generated/@tanstack/react-quer
 import { Button } from "@/components/button";
 import * as styles from "./received-reviews.css";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
 type ReceivedReviewsPage = NonNullable<GetReceivedReviewsResponse["data"]>;
 
@@ -19,6 +19,28 @@ function pageOptions(lastReviewId?: number) {
       ...(lastReviewId === undefined ? {} : { lastReviewId: String(lastReviewId) }),
     } as GetReceivedReviewsData["query"],
   };
+}
+
+export function ReceivedReviewsFallback() {
+  return (
+    <section aria-label="받은 후기 불러오는 중" className={styles.container}>
+      <div className={styles.header}>
+        <h3 className={styles.title}>받은 후기</h3>
+      </div>
+      <ul className={styles.list}>
+        {[0, 1, 2].map((index) => (
+          <li aria-hidden="true" className={styles.item} key={index}>
+            <div className={styles.skeletonTagRow}>
+              <span className={styles.skeletonChip} />
+              <span className={styles.skeletonChip} />
+            </div>
+            <span className={styles.skeletonLine} />
+            <span className={styles.skeletonLineShort} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
 }
 
 export function ReceivedReviews() {

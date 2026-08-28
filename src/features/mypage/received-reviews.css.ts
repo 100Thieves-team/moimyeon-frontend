@@ -77,6 +77,37 @@ export const author = style({
   color: vars.color.tertiary,
 });
 
+const skeletonBase = {
+  display: "block",
+  borderRadius: vars.radius.pill,
+  backgroundColor: vars.color.fillTertiary,
+} as const;
+
+export const skeletonTagRow = style({
+  display: "flex",
+  gap: "0.6rem",
+});
+
+export const skeletonChip = style({
+  ...skeletonBase,
+  width: "8.4rem",
+  height: "2.2rem",
+});
+
+export const skeletonLine = style({
+  ...skeletonBase,
+  width: "70%",
+  height: "1.4rem",
+  borderRadius: "0.4rem",
+});
+
+export const skeletonLineShort = style({
+  ...skeletonBase,
+  width: "24%",
+  height: "1.2rem",
+  borderRadius: "0.4rem",
+});
+
 export const moreRow = style({
   display: "flex",
   justifyContent: "center",
