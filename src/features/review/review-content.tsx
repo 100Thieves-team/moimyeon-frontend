@@ -6,7 +6,7 @@ import {
   getReviewTargetsOptions,
   roomDetailOptions,
 } from "@/api/generated/@tanstack/react-query.gen";
-import { formatCompletedDate } from "./review-model";
+import { formatCompletedDate, isSubmittedTarget } from "./review-model";
 import * as styles from "./review-content.css";
 import { TargetRow } from "./target-row";
 
@@ -34,6 +34,17 @@ export function ReviewContent({ roomId }: ReviewContentProps) {
   }
 
   const completedDate = formatCompletedDate(room.schedule?.startAt);
+  const { targets } = reviewTargets;
+
+  /* 제출·건너뛰기를 마치면 리스트 순서상 다음 WRITABLE 대상을 이어서 연다 (끝이면 앞에서부터) */
+  const openNextWritable = (memberId: string) => {
+    const currentIndex = targets.findIndex((target) => target.memberId === memberId);
+    const nextTarget = [...targets.slice(currentIndex + 1), ...targets.slice(0, currentIndex)].find(
+      (target) => !isSubmittedTarget(target),
+    );
+
+    setExpandedMemberId(nextTarget?.memberId ?? null);
+  };
 
   return (
     <main className={styles.page}>
@@ -52,11 +63,12 @@ export function ReviewContent({ roomId }: ReviewContentProps) {
           </p>
         </section>
         <section aria-label="후기 작성 대상" className={styles.targetList}>
-          {reviewTargets.targets.map((target) => (
+          {targets.map((target) => (
             <TargetRow
               expanded={expandedMemberId === target.memberId}
               isHost={target.memberId === room.hostMemberId}
               key={target.memberId}
+              onCompleted={() => openNextWritable(target.memberId)}
               roomId={roomId}
               onExpandedChange={(expanded) => {
                 setExpandedMemberId(expanded ? target.memberId : null);

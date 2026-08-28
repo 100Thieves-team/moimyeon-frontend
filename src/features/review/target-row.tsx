@@ -10,6 +10,7 @@ import * as styles from "./target-row.css";
 type TargetRowProps = {
   expanded: boolean;
   isHost: boolean;
+  onCompleted: () => void;
   onExpandedChange: (expanded: boolean) => void;
   roomId: string;
   target: ReviewTarget;
@@ -37,7 +38,14 @@ function TargetIdentity({ isHost, target }: Pick<TargetRowProps, "isHost" | "tar
   );
 }
 
-export function TargetRow({ expanded, isHost, onExpandedChange, roomId, target }: TargetRowProps) {
+export function TargetRow({
+  expanded,
+  isHost,
+  onCompleted,
+  onExpandedChange,
+  roomId,
+  target,
+}: TargetRowProps) {
   if (isSubmittedTarget(target)) {
     return (
       <div className={styles.row}>
@@ -72,7 +80,7 @@ export function TargetRow({ expanded, isHost, onExpandedChange, roomId, target }
       </div>
       <Collapsible.Panel className={styles.panel}>
         <div className={styles.panelContent}>
-          <ReviewForm onCompleted={() => onExpandedChange(false)} roomId={roomId} target={target} />
+          <ReviewForm onCompleted={onCompleted} roomId={roomId} target={target} />
         </div>
       </Collapsible.Panel>
     </Collapsible.Root>
