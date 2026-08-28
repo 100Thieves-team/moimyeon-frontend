@@ -276,7 +276,7 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
                   className={styles.deleteButton}
                   disabled={isBusy}
                   size="md"
-                  variant="ghost"
+                  variant="secondary"
                 />
               }
             >
