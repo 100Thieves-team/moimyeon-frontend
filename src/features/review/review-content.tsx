@@ -68,7 +68,11 @@ export function ReviewContent({ roomId }: ReviewContentProps) {
               expanded={expandedMemberId === target.memberId}
               isHost={target.memberId === room.hostMemberId}
               key={target.memberId}
-              onCompleted={() => openNextWritable(target.memberId)}
+              onCompleted={
+                isSubmittedTarget(target)
+                  ? () => setExpandedMemberId(null)
+                  : () => openNextWritable(target.memberId)
+              }
               roomId={roomId}
               onExpandedChange={(expanded) => {
                 setExpandedMemberId(expanded ? target.memberId : null);

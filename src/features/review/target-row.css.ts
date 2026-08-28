@@ -26,6 +26,7 @@ export const expandTrigger = style({
   display: "flex",
   alignItems: "center",
   justifyContent: "flex-end",
+  gap: "0.8rem",
   flex: "1 0 0",
   minWidth: "0.1rem",
   alignSelf: "stretch",

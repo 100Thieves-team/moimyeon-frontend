@@ -13,14 +13,17 @@ import {
   getReviewTargetsQueryKey,
   skipReviewMutation,
   submitReviewMutation,
+  updateReviewMutation,
 } from "@/api/generated/@tanstack/react-query.gen";
-import type { SkipReviewError, SubmitReviewError } from "@/api/generated";
+import type { SkipReviewError, SubmitReviewError, UpdateReviewError } from "@/api/generated";
 import { Button } from "@/components/button";
 import { REVIEW_TAG_LABELS, type ReviewTarget } from "./review-model";
 import * as styles from "./review-form.css";
 
 type ReviewFormProps = {
   onCompleted: () => void;
+  /* SUBMITTED 대상의 수정 모드. targets 확장(제출값 조회)이 생기면 프리필로 교체한다 */
+  reviewId?: number | null;
   roomId: string;
   target: ReviewTarget;
 };
@@ -32,15 +35,17 @@ type ReviewFormValues = {
 };
 
 function getApiErrorMessage(error: unknown) {
-  const apiError = (error as SkipReviewError | SubmitReviewError).error;
+  const apiError = (error as SkipReviewError | SubmitReviewError | UpdateReviewError).error;
 
   return apiError?.message ?? "요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.";
 }
 
-export function ReviewForm({ onCompleted, roomId, target }: ReviewFormProps) {
+export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewFormProps) {
+  const isEdit = reviewId !== undefined && reviewId !== null;
   const queryClient = useQueryClient();
   const toastManager = Toast.useToastManager();
   const submitReview = useMutation(submitReviewMutation());
+  const updateReview = useMutation(updateReviewMutation());
   const skipReview = useMutation(skipReviewMutation());
   const {
     clearErrors,
@@ -66,17 +71,26 @@ export function ReviewForm({ onCompleted, roomId, target }: ReviewFormProps) {
     });
 
   const submitForm = handleSubmit(async ({ anonymous, content, tags }) => {
+    const normalizedContent = content.trim() === "" ? null : content.trim();
+
     try {
-      await submitReview.mutateAsync({
-        body: {
-          /* dev API가 anonymous 누락 시 E400을 반환하므로 항상 명시한다(계약상 optional·기본 true지만 필수로 동작) */
-          anonymous,
-          content: content.trim() === "" ? null : content.trim(),
-          tags,
-          targetMemberId: target.memberId,
-        },
-        path: { roomId },
-      });
+      if (isEdit) {
+        await updateReview.mutateAsync({
+          body: { content: normalizedContent, tags },
+          path: { reviewId: String(reviewId) },
+        });
+      } else {
+        await submitReview.mutateAsync({
+          body: {
+            /* dev API가 anonymous 누락 시 E400을 반환하므로 항상 명시한다(계약상 optional·기본 true지만 필수로 동작) */
+            anonymous,
+            content: normalizedContent,
+            tags,
+            targetMemberId: target.memberId,
+          },
+          path: { roomId },
+        });
+      }
     } catch (error) {
       setError("root", { message: getApiErrorMessage(error), type: "server" });
 
@@ -84,7 +98,11 @@ export function ReviewForm({ onCompleted, roomId, target }: ReviewFormProps) {
     }
 
     await invalidateTargets();
-    toastManager.add({ title: `${target.nickname} 님에게 후기를 남겼어요` });
+    toastManager.add({
+      title: isEdit
+        ? `${target.nickname} 님에게 남긴 후기를 수정했어요`
+        : `${target.nickname} 님에게 후기를 남겼어요`,
+    });
     onCompleted();
   });
 
@@ -109,6 +127,11 @@ export function ReviewForm({ onCompleted, roomId, target }: ReviewFormProps) {
 
   return (
     <Form className={styles.form} onSubmit={submitForm}>
+      {isEdit && (
+        <p className={styles.editNotice}>
+          이전에 남긴 내용은 불러오지 못해요. 저장하면 새로 입력한 내용으로 교체돼요.
+        </p>
+      )}
       <Controller
         control={control}
         name="tags"
@@ -181,36 +204,44 @@ export function ReviewForm({ onCompleted, roomId, target }: ReviewFormProps) {
           </Field.Root>
         )}
       />
-      <Controller
-        control={control}
-        name="anonymous"
-        render={({ field }) => (
-          <label className={styles.anonymousRow} htmlFor={`review-anonymous-${target.memberId}`}>
-            <Checkbox.Root
-              checked={field.value}
-              className={styles.checkbox}
-              id={`review-anonymous-${target.memberId}`}
-              inputRef={field.ref}
-              name={field.name}
-              onBlur={field.onBlur}
-              onCheckedChange={(checked) => field.onChange(checked)}
-            >
-              <Checkbox.Indicator className={styles.checkboxIndicator}>
-                <Check size={12} strokeWidth={3} />
-              </Checkbox.Indicator>
-            </Checkbox.Root>
-            <span className={styles.anonymousLabel}>익명으로 남기기</span>
-            <span className={styles.anonymousHint}>끄면 상대에게 닉네임이 공개돼요</span>
-          </label>
-        )}
-      />
+      {!isEdit && (
+        <Controller
+          control={control}
+          name="anonymous"
+          render={({ field }) => (
+            <label className={styles.anonymousRow} htmlFor={`review-anonymous-${target.memberId}`}>
+              <Checkbox.Root
+                checked={field.value}
+                className={styles.checkbox}
+                id={`review-anonymous-${target.memberId}`}
+                inputRef={field.ref}
+                name={field.name}
+                onBlur={field.onBlur}
+                onCheckedChange={(checked) => field.onChange(checked)}
+              >
+                <Checkbox.Indicator className={styles.checkboxIndicator}>
+                  <Check size={12} strokeWidth={3} />
+                </Checkbox.Indicator>
+              </Checkbox.Root>
+              <span className={styles.anonymousLabel}>익명으로 남기기</span>
+              <span className={styles.anonymousHint}>끄면 상대에게 닉네임이 공개돼요</span>
+            </label>
+          )}
+        />
+      )}
       {errors.root !== undefined && <p className={styles.rootError}>{errors.root.message}</p>}
       <div className={styles.footer}>
-        <Button disabled={isBusy} onClick={skipTarget} size="md" type="button" variant="ghost">
-          건너뛰기
-        </Button>
+        {isEdit ? (
+          <Button disabled={isBusy} onClick={onCompleted} size="md" type="button" variant="ghost">
+            취소
+          </Button>
+        ) : (
+          <Button disabled={isBusy} onClick={skipTarget} size="md" type="button" variant="ghost">
+            건너뛰기
+          </Button>
+        )}
         <Button disabled={isBusy || !hasInput} size="md" type="submit" variant="primary">
-          후기 제출하기
+          {isEdit ? "후기 수정하기" : "후기 제출하기"}
         </Button>
       </div>
     </Form>

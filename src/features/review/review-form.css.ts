@@ -8,6 +8,15 @@ export const form = style({
   width: "100%",
 });
 
+export const editNotice = style({
+  padding: "0.9rem 1.2rem",
+  borderRadius: vars.radius.control,
+  backgroundColor: vars.color.fillTertiary,
+  fontSize: "1.25rem",
+  lineHeight: 1.5,
+  color: vars.color.secondary,
+});
+
 export const field = style({
   display: "flex",
   flexDirection: "column",

@@ -46,30 +46,25 @@ export function TargetRow({
   roomId,
   target,
 }: TargetRowProps) {
-  if (isSubmittedTarget(target)) {
-    return (
-      <div className={styles.row}>
-        <div className={styles.rowHead}>
-          <TargetIdentity isHost={isHost} target={target} />
-          <span className={styles.submitted}>
-            <span aria-hidden="true" className={styles.submittedCheck}>
-              <Check size={12} strokeWidth={3} />
-            </span>
-            제출함
-          </span>
-        </div>
-      </div>
-    );
-  }
+  const submitted = isSubmittedTarget(target);
+  const actionLabel = submitted ? "후기 수정" : "후기 작성";
 
   return (
     <Collapsible.Root className={styles.row} onOpenChange={onExpandedChange} open={expanded}>
       <div className={styles.rowHead}>
         <TargetIdentity isHost={isHost} target={target} />
         <Collapsible.Trigger
-          aria-label={`${target.nickname} 후기 작성 ${expanded ? "접기" : "펼치기"}`}
+          aria-label={`${target.nickname} ${actionLabel} ${expanded ? "접기" : "펼치기"}`}
           className={styles.expandTrigger}
         >
+          {submitted && (
+            <span className={styles.submitted}>
+              <span aria-hidden="true" className={styles.submittedCheck}>
+                <Check size={12} strokeWidth={3} />
+              </span>
+              제출함
+            </span>
+          )}
           <ChevronDown
             aria-hidden="true"
             className={expanded ? styles.chevronOpen : styles.chevron}
@@ -80,7 +75,12 @@ export function TargetRow({
       </div>
       <Collapsible.Panel className={styles.panel}>
         <div className={styles.panelContent}>
-          <ReviewForm onCompleted={onCompleted} roomId={roomId} target={target} />
+          <ReviewForm
+            onCompleted={onCompleted}
+            reviewId={target.reviewId}
+            roomId={roomId}
+            target={target}
+          />
         </div>
       </Collapsible.Panel>
     </Collapsible.Root>
