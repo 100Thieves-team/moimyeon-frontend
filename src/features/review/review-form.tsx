@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertDialog } from "@base-ui/react/alert-dialog";
 import { Checkbox } from "@base-ui/react/checkbox";
 import { Field } from "@base-ui/react/field";
 import { Form } from "@base-ui/react/form";
@@ -8,6 +9,7 @@ import { Toggle } from "@base-ui/react/toggle";
 import { ToggleGroup } from "@base-ui/react/toggle-group";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Check } from "lucide-react";
+import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import {
   deleteReviewMutation,
@@ -69,6 +71,7 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
       tags: [],
     },
   });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const isBusy = isSubmitting || skipReview.isPending || deleteReview.isPending;
   const watchedTags = useWatch({ control, name: "tags" });
   const watchedContent = useWatch({ control, name: "content" });
@@ -133,6 +136,11 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
     await invalidateTargets();
     toastManager.add({ title: "후기를 삭제했어요. 다시 작성할 수 있어요" });
     onCompleted();
+  };
+
+  const confirmDelete = async () => {
+    await deleteSubmittedReview();
+    setDeleteDialogOpen(false);
   };
 
   const skipTarget = async () => {
@@ -261,16 +269,46 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
       {errors.root !== undefined && <p className={styles.rootError}>{errors.root.message}</p>}
       <div className={styles.footer}>
         {isEdit ? (
-          <Button
-            className={styles.deleteButton}
-            disabled={isBusy}
-            onClick={deleteSubmittedReview}
-            size="md"
-            type="button"
-            variant="ghost"
-          >
-            후기 삭제하기
-          </Button>
+          <AlertDialog.Root onOpenChange={setDeleteDialogOpen} open={deleteDialogOpen}>
+            <AlertDialog.Trigger
+              render={
+                <Button
+                  className={styles.deleteButton}
+                  disabled={isBusy}
+                  size="md"
+                  variant="ghost"
+                />
+              }
+            >
+              후기 삭제하기
+            </AlertDialog.Trigger>
+            <AlertDialog.Portal>
+              <AlertDialog.Backdrop className={styles.dialogBackdrop} />
+              <AlertDialog.Popup className={styles.dialogPopup}>
+                <AlertDialog.Title className={styles.dialogTitle}>
+                  후기를 삭제할까요?
+                </AlertDialog.Title>
+                <AlertDialog.Description className={styles.dialogDescription}>
+                  {target.nickname} 님에게 남긴 후기가 삭제돼요. 반영 전이니 다시 작성할 수 있어요.
+                </AlertDialog.Description>
+                <div className={styles.dialogActions}>
+                  <AlertDialog.Close render={<Button size="md" variant="ghost" />}>
+                    취소
+                  </AlertDialog.Close>
+                  <Button
+                    className={styles.deleteConfirmButton}
+                    disabled={isBusy}
+                    onClick={confirmDelete}
+                    size="md"
+                    type="button"
+                    variant="primary"
+                  >
+                    삭제하기
+                  </Button>
+                </div>
+              </AlertDialog.Popup>
+            </AlertDialog.Portal>
+          </AlertDialog.Root>
         ) : (
           <Button disabled={isBusy} onClick={skipTarget} size="md" type="button" variant="ghost">
             건너뛰기

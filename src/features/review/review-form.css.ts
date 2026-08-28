@@ -157,6 +157,60 @@ export const deleteButton = style({
   color: vars.color.red,
 });
 
+export const dialogBackdrop = style({
+  position: "fixed",
+  zIndex: 100,
+  inset: 0,
+  minHeight: "100dvh",
+  backgroundColor: vars.color.black50,
+});
+
+export const dialogPopup = style({
+  position: "fixed",
+  zIndex: 101,
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.spacing.md,
+  width: "min(36rem, calc(100vw - 4.8rem))",
+  padding: vars.spacing.xl,
+  borderRadius: vars.radius.media,
+  border: `1px solid ${vars.color.strokeLight}`,
+  backgroundColor: vars.color.background,
+  boxShadow: vars.shadow.cardRaise,
+});
+
+export const dialogTitle = style({
+  fontSize: "1.7rem",
+  fontWeight: 700,
+  color: vars.color.primary,
+});
+
+export const dialogDescription = style({
+  fontSize: "1.35rem",
+  lineHeight: 1.55,
+  color: vars.color.secondary,
+});
+
+export const dialogActions = style({
+  display: "flex",
+  justifyContent: "flex-end",
+  gap: vars.spacing.sm,
+  paddingTop: vars.spacing.sm,
+});
+
+export const deleteConfirmButton = style({
+  backgroundColor: vars.color.red,
+  selectors: {
+    "&:hover:not([data-disabled])": {
+      backgroundColor: vars.color.red,
+      opacity: 0.9,
+    },
+  },
+});
+
 export const footer = style({
   display: "flex",
   alignItems: "center",
