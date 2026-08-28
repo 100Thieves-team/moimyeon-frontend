@@ -2,6 +2,7 @@
 
 import { Collapsible } from "@base-ui/react/collapsible";
 import { Check, ChevronDown } from "lucide-react";
+import { TrustCardPopover } from "@/features/trust-card/trust-card-popover";
 import { isSubmittedTarget, type ReviewTarget } from "./review-model";
 import { ReviewForm } from "./review-form";
 import * as styles from "./target-row.css";
@@ -14,19 +15,25 @@ type TargetRowProps = {
   target: ReviewTarget;
 };
 
-function TargetRowHead({ isHost, target }: Pick<TargetRowProps, "isHost" | "target">) {
+function TargetIdentity({ isHost, target }: Pick<TargetRowProps, "isHost" | "target">) {
   return (
-    <>
-      <span aria-hidden="true" className={styles.avatar}>
-        {target.nickname.charAt(0)}
-      </span>
-      <span className={styles.nameColumn}>
-        <span className={styles.nameRow}>
-          <span className={styles.nickname}>{target.nickname}</span>
-          {isHost && <span className={styles.hostBadge}>방장</span>}
-        </span>
-      </span>
-    </>
+    <TrustCardPopover
+      memberId={target.memberId}
+      trigger={
+        <>
+          <span aria-hidden="true" className={styles.avatar}>
+            {target.nickname.charAt(0)}
+          </span>
+          <span className={styles.nameColumn}>
+            <span className={styles.nameRow}>
+              <span className={styles.nickname}>{target.nickname}</span>
+              {isHost && <span className={styles.hostBadge}>방장</span>}
+            </span>
+          </span>
+        </>
+      }
+      triggerLabel={target.nickname}
+    />
   );
 }
 
@@ -35,7 +42,7 @@ export function TargetRow({ expanded, isHost, onExpandedChange, roomId, target }
     return (
       <div className={styles.row}>
         <div className={styles.rowHead}>
-          <TargetRowHead isHost={isHost} target={target} />
+          <TargetIdentity isHost={isHost} target={target} />
           <span className={styles.submitted}>
             <span aria-hidden="true" className={styles.submittedCheck}>
               <Check size={12} strokeWidth={3} />
@@ -49,15 +56,20 @@ export function TargetRow({ expanded, isHost, onExpandedChange, roomId, target }
 
   return (
     <Collapsible.Root className={styles.row} onOpenChange={onExpandedChange} open={expanded}>
-      <Collapsible.Trigger className={styles.rowTrigger}>
-        <TargetRowHead isHost={isHost} target={target} />
-        <ChevronDown
-          aria-hidden="true"
-          className={expanded ? styles.chevronOpen : styles.chevron}
-          size={16}
-          strokeWidth={2}
-        />
-      </Collapsible.Trigger>
+      <div className={styles.rowHead}>
+        <TargetIdentity isHost={isHost} target={target} />
+        <Collapsible.Trigger
+          aria-label={`${target.nickname} 후기 작성 ${expanded ? "접기" : "펼치기"}`}
+          className={styles.expandTrigger}
+        >
+          <ChevronDown
+            aria-hidden="true"
+            className={expanded ? styles.chevronOpen : styles.chevron}
+            size={16}
+            strokeWidth={2}
+          />
+        </Collapsible.Trigger>
+      </div>
       <Collapsible.Panel className={styles.panel}>
         <div className={styles.panelContent}>
           <ReviewForm onCompleted={() => onExpandedChange(false)} roomId={roomId} target={target} />

@@ -22,11 +22,16 @@ const rowHeadBase = {
 
 export const rowHead = style(rowHeadBase);
 
-export const rowTrigger = style({
-  ...rowHeadBase,
+export const expandTrigger = style({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
+  flex: "1 0 0",
+  minWidth: "0.1rem",
+  alignSelf: "stretch",
+  padding: 0,
   border: "none",
   background: "none",
-  textAlign: "left",
   cursor: "pointer",
   selectors: {
     "&:focus-visible": {
