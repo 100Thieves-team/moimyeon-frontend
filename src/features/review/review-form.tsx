@@ -8,7 +8,7 @@ import { Toggle } from "@base-ui/react/toggle";
 import { ToggleGroup } from "@base-ui/react/toggle-group";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Check } from "lucide-react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import {
   getReviewTargetsQueryKey,
   skipReviewMutation,
@@ -56,6 +56,9 @@ export function ReviewForm({ onCompleted, roomId, target }: ReviewFormProps) {
     },
   });
   const isBusy = isSubmitting || skipReview.isPending;
+  const watchedTags = useWatch({ control, name: "tags" });
+  const watchedContent = useWatch({ control, name: "content" });
+  const hasInput = watchedTags.length > 0 || watchedContent.trim() !== "";
 
   const invalidateTargets = () =>
     queryClient.invalidateQueries({
@@ -206,7 +209,7 @@ export function ReviewForm({ onCompleted, roomId, target }: ReviewFormProps) {
         <Button disabled={isBusy} onClick={skipTarget} size="md" type="button" variant="ghost">
           건너뛰기
         </Button>
-        <Button disabled={isBusy} size="md" type="submit" variant="primary">
+        <Button disabled={isBusy || !hasInput} size="md" type="submit" variant="primary">
           후기 제출하기
         </Button>
       </div>
