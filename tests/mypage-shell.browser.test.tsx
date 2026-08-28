@@ -100,7 +100,7 @@ describe("MyPageShell", () => {
       .element(screen.getByRole("tab", { name: "프로필 수정" }))
       .toHaveAttribute("aria-selected", "true");
     await expect.element(screen.getByRole("tab", { name: "이력서 관리" })).toBeDisabled();
-    await expect.element(screen.getByRole("tab", { name: "활동과 후기" })).toBeDisabled();
+    await expect.element(screen.getByRole("tab", { name: "활동과 후기" })).toBeEnabled();
     await expect.element(screen.getByRole("heading", { name: "프로필 수정" })).toBeVisible();
     await expect.element(screen.getByText("회원 탈퇴")).not.toBeInTheDocument();
     await expect.element(screen.getByText("3", { exact: true })).not.toBeInTheDocument();

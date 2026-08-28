@@ -6,6 +6,7 @@ import { LogoutButton } from "./logout-button";
 import * as styles from "./mypage-shell.css";
 
 type MyPageShellProps = {
+  activity?: ReactNode;
   children: ReactNode;
   publicProfile: MyPageData["publicProfile"];
 };
@@ -76,7 +77,7 @@ function TrustStats({ trust }: TrustStatsProps) {
   );
 }
 
-export function MyPageShell({ children, publicProfile }: MyPageShellProps) {
+export function MyPageShell({ activity, children, publicProfile }: MyPageShellProps) {
   const jobTitle = publicProfile.interestJobRoles.map((jobRole) => jobRole.displayName).join(" · ");
   const avatarLabel = Array.from(publicProfile.nickname.trim())[0] ?? "?";
 
@@ -112,7 +113,7 @@ export function MyPageShell({ children, publicProfile }: MyPageShellProps) {
             <Tabs.Tab className={styles.tab} disabled value="resume">
               이력서 관리
             </Tabs.Tab>
-            <Tabs.Tab className={styles.tab} disabled value="activity">
+            <Tabs.Tab className={styles.tab} value="activity">
               활동과 후기
             </Tabs.Tab>
           </Tabs.List>
@@ -120,6 +121,11 @@ export function MyPageShell({ children, publicProfile }: MyPageShellProps) {
           <Tabs.Panel className={styles.editorCard} value="profile">
             <h2 className={styles.editorTitle}>프로필 수정</h2>
             {children}
+          </Tabs.Panel>
+
+          <Tabs.Panel className={styles.editorCard} value="activity">
+            <h2 className={styles.editorTitle}>활동과 후기</h2>
+            {activity}
           </Tabs.Panel>
         </Tabs.Root>
       </div>

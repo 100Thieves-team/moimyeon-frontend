@@ -6,9 +6,11 @@ import {
   memberMeOptions,
   publicProfileOptions,
 } from "@/api/generated/@tanstack/react-query.gen";
+import { Suspense } from "react";
 import type { MemberMeResponse } from "@/api/generated";
 import { MyPageShell } from "./mypage-shell";
 import { ProfileEditor } from "./profile-editor";
+import { ReceivedReviews } from "./received-reviews";
 
 type Member = NonNullable<MemberMeResponse["data"]>;
 
@@ -32,7 +34,14 @@ function MyPageDetails({ member }: MyPageDetailsProps) {
   }
 
   return (
-    <MyPageShell publicProfile={publicProfile}>
+    <MyPageShell
+      activity={
+        <Suspense fallback={null}>
+          <ReceivedReviews />
+        </Suspense>
+      }
+      publicProfile={publicProfile}
+    >
       <ProfileEditor jobRoleGroups={jobRoles.groups} member={member} />
     </MyPageShell>
   );
