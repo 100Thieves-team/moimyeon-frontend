@@ -153,6 +153,10 @@ export const rootError = style({
   color: vars.color.red,
 });
 
+export const deleteButton = style({
+  color: vars.color.red,
+});
+
 export const footer = style({
   display: "flex",
   alignItems: "center",

@@ -10,12 +10,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Check } from "lucide-react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import {
+  deleteReviewMutation,
   getReviewTargetsQueryKey,
   skipReviewMutation,
   submitReviewMutation,
   updateReviewMutation,
 } from "@/api/generated/@tanstack/react-query.gen";
-import type { SkipReviewError, SubmitReviewError, UpdateReviewError } from "@/api/generated";
+import type {
+  DeleteReviewError,
+  SkipReviewError,
+  SubmitReviewError,
+  UpdateReviewError,
+} from "@/api/generated";
 import { Button } from "@/components/button";
 import { REVIEW_TAG_LABELS, type ReviewTarget } from "./review-model";
 import * as styles from "./review-form.css";
@@ -35,7 +41,9 @@ type ReviewFormValues = {
 };
 
 function getApiErrorMessage(error: unknown) {
-  const apiError = (error as SkipReviewError | SubmitReviewError | UpdateReviewError).error;
+  const apiError = (
+    error as DeleteReviewError | SkipReviewError | SubmitReviewError | UpdateReviewError
+  ).error;
 
   return apiError?.message ?? "요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.";
 }
@@ -46,6 +54,7 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
   const toastManager = Toast.useToastManager();
   const submitReview = useMutation(submitReviewMutation());
   const updateReview = useMutation(updateReviewMutation());
+  const deleteReview = useMutation(deleteReviewMutation());
   const skipReview = useMutation(skipReviewMutation());
   const {
     clearErrors,
@@ -60,7 +69,7 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
       tags: [],
     },
   });
-  const isBusy = isSubmitting || skipReview.isPending;
+  const isBusy = isSubmitting || skipReview.isPending || deleteReview.isPending;
   const watchedTags = useWatch({ control, name: "tags" });
   const watchedContent = useWatch({ control, name: "content" });
   const hasInput = watchedTags.length > 0 || watchedContent.trim() !== "";
@@ -105,6 +114,26 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
     });
     onCompleted();
   });
+
+  const deleteSubmittedReview = async () => {
+    if (!isEdit) {
+      return;
+    }
+
+    clearErrors("root");
+
+    try {
+      await deleteReview.mutateAsync({ path: { reviewId: String(reviewId) } });
+    } catch (error) {
+      setError("root", { message: getApiErrorMessage(error), type: "server" });
+
+      return;
+    }
+
+    await invalidateTargets();
+    toastManager.add({ title: "후기를 삭제했어요. 다시 작성할 수 있어요" });
+    onCompleted();
+  };
 
   const skipTarget = async () => {
     clearErrors("root");
@@ -232,8 +261,15 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
       {errors.root !== undefined && <p className={styles.rootError}>{errors.root.message}</p>}
       <div className={styles.footer}>
         {isEdit ? (
-          <Button disabled={isBusy} onClick={onCompleted} size="md" type="button" variant="ghost">
-            취소
+          <Button
+            className={styles.deleteButton}
+            disabled={isBusy}
+            onClick={deleteSubmittedReview}
+            size="md"
+            type="button"
+            variant="ghost"
+          >
+            후기 삭제하기
           </Button>
         ) : (
           <Button disabled={isBusy} onClick={skipTarget} size="md" type="button" variant="ghost">
