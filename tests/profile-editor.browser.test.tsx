@@ -118,7 +118,7 @@ function renderProfileEditor(data: MyPageData = myPageData) {
 
 async function openJobRoleDialog(screen: Awaited<ReturnType<typeof renderProfileEditor>>) {
   await screen.getByRole("button", { name: "관심 직무" }).click();
-  const dialog = screen.getByRole("dialog", { name: "직무 추가" });
+  const dialog = screen.getByRole("dialog", { name: "직무 선택" });
   await expect.element(dialog).toBeVisible();
   return dialog;
 }
@@ -133,7 +133,7 @@ beforeEach(async () => {
 });
 
 describe("ProfileEditor", () => {
-  it("관심 직무 필드를 클릭하면 기존 선택으로 직무 추가 Dialog를 연다", async () => {
+  it("관심 직무 필드를 클릭하면 기존 선택으로 직무 선택 Dialog를 연다", async () => {
     const screen = await renderProfileEditor();
 
     await expect.element(screen.getByLabelText("닉네임")).toBeVisible();
@@ -170,7 +170,7 @@ describe("ProfileEditor", () => {
 
     await screen.getByRole("button", { name: "프론트엔드 삭제" }).click();
 
-    await expect.element(screen.getByRole("dialog", { name: "직무 추가" })).not.toBeInTheDocument();
+    await expect.element(screen.getByRole("dialog", { name: "직무 선택" })).not.toBeInTheDocument();
     await expect.element(screen.getByText("관심 직무를 선택해 주세요.")).toBeVisible();
     await screen.getByRole("button", { name: "저장하기" }).click();
 

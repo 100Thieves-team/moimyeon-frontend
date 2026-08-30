@@ -150,16 +150,26 @@ export const backButton = style({
   width: "4.4rem",
   height: "4.4rem",
   padding: 0,
-  border: `1px solid ${vars.color.strokeMedium}`,
+  border: 0,
   borderRadius: vars.radius.pill,
-  backgroundColor: vars.color.fillTertiary,
+  backgroundColor: "transparent",
   color: vars.color.primary,
   cursor: "pointer",
   placeItems: "center",
   selectors: {
+    "&:active": {
+      backgroundColor: vars.color.fillSecondary,
+    },
     "&:focus-visible": {
       outline: `2px solid ${vars.color.primary}`,
       outlineOffset: "3px",
+    },
+  },
+  "@media": {
+    [media.hover]: {
+      selectors: {
+        "&:hover": { backgroundColor: vars.color.fillTertiary },
+      },
     },
   },
 });
