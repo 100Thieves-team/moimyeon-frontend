@@ -63,7 +63,7 @@ describe("TopBar", () => {
     await expect.element(avatarLink).toHaveTextContent("집");
   });
 
-  it("홈에서 면접 탐색 메뉴를 활성 상태로 표시한다", async () => {
+  it("홈에서 면접 메뉴를 활성 상태로 표시한다", async () => {
     mocks.getCurrentMemberState.mockResolvedValue({
       member: { nickname: "집요한 수달 07" },
       status: "authenticated",
@@ -71,7 +71,7 @@ describe("TopBar", () => {
     const screen = await render(await TopBar());
 
     await expect
-      .element(screen.getByRole("link", { name: "면접 탐색" }))
+      .element(screen.getByRole("link", { exact: true, name: "면접" }))
       .toHaveAttribute("aria-current", "page");
   });
 });
