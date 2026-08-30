@@ -1,69 +1,12 @@
 import { style } from "@vanilla-extract/css";
-import { media } from "@/styles/tokens";
-import { vars } from "@/styles/theme.css";
-import * as pillFieldStyles from "./profile-pill-field.css";
+import { media, vars } from "@/styles";
 
 const mobile = "screen and (max-width: 799px)";
 
-export const fieldFrame = style([
-  pillFieldStyles.frame,
-  {
-    position: "relative",
-  },
-]);
-
-export const fieldTrigger = style({
-  position: "absolute",
-  zIndex: 0,
-  inset: 0,
-  width: "100%",
-  border: 0,
-  borderRadius: vars.radius.control,
-  backgroundColor: "transparent",
-  cursor: "pointer",
-  selectors: {
-    "&:focus-visible": {
-      outline: `2px solid ${vars.color.primary}`,
-      outlineOffset: "3px",
-    },
-  },
-});
-
-export const fieldContent = style([
-  pillFieldStyles.pills,
-  {
-    position: "relative",
-    zIndex: 1,
-    minHeight: "4.4rem",
-    padding: "0.7rem 3.6rem 0.7rem 1.2rem",
-    pointerEvents: "none",
-  },
-]);
-
-export const fieldPill = style([
-  pillFieldStyles.pill,
-  {
-    pointerEvents: "none",
-  },
-]);
-
-export const footerPill = style([
-  pillFieldStyles.pill,
-  {
-    minHeight: "3.2rem",
-    flex: "0 0 auto",
-  },
-]);
-
-export const pillRemove = style([pillFieldStyles.pillRemove, { pointerEvents: "auto" }]);
-
-export const fieldChevron = style({
-  position: "absolute",
-  top: "50%",
-  right: "1.4rem",
-  color: vars.color.tertiary,
-  transform: "translateY(-50%)",
-});
+const focusRing = {
+  outline: `2px solid ${vars.color.primary}`,
+  outlineOffset: "2px",
+} as const;
 
 export const backdrop = style({
   position: "fixed",
@@ -77,9 +20,7 @@ export const backdrop = style({
     "&[data-starting-style]": { opacity: 0 },
     "&[data-ending-style]": { opacity: 0 },
   },
-  "@media": {
-    [media.reducedMotion]: { transition: "none" },
-  },
+  "@media": { [media.reducedMotion]: { transition: "none" } },
 });
 
 export const popup = style({
@@ -131,7 +72,7 @@ export const popup = style({
 export const header = style({
   display: "grid",
   minHeight: "8rem",
-  gridTemplateColumns: "4.4rem minmax(0, 1fr) auto",
+  gridTemplateColumns: "4.4rem minmax(0, 1fr)",
   alignItems: "center",
   gap: vars.spacing.base,
   padding: "1.6rem 2.4rem",
@@ -157,19 +98,12 @@ export const backButton = style({
   cursor: "pointer",
   placeItems: "center",
   selectors: {
-    "&:active": {
-      backgroundColor: vars.color.fillSecondary,
-    },
-    "&:focus-visible": {
-      outline: `2px solid ${vars.color.primary}`,
-      outlineOffset: "3px",
-    },
+    "&:active": { backgroundColor: vars.color.fillSecondary },
+    "&:focus-visible": focusRing,
   },
   "@media": {
     [media.hover]: {
-      selectors: {
-        "&:hover": { backgroundColor: vars.color.fillTertiary },
-      },
+      selectors: { "&:hover": { backgroundColor: vars.color.fillTertiary } },
     },
   },
 });
@@ -178,9 +112,7 @@ export const title = style({
   fontSize: "2.4rem",
   fontWeight: 700,
   lineHeight: "3.2rem",
-  "@media": {
-    [mobile]: { fontSize: "2rem", lineHeight: "2.8rem" },
-  },
+  "@media": { [mobile]: { fontSize: "2rem", lineHeight: "2.8rem" } },
 });
 
 export const dialogBody = style({
@@ -195,7 +127,7 @@ export const dialogBody = style({
   },
 });
 
-export const groupList = style({
+export const sidoList = style({
   display: "flex",
   minHeight: 0,
   flexDirection: "column",
@@ -215,7 +147,7 @@ export const groupList = style({
   },
 });
 
-export const groupTab = style({
+export const sidoTab = style({
   display: "flex",
   width: "100%",
   minHeight: "4.8rem",
@@ -240,10 +172,7 @@ export const groupTab = style({
       color: vars.color.primary,
       fontWeight: 700,
     },
-    "&:focus-visible": {
-      outline: `2px solid ${vars.color.primary}`,
-      outlineOffset: "2px",
-    },
+    "&:focus-visible": focusRing,
   },
   "@media": {
     [mobile]: {
@@ -253,49 +182,41 @@ export const groupTab = style({
       whiteSpace: "nowrap",
     },
     [media.hover]: {
-      selectors: {
-        "&:hover:not([data-active])": { backgroundColor: vars.color.fillTertiary },
-      },
+      selectors: { "&:hover:not([data-active])": { backgroundColor: vars.color.fillTertiary } },
     },
   },
 });
 
-export const groupCount = style({
+export const selectedCount = style({
   minWidth: "2rem",
   color: vars.color.primary,
   fontVariantNumeric: "tabular-nums",
   textAlign: "right",
 });
 
-export const roleSection = style({
-  minWidth: 0,
-  minHeight: 0,
-  overflowY: "auto",
-});
+export const sigunguSection = style({ minWidth: 0, minHeight: 0, overflowY: "auto" });
 
-export const rolePanel = style({
+export const sigunguPanel = style({
   minHeight: "100%",
   padding: "3.2rem",
-  "@media": {
-    [mobile]: { padding: "2.4rem 1.6rem" },
-  },
+  "@media": { [mobile]: { padding: "2.4rem 1.6rem" } },
 });
 
-export const groupTitle = style({
+export const sidoTitle = style({
   marginBottom: vars.spacing.xl,
   fontSize: "2rem",
   fontWeight: 700,
   lineHeight: "2.8rem",
 });
 
-export const roleList = style({
+export const sigunguList = style({
   display: "flex",
   flexWrap: "wrap",
   alignItems: "flex-start",
   gap: vars.spacing.md,
 });
 
-export const roleToggle = style({
+export const sigunguToggle = style({
   minHeight: "4.2rem",
   padding: "1rem 1.4rem",
   border: "1px solid transparent",
@@ -314,10 +235,7 @@ export const roleToggle = style({
       backgroundColor: vars.color.primary10,
       color: vars.color.primary,
     },
-    "&:focus-visible": {
-      outline: `2px solid ${vars.color.primary}`,
-      outlineOffset: "2px",
-    },
+    "&:focus-visible": focusRing,
   },
   "@media": {
     [media.hover]: {
@@ -355,22 +273,33 @@ export const footer = style({
   },
 });
 
-export const selectedPills = style({
-  display: "flex",
-  minWidth: 0,
-  maxHeight: "7.2rem",
-  flexWrap: "wrap",
+export const selectedRegion = style({ minWidth: 0, minHeight: "3.2rem" });
+
+export const regionPill = style({
+  display: "inline-flex",
+  minHeight: "3.2rem",
   alignItems: "center",
-  gap: vars.spacing.sm,
-  overflowY: "auto",
-  "@media": {
-    [mobile]: {
-      maxHeight: "4rem",
-      flexWrap: "nowrap",
-      overflowX: "auto",
-      overflowY: "hidden",
-    },
-  },
+  gap: "0.4rem",
+  padding: "0.6rem 0.8rem 0.6rem 1.2rem",
+  borderRadius: vars.radius.pill,
+  backgroundColor: vars.color.fillSecondary,
+  color: vars.color.primary,
+  fontSize: "1.3rem",
+  fontWeight: 600,
+});
+
+export const removeRegionButton = style({
+  display: "grid",
+  width: "2rem",
+  height: "2rem",
+  padding: 0,
+  border: 0,
+  borderRadius: vars.radius.pill,
+  backgroundColor: "transparent",
+  color: vars.color.secondary,
+  cursor: "pointer",
+  placeItems: "center",
+  selectors: { "&:focus-visible": focusRing },
 });
 
 export const footerActions = style({

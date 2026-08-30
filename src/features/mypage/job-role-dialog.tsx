@@ -26,7 +26,12 @@ type SingleJobRoleDialogProps = {
   value: number | null;
 };
 
-export type JobRoleDialogProps = MultipleJobRoleDialogProps | SingleJobRoleDialogProps;
+type CommonJobRoleDialogProps = {
+  handle?: typeof jobRoleDialog;
+};
+
+export type JobRoleDialogProps = (MultipleJobRoleDialogProps | SingleJobRoleDialogProps) &
+  CommonJobRoleDialogProps;
 
 function getOrderedRoles(groups: JobRoleGroup[]) {
   return groups.flatMap((group) => group.roles);
@@ -48,7 +53,7 @@ function getSelectedIds(value: JobRoleDialogProps["value"]) {
 }
 
 export function JobRoleDialog(props: JobRoleDialogProps) {
-  const { groups, value } = props;
+  const { groups, handle = jobRoleDialog, value } = props;
   const selectedIds = getSelectedIds(value);
   const orderedRoles = useMemo(() => getOrderedRoles(groups), [groups]);
   const [draftIds, setDraftIds] = useState<Set<number>>(() => new Set(selectedIds));
@@ -112,7 +117,7 @@ export function JobRoleDialog(props: JobRoleDialogProps) {
   };
 
   return (
-    <Dialog.Root handle={jobRoleDialog} onOpenChange={handleOpenChange}>
+    <Dialog.Root handle={handle} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
         <Dialog.Backdrop className={styles.backdrop} />
         <Dialog.Popup className={styles.popup}>
@@ -120,7 +125,7 @@ export function JobRoleDialog(props: JobRoleDialogProps) {
             <Dialog.Close aria-label="직무 선택 닫기" className={styles.backButton} type="button">
               <ArrowLeft aria-hidden="true" size={24} strokeWidth={1.75} />
             </Dialog.Close>
-            <Dialog.Title className={styles.title}>직무 추가</Dialog.Title>
+            <Dialog.Title className={styles.title}>직무 선택</Dialog.Title>
           </header>
 
           <Tabs.Root

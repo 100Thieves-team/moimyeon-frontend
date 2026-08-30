@@ -565,7 +565,7 @@ describe("InterviewCreateWizard", () => {
     const screen = await renderWizard();
 
     await screen.getByRole("button", { name: "직무", exact: true }).click();
-    await expect.element(screen.getByRole("dialog", { name: "직무 추가" })).toBeVisible();
+    await expect.element(screen.getByRole("dialog", { name: "직무 선택" })).toBeVisible();
 
     await screen.getByRole("tab", { name: "개발" }).click();
     await screen.getByRole("button", { name: "프론트엔드" }).click();

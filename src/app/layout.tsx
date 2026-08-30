@@ -2,8 +2,19 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { QueryProvider } from "@/api/query-provider";
 import { ToastProvider } from "@/components/toast";
+import { MSWProvider } from "@/mocks/msw-provider";
 import "@/styles/global.css";
 import { app } from "./layout.css";
+
+if (
+  process.env.NODE_ENV === "development" &&
+  process.env.NEXT_PUBLIC_MOCK_INTERVIEW_DISCOVERY === "true" &&
+  process.env.NEXT_RUNTIME === "nodejs"
+) {
+  const { server } = require("@/mocks/node") as typeof import("@/mocks/node");
+
+  server.listen({ onUnhandledRequest: "bypass" });
+}
 
 const pretendard = localFont({
   src: "./fonts/PretendardVariable.woff2",
@@ -44,11 +55,13 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${pretendard.variable} ${notoSansMonoCjkKr.variable}`}>
       <body>
-        <QueryProvider>
-          <ToastProvider>
-            <div className={app}>{children}</div>
-          </ToastProvider>
-        </QueryProvider>
+        <MSWProvider>
+          <QueryProvider>
+            <ToastProvider>
+              <div className={app}>{children}</div>
+            </ToastProvider>
+          </QueryProvider>
+        </MSWProvider>
       </body>
     </html>
   );
