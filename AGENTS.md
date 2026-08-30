@@ -20,4 +20,4 @@
 
 ## 환경 변수
 
-`.env.example`을 `.env.local`로 복사한다. 토큰, `.env.local`, `DEV_ACCESS_TOKEN`은 커밋하지 않는다.
+`.env.example`을 `.env.local`로 복사한다. 토큰, `.env.local`, `NEXT_PUBLIC_DEV_ACCESS_TOKEN`은 커밋하지 않는다.

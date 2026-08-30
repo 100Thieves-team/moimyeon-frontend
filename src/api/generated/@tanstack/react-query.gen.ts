@@ -997,9 +997,9 @@ export const getMyAttendanceOptions = (options: Options<GetMyAttendanceData>) =>
   });
 
 /**
- * 개발 환경 세션 발급
+ * 개발 환경 액세스 토큰 발급
  *
- * local·local-dev·dev 프로파일에서 기존 회원 UUID로 Google OAuth를 거치지 않고 환경별 액세스·리프레시 쿠키를 발급한다. 회원이 없거나 탈퇴했으면 404(E1006), 요청 본문 형식이 잘못됐으면 400(E400)으로 응답한다.
+ * local·local-dev·dev 프로파일에서 기존 회원 UUID로 Google OAuth를 거치지 않고 만료 없는 액세스 토큰을 응답한다. 회원이 없거나 탈퇴했으면 404(E1006), 요청 본문 형식이 잘못됐으면 400(E400)으로 응답한다.
  */
 export const issueDevSessionMutation = (
   options?: Partial<Options<IssueDevSessionData>>,

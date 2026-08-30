@@ -17,17 +17,15 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## API Client
 
-The generated client calls the published development API. For authenticated server rendering during local development:
-
-1. Sign in with a dev account.
-2. Copy the `ACCESS_TOKEN` value from the dev API cookies in browser DevTools.
-3. Set it in `.env.local` without the `NEXT_PUBLIC_` prefix:
+The generated client calls the published development API directly. To authenticate locally, call `POST /v1/auth/dev-sessions` with an existing dev member UUID, then set the returned `data.accessToken` in `.env.local`:
 
 ```bash
-DEV_ACCESS_TOKEN=eyJ...
+NEXT_PUBLIC_DEV_ACCESS_TOKEN=eyJ...
 ```
 
-Restart `pnpm dev` after changing the token. Access tokens expire, so repeat these steps when server-rendered requests begin returning `401`. Never commit the token value or write it to `.env.example`.
+Restart `pnpm dev` after changing the environment variable. In development, generated browser and server clients attach the token as an `Authorization: Bearer` header only when calling `https://api.dev.moimyeon.plady.io`.
+
+`NEXT_PUBLIC_` values are embedded in the browser bundle. Use this variable only with a development access token, never configure it in production, and never commit the token value or write it to `.env.example`.
 
 Generate the typed Next.js Fetch client and SDK from the published development OpenAPI schema:
 

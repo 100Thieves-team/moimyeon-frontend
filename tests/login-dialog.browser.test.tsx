@@ -149,7 +149,9 @@ describe("LoginDialog", () => {
   });
 
   it("개발 로그인에 성공하면 Dialog를 닫고 원래 경로로 이동한다", async () => {
-    issueDevSessionMock.mockResolvedValue({ data: { result: "SUCCESS" } });
+    issueDevSessionMock.mockResolvedValue({
+      data: { data: { accessToken: "dev-access-token" }, result: "SUCCESS" },
+    });
     const { dialog, screen } = await openLoginDialog("로그인", true);
 
     await screen
@@ -191,7 +193,9 @@ describe("DevLoginForm", () => {
   });
 
   it("UUID로 세션을 발급하면 바로 원래 경로로 이동한다", async () => {
-    issueDevSessionMock.mockResolvedValue({ data: { result: "SUCCESS" } });
+    issueDevSessionMock.mockResolvedValue({
+      data: { data: { accessToken: "dev-access-token" }, result: "SUCCESS" },
+    });
 
     await submitDevLogin();
 
@@ -245,7 +249,10 @@ describe("DevLoginForm", () => {
     issueDevSessionMock.mockImplementation(
       () =>
         new Promise((resolve) => {
-          resolveRequest = () => resolve({ data: { result: "SUCCESS" } });
+          resolveRequest = () =>
+            resolve({
+              data: { data: { accessToken: "dev-access-token" }, result: "SUCCESS" },
+            });
         }),
     );
 

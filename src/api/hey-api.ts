@@ -78,7 +78,7 @@ function createApiFetch(requestFetch: typeof fetch): typeof fetch {
 }
 
 export const createClientConfig: CreateClientConfig = (config) => {
-  const devAccessToken = process.env.DEV_ACCESS_TOKEN?.trim();
+  const devAccessToken = process.env.NEXT_PUBLIC_DEV_ACCESS_TOKEN?.trim();
   const isDevApi = apiBaseUrl.replace(/\/$/, "") === "https://api.dev.moimyeon.plady.io";
   const requestFetch = config?.fetch ?? globalThis.fetch;
 
@@ -89,10 +89,7 @@ export const createClientConfig: CreateClientConfig = (config) => {
     fetch: createApiFetch(requestFetch),
     headers: {
       ...config?.headers,
-      ...(process.env.NODE_ENV === "development" &&
-      typeof window === "undefined" &&
-      isDevApi &&
-      devAccessToken
+      ...(process.env.NODE_ENV === "development" && isDevApi && devAccessToken
         ? { Authorization: `Bearer ${devAccessToken}` }
         : {}),
     },
