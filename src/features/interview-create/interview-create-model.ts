@@ -166,7 +166,7 @@ export function toCreateRoomBody(values: InterviewCreateFormValues): CreateRoomB
 }
 
 export function getResumesData(response: ResumesResponse): Resumes {
-  if (response.data === undefined) {
+  if (response.data === undefined || response.data === null) {
     throw new Error("Failed to load resumes");
   }
 

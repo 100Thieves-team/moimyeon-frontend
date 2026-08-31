@@ -28,19 +28,19 @@ export function InterviewCreateContent() {
   const regions = regionsResponse.data;
   const participationSlots = participationSlotsResponse.data;
 
-  if (roomFormOptions === undefined) {
+  if (roomFormOptions === undefined || roomFormOptions === null) {
     throw new Error("Failed to load room form options");
   }
 
-  if (jobRoles === undefined) {
+  if (jobRoles === undefined || jobRoles === null) {
     throw new Error("Failed to load job roles");
   }
 
-  if (regions === undefined) {
+  if (regions === undefined || regions === null) {
     throw new Error("Failed to load regions");
   }
 
-  if (participationSlots === undefined) {
+  if (participationSlots === undefined || participationSlots === null) {
     throw new Error("Failed to load participation slots");
   }
 

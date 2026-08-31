@@ -4,6 +4,17 @@ export type ClientOptions = {
   baseUrl: "http://localhost:8080" | "https://api.dev.moimyeon.plady.io" | (string & {});
 };
 
+export type V1RoomsRoomIdApplications240308819 = {
+  /**
+   * 방장에게 전할 말 (선택, 최대 300자, 미입력 시 빈 문자열)
+   */
+  note?: string | null;
+  /**
+   * 제출할 본인 보관 이력서 id (UUID)
+   */
+  resumeId: string;
+};
+
 export type V1ReviewsReviewId292942325 = {
   /**
    * 교체할 한 줄 후기 (선택)
@@ -20,17 +31,6 @@ export type V1ReviewsReviewId292942325 = {
     | string
     | number
   >;
-};
-
-export type V1RoomsRoomIdApplications240308819 = {
-  /**
-   * 방장에게 전할 말 (선택, 최대 300자, 미입력 시 빈 문자열)
-   */
-  note?: string | null;
-  /**
-   * 제출할 본인 보관 이력서 id (UUID)
-   */
-  resumeId: string;
 };
 
 export type V1JobPostings1538643122 = {
@@ -59,7 +59,7 @@ export type V1JobPostings1538643122 = {
      * 공고명
      */
     postingName: string;
-  };
+  } | null;
 };
 
 export type V1JobPostingsLinkMetadata1427693842 = {
@@ -88,7 +88,7 @@ export type V1JobPostingsLinkMetadata1427693842 = {
      * 공고명 후보 (og:title, 사용자가 확인·수정). fetch 실패·OG 없음이면 null → 직접 입력
      */
     postingName?: string | null;
-  };
+  } | null;
 };
 
 export type V1RoomsRoomIdParticipants1711899011 = {
@@ -130,7 +130,7 @@ export type V1RoomsRoomIdParticipants1711899011 = {
          * AI 요약 상태 (PROCESSING | DONE). 생성 실패도 준비 중으로 내려간다
          */
         status?: string | null;
-      };
+      } | null;
       /**
        * 이력서 원본을 열 수 있는지. 원본 공개 룸이고 진행이 확정됐으며 조회자가 확정 참여자일 때만 true
        */
@@ -152,7 +152,7 @@ export type V1RoomsRoomIdParticipants1711899011 = {
        */
       memberId: string;
     }>;
-  };
+  } | null;
 };
 
 export type V1JobPostingsLinkMetadata34312967 = {
@@ -171,36 +171,6 @@ export type V1RoomsRoomIdComments1160873406 = {
    * 글 내용 (trim 후 1~1000자, 텍스트만)
    */
   content: string;
-};
-
-export type GetExampleValue191457252 = {
-  /**
-   * ResultType
-   */
-  result: string;
-  data?: {
-    /**
-     * Result Date
-     */
-    date: string;
-    /**
-     * Result Data
-     */
-    result: string;
-    /**
-     * Result Datetime
-     */
-    datetime: string;
-    /**
-     * Result Items
-     */
-    items: Array<{
-      /**
-       * Result Item
-       */
-      key: string;
-    }>;
-  };
 };
 
 export type V1RoomsRoomIdComments1495367468 = {
@@ -249,7 +219,7 @@ export type V1RoomsRoomIdComments1495367468 = {
          * 작성자 회원 id
          */
         memberId?: string | null;
-      };
+      } | null;
       /**
        * 글 id
        */
@@ -267,7 +237,37 @@ export type V1RoomsRoomIdComments1495367468 = {
      * 작성 가능 여부. false 면 읽기 전용
      */
     writable: boolean;
-  };
+  } | null;
+};
+
+export type Post191457252 = {
+  /**
+   * ResultType
+   */
+  result: string;
+  data?: {
+    /**
+     * Result Date
+     */
+    date: string;
+    /**
+     * Result Data
+     */
+    result: string;
+    /**
+     * Result Datetime
+     */
+    datetime: string;
+    /**
+     * Result Items
+     */
+    items: Array<{
+      /**
+       * Result Item
+       */
+      key: string;
+    }>;
+  } | null;
 };
 
 export type V1AuthLogout198252895 = {
@@ -312,7 +312,7 @@ export type V1Rounds1524907893 = {
            * 꼬리질문 작성자 회원 id
            */
           memberId: string;
-        };
+        } | null;
         /**
          * PREPARATION | IN_PROGRESS
          */
@@ -339,7 +339,7 @@ export type V1Rounds1524907893 = {
          * 원 질문 작성자 회원 id
          */
         memberId: string;
-      };
+      } | null;
       /**
        * PREPARATION | IN_PROGRESS
        */
@@ -358,219 +358,8 @@ export type V1Rounds1524907893 = {
        * 현재 라운드 면접자 회원 id
        */
       memberId: string;
-    };
-  };
-};
-
-export type V1MembersMeRooms1592819168 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 처리 대기 중인 참가 신청 (최근 신청 순)
-     */
-    pendingApplications: Array<{
-      /**
-       * 신청에 제출한 이력서 원본 파일명
-       */
-      resumeOriginalName: string;
-      /**
-       * 참가 신청 식별자
-       */
-      applicationId: number;
-      /**
-       * 신청 대상 룸 요약
-       */
-      room: {
-        /**
-         * 룸 제목
-         */
-        title: string;
-        /**
-         * 진행 방식 (ONLINE | OFFLINE)
-         */
-        meetingType: string;
-        /**
-         * 룸 식별자 (UUID)
-         */
-        roomId: string;
-        /**
-         * 최대 참여 인원
-         */
-        maxParticipants: number;
-        /**
-         * 룸 상태
-         */
-        roomStatus: string;
-        /**
-         * 진행 시간(분)
-         */
-        durationMinutes: number;
-        /**
-         * 오프라인 시군구 식별자. 값이 없으면 null
-         */
-        sigunguId?: number | null;
-        /**
-         * 채용 공고 식별자
-         */
-        jobPostingId: number;
-        /**
-         * 면접 유형. 값이 없으면 null
-         */
-        interviewType?: string | null;
-        /**
-         * 표시 참여 인원 (신청·참여 중은 현재 인원, 완료는 실제 출석 인원)
-         */
-        participantCount: number;
-        /**
-         * 직무 식별자
-         */
-        jobRoleId: number;
-        /**
-         * 면접 단계
-         */
-        interviewStage: string;
-        /**
-         * 시작 예정 시각
-         */
-        startAt: string;
-      };
-      /**
-       * 신청 시각
-       */
-      appliedAt: string;
-    }>;
-    /**
-     * 현재 참여 중인 룸 (가까운 일정 순)
-     */
-    participatingRooms: Array<{
-      /**
-       * 참여 중인 룸 요약
-       */
-      room: {
-        /**
-         * 룸 제목
-         */
-        title: string;
-        /**
-         * 진행 방식 (ONLINE | OFFLINE)
-         */
-        meetingType: string;
-        /**
-         * 룸 식별자 (UUID)
-         */
-        roomId: string;
-        /**
-         * 최대 참여 인원
-         */
-        maxParticipants: number;
-        /**
-         * 룸 상태
-         */
-        roomStatus: string;
-        /**
-         * 진행 시간(분)
-         */
-        durationMinutes: number;
-        /**
-         * 오프라인 시군구 식별자. 값이 없으면 null
-         */
-        sigunguId?: number | null;
-        /**
-         * 채용 공고 식별자
-         */
-        jobPostingId: number;
-        /**
-         * 면접 유형. 값이 없으면 null
-         */
-        interviewType?: string | null;
-        /**
-         * 표시 참여 인원 (신청·참여 중은 현재 인원, 완료는 실제 출석 인원)
-         */
-        participantCount: number;
-        /**
-         * 직무 식별자
-         */
-        jobRoleId: number;
-        /**
-         * 면접 단계
-         */
-        interviewStage: string;
-        /**
-         * 시작 예정 시각
-         */
-        startAt: string;
-      };
-    }>;
-    /**
-     * 완료된 룸 (최근 일정 순)
-     */
-    completedRooms: Array<{
-      /**
-       * 후기 상태 (WRITABLE | WRITTEN | NOT_ELIGIBLE_ABSENT | NOT_ELIGIBLE_NO_TARGET)
-       */
-      reviewStatus: string;
-      /**
-       * 완료된 룸 요약
-       */
-      room: {
-        /**
-         * 룸 제목
-         */
-        title: string;
-        /**
-         * 진행 방식 (ONLINE | OFFLINE)
-         */
-        meetingType: string;
-        /**
-         * 룸 식별자 (UUID)
-         */
-        roomId: string;
-        /**
-         * 최대 참여 인원
-         */
-        maxParticipants: number;
-        /**
-         * 룸 상태
-         */
-        roomStatus: string;
-        /**
-         * 진행 시간(분)
-         */
-        durationMinutes: number;
-        /**
-         * 오프라인 시군구 식별자. 값이 없으면 null
-         */
-        sigunguId?: number | null;
-        /**
-         * 채용 공고 식별자
-         */
-        jobPostingId: number;
-        /**
-         * 면접 유형. 값이 없으면 null
-         */
-        interviewType?: string | null;
-        /**
-         * 표시 참여 인원 (신청·참여 중은 현재 인원, 완료는 실제 출석 인원)
-         */
-        participantCount: number;
-        /**
-         * 직무 식별자
-         */
-        jobRoleId: number;
-        /**
-         * 면접 단계
-         */
-        interviewStage: string;
-        /**
-         * 시작 예정 시각
-         */
-        startAt: string;
-      };
-    }>;
-  };
+    } | null;
+  } | null;
 };
 
 export type V1ClosingQuestionsMe207387725 = {
@@ -600,7 +389,28 @@ export type V1ClosingQuestionsMe207387725 = {
        */
       content: string;
     }>;
-  };
+  } | null;
+};
+
+export type V1AttendancesMe438784568 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 로그인 회원 닉네임
+     */
+    nickname: string;
+    /**
+     * ATTENDED | ABSENT
+     */
+    status: string;
+    /**
+     * 로그인 회원 id
+     */
+    memberId: string;
+  } | null;
 };
 
 export type V1FollowUpQuestions140122441 = {
@@ -613,7 +423,422 @@ export type V1FollowUpQuestions140122441 = {
      * 생성된 꼬리질문 id
      */
     questionId: number;
-  };
+  } | null;
+};
+
+export type V1MembersMeRooms257716809 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 처리 대기 중인 참가 신청 (최근 신청 순)
+     */
+    pendingApplications: Array<{
+      /**
+       * 신청에 제출한 이력서 원본 파일명
+       */
+      resumeOriginalName: string;
+      /**
+       * 참가 신청 식별자
+       */
+      applicationId: number;
+      /**
+       * 신청 대상 룸 요약
+       */
+      room: {
+        /**
+         * 채용 공고 (폐기됐으면 null)
+         */
+        jobPosting?: {
+          /**
+           * 채용 공고 id
+           */
+          jobPostingId?: number | null;
+          /**
+           * 채용 공고명
+           */
+          postingName?: string | null;
+        } | null;
+        /**
+         * 면접 유형 표시명. 값이 없으면 null
+         */
+        interviewTypeLabel?: string | null;
+        /**
+         * 룸 제목
+         */
+        title: string;
+        /**
+         * 진행 방식 (ONLINE | OFFLINE)
+         */
+        meetingType: string;
+        /**
+         * 룸 식별자 (UUID)
+         */
+        roomId: string;
+        /**
+         * 최대 참여 인원
+         */
+        maxParticipants: number;
+        /**
+         * 룸 상태
+         */
+        roomStatus: string;
+        /**
+         * 진행 시간(분)
+         */
+        durationMinutes: number;
+        /**
+         * 면접 단계 표시명
+         */
+        interviewStageLabel: string;
+        /**
+         * 오프라인 시군구 식별자. 값이 없으면 null
+         */
+        sigunguId?: number | null;
+        /**
+         * 진행 방식 표시명
+         */
+        meetingTypeLabel: string;
+        /**
+         * 채용 공고 식별자
+         */
+        jobPostingId: number;
+        /**
+         * 면접 유형. 값이 없으면 null
+         */
+        interviewType?: string | null;
+        /**
+         * 표시 참여 인원 (신청·참여 중은 현재 인원, 완료는 실제 출석 인원)
+         */
+        participantCount: number;
+        /**
+         * 직무 (폐기됐으면 null)
+         */
+        jobRole?: {
+          /**
+           * 직무 코드
+           */
+          code?: string | null;
+          /**
+           * 직무 표시명
+           */
+          displayName?: string | null;
+          /**
+           * 직무 id
+           */
+          jobRoleId?: number | null;
+        } | null;
+        /**
+         * 직무 식별자
+         */
+        jobRoleId: number;
+        /**
+         * 회사 (공고에서 파생. 회사를 알 수 없으면 null)
+         */
+        company?: {
+          /**
+           * 회사 id
+           */
+          companyId?: number | null;
+          /**
+           * 회사명
+           */
+          name?: string | null;
+        } | null;
+        /**
+         * 면접 단계
+         */
+        interviewStage: string;
+        /**
+         * 오프라인 지역 (온라인이거나 폐기된 지역이면 null)
+         */
+        region?: {
+          /**
+           * 지역 시군구 id
+           */
+          sigunguId?: number | null;
+          /**
+           * 지역 표시명
+           */
+          label?: string | null;
+        } | null;
+        /**
+         * 시작 예정 시각
+         */
+        startAt: string;
+      };
+      /**
+       * 신청 시각
+       */
+      appliedAt: string;
+    }>;
+    /**
+     * 현재 참여 중인 룸 (가까운 일정 순)
+     */
+    participatingRooms: Array<{
+      /**
+       * 참여 중인 룸 요약
+       */
+      room: {
+        /**
+         * 채용 공고 (폐기됐으면 null)
+         */
+        jobPosting?: {
+          /**
+           * 채용 공고 id
+           */
+          jobPostingId?: number | null;
+          /**
+           * 채용 공고명
+           */
+          postingName?: string | null;
+        } | null;
+        /**
+         * 면접 유형 표시명. 값이 없으면 null
+         */
+        interviewTypeLabel?: string | null;
+        /**
+         * 룸 제목
+         */
+        title: string;
+        /**
+         * 진행 방식 (ONLINE | OFFLINE)
+         */
+        meetingType: string;
+        /**
+         * 룸 식별자 (UUID)
+         */
+        roomId: string;
+        /**
+         * 최대 참여 인원
+         */
+        maxParticipants: number;
+        /**
+         * 룸 상태
+         */
+        roomStatus: string;
+        /**
+         * 진행 시간(분)
+         */
+        durationMinutes: number;
+        /**
+         * 면접 단계 표시명
+         */
+        interviewStageLabel: string;
+        /**
+         * 오프라인 시군구 식별자. 값이 없으면 null
+         */
+        sigunguId?: number | null;
+        /**
+         * 진행 방식 표시명
+         */
+        meetingTypeLabel: string;
+        /**
+         * 채용 공고 식별자
+         */
+        jobPostingId: number;
+        /**
+         * 면접 유형. 값이 없으면 null
+         */
+        interviewType?: string | null;
+        /**
+         * 표시 참여 인원 (신청·참여 중은 현재 인원, 완료는 실제 출석 인원)
+         */
+        participantCount: number;
+        /**
+         * 직무 (폐기됐으면 null)
+         */
+        jobRole?: {
+          /**
+           * 직무 코드
+           */
+          code?: string | null;
+          /**
+           * 직무 표시명
+           */
+          displayName?: string | null;
+          /**
+           * 직무 id
+           */
+          jobRoleId?: number | null;
+        } | null;
+        /**
+         * 직무 식별자
+         */
+        jobRoleId: number;
+        /**
+         * 회사 (공고에서 파생. 회사를 알 수 없으면 null)
+         */
+        company?: {
+          /**
+           * 회사 id
+           */
+          companyId?: number | null;
+          /**
+           * 회사명
+           */
+          name?: string | null;
+        } | null;
+        /**
+         * 면접 단계
+         */
+        interviewStage: string;
+        /**
+         * 오프라인 지역 (온라인이거나 폐기된 지역이면 null)
+         */
+        region?: {
+          /**
+           * 지역 시군구 id
+           */
+          sigunguId?: number | null;
+          /**
+           * 지역 표시명
+           */
+          label?: string | null;
+        } | null;
+        /**
+         * 시작 예정 시각
+         */
+        startAt: string;
+      };
+    }>;
+    /**
+     * 완료된 룸 (최근 일정 순)
+     */
+    completedRooms: Array<{
+      /**
+       * 후기 상태 (WRITABLE | WRITTEN | NOT_ELIGIBLE_ABSENT | NOT_ELIGIBLE_NO_TARGET)
+       */
+      reviewStatus: string;
+      /**
+       * 완료된 룸 요약
+       */
+      room: {
+        /**
+         * 채용 공고 (폐기됐으면 null)
+         */
+        jobPosting?: {
+          /**
+           * 채용 공고 id
+           */
+          jobPostingId?: number | null;
+          /**
+           * 채용 공고명
+           */
+          postingName?: string | null;
+        } | null;
+        /**
+         * 면접 유형 표시명. 값이 없으면 null
+         */
+        interviewTypeLabel?: string | null;
+        /**
+         * 룸 제목
+         */
+        title: string;
+        /**
+         * 진행 방식 (ONLINE | OFFLINE)
+         */
+        meetingType: string;
+        /**
+         * 룸 식별자 (UUID)
+         */
+        roomId: string;
+        /**
+         * 최대 참여 인원
+         */
+        maxParticipants: number;
+        /**
+         * 룸 상태
+         */
+        roomStatus: string;
+        /**
+         * 진행 시간(분)
+         */
+        durationMinutes: number;
+        /**
+         * 면접 단계 표시명
+         */
+        interviewStageLabel: string;
+        /**
+         * 오프라인 시군구 식별자. 값이 없으면 null
+         */
+        sigunguId?: number | null;
+        /**
+         * 진행 방식 표시명
+         */
+        meetingTypeLabel: string;
+        /**
+         * 채용 공고 식별자
+         */
+        jobPostingId: number;
+        /**
+         * 면접 유형. 값이 없으면 null
+         */
+        interviewType?: string | null;
+        /**
+         * 표시 참여 인원 (신청·참여 중은 현재 인원, 완료는 실제 출석 인원)
+         */
+        participantCount: number;
+        /**
+         * 직무 (폐기됐으면 null)
+         */
+        jobRole?: {
+          /**
+           * 직무 코드
+           */
+          code?: string | null;
+          /**
+           * 직무 표시명
+           */
+          displayName?: string | null;
+          /**
+           * 직무 id
+           */
+          jobRoleId?: number | null;
+        } | null;
+        /**
+         * 직무 식별자
+         */
+        jobRoleId: number;
+        /**
+         * 회사 (공고에서 파생. 회사를 알 수 없으면 null)
+         */
+        company?: {
+          /**
+           * 회사 id
+           */
+          companyId?: number | null;
+          /**
+           * 회사명
+           */
+          name?: string | null;
+        } | null;
+        /**
+         * 면접 단계
+         */
+        interviewStage: string;
+        /**
+         * 오프라인 지역 (온라인이거나 폐기된 지역이면 null)
+         */
+        region?: {
+          /**
+           * 지역 시군구 id
+           */
+          sigunguId?: number | null;
+          /**
+           * 지역 표시명
+           */
+          label?: string | null;
+        } | null;
+        /**
+         * 시작 예정 시각
+         */
+        startAt: string;
+      };
+    }>;
+  } | null;
 };
 
 export type Post1780624183 = {
@@ -634,7 +859,7 @@ export type V1RoomsRoomIdQuestions282474051 = {
   content: string;
 };
 
-export type V1RoomsRoomId1165715694 = {
+export type V1RoomsRoomId593421515 = {
   /**
    * 처리 결과 (SUCCESS)
    */
@@ -681,6 +906,19 @@ export type V1RoomsRoomId1165715694 = {
      */
     description?: string | null;
     /**
+     * 채용 공고 (폐기됐으면 null)
+     */
+    jobPosting?: {
+      /**
+       * 채용 공고 id
+       */
+      jobPostingId?: number | null;
+      /**
+       * 채용 공고명
+       */
+      postingName?: string | null;
+    } | null;
+    /**
      * 진행 확정 준비 여부. 이 룸의 사실이며 조회자가 확정할 수 있는지와는 다르다
      */
     confirmation: {
@@ -700,7 +938,7 @@ export type V1RoomsRoomId1165715694 = {
          * 화면에 그대로 쓰는 사유 문구. 인원 미달이면 현재 인원과 최소 인원이 들어간다
          */
         label?: string | null;
-      };
+      } | null;
     };
     /**
      * 면접 유형 (선택)
@@ -723,7 +961,7 @@ export type V1RoomsRoomId1165715694 = {
        * 진행 시작 일시 (ISO-8601)
        */
       startAt: string;
-    };
+    } | null;
     /**
      * 오프라인 지역 시군구 id (온라인이면 null)
      */
@@ -757,7 +995,32 @@ export type V1RoomsRoomId1165715694 = {
        * 모집 상태 (RECRUITING | CLOSED, 정원 충족 시 CLOSED)
        */
       recruitStatus: string;
-    };
+      /**
+       * 모집 상태 표시명 (모집 중 | 모집 마감)
+       */
+      recruitStatusLabel: string;
+    } | null;
+    /**
+     * 진행 방식 표시명
+     */
+    methodLabel: string;
+    /**
+     * 직무 (폐기됐으면 null)
+     */
+    jobRole?: {
+      /**
+       * 직무 코드
+       */
+      code?: string | null;
+      /**
+       * 직무 표시명
+       */
+      displayName?: string | null;
+      /**
+       * 직무 id
+       */
+      jobRoleId?: number | null;
+    } | null;
     /**
      * 직무 id
      */
@@ -767,14 +1030,40 @@ export type V1RoomsRoomId1165715694 = {
      */
     typeLabel?: string | null;
     /**
+     * 회사 (공고에서 파생. 회사를 알 수 없으면 null)
+     */
+    company?: {
+      /**
+       * 회사 id
+       */
+      companyId?: number | null;
+      /**
+       * 회사명
+       */
+      name?: string | null;
+    } | null;
+    /**
+     * 오프라인 지역 (온라인이거나 폐기된 지역이면 null)
+     */
+    region?: {
+      /**
+       * 지역 시군구 id
+       */
+      sigunguId?: number | null;
+      /**
+       * 지역 표시명
+       */
+      label?: string | null;
+    } | null;
+    /**
      * 면접 회차 표시명
      */
     roundLabel: string;
     /**
-     * 룸 상태 (RECRUITING | CONFIRMED | COMPLETED | CANCELED)
+     * 룸 상태 (RECRUITING | CONFIRMED | IN_PROGRESS | COMPLETED | CANCELED)
      */
     status: string;
-  };
+  } | null;
 };
 
 export type V1RoomsRoomIdReviews1785905513 = {
@@ -787,7 +1076,7 @@ export type V1RoomsRoomIdReviews1785905513 = {
      * 생성된 후기 id
      */
     reviewId: number;
-  };
+  } | null;
 };
 
 export type V1ProgressRails60461824 = {
@@ -816,9 +1105,9 @@ export type V1ProgressRails60461824 = {
          * 면접 대상 회원 id
          */
         memberId?: string | null;
-      };
+      } | null;
     }>;
-  };
+  } | null;
 };
 
 export type V1Questions1610867609 = {
@@ -831,7 +1120,7 @@ export type V1Questions1610867609 = {
      * 생성된 원 질문 id
      */
     questionId: number;
-  };
+  } | null;
 };
 
 export type V1SelfFeedbacks342673527 = {
@@ -844,7 +1133,7 @@ export type V1SelfFeedbacks342673527 = {
      * 저장된 자가 피드백 id
      */
     feedbackId: number;
-  };
+  } | null;
 };
 
 export type V1AuthDevSessions1490138447 = {
@@ -857,7 +1146,7 @@ export type V1AuthDevSessions1490138447 = {
      * 만료 시각이 없는 개발용 액세스 토큰
      */
     accessToken: string;
-  };
+  } | null;
 };
 
 export type V1FollowUpQuestions1363007138 = {
@@ -914,7 +1203,7 @@ export type V1RoomsRoomIdReviewTargets2072286757 = {
        */
       memberId: string;
     }>;
-  };
+  } | null;
 };
 
 export type V1RoomsFormOptions38619118 = {
@@ -975,7 +1264,7 @@ export type V1RoomsFormOptions38619118 = {
        * 허용 최대 인원
        */
       max: number;
-    };
+    } | null;
     /**
      * 면접 회차 선택지
      */
@@ -989,7 +1278,7 @@ export type V1RoomsFormOptions38619118 = {
        */
       label: string;
     }>;
-  };
+  } | null;
 };
 
 export type V1MembersMeParticipationSlots889288482 = {
@@ -1010,7 +1299,7 @@ export type V1MembersMeParticipationSlots889288482 = {
      * 활성 룸에서 참여 중(JOINED)인 룸 수. 방장으로 만든 룸도 센다
      */
     occupied: number;
-  };
+  } | null;
 };
 
 export type V1RoomsRoomIdReviewSkips2104006349 = {
@@ -1072,7 +1361,7 @@ export type V1Regions709600108 = {
        */
       shortName: string;
     }>;
-  };
+  } | null;
 };
 
 export type V1Rooms897804324 = {
@@ -1117,7 +1406,7 @@ export type V1Rooms897804324 = {
      * 시작 시각 (HH:mm)
      */
     startTime: string;
-  };
+  } | null;
   /**
    * 채용 공고 id (필수, /v1/companies/{companyId}/job-postings 또는 POST /v1/job-postings). 회사는 공고에서 파생
    */
@@ -1179,7 +1468,7 @@ export type V1CompaniesCompanyIdJobPostings1890921117 = {
        */
       jobRoleName?: string | null;
     }>;
-  };
+  } | null;
 };
 
 export type V1MembersMe1349704155 = {
@@ -1234,7 +1523,41 @@ export type V1MembersMe1349704155 = {
      * 회원 식별자 (UUID)
      */
     memberId: string;
-  };
+  } | null;
+};
+
+export type V1RoomProgresses612761132 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 진행을 시작한 방장 회원 id
+     */
+    hostMemberId: string;
+    /**
+     * 확정된 출석 목록
+     */
+    attendances: Array<{
+      /**
+       * 참여자 닉네임. 탈퇴한 회원은 대체 표기로 내려간다
+       */
+      nickname: string;
+      /**
+       * ATTENDED | ABSENT
+       */
+      status: string;
+      /**
+       * 참여자 회원 id
+       */
+      memberId: string;
+    }>;
+    /**
+     * 시작 후 룸 상태 (IN_PROGRESS)
+     */
+    status: string;
+  } | null;
 };
 
 export type V1RoomsRoomIdQuestionsQuestionIdFollowUps1317980453 = {
@@ -1269,7 +1592,7 @@ export type V1ClosingResponses1424921824 = {
      * 제출자 회원 id
      */
     memberId: string;
-  };
+  } | null;
 };
 
 export type V1RoundFeedbacks923155903 = {
@@ -1295,7 +1618,7 @@ export type V1RoundFeedbacks923155903 = {
          * 작성자 회원 id
          */
         memberId: string;
-      };
+      } | null;
       /**
        * 카드 열람 확인 여부
        */
@@ -1322,7 +1645,7 @@ export type V1RoundFeedbacks923155903 = {
        */
       content: string;
     } | null;
-  };
+  } | null;
 };
 
 export type V1RoomsCreationLimit910352763 = {
@@ -1345,7 +1668,7 @@ export type V1RoomsCreationLimit910352763 = {
      * 사용자에게 표시 가능한 메시지
      */
     message: string;
-  };
+  } | null;
 };
 
 export type V1RoomProgresses1093163669 = {
@@ -1391,7 +1714,7 @@ export type V1MembersMeResumesResumeId1837465274 = {
        * 파일 크기 (byte)
        */
       sizeBytes: number;
-    };
+    } | null;
     /**
      * 이력서 식별자 (UUID, 다른 화면에서 선택할 때 사용)
      */
@@ -1405,7 +1728,7 @@ export type V1MembersMeResumesResumeId1837465274 = {
        * AI 요약 상태 (PROCESSING | DONE | FAILED). PROCESSING이면 단건 조회를 폴링하고 최대 1분 뒤 DONE·FAILED에서 중단
        */
       status: string;
-    };
+    } | null;
     /**
      * 등록 시각 (yyyy-MM-ddTHH:mm:ss)
      */
@@ -1414,56 +1737,7 @@ export type V1MembersMeResumesResumeId1837465274 = {
      * 업로드 당시 원본 파일명과 동일한 이력서 이름
      */
     name: string;
-  };
-};
-
-export type V1RoomProgresses1064909895 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 진행을 시작한 방장 회원 id
-     */
-    hostMemberId: string;
-    /**
-     * 확정된 출석 목록
-     */
-    attendances: Array<{
-      /**
-       * ATTENDED | ABSENT
-       */
-      status: string;
-      /**
-       * 참여자 회원 id
-       */
-      memberId: string;
-    }>;
-    /**
-     * 시작 후 룸 상태 (IN_PROGRESS)
-     */
-    status: string;
-  };
-};
-
-export type V1MembersMeProfile466680720 = {
-  /**
-   * 변경할 닉네임 (전체 중복 불가, 자신 제외)
-   */
-  nickname: string;
-  /**
-   * 자기소개 (미지정이면 빈 문자열, 최대 500자)
-   */
-  bio?: string | null;
-  /**
-   * 관심 직무 id 목록 (미지정이면 빈 배열, /v1/job-roles — 전체 교체)
-   */
-  interestJobRoleIds?: Array<number> | null;
-  /**
-   * 관심 회사 id 목록 (미지정이면 빈 배열, /v1/companies 검색 — 전체 교체)
-   */
-  interestCompanyIds?: Array<number> | null;
+  } | null;
 };
 
 export type V1Companies1839974379 = {
@@ -1485,22 +1759,26 @@ export type V1Companies1839974379 = {
        */
       name: string;
     }>;
-  };
+  } | null;
 };
 
-export type V1QuestionsQuestionId496267733 = {
+export type V1MembersMeProfile466680720 = {
   /**
-   * 라운드 면접자 회원 id (UUID)
+   * 변경할 닉네임 (전체 중복 불가, 자신 제외)
    */
-  intervieweeMemberId: string;
+  nickname: string;
   /**
-   * 질문했으면 true, 되돌리면 false
+   * 자기소개 (미지정이면 빈 문자열, 최대 500자)
    */
-  asked: boolean;
+  bio?: string | null;
   /**
-   * 룸 id (UUID)
+   * 관심 직무 id 목록 (미지정이면 빈 배열, /v1/job-roles — 전체 교체)
    */
-  roomId: string;
+  interestJobRoleIds?: Array<number> | null;
+  /**
+   * 관심 회사 id 목록 (미지정이면 빈 배열, /v1/companies 검색 — 전체 교체)
+   */
+  interestCompanyIds?: Array<number> | null;
 };
 
 export type V1RoomsRoomIdApplicationsMe2061746466 = {
@@ -1523,7 +1801,7 @@ export type V1RoomsRoomIdApplicationsMe2061746466 = {
          * 제출 당시 파일 크기 (bytes)
          */
         sizeBytes: number;
-      };
+      } | null;
       /**
        * 제출 원본이 된 보관 이력서 id (UUID)
        */
@@ -1537,8 +1815,8 @@ export type V1RoomsRoomIdApplicationsMe2061746466 = {
          * AI 요약 상태 (PROCESSING | DONE | FAILED)
          */
         status: string;
-      };
-    };
+      } | null;
+    } | null;
     /**
      * 내가 입력한 전달 사항 (미입력 시 빈 문자열)
      */
@@ -1563,7 +1841,22 @@ export type V1RoomsRoomIdApplicationsMe2061746466 = {
      * 신청 상태 (PENDING | ACCEPTED | REJECTED | WITHDRAWN | ROOM_CANCELED | ROOM_CONFIRMED)
      */
     status: string;
-  };
+  } | null;
+};
+
+export type V1QuestionsQuestionId496267733 = {
+  /**
+   * 라운드 면접자 회원 id (UUID)
+   */
+  intervieweeMemberId: string;
+  /**
+   * 질문했으면 true, 되돌리면 false
+   */
+  asked: boolean;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
 };
 
 export type V1MembersMemberIdProfile655149006 = {
@@ -1631,7 +1924,7 @@ export type V1MembersMemberIdProfile655149006 = {
      * 회원 식별자 (UUID)
      */
     memberId: string;
-  };
+  } | null;
 };
 
 export type V1RoomsRoomIdQuestionSetsTargetMemberId906553040 = {
@@ -1665,7 +1958,7 @@ export type V1RoomsRoomIdQuestionSetsTargetMemberId906553040 = {
            * 꼬리질문 작성자 회원 id
            */
           memberId: string;
-        };
+        } | null;
         /**
          * 작성 단계 (PREPARATION | IN_PROGRESS)
          */
@@ -1692,7 +1985,7 @@ export type V1RoomsRoomIdQuestionSetsTargetMemberId906553040 = {
          * 작성자 회원 id
          */
         memberId: string;
-      };
+      } | null;
       /**
        * 작성 단계 (PREPARATION | IN_PROGRESS)
        */
@@ -1711,7 +2004,7 @@ export type V1RoomsRoomIdQuestionSetsTargetMemberId906553040 = {
        * AI 요약 상태 (DONE | PROCESSING | FAILED)
        */
       status: string;
-    };
+    } | null;
     target?: {
       /**
        * 질문 대상 닉네임
@@ -1721,8 +2014,8 @@ export type V1RoomsRoomIdQuestionSetsTargetMemberId906553040 = {
        * 질문 대상 회원 id
        */
       memberId: string;
-    };
-  };
+    } | null;
+  } | null;
 };
 
 export type V1NicknamesAvailability1805856748 = {
@@ -1735,7 +2028,7 @@ export type V1NicknamesAvailability1805856748 = {
      * 사용 가능 여부 (중복이면 false)
      */
     available: boolean;
-  };
+  } | null;
 };
 
 export type V1RoomsRejectReasons1951847967 = {
@@ -1753,8 +2046,8 @@ export type V1RoomsRejectReasons1951847967 = {
        * 화면 표시 문구
        */
       label: string;
-    }>;
-  };
+    }> | null;
+  } | null;
 };
 
 export type V1QuestionComments469179710 = {
@@ -1775,7 +2068,7 @@ export type V1QuestionComments469179710 = {
        * 다음 커서 질문 메모 id
        */
       id?: number | null;
-    };
+    } | null;
     /**
      * 오래된 순 질문 메모 목록
      */
@@ -1797,7 +2090,7 @@ export type V1QuestionComments469179710 = {
          * 작성자 회원 id
          */
         memberId: string;
-      };
+      } | null;
       /**
        * 질문 메모 id
        */
@@ -1811,7 +2104,7 @@ export type V1QuestionComments469179710 = {
        */
       content: string;
     }>;
-  };
+  } | null;
 };
 
 export type V1QuestionCommentsCommentId83412404 = {
@@ -1847,7 +2140,7 @@ export type V1RoomsRoomIdComments876888201 = {
      * 생성된(또는 멱등 반환된 기존) 글 id
      */
     commentId: number;
-  };
+  } | null;
 };
 
 export type V1RoomsRoomIdReviews1356104346 = {
@@ -1886,7 +2179,7 @@ export type V1FinalFeedbacks317638049 = {
      * 생성된 최종 피드백 id
      */
     feedbackId: number;
-  };
+  } | null;
 };
 
 export type V1RoomsRoomIdParticipantsMe837364537 = {
@@ -1903,7 +2196,7 @@ export type V1RoomsRoomIdParticipantsMe837364537 = {
      * 에러 메시지
      */
     message: string;
-  };
+  } | null;
 };
 
 export type V1QuestionComments1807061222 = {
@@ -1943,7 +2236,7 @@ export type V1Rooms583341076 = {
      * 룸 상태 (RECRUITING)
      */
     status: string;
-  };
+  } | null;
 };
 
 export type V1JobPostings1848070641 = {
@@ -1971,7 +2264,7 @@ export type V1NicknamesSuggestion679533277 = {
      * 추천 닉네임 (중복 아님 보장)
      */
     nickname: string;
-  };
+  } | null;
 };
 
 export type V1RoomsRoomIdParticipantsMe1338856208 = {
@@ -1988,7 +2281,7 @@ export type V1RoomsRoomIdParticipantsMe1338856208 = {
      * 에러 메시지
      */
     message: string;
-  };
+  } | null;
 };
 
 export type V1FeedbackDisclosuresFeedbackId256087070 = {
@@ -2027,7 +2320,7 @@ export type V1QuestionComments32871189 = {
      * 생성된 질문 메모 id
      */
     commentId: number;
-  };
+  } | null;
 };
 
 export type V1RoomsRoomIdQuestionsQuestionIdFollowUps36237129 = {
@@ -2040,7 +2333,7 @@ export type V1RoomsRoomIdQuestionsQuestionIdFollowUps36237129 = {
      * 생성된 질문 id
      */
     questionId: number;
-  };
+  } | null;
 };
 
 export type V1MembersMeProfile934225230 = {
@@ -2074,7 +2367,7 @@ export type V1MembersMeProfile934225230 = {
      * 회원 식별자 (UUID)
      */
     memberId: string;
-  };
+  } | null;
 };
 
 export type V1RoomsRoomIdApplicationsApplicationIdReject855969760 = {
@@ -2100,7 +2393,7 @@ export type V1RoomsRoomIdApplicationsApplicationIdReject855969760 = {
        * 모집 상태 표시명
        */
       recruitStatusLabel: string;
-    };
+    } | null;
     /**
      * 처리된 신청 id
      */
@@ -2113,7 +2406,7 @@ export type V1RoomsRoomIdApplicationsApplicationIdReject855969760 = {
      * 신청 상태 (REJECTED)
      */
     status: string;
-  };
+  } | null;
 };
 
 export type V1RoomsRoomIdApplicationsApplicationIdAccept674159690 = {
@@ -2139,7 +2432,7 @@ export type V1RoomsRoomIdApplicationsApplicationIdAccept674159690 = {
        * 모집 상태 표시명
        */
       recruitStatusLabel: string;
-    };
+    } | null;
     /**
      * 처리된 신청 id
      */
@@ -2152,7 +2445,7 @@ export type V1RoomsRoomIdApplicationsApplicationIdAccept674159690 = {
      * 신청 상태 (ACCEPTED | SLOT_EXCEEDED)
      */
     status: string;
-  };
+  } | null;
 };
 
 export type V1MembersMeWebPushSubscriptions1250153706 = {
@@ -2198,7 +2491,7 @@ export type V1JobRoles1436485238 = {
         jobRoleId: number;
       }>;
     }>;
-  };
+  } | null;
 };
 
 export type V1FinalFeedbacks135367546 = {
@@ -2214,6 +2507,27 @@ export type V1FinalFeedbacks135367546 = {
    * 룸 id (UUID)
    */
   roomId: string;
+};
+
+export type V1RoomsRoomIdApplications1651584797 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 생성된 참가 신청 id
+     */
+    applicationId: number;
+    /**
+     * 신청 상태 표시명 (대기 중)
+     */
+    statusLabel: string;
+    /**
+     * 신청 상태 (PENDING)
+     */
+    status: string;
+  } | null;
 };
 
 export type V1RoomsRoomIdApplications1094172635 = {
@@ -2285,30 +2599,53 @@ export type V1RoomsRoomIdApplications1094172635 = {
          * 신청자 회원 식별자 (UUID)
          */
         memberId: string;
-      };
+      } | null;
     }>;
-  };
+  } | null;
 };
 
-export type V1RoomsRoomIdApplications1651584797 = {
+export type V1ReviewsReviewId20839761 = {
   /**
    * 처리 결과 (SUCCESS)
    */
   result: string;
   data?: {
     /**
-     * 생성된 참가 신청 id
+     * 후기 대상 회원 id
      */
-    applicationId: number;
+    targetMemberId: string;
     /**
-     * 신청 상태 표시명 (대기 중)
+     * 익명 작성 여부
      */
-    statusLabel: string;
+    anonymous: boolean;
     /**
-     * 신청 상태 (PENDING)
+     * 후기 id
      */
-    status: string;
-  };
+    reviewId: number;
+    /**
+     * 한 줄 후기 (null 가능)
+     */
+    content?: string | null;
+    /**
+     * 후기 대상 회원 닉네임. 탈퇴한 회원은 대체 표기로 내려간다
+     */
+    targetNickname: string;
+    /**
+     * 후기가 작성된 룸 id
+     */
+    roomId: string;
+    /**
+     * 평가 태그 (빈 배열 가능)
+     */
+    tags: Array<
+      | {
+          [key: string]: unknown;
+        }
+      | boolean
+      | string
+      | number
+    >;
+  } | null;
 };
 
 export type V1Rooms1476531183 = {
@@ -2365,7 +2702,7 @@ export type V1Rooms1476531183 = {
          * 채용 공고명
          */
         postingName?: string | null;
-      };
+      } | null;
       /**
        * 면접 유형 코드 (선택)
        */
@@ -2391,7 +2728,7 @@ export type V1Rooms1476531183 = {
          * 시작 시각 (HH:mm)
          */
         startTime: string;
-      };
+      } | null;
       /**
        * 면접 단계 코드 (FIRST | SECOND | THIRD | ETC)
        */
@@ -2417,7 +2754,7 @@ export type V1Rooms1476531183 = {
          * 모집 상태 표시명
          */
         recruitStatusLabel: string;
-      };
+      } | null;
       /**
        * 진행 방식 표시명
        */
@@ -2438,7 +2775,7 @@ export type V1Rooms1476531183 = {
          * 직무 id
          */
         jobRoleId?: number | null;
-      };
+      } | null;
       /**
        * 면접 유형 표시명 (선택)
        */
@@ -2455,7 +2792,7 @@ export type V1Rooms1476531183 = {
          * 회사명
          */
         name?: string | null;
-      };
+      } | null;
       /**
        * 오프라인 지역 (온라인이거나 폐기된 지역이면 null)
        */
@@ -2468,7 +2805,7 @@ export type V1Rooms1476531183 = {
          * 지역 표시명
          */
         label?: string | null;
-      };
+      } | null;
       /**
        * 면접 단계 표시명
        */
@@ -2482,7 +2819,7 @@ export type V1Rooms1476531183 = {
      * 조건에 맞는 전체 룸 수 (페이지 크기와 무관)
      */
     totalCount: number;
-  };
+  } | null;
 };
 
 export type V1Terms1673199050 = {
@@ -2524,7 +2861,7 @@ export type V1Terms1673199050 = {
        */
       content: string;
     }>;
-  };
+  } | null;
 };
 
 export type V1MembersMeReceivedReviews785981355 = {
@@ -2569,24 +2906,7 @@ export type V1MembersMeReceivedReviews785981355 = {
      * 공개 가능한 받은 후기 전체 수
      */
     totalCount: number;
-  };
-};
-
-export type V1AttendancesMe427868787 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * ATTENDED | ABSENT
-     */
-    status: string;
-    /**
-     * 로그인 회원 id
-     */
-    memberId: string;
-  };
+  } | null;
 };
 
 export type V1JobPostingsSearch1628359421 = {
@@ -2624,7 +2944,7 @@ export type V1JobPostingsSearch1628359421 = {
          * 공고가 속한 회사명 (행 앞에 표시)
          */
         name: string;
-      };
+      } | null;
       /**
        * 공고명
        */
@@ -2651,7 +2971,7 @@ export type V1JobPostingsSearch1628359421 = {
      * 요청 검색어 echo (stale 응답 판별용)
      */
     query: string;
-  };
+  } | null;
 };
 
 export type V1JobRolesSearch1966453570 = {
@@ -2685,9 +3005,9 @@ export type V1JobRolesSearch1966453570 = {
          * 상위 직군 표시명
          */
         displayName: string;
-      };
+      } | null;
     }>;
-  };
+  } | null;
 };
 
 export type V1QuestionRecordsMe591289672 = {
@@ -2730,7 +3050,7 @@ export type V1QuestionRecordsMe591289672 = {
        */
       questionId: number;
     }>;
-  };
+  } | null;
 };
 
 export type V1Questions1653829861 = {
@@ -2775,13 +3095,13 @@ export type V1RoomsRoomIdQuestionSets2052308651 = {
          * 질문 대상 회원 id (UUID)
          */
         memberId: string;
-      };
+      } | null;
     }>;
     /**
      * 내 카드셋에 활성 질문 또는 꼬리질문을 남긴 참여자 수
      */
     myCardSetPreparerCount: number;
-  };
+  } | null;
 };
 
 export type V1MembersMeWebPushSubscriptions615785551 = {
@@ -2828,7 +3148,7 @@ export type V1RoomsCreationLimit1772486104 = {
      * 더 만들 수 있는 개수. 0 이면 생성이 E1427 로 거부된다. 음수가 되지 않는다
      */
     remaining: number;
-  };
+  } | null;
 };
 
 export type V1MembersMeResumes1467612549 = {
@@ -2857,7 +3177,7 @@ export type V1MembersMeResumes1467612549 = {
          * 최근 사용한 룸 식별자 (UUID)
          */
         roomId?: string | null;
-      };
+      } | null;
       /**
        * 회원이 지정한 기본 이력서 여부 (최근 사용 여부와 별개)
        */
@@ -2875,7 +3195,7 @@ export type V1MembersMeResumes1467612549 = {
          * 파일 크기 (byte)
          */
         sizeBytes: number;
-      };
+      } | null;
       /**
        * 이력서 식별자 (UUID, 다른 화면에서 선택할 때 사용)
        */
@@ -2889,7 +3209,7 @@ export type V1MembersMeResumes1467612549 = {
          * AI 요약 상태 (PROCESSING | DONE | FAILED). PROCESSING이면 단건 조회를 폴링하고 최대 1분 뒤 DONE·FAILED에서 중단
          */
         status: string;
-      };
+      } | null;
       /**
        * 등록 시각 (yyyy-MM-ddTHH:mm:ss)
        */
@@ -2903,7 +3223,7 @@ export type V1MembersMeResumes1467612549 = {
      * 최대 보관 가능 개수 (10)
      */
     maxCount: number;
-  };
+  } | null;
 };
 
 export type V1AuthDevSessions1806235479 = {
@@ -2934,7 +3254,7 @@ export type ExampleGetResponses = {
   /**
    * 200
    */
-  200: GetExampleValue191457252;
+  200: Post191457252;
 };
 
 export type ExampleGetResponse = ExampleGetResponses[keyof ExampleGetResponses];
@@ -2950,7 +3270,7 @@ export type ExamplePostResponses = {
   /**
    * 200
    */
-  200: GetExampleValue191457252;
+  200: Post191457252;
 };
 
 export type ExamplePostResponse = ExamplePostResponses[keyof ExamplePostResponses];
@@ -3370,7 +3690,7 @@ export type StartRoomProgressResponses = {
   /**
    * 200
    */
-  200: V1RoomProgresses1064909895;
+  200: V1RoomProgresses612761132;
 };
 
 export type StartRoomProgressResponse =
@@ -3649,7 +3969,7 @@ export type GetMyAttendanceResponses = {
   /**
    * 200
    */
-  200: V1AttendancesMe427868787;
+  200: V1AttendancesMe438784568;
 };
 
 export type GetMyAttendanceResponse = GetMyAttendanceResponses[keyof GetMyAttendanceResponses];
@@ -4243,6 +4563,44 @@ export type DeleteReviewResponses = {
 
 export type DeleteReviewResponse = DeleteReviewResponses[keyof DeleteReviewResponses];
 
+export type GetReviewData = {
+  body?: never;
+  path: {
+    /**
+     * 조회할 후기 id
+     */
+    reviewId: string;
+  };
+  query?: never;
+  url: "/v1/reviews/{reviewId}";
+};
+
+export type GetReviewErrors = {
+  /**
+   * 401
+   */
+  401: V1RoomsCreationLimit910352763;
+  /**
+   * 403
+   */
+  403: V1RoomsCreationLimit910352763;
+  /**
+   * 404
+   */
+  404: V1RoomsCreationLimit910352763;
+};
+
+export type GetReviewError = GetReviewErrors[keyof GetReviewErrors];
+
+export type GetReviewResponses = {
+  /**
+   * 200
+   */
+  200: V1ReviewsReviewId20839761;
+};
+
+export type GetReviewResponse = GetReviewResponses[keyof GetReviewResponses];
+
 export type UpdateReviewData = {
   body?: V1ReviewsReviewId292942325;
   path: {
@@ -4372,7 +4730,7 @@ export type RoomDetailResponses = {
   /**
    * 200
    */
-  200: V1RoomsRoomId1165715694;
+  200: V1RoomsRoomId593421515;
 };
 
 export type RoomDetailResponse = RoomDetailResponses[keyof RoomDetailResponses];
@@ -4582,7 +4940,7 @@ export type GetInterviewOverviewResponses = {
   /**
    * 200
    */
-  200: V1MembersMeRooms1592819168;
+  200: V1MembersMeRooms257716809;
 };
 
 export type GetInterviewOverviewResponse =

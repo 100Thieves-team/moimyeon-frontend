@@ -58,5 +58,5 @@ export async function hasAuthenticatedMember() {
     throwOnError: false,
   });
 
-  return result.data?.data !== undefined;
+  return result.data?.data !== undefined && result.data.data !== null;
 }

@@ -90,7 +90,7 @@ function upsertResume(
   current: ResumesResponse | undefined,
   nextResume: NonNullable<ResumeResponse["data"]>,
 ) {
-  if (current?.data === undefined) {
+  if (current?.data === undefined || current.data === null) {
     return current;
   }
 
@@ -177,7 +177,7 @@ function ResumePicker({
       const response = await createResume.mutateAsync({ body: { file } });
       const uploadedResume = response.data;
 
-      if (uploadedResume === undefined) {
+      if (uploadedResume === undefined || uploadedResume === null) {
         throw new Error("Resume response did not include data.");
       }
 

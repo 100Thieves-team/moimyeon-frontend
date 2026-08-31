@@ -23,11 +23,11 @@ function MyPageDetails({ member }: MyPageDetailsProps) {
   const publicProfile = publicProfileResponse.data;
   const jobRoles = jobRolesResponse.data;
 
-  if (publicProfile === undefined) {
+  if (publicProfile === undefined || publicProfile === null) {
     throw new Error("Failed to load public profile");
   }
 
-  if (jobRoles === undefined) {
+  if (jobRoles === undefined || jobRoles === null) {
     throw new Error("Failed to load job roles");
   }
 
@@ -42,7 +42,7 @@ export function MyPageContent() {
   const { data: memberResponse } = useSuspenseQuery(memberMeOptions());
   const member = memberResponse.data;
 
-  if (member === undefined) {
+  if (member === undefined || member === null) {
     throw new Error("Failed to load member");
   }
 

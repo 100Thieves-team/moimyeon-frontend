@@ -6,7 +6,7 @@ import * as styles from "./interview-discovery.css";
 export type InterviewRoom = NonNullable<RoomsResponse["data"]>["rooms"][number];
 
 function formatSchedule(schedule: InterviewRoom["schedule"]) {
-  if (schedule === undefined) return "일정 정보 없음";
+  if (schedule === undefined || schedule === null) return "일정 정보 없음";
 
   const date = new Date(`${schedule.date}T00:00:00`);
   const dateLabel = Number.isNaN(date.getTime())

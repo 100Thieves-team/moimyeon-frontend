@@ -27,7 +27,7 @@ async function loadCurrentMemberState(): Promise<CurrentMemberState> {
   if (result.data !== undefined) {
     const member = result.data.data;
 
-    if (member === undefined) {
+    if (member === undefined || member === null) {
       throw new Error("Failed to load member");
     }
 

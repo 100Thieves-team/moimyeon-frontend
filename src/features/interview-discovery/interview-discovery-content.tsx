@@ -57,14 +57,21 @@ export function InterviewDiscoveryContent({ filters }: InterviewDiscoveryContent
   const regions = regionsResponse.data;
   const roomFormOptions = roomFormOptionsResponse.data;
 
-  if (jobRoles === undefined || regions === undefined || roomFormOptions === undefined) {
+  if (
+    jobRoles === undefined ||
+    jobRoles === null ||
+    regions === undefined ||
+    regions === null ||
+    roomFormOptions === undefined ||
+    roomFormOptions === null
+  ) {
     throw new Error("Failed to load interview discovery filters");
   }
 
   const rooms = roomsData.pages.flatMap((page) => page.data?.rooms ?? []);
   const firstPageData = roomsData.pages[0]?.data;
 
-  if (firstPageData === undefined) {
+  if (firstPageData === undefined || firstPageData === null) {
     throw new Error("Failed to load interviews");
   }
 

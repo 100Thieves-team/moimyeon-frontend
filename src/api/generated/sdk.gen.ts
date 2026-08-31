@@ -92,6 +92,9 @@ import type {
   GetReceivedReviewsData,
   GetReceivedReviewsErrors,
   GetReceivedReviewsResponses,
+  GetReviewData,
+  GetReviewErrors,
+  GetReviewResponses,
   GetReviewTargetsData,
   GetReviewTargetsErrors,
   GetReviewTargetsResponses,
@@ -256,6 +259,7 @@ import {
   zGetQuestionCardSetsResponse,
   zGetQuestionCommentsResponse,
   zGetReceivedReviewsResponse,
+  zGetReviewResponse,
   zGetReviewTargetsResponse,
   zGetRoomCommentsResponse,
   zGetRoundScreenResponse,
@@ -1021,6 +1025,20 @@ export const deleteReview = <ThrowOnError extends boolean = true>(
   });
 
 /**
+ * 작성한 후기 조회
+ *
+ * 후기 작성자가 리뷰 id로 자신이 작성한 후기의 태그, 텍스트, 익명 여부를 조회한다. 수정 화면 진입 시 기존 내용을 채우는 용도이며 공개 기준 시각과 무관하게 조회할 수 있다. 미인증 E1102, 후기 없음 E2006, 작성자 불일치 E2007로 응답한다.
+ */
+export const getReview = <ThrowOnError extends boolean = true>(
+  options: Options<GetReviewData, ThrowOnError>,
+): RequestResult<GetReviewResponses, GetReviewErrors, ThrowOnError> =>
+  (options.client ?? client).get<GetReviewResponses, GetReviewErrors, ThrowOnError>({
+    responseValidator: async (data) => await zGetReviewResponse.parseAsync(data),
+    url: "/v1/reviews/{reviewId}",
+    ...options,
+  });
+
+/**
  * 후기 수정
  *
  * 후기 작성자가 공개 기준 시각 전까지 태그와 텍스트를 교체한다. 잘못된 태그 E400, 미인증 E1102, 후기 없음 E2006, 작성자 불일치 E2007, 수정 창 만료 E2008로 응답한다.
@@ -1085,7 +1103,7 @@ export const rejectReasons = <ThrowOnError extends boolean = true>(
 /**
  * 룸 단건 조회
  *
- * 룸의 실제 저장 데이터 + 현재 인원 + 방장 식별자를 반환한다(§6 공개 데이터). 현재 인원 = 활성 참여 수, 모집 상태는 정원 충족 여부로 계산한다. 회사·공고·직무 표시명, 방장 프로필/신뢰 지표 enrich 는 별도 이슈. 존재하지 않는 룸은 404(E1405).
+ * 룸의 실제 저장 데이터 + 현재 인원 + 방장 식별자 + 표시명을 반환한다(§6 공개 데이터). 현재 인원 = 활성 참여 수, 모집 상태는 정원 충족 여부로 계산한다. 회사·공고·직무·지역 표시명은 목록과 같은 규칙으로 내려간다 — 참조가 끊어졌을 때(회사 미매칭 공고, 폐기된 직무 등) null 로 내려가고 raw id(jobPostingId·jobRoleId·sigunguId)는 그대로 남는다. 방장 프로필/신뢰 지표 enrich 는 별도 이슈. 존재하지 않는 룸은 404(E1405).
  */
 export const roomDetail = <ThrowOnError extends boolean = true>(
   options: Options<RoomDetailData, ThrowOnError>,

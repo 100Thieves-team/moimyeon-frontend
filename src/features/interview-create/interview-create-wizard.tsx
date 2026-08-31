@@ -185,9 +185,7 @@ export function InterviewCreateWizard({
     },
   });
   const canCreateRoom =
-    creationLimitQuery.data?.data !== undefined &&
-    creationLimitQuery.data.data.remaining > 0 &&
-    participationSlots.remaining > 0;
+    (creationLimitQuery.data?.data?.remaining ?? 0) > 0 && participationSlots.remaining > 0;
   const completedSteps = [
     isInterviewInfoStepComplete(values, options, validJobRoleIds),
     isMethodAndScheduleStepComplete(values, options, regions, canCreateRoom),
@@ -330,7 +328,7 @@ export function InterviewCreateWizard({
                         <InterviewInfoStep jobRoleGroups={jobRoleGroups} options={options} />
                       ) : currentStep === "진행 방식과 일정" ? (
                         <MethodAndScheduleStep
-                          creationLimit={creationLimitQuery.data?.data}
+                          creationLimit={creationLimitQuery.data?.data ?? undefined}
                           creationLimitIsError={creationLimitQuery.isError}
                           creationLimitIsPending={creationLimitQuery.isPending}
                           hasCreationLimitParams={hasCreationLimitParams}

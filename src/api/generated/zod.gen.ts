@@ -2,14 +2,14 @@
 
 import * as z from "zod";
 
-export const zV1ReviewsReviewId292942325 = z.object({
-  content: z.string().nullish(),
-  tags: z.array(z.union([z.record(z.string(), z.unknown()), z.boolean(), z.string(), z.number()])),
-});
-
 export const zV1RoomsRoomIdApplications240308819 = z.object({
   note: z.string().nullish(),
   resumeId: z.string(),
+});
+
+export const zV1ReviewsReviewId292942325 = z.object({
+  content: z.string().nullish(),
+  tags: z.array(z.union([z.record(z.string(), z.unknown()), z.boolean(), z.string(), z.number()])),
 });
 
 export const zV1JobPostings1538643122 = z.object({
@@ -22,7 +22,7 @@ export const zV1JobPostings1538643122 = z.object({
       verified: z.boolean(),
       postingName: z.string(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1JobPostingsLinkMetadata1427693842 = z.object({
@@ -35,7 +35,7 @@ export const zV1JobPostingsLinkMetadata1427693842 = z.object({
       description: z.string().nullish(),
       postingName: z.string().nullish(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoomsRoomIdParticipants1711899011 = z.object({
@@ -56,7 +56,7 @@ export const zV1RoomsRoomIdParticipants1711899011 = z.object({
               text: z.string().nullish(),
               status: z.string().nullish(),
             })
-            .optional(),
+            .nullish(),
           canViewOriginal: z.boolean(),
           nickname: z.string(),
           activitySummary: z.string().nullish(),
@@ -65,7 +65,7 @@ export const zV1RoomsRoomIdParticipants1711899011 = z.object({
         }),
       ),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1JobPostingsLinkMetadata34312967 = z.object({
@@ -75,22 +75,6 @@ export const zV1JobPostingsLinkMetadata34312967 = z.object({
 
 export const zV1RoomsRoomIdComments1160873406 = z.object({
   content: z.string(),
-});
-
-export const zGetExampleValue191457252 = z.object({
-  result: z.string(),
-  data: z
-    .object({
-      date: z.string(),
-      result: z.string(),
-      datetime: z.string(),
-      items: z.array(
-        z.object({
-          key: z.string(),
-        }),
-      ),
-    })
-    .optional(),
 });
 
 export const zV1RoomsRoomIdComments1495367468 = z.object({
@@ -110,7 +94,7 @@ export const zV1RoomsRoomIdComments1495367468 = z.object({
               nickname: z.string().nullish(),
               memberId: z.string().nullish(),
             })
-            .optional(),
+            .nullish(),
           commentId: z.number(),
           isMine: z.boolean(),
           content: z.string().nullish(),
@@ -118,7 +102,23 @@ export const zV1RoomsRoomIdComments1495367468 = z.object({
       ),
       writable: z.boolean(),
     })
-    .optional(),
+    .nullish(),
+});
+
+export const zPost191457252 = z.object({
+  result: z.string(),
+  data: z
+    .object({
+      date: z.string(),
+      result: z.string(),
+      datetime: z.string(),
+      items: z.array(
+        z.object({
+          key: z.string(),
+        }),
+      ),
+    })
+    .nullish(),
 });
 
 export const zV1AuthLogout198252895 = z.object({
@@ -142,7 +142,7 @@ export const zV1Rounds1524907893 = z.object({
                     nickname: z.string(),
                     memberId: z.string(),
                   })
-                  .optional(),
+                  .nullish(),
                 source: z.string(),
                 content: z.string(),
               }),
@@ -154,7 +154,7 @@ export const zV1Rounds1524907893 = z.object({
                 nickname: z.string(),
                 memberId: z.string(),
               })
-              .optional(),
+              .nullish(),
             source: z.string(),
             content: z.string(),
           }),
@@ -165,78 +165,9 @@ export const zV1Rounds1524907893 = z.object({
           nickname: z.string(),
           memberId: z.string(),
         })
-        .optional(),
+        .nullish(),
     })
-    .optional(),
-});
-
-export const zV1MembersMeRooms1592819168 = z.object({
-  result: z.string(),
-  data: z
-    .object({
-      pendingApplications: z.array(
-        z.object({
-          resumeOriginalName: z.string(),
-          applicationId: z.number(),
-          room: z.object({
-            title: z.string(),
-            meetingType: z.string(),
-            roomId: z.string(),
-            maxParticipants: z.number(),
-            roomStatus: z.string(),
-            durationMinutes: z.number(),
-            sigunguId: z.number().nullish(),
-            jobPostingId: z.number(),
-            interviewType: z.string().nullish(),
-            participantCount: z.number(),
-            jobRoleId: z.number(),
-            interviewStage: z.string(),
-            startAt: z.string(),
-          }),
-          appliedAt: z.string(),
-        }),
-      ),
-      participatingRooms: z.array(
-        z.object({
-          room: z.object({
-            title: z.string(),
-            meetingType: z.string(),
-            roomId: z.string(),
-            maxParticipants: z.number(),
-            roomStatus: z.string(),
-            durationMinutes: z.number(),
-            sigunguId: z.number().nullish(),
-            jobPostingId: z.number(),
-            interviewType: z.string().nullish(),
-            participantCount: z.number(),
-            jobRoleId: z.number(),
-            interviewStage: z.string(),
-            startAt: z.string(),
-          }),
-        }),
-      ),
-      completedRooms: z.array(
-        z.object({
-          reviewStatus: z.string(),
-          room: z.object({
-            title: z.string(),
-            meetingType: z.string(),
-            roomId: z.string(),
-            maxParticipants: z.number(),
-            roomStatus: z.string(),
-            durationMinutes: z.number(),
-            sigunguId: z.number().nullish(),
-            jobPostingId: z.number(),
-            interviewType: z.string().nullish(),
-            participantCount: z.number(),
-            jobRoleId: z.number(),
-            interviewStage: z.string(),
-            startAt: z.string(),
-          }),
-        }),
-      ),
-    })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1ClosingQuestionsMe207387725 = z.object({
@@ -252,7 +183,18 @@ export const zV1ClosingQuestionsMe207387725 = z.object({
         }),
       ),
     })
-    .optional(),
+    .nullish(),
+});
+
+export const zV1AttendancesMe438784568 = z.object({
+  result: z.string(),
+  data: z
+    .object({
+      nickname: z.string(),
+      status: z.string(),
+      memberId: z.string(),
+    })
+    .nullish(),
 });
 
 export const zV1FollowUpQuestions140122441 = z.object({
@@ -261,7 +203,160 @@ export const zV1FollowUpQuestions140122441 = z.object({
     .object({
       questionId: z.number(),
     })
-    .optional(),
+    .nullish(),
+});
+
+export const zV1MembersMeRooms257716809 = z.object({
+  result: z.string(),
+  data: z
+    .object({
+      pendingApplications: z.array(
+        z.object({
+          resumeOriginalName: z.string(),
+          applicationId: z.number(),
+          room: z.object({
+            jobPosting: z
+              .object({
+                jobPostingId: z.number().nullish(),
+                postingName: z.string().nullish(),
+              })
+              .nullish(),
+            interviewTypeLabel: z.string().nullish(),
+            title: z.string(),
+            meetingType: z.string(),
+            roomId: z.string(),
+            maxParticipants: z.number(),
+            roomStatus: z.string(),
+            durationMinutes: z.number(),
+            interviewStageLabel: z.string(),
+            sigunguId: z.number().nullish(),
+            meetingTypeLabel: z.string(),
+            jobPostingId: z.number(),
+            interviewType: z.string().nullish(),
+            participantCount: z.number(),
+            jobRole: z
+              .object({
+                code: z.string().nullish(),
+                displayName: z.string().nullish(),
+                jobRoleId: z.number().nullish(),
+              })
+              .nullish(),
+            jobRoleId: z.number(),
+            company: z
+              .object({
+                companyId: z.number().nullish(),
+                name: z.string().nullish(),
+              })
+              .nullish(),
+            interviewStage: z.string(),
+            region: z
+              .object({
+                sigunguId: z.number().nullish(),
+                label: z.string().nullish(),
+              })
+              .nullish(),
+            startAt: z.string(),
+          }),
+          appliedAt: z.string(),
+        }),
+      ),
+      participatingRooms: z.array(
+        z.object({
+          room: z.object({
+            jobPosting: z
+              .object({
+                jobPostingId: z.number().nullish(),
+                postingName: z.string().nullish(),
+              })
+              .nullish(),
+            interviewTypeLabel: z.string().nullish(),
+            title: z.string(),
+            meetingType: z.string(),
+            roomId: z.string(),
+            maxParticipants: z.number(),
+            roomStatus: z.string(),
+            durationMinutes: z.number(),
+            interviewStageLabel: z.string(),
+            sigunguId: z.number().nullish(),
+            meetingTypeLabel: z.string(),
+            jobPostingId: z.number(),
+            interviewType: z.string().nullish(),
+            participantCount: z.number(),
+            jobRole: z
+              .object({
+                code: z.string().nullish(),
+                displayName: z.string().nullish(),
+                jobRoleId: z.number().nullish(),
+              })
+              .nullish(),
+            jobRoleId: z.number(),
+            company: z
+              .object({
+                companyId: z.number().nullish(),
+                name: z.string().nullish(),
+              })
+              .nullish(),
+            interviewStage: z.string(),
+            region: z
+              .object({
+                sigunguId: z.number().nullish(),
+                label: z.string().nullish(),
+              })
+              .nullish(),
+            startAt: z.string(),
+          }),
+        }),
+      ),
+      completedRooms: z.array(
+        z.object({
+          reviewStatus: z.string(),
+          room: z.object({
+            jobPosting: z
+              .object({
+                jobPostingId: z.number().nullish(),
+                postingName: z.string().nullish(),
+              })
+              .nullish(),
+            interviewTypeLabel: z.string().nullish(),
+            title: z.string(),
+            meetingType: z.string(),
+            roomId: z.string(),
+            maxParticipants: z.number(),
+            roomStatus: z.string(),
+            durationMinutes: z.number(),
+            interviewStageLabel: z.string(),
+            sigunguId: z.number().nullish(),
+            meetingTypeLabel: z.string(),
+            jobPostingId: z.number(),
+            interviewType: z.string().nullish(),
+            participantCount: z.number(),
+            jobRole: z
+              .object({
+                code: z.string().nullish(),
+                displayName: z.string().nullish(),
+                jobRoleId: z.number().nullish(),
+              })
+              .nullish(),
+            jobRoleId: z.number(),
+            company: z
+              .object({
+                companyId: z.number().nullish(),
+                name: z.string().nullish(),
+              })
+              .nullish(),
+            interviewStage: z.string(),
+            region: z
+              .object({
+                sigunguId: z.number().nullish(),
+                label: z.string().nullish(),
+              })
+              .nullish(),
+            startAt: z.string(),
+          }),
+        }),
+      ),
+    })
+    .nullish(),
 });
 
 export const zPost1780624183 = z.object({
@@ -273,7 +368,7 @@ export const zV1RoomsRoomIdQuestions282474051 = z.object({
   content: z.string(),
 });
 
-export const zV1RoomsRoomId1165715694 = z.object({
+export const zV1RoomsRoomId593421515 = z.object({
   result: z.string(),
   data: z
     .object({
@@ -288,6 +383,12 @@ export const zV1RoomsRoomId1165715694 = z.object({
       resumePublic: z.boolean(),
       method: z.string(),
       description: z.string().nullish(),
+      jobPosting: z
+        .object({
+          jobPostingId: z.number().nullish(),
+          postingName: z.string().nullish(),
+        })
+        .nullish(),
       confirmation: z.object({
         ready: z.boolean(),
         blockReason: z
@@ -295,7 +396,7 @@ export const zV1RoomsRoomId1165715694 = z.object({
             code: z.string().nullish(),
             label: z.string().nullish(),
           })
-          .optional(),
+          .nullish(),
       }),
       type: z.string().nullish(),
       title: z.string(),
@@ -305,7 +406,7 @@ export const zV1RoomsRoomId1165715694 = z.object({
           durationMinutes: z.number(),
           startAt: z.string(),
         })
-        .optional(),
+        .nullish(),
       sigunguId: z.number().nullish(),
       round: z.string(),
       jobPostingId: z.number(),
@@ -316,14 +417,35 @@ export const zV1RoomsRoomId1165715694 = z.object({
           pendingApplicationCount: z.number(),
           max: z.number(),
           recruitStatus: z.string(),
+          recruitStatusLabel: z.string(),
         })
-        .optional(),
+        .nullish(),
+      methodLabel: z.string(),
+      jobRole: z
+        .object({
+          code: z.string().nullish(),
+          displayName: z.string().nullish(),
+          jobRoleId: z.number().nullish(),
+        })
+        .nullish(),
       jobRoleId: z.number(),
       typeLabel: z.string().nullish(),
+      company: z
+        .object({
+          companyId: z.number().nullish(),
+          name: z.string().nullish(),
+        })
+        .nullish(),
+      region: z
+        .object({
+          sigunguId: z.number().nullish(),
+          label: z.string().nullish(),
+        })
+        .nullish(),
       roundLabel: z.string(),
       status: z.string(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoomsRoomIdReviews1785905513 = z.object({
@@ -332,7 +454,7 @@ export const zV1RoomsRoomIdReviews1785905513 = z.object({
     .object({
       reviewId: z.number(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1ProgressRails60461824 = z.object({
@@ -347,11 +469,11 @@ export const zV1ProgressRails60461824 = z.object({
               nickname: z.string().nullish(),
               memberId: z.string().nullish(),
             })
-            .optional(),
+            .nullish(),
         }),
       ),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1Questions1610867609 = z.object({
@@ -360,7 +482,7 @@ export const zV1Questions1610867609 = z.object({
     .object({
       questionId: z.number(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1SelfFeedbacks342673527 = z.object({
@@ -369,7 +491,7 @@ export const zV1SelfFeedbacks342673527 = z.object({
     .object({
       feedbackId: z.number(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1AuthDevSessions1490138447 = z.object({
@@ -378,7 +500,7 @@ export const zV1AuthDevSessions1490138447 = z.object({
     .object({
       accessToken: z.string(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1FollowUpQuestions1363007138 = z.object({
@@ -403,7 +525,7 @@ export const zV1RoomsRoomIdReviewTargets2072286757 = z.object({
         }),
       ),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoomsFormOptions38619118 = z.object({
@@ -434,7 +556,7 @@ export const zV1RoomsFormOptions38619118 = z.object({
           min: z.number(),
           max: z.number(),
         })
-        .optional(),
+        .nullish(),
       rounds: z.array(
         z.object({
           code: z.string(),
@@ -442,7 +564,7 @@ export const zV1RoomsFormOptions38619118 = z.object({
         }),
       ),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1MembersMeParticipationSlots889288482 = z.object({
@@ -453,7 +575,7 @@ export const zV1MembersMeParticipationSlots889288482 = z.object({
       remaining: z.number(),
       occupied: z.number(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoomsRoomIdReviewSkips2104006349 = z.object({
@@ -487,7 +609,7 @@ export const zV1Regions709600108 = z.object({
         }),
       ),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1Rooms897804324 = z.object({
@@ -504,7 +626,7 @@ export const zV1Rooms897804324 = z.object({
       durationMinutes: z.number(),
       startTime: z.string(),
     })
-    .optional(),
+    .nullish(),
   postingId: z.number(),
   sigunguId: z.number().nullish(),
   resumeId: z.string(),
@@ -528,7 +650,7 @@ export const zV1CompaniesCompanyIdJobPostings1890921117 = z.object({
         }),
       ),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1MembersMe1349704155 = z.object({
@@ -551,7 +673,24 @@ export const zV1MembersMe1349704155 = z.object({
       status: z.string(),
       memberId: z.string(),
     })
-    .optional(),
+    .nullish(),
+});
+
+export const zV1RoomProgresses612761132 = z.object({
+  result: z.string(),
+  data: z
+    .object({
+      hostMemberId: z.string(),
+      attendances: z.array(
+        z.object({
+          nickname: z.string(),
+          status: z.string(),
+          memberId: z.string(),
+        }),
+      ),
+      status: z.string(),
+    })
+    .nullish(),
 });
 
 export const zV1RoomsRoomIdQuestionsQuestionIdFollowUps1317980453 = z.object({
@@ -570,7 +709,7 @@ export const zV1ClosingResponses1424921824 = z.object({
       roomId: z.string(),
       memberId: z.string(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoundFeedbacks923155903 = z.object({
@@ -585,7 +724,7 @@ export const zV1RoundFeedbacks923155903 = z.object({
               displayName: z.string(),
               memberId: z.string(),
             })
-            .optional(),
+            .nullish(),
           revealed: z.boolean(),
           feedbackId: z.number(),
           content: z.string().nullish(),
@@ -598,7 +737,7 @@ export const zV1RoundFeedbacks923155903 = z.object({
         })
         .nullish(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoomsCreationLimit910352763 = z.object({
@@ -609,7 +748,7 @@ export const zV1RoomsCreationLimit910352763 = z.object({
       data: z.record(z.string(), z.string()).nullish(),
       message: z.string(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoomProgresses1093163669 = z.object({
@@ -633,41 +772,18 @@ export const zV1MembersMeResumesResumeId1837465274 = z.object({
           contentType: z.string(),
           sizeBytes: z.number(),
         })
-        .optional(),
+        .nullish(),
       resumeId: z.string(),
       aiSummary: z
         .object({
           text: z.string().nullish(),
           status: z.string(),
         })
-        .optional(),
+        .nullish(),
       registeredAt: z.string(),
       name: z.string(),
     })
-    .optional(),
-});
-
-export const zV1RoomProgresses1064909895 = z.object({
-  result: z.string(),
-  data: z
-    .object({
-      hostMemberId: z.string(),
-      attendances: z.array(
-        z.object({
-          status: z.string(),
-          memberId: z.string(),
-        }),
-      ),
-      status: z.string(),
-    })
-    .optional(),
-});
-
-export const zV1MembersMeProfile466680720 = z.object({
-  nickname: z.string(),
-  bio: z.string().nullish(),
-  interestJobRoleIds: z.array(z.number()).nullish(),
-  interestCompanyIds: z.array(z.number()).nullish(),
+    .nullish(),
 });
 
 export const zV1Companies1839974379 = z.object({
@@ -681,13 +797,14 @@ export const zV1Companies1839974379 = z.object({
         }),
       ),
     })
-    .optional(),
+    .nullish(),
 });
 
-export const zV1QuestionsQuestionId496267733 = z.object({
-  intervieweeMemberId: z.string(),
-  asked: z.boolean(),
-  roomId: z.string(),
+export const zV1MembersMeProfile466680720 = z.object({
+  nickname: z.string(),
+  bio: z.string().nullish(),
+  interestJobRoleIds: z.array(z.number()).nullish(),
+  interestCompanyIds: z.array(z.number()).nullish(),
 });
 
 export const zV1RoomsRoomIdApplicationsMe2061746466 = z.object({
@@ -702,16 +819,16 @@ export const zV1RoomsRoomIdApplicationsMe2061746466 = z.object({
               contentType: z.string(),
               sizeBytes: z.number(),
             })
-            .optional(),
+            .nullish(),
           resumeId: z.string(),
           aiSummary: z
             .object({
               text: z.string().nullish(),
               status: z.string(),
             })
-            .optional(),
+            .nullish(),
         })
-        .optional(),
+        .nullish(),
       note: z.string(),
       applicationId: z.number(),
       appliedAt: z.string(),
@@ -719,7 +836,13 @@ export const zV1RoomsRoomIdApplicationsMe2061746466 = z.object({
       roomId: z.string(),
       status: z.string(),
     })
-    .optional(),
+    .nullish(),
+});
+
+export const zV1QuestionsQuestionId496267733 = z.object({
+  intervieweeMemberId: z.string(),
+  asked: z.boolean(),
+  roomId: z.string(),
 });
 
 export const zV1MembersMemberIdProfile655149006 = z.object({
@@ -748,7 +871,7 @@ export const zV1MembersMemberIdProfile655149006 = z.object({
       ),
       memberId: z.string(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoomsRoomIdQuestionSetsTargetMemberId906553040 = z.object({
@@ -766,7 +889,7 @@ export const zV1RoomsRoomIdQuestionSetsTargetMemberId906553040 = z.object({
                   nickname: z.string(),
                   memberId: z.string(),
                 })
-                .optional(),
+                .nullish(),
               source: z.string(),
               content: z.string(),
             }),
@@ -778,7 +901,7 @@ export const zV1RoomsRoomIdQuestionSetsTargetMemberId906553040 = z.object({
               nickname: z.string(),
               memberId: z.string(),
             })
-            .optional(),
+            .nullish(),
           source: z.string(),
           content: z.string(),
         }),
@@ -788,15 +911,15 @@ export const zV1RoomsRoomIdQuestionSetsTargetMemberId906553040 = z.object({
           text: z.string().nullish(),
           status: z.string(),
         })
-        .optional(),
+        .nullish(),
       target: z
         .object({
           nickname: z.string(),
           memberId: z.string(),
         })
-        .optional(),
+        .nullish(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1NicknamesAvailability1805856748 = z.object({
@@ -805,7 +928,7 @@ export const zV1NicknamesAvailability1805856748 = z.object({
     .object({
       available: z.boolean(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoomsRejectReasons1951847967 = z.object({
@@ -819,9 +942,9 @@ export const zV1RoomsRejectReasons1951847967 = z.object({
             label: z.string(),
           }),
         )
-        .optional(),
+        .nullish(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1QuestionComments469179710 = z.object({
@@ -833,7 +956,7 @@ export const zV1QuestionComments469179710 = z.object({
           createdAt: z.string().nullish(),
           id: z.number().nullish(),
         })
-        .optional(),
+        .nullish(),
       comments: z.array(
         z.object({
           createdAt: z.string(),
@@ -843,14 +966,14 @@ export const zV1QuestionComments469179710 = z.object({
               nickname: z.string(),
               memberId: z.string(),
             })
-            .optional(),
+            .nullish(),
           commentId: z.number(),
           type: z.string(),
           content: z.string(),
         }),
       ),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1QuestionCommentsCommentId83412404 = z.object({
@@ -867,7 +990,7 @@ export const zV1RoomsRoomIdComments876888201 = z.object({
       createdAt: z.string(),
       commentId: z.number(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoomsRoomIdReviews1356104346 = z.object({
@@ -883,7 +1006,7 @@ export const zV1FinalFeedbacks317638049 = z.object({
     .object({
       feedbackId: z.number(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoomsRoomIdParticipantsMe837364537 = z.object({
@@ -893,7 +1016,7 @@ export const zV1RoomsRoomIdParticipantsMe837364537 = z.object({
       code: z.string(),
       message: z.string(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1QuestionComments1807061222 = z.object({
@@ -911,7 +1034,7 @@ export const zV1Rooms583341076 = z.object({
       roomId: z.string(),
       status: z.string(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1JobPostings1848070641 = z.object({
@@ -926,7 +1049,7 @@ export const zV1NicknamesSuggestion679533277 = z.object({
     .object({
       nickname: z.string(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoomsRoomIdParticipantsMe1338856208 = z.object({
@@ -936,7 +1059,7 @@ export const zV1RoomsRoomIdParticipantsMe1338856208 = z.object({
       code: z.string(),
       message: z.string(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1FeedbackDisclosuresFeedbackId256087070 = z.object({
@@ -956,7 +1079,7 @@ export const zV1QuestionComments32871189 = z.object({
     .object({
       commentId: z.number(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoomsRoomIdQuestionsQuestionIdFollowUps36237129 = z.object({
@@ -965,7 +1088,7 @@ export const zV1RoomsRoomIdQuestionsQuestionIdFollowUps36237129 = z.object({
     .object({
       questionId: z.number(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1MembersMeProfile934225230 = z.object({
@@ -982,7 +1105,7 @@ export const zV1MembersMeProfile934225230 = z.object({
       interestJobRoleIds: z.array(z.number()),
       memberId: z.string(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoomsRoomIdApplicationsApplicationIdReject855969760 = z.object({
@@ -996,12 +1119,12 @@ export const zV1RoomsRoomIdApplicationsApplicationIdReject855969760 = z.object({
           recruitStatus: z.string(),
           recruitStatusLabel: z.string(),
         })
-        .optional(),
+        .nullish(),
       applicationId: z.number(),
       statusLabel: z.string(),
       status: z.string(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1RoomsRoomIdApplicationsApplicationIdAccept674159690 = z.object({
@@ -1015,12 +1138,12 @@ export const zV1RoomsRoomIdApplicationsApplicationIdAccept674159690 = z.object({
           recruitStatus: z.string(),
           recruitStatusLabel: z.string(),
         })
-        .optional(),
+        .nullish(),
       applicationId: z.number(),
       statusLabel: z.string(),
       status: z.string(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1MembersMeWebPushSubscriptions1250153706 = z.object({
@@ -1045,13 +1168,24 @@ export const zV1JobRoles1436485238 = z.object({
         }),
       ),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1FinalFeedbacks135367546 = z.object({
   intervieweeMemberId: z.string(),
   content: z.string(),
   roomId: z.string(),
+});
+
+export const zV1RoomsRoomIdApplications1651584797 = z.object({
+  result: z.string(),
+  data: z
+    .object({
+      applicationId: z.number(),
+      statusLabel: z.string(),
+      status: z.string(),
+    })
+    .nullish(),
 });
 
 export const zV1RoomsRoomIdApplications1094172635 = z.object({
@@ -1081,22 +1215,28 @@ export const zV1RoomsRoomIdApplications1094172635 = z.object({
               activitySummary: z.string().nullish(),
               memberId: z.string(),
             })
-            .optional(),
+            .nullish(),
         }),
       ),
     })
-    .optional(),
+    .nullish(),
 });
 
-export const zV1RoomsRoomIdApplications1651584797 = z.object({
+export const zV1ReviewsReviewId20839761 = z.object({
   result: z.string(),
   data: z
     .object({
-      applicationId: z.number(),
-      statusLabel: z.string(),
-      status: z.string(),
+      targetMemberId: z.string(),
+      anonymous: z.boolean(),
+      reviewId: z.number(),
+      content: z.string().nullish(),
+      targetNickname: z.string(),
+      roomId: z.string(),
+      tags: z.array(
+        z.union([z.record(z.string(), z.unknown()), z.boolean(), z.string(), z.number()]),
+      ),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1Rooms1476531183 = z.object({
@@ -1119,7 +1259,7 @@ export const zV1Rooms1476531183 = z.object({
               jobPostingId: z.number().nullish(),
               postingName: z.string().nullish(),
             })
-            .optional(),
+            .nullish(),
           type: z.string().nullish(),
           title: z.string(),
           roomId: z.string(),
@@ -1129,7 +1269,7 @@ export const zV1Rooms1476531183 = z.object({
               durationMinutes: z.number(),
               startTime: z.string(),
             })
-            .optional(),
+            .nullish(),
           round: z.string(),
           recruit: z
             .object({
@@ -1139,7 +1279,7 @@ export const zV1Rooms1476531183 = z.object({
               recruitStatus: z.string(),
               recruitStatusLabel: z.string(),
             })
-            .optional(),
+            .nullish(),
           methodLabel: z.string(),
           jobRole: z
             .object({
@@ -1147,27 +1287,27 @@ export const zV1Rooms1476531183 = z.object({
               displayName: z.string().nullish(),
               jobRoleId: z.number().nullish(),
             })
-            .optional(),
+            .nullish(),
           typeLabel: z.string().nullish(),
           company: z
             .object({
               companyId: z.number().nullish(),
               name: z.string().nullish(),
             })
-            .optional(),
+            .nullish(),
           region: z
             .object({
               sigunguId: z.number().nullish(),
               label: z.string().nullish(),
             })
-            .optional(),
+            .nullish(),
           roundLabel: z.string(),
         }),
       ),
       sort: z.string(),
       totalCount: z.number(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1Terms1673199050 = z.object({
@@ -1186,7 +1326,7 @@ export const zV1Terms1673199050 = z.object({
         }),
       ),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1MembersMeReceivedReviews785981355 = z.object({
@@ -1206,17 +1346,7 @@ export const zV1MembersMeReceivedReviews785981355 = z.object({
       hasNext: z.boolean(),
       totalCount: z.number(),
     })
-    .optional(),
-});
-
-export const zV1AttendancesMe427868787 = z.object({
-  result: z.string(),
-  data: z
-    .object({
-      status: z.string(),
-      memberId: z.string(),
-    })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1JobPostingsSearch1628359421 = z.object({
@@ -1234,7 +1364,7 @@ export const zV1JobPostingsSearch1628359421 = z.object({
               companyId: z.number(),
               name: z.string(),
             })
-            .optional(),
+            .nullish(),
           postingName: z.string(),
           jobRoleName: z.string().nullish(),
         }),
@@ -1247,7 +1377,7 @@ export const zV1JobPostingsSearch1628359421 = z.object({
       ),
       query: z.string(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1JobRolesSearch1966453570 = z.object({
@@ -1264,11 +1394,11 @@ export const zV1JobRolesSearch1966453570 = z.object({
               code: z.string(),
               displayName: z.string(),
             })
-            .optional(),
+            .nullish(),
         }),
       ),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1QuestionRecordsMe591289672 = z.object({
@@ -1290,7 +1420,7 @@ export const zV1QuestionRecordsMe591289672 = z.object({
         }),
       ),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1Questions1653829861 = z.object({
@@ -1312,12 +1442,12 @@ export const zV1RoomsRoomIdQuestionSets2052308651 = z.object({
               nickname: z.string(),
               memberId: z.string(),
             })
-            .optional(),
+            .nullish(),
         }),
       ),
       myCardSetPreparerCount: z.number(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1MembersMeWebPushSubscriptions615785551 = z.object({
@@ -1339,7 +1469,7 @@ export const zV1RoomsCreationLimit1772486104 = z.object({
       limit: z.number(),
       remaining: z.number(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1MembersMeResumes1467612549 = z.object({
@@ -1354,7 +1484,7 @@ export const zV1MembersMeResumes1467612549 = z.object({
               roomTitle: z.string().nullish(),
               roomId: z.string().nullish(),
             })
-            .optional(),
+            .nullish(),
           isDefault: z.boolean(),
           file: z
             .object({
@@ -1362,21 +1492,21 @@ export const zV1MembersMeResumes1467612549 = z.object({
               contentType: z.string(),
               sizeBytes: z.number(),
             })
-            .optional(),
+            .nullish(),
           resumeId: z.string(),
           aiSummary: z
             .object({
               text: z.string().nullish(),
               status: z.string(),
             })
-            .optional(),
+            .nullish(),
           registeredAt: z.string(),
           name: z.string(),
         }),
       ),
       maxCount: z.number(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const zV1AuthDevSessions1806235479 = z.object({
@@ -1394,14 +1524,14 @@ export const zExampleGetQuery = z.object({
 /**
  * 200
  */
-export const zExampleGetResponse = zGetExampleValue191457252;
+export const zExampleGetResponse = zPost191457252;
 
 export const zExamplePostBody = zPost1780624183;
 
 /**
  * 200
  */
-export const zExamplePostResponse = zGetExampleValue191457252;
+export const zExamplePostResponse = zPost191457252;
 
 export const zSubmitClosingResponseBody = zV1ClosingResponses2021047633;
 
@@ -1491,7 +1621,7 @@ export const zStartRoomProgressBody = zV1RoomProgresses1093163669;
 /**
  * 200
  */
-export const zStartRoomProgressResponse = zV1RoomProgresses1064909895;
+export const zStartRoomProgressResponse = zV1RoomProgresses612761132;
 
 export const zRoomsQuery = z.object({
   companyId: z.string().optional(),
@@ -1559,7 +1689,7 @@ export const zGetMyAttendanceQuery = z.object({
 /**
  * 200
  */
-export const zGetMyAttendanceResponse = zV1AttendancesMe427868787;
+export const zGetMyAttendanceResponse = zV1AttendancesMe438784568;
 
 export const zIssueDevSessionBody = zV1AuthDevSessions1806235479;
 
@@ -1710,6 +1840,15 @@ export const zDeleteReviewPath = z.object({
  */
 export const zDeleteReviewResponse = zV1AuthLogout198252895;
 
+export const zGetReviewPath = z.object({
+  reviewId: z.string(),
+});
+
+/**
+ * 200
+ */
+export const zGetReviewResponse = zV1ReviewsReviewId20839761;
+
 export const zUpdateReviewBody = zV1ReviewsReviewId292942325;
 
 export const zUpdateReviewPath = z.object({
@@ -1748,7 +1887,7 @@ export const zRoomDetailPath = z.object({
 /**
  * 200
  */
-export const zRoomDetailResponse = zV1RoomsRoomId1165715694;
+export const zRoomDetailResponse = zV1RoomsRoomId593421515;
 
 export const zJobPostingsPath = z.object({
   companyId: z.string(),
@@ -1802,7 +1941,7 @@ export const zCreateResumeResponse = zV1MembersMeResumesResumeId1837465274;
 /**
  * 200
  */
-export const zGetInterviewOverviewResponse = zV1MembersMeRooms1592819168;
+export const zGetInterviewOverviewResponse = zV1MembersMeRooms257716809;
 
 export const zUnregisterWebPushSubscriptionBody = zV1MembersMeWebPushSubscriptions615785551;
 

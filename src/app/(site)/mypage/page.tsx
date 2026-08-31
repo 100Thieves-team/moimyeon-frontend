@@ -28,7 +28,7 @@ export default async function MyPage() {
     queryClient.ensureQueryData(jobRolesOptions(requestOptions)),
   ]);
 
-  if (memberResponse?.data !== undefined) {
+  if (memberResponse?.data !== undefined && memberResponse.data !== null) {
     queryClient.prefetchQuery(
       publicProfileOptions({
         ...requestOptions,
