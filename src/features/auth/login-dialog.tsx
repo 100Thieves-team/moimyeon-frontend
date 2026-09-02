@@ -4,7 +4,7 @@ import { Dialog } from "@base-ui/react/dialog";
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button, type ButtonProps } from "@/components/button";
-import type { LoginReturnTo } from "./auth-intent";
+import { isInterviewDetailReturnTo, type LoginReturnTo } from "./auth-intent";
 import { DevLoginForm } from "./dev-login-form";
 import { loginDialog } from "./login-dialog-handle";
 import * as styles from "./login-dialog.css";
@@ -22,10 +22,18 @@ type LoginDialogProps = {
   showDevLogin?: boolean;
 };
 
-const loginDialogTitleLines: Record<LoginReturnTo, readonly [string, string]> = {
-  "/": ["로그인하고 함께", "면접을 준비해 보세요"],
-  "/interviews/new": ["로그인하고", "면접을 만들어 보세요"],
-};
+const loginDialogTitleLines = {
+  "/": ["로그인하고 함께", "면접을 준비하세요"],
+  "/interviews/new": ["로그인하고", "면접을 만드세요"],
+} as const;
+
+function getLoginDialogTitleLines(returnTo: LoginReturnTo): readonly [string, string] {
+  if (isInterviewDetailReturnTo(returnTo)) {
+    return ["로그인하고", "면접에 참가하세요"];
+  }
+
+  return loginDialogTitleLines[returnTo];
+}
 
 export function LoginTrigger({ children, returnTo, size, variant }: LoginTriggerProps) {
   return (
@@ -49,7 +57,7 @@ export function LoginDialog({
     <Dialog.Root defaultOpen={defaultOpen} handle={loginDialog}>
       {({ payload }) => {
         const returnTo = payload?.returnTo ?? "/";
-        const [titleFirstLine, titleSecondLine] = loginDialogTitleLines[returnTo];
+        const [titleFirstLine, titleSecondLine] = getLoginDialogTitleLines(returnTo);
         const googleLoginHref = `/auth/google/start?returnTo=${encodeURIComponent(returnTo)}`;
 
         return (
