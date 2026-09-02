@@ -96,6 +96,7 @@ describe("면접 상세 조회자 상태", () => {
     ["COMPLETED", "종료된 면접이에요"],
     ["CONFIRMED", "참여자가 확정된 면접이에요"],
     ["IN_PROGRESS", "진행 중인 면접이에요"],
+    ["UNKNOWN", "신청할 수 없는 면접이에요"],
   ])("비로그인이어도 %s 면접이면 로그인보다 신청 불가를 먼저 안내한다", (status, message) => {
     expect(getInterviewViewerState(createRoom({ status, viewer: null }))).toEqual({
       kind: "BLOCKED",
@@ -103,7 +104,7 @@ describe("면접 상세 조회자 상태", () => {
     });
   });
 
-  it("일정이 지난 면접을 비활성 버튼 상태로 판정한다", () => {
+  it("일정이 지났어도 서버 상태가 모집 중이면 신청 가능 상태로 판정한다", () => {
     expect(
       getInterviewViewerState(
         createRoom({
@@ -111,8 +112,8 @@ describe("면접 상세 조회자 상태", () => {
         }),
       ),
     ).toEqual({
-      kind: "BLOCKED",
-      message: "이미 일정이 지난 면접이에요",
+      applicationMode: "REGULAR",
+      kind: "APPLY",
     });
   });
 

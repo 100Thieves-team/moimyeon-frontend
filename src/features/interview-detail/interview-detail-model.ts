@@ -46,18 +46,7 @@ function hasReachedLimit(
   return quota.occupied >= quota.limit;
 }
 
-function isSchedulePassed(schedule: InterviewDetail["schedule"], now: number) {
-  if (!schedule) return false;
-
-  const startAt = new Date(schedule.startAt).getTime();
-
-  return Number.isFinite(startAt) && startAt <= now;
-}
-
-export function getInterviewViewerState(
-  room: InterviewDetail,
-  now = Date.now(),
-): InterviewViewerState {
+export function getInterviewViewerState(room: InterviewDetail): InterviewViewerState {
   const viewer = room.viewer;
 
   if (viewer?.isHost === true) return { kind: "MANAGE_INTERVIEW" };
@@ -67,12 +56,10 @@ export function getInterviewViewerState(
   }
 
   const roomStatusMessage = roomStatusMessages[room.status];
-  if (roomStatusMessage) return { kind: "BLOCKED", message: roomStatusMessage };
-
-  if (isSchedulePassed(room.schedule, now)) {
+  if (room.status !== "RECRUITING") {
     return {
       kind: "BLOCKED",
-      message: "이미 일정이 지난 면접이에요",
+      message: roomStatusMessage ?? "신청할 수 없는 면접이에요",
     };
   }
 

@@ -176,13 +176,6 @@ export const MOCK_INTERVIEW_DETAIL_SCENARIOS = [
       room: { status },
     }),
   ),
-  createScenario(112, {
-    category: "면접 상태",
-    description: "면접 시작 시각이 지나 참가 신청할 수 없는 상태입니다.",
-    key: "schedule-passed",
-    label: "일정이 지난 면접",
-    room: { schedule: { durationMinutes: 90, startAt: "2020-09-01T19:00:00+09:00" } },
-  }),
   createScenario(113, {
     category: "신청 제한",
     description: "이 면접에서 이전 참가 신청이 반려되어 재신청할 수 없는 상태입니다.",

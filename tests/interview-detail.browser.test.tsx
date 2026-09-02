@@ -291,7 +291,7 @@ describe("InterviewDetailContent", () => {
       .toHaveAttribute("href", `/interviews/${roomId}/room`);
   });
 
-  it("일정이 지나면 소개를 유지하고 비활성 버튼으로 안내한다", async () => {
+  it("일정이 지났어도 서버 상태가 모집 중이면 참가 신청 링크를 표시한다", async () => {
     mocks.roomDetail.mockResolvedValue(
       roomResponse(
         createRoom({ schedule: { durationMinutes: 90, startAt: "2020-09-01T19:00:00+09:00" } }),
@@ -303,8 +303,8 @@ describe("InterviewDetailContent", () => {
       .element(screen.getByText("실제 면접처럼 시스템 설계 위주로 진행해요."))
       .toBeVisible();
     await expect
-      .element(screen.getByRole("button", { name: "이미 일정이 지난 면접이에요" }))
-      .toBeDisabled();
+      .element(screen.getByRole("link", { name: "참가 신청하기" }))
+      .toHaveAttribute("href", `/interviews/${roomId}/apply`);
   });
 
   it.each([

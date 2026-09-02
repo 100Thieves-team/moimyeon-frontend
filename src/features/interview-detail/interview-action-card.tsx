@@ -2,7 +2,6 @@
 
 import { Toast } from "@base-ui/react/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 import {
   myRoomApplicationQueryKey,
   roomDetailQueryKey,
@@ -17,29 +16,6 @@ import {
   type InterviewViewerState,
 } from "./interview-detail-model";
 import * as styles from "./interview-detail.css";
-
-const maximumTimeout = 2_147_483_647;
-
-function useCurrentTimeAtSchedule(schedule: InterviewDetail["schedule"]) {
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    if (!schedule) return;
-
-    const startAt = new Date(schedule.startAt).getTime();
-    const remaining = startAt - Date.now();
-    if (!Number.isFinite(startAt) || remaining <= 0) return;
-
-    const timeout = window.setTimeout(
-      () => setNow(Date.now()),
-      Math.min(remaining + 1_000, maximumTimeout),
-    );
-
-    return () => window.clearTimeout(timeout);
-  }, [now, schedule]);
-
-  return now;
-}
 
 function WithdrawAction({ roomId }: { roomId: string }) {
   const queryClient = useQueryClient();
@@ -109,8 +85,7 @@ function ActionControl({ roomId, state }: { roomId: string; state: InterviewView
 }
 
 export function InterviewActionCard({ room }: { room: InterviewDetail }) {
-  const now = useCurrentTimeAtSchedule(room.schedule);
-  const state = getInterviewViewerState(room, now);
+  const state = getInterviewViewerState(room);
   const recruit = room.recruit;
   const current = recruit?.current ?? 0;
   const max = recruit?.max ?? 0;
