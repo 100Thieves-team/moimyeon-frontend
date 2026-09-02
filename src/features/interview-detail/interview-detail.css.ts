@@ -448,6 +448,83 @@ export const actionProgress = style({
   width: "100%",
 });
 
+export const participantAvatarList = style({
+  display: "flex",
+  minWidth: 0,
+  alignItems: "center",
+  alignSelf: "flex-start",
+  padding: 0,
+  listStyle: "none",
+});
+
+export const participantAvatarItem = style({
+  position: "relative",
+  display: "grid",
+  width: "3.4rem",
+  height: "3.4rem",
+  flex: "0 0 3.4rem",
+  placeItems: "center",
+  selectors: {
+    "&:not(:first-child)": {
+      marginInlineStart: "-0.8rem",
+    },
+  },
+});
+
+const participantAvatarBase = style({
+  display: "grid",
+  width: "100%",
+  height: "100%",
+  overflow: "hidden",
+  border: `0.2rem solid ${vars.color.background}`,
+  borderRadius: vars.radius.pill,
+  placeItems: "center",
+  fontSize: "1.3rem",
+  fontWeight: 600,
+  lineHeight: 1,
+});
+
+export const participantAvatar = style([
+  participantAvatarBase,
+  {
+    backgroundColor: vars.color.fillSecondary,
+    color: vars.color.secondary,
+  },
+]);
+
+export const hostParticipantAvatar = style([
+  participantAvatarBase,
+  {
+    backgroundColor: vars.color.yellow10,
+    color: vars.color.brown,
+  },
+]);
+
+export const participantAvatarImage = style({
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+});
+
+export const participantAvatarFallback = style({
+  display: "grid",
+  width: "100%",
+  height: "100%",
+  placeItems: "center",
+});
+
+export const participantAvatarOverflow = style({
+  zIndex: 1,
+  border: `0.2rem solid ${vars.color.background}`,
+  borderRadius: vars.radius.pill,
+  backgroundColor: vars.color.fillSecondary,
+  color: vars.color.secondary,
+  fontFamily: vars.font.mono,
+  fontSize: "1.1rem",
+  fontWeight: 600,
+  lineHeight: 1,
+});
+
 export const actionMessage = style({
   color: vars.color.secondary,
   fontSize: "1.4rem",

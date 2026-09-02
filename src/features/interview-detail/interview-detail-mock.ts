@@ -12,8 +12,8 @@ const futureSchedule = {
 };
 
 const regularRecruit = {
-  current: 3,
-  max: 5,
+  current: 8,
+  max: 10,
   min: 3,
   pendingApplicationCount: 1,
   recruitStatus: "RECRUITING",
@@ -22,11 +22,34 @@ const regularRecruit = {
 
 const waitlistRecruit = {
   ...regularRecruit,
-  current: 5,
+  current: 10,
   pendingApplicationCount: 2,
   recruitStatus: "CLOSED",
   recruitStatusLabel: "모집 마감",
 };
+
+const participantNicknames = [
+  "꼼꼼한 여우 12",
+  "성실한 수달 02",
+  "차분한 라쿤 03",
+  "든든한 곰 04",
+  "영리한 부엉이 05",
+  "집요한 사슴 06",
+  "차분한 토끼 07",
+  "용감한 판다 08",
+  "세심한 고양이 09",
+  "유쾌한 강아지 10",
+];
+
+function createMockParticipants(count: number): InterviewDetail["participants"] {
+  return Array.from({ length: count }, (_, index) => ({
+    memberId:
+      index === 0
+        ? MOCK_INTERVIEW_HOST_ID
+        : `00000000-0000-4000-8001-${String(index).padStart(12, "0")}`,
+    nickname: participantNicknames[index] ?? `참여자 ${index + 1}`,
+  }));
+}
 
 const eligibleViewer: InterviewViewer = {
   hasRemovalHistory: false,
@@ -76,6 +99,7 @@ function createScenario(
   },
 ): MockInterviewDetailScenario {
   const roomId = `00000000-0000-4000-8000-${String(index).padStart(12, "0")}`;
+  const recruit = scenario.room?.recruit ?? regularRecruit;
 
   return {
     category: scenario.category,
@@ -90,7 +114,8 @@ function createScenario(
       jobRole: { code: "FRONTEND", displayName: "프론트엔드", jobRoleId: 10 },
       method: "ONLINE",
       methodLabel: "온라인",
-      recruit: regularRecruit,
+      participants: createMockParticipants(recruit?.current ?? 0),
+      recruit,
       resumePublic: true,
       roomId,
       round: "FIRST",
@@ -259,6 +284,7 @@ export function getMockInterviewDetail(roomId: string): RoomDetailResponse | nul
       jobRole: discoveryRoom.jobRole,
       method: discoveryRoom.method,
       methodLabel: discoveryRoom.methodLabel,
+      participants: createMockParticipants(recruit?.current ?? 0),
       recruit: recruit
         ? {
             current: recruit.current,

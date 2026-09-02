@@ -37,6 +37,37 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
 }));
 
 const roomId = "019db000-0000-7000-8000-000000002001";
+const hostMemberId = "019db000-0000-7000-8000-000000001001";
+
+type Participant = {
+  imageUrl?: string | null;
+  memberId: string;
+  nickname: string;
+};
+
+const participantNicknames = [
+  "성실한 수달 02",
+  "차분한 라쿤 03",
+  "든든한 곰 04",
+  "영리한 부엉이 05",
+  "집요한 사슴 06",
+];
+
+function createParticipants(count: number, hostIndex = 0): Participant[] {
+  let participantIndex = 0;
+
+  return Array.from({ length: count }, (_, index) => {
+    if (index === hostIndex) {
+      return { memberId: hostMemberId, nickname: "꼼꼼한 여우 12" };
+    }
+
+    participantIndex += 1;
+    return {
+      memberId: `019db000-0000-7000-8000-${String(participantIndex + 1001).padStart(12, "0")}`,
+      nickname: participantNicknames[participantIndex - 1] ?? `참여자 ${participantIndex + 1}`,
+    };
+  });
+}
 
 type Viewer = {
   hasRemovalHistory: boolean;
@@ -63,6 +94,7 @@ const eligibleViewer: Viewer = {
 };
 
 type RoomOptions = {
+  participants?: Participant[];
   recruit?: Partial<{
     current: number;
     max: number;
@@ -77,26 +109,29 @@ type RoomOptions = {
 };
 
 function createRoom(options: RoomOptions = {}) {
+  const recruit = {
+    current: 3,
+    max: 5,
+    min: 3,
+    pendingApplicationCount: 0,
+    recruitStatus: "RECRUITING",
+    recruitStatusLabel: "모집 중",
+    ...options.recruit,
+  };
+
   return {
     company: { companyId: 1, name: "한빛커머스" },
     confirmation: { blockReason: null, ready: false },
     description: "실제 면접처럼 시스템 설계 위주로 진행해요.",
-    hostMemberId: "019db000-0000-7000-8000-000000001001",
+    hostMemberId,
     jobPosting: { jobPostingId: 11, postingName: "백엔드 개발자" },
     jobPostingId: 11,
     jobRole: { code: "BACKEND", displayName: "서버·백엔드", jobRoleId: 10 },
     jobRoleId: 10,
     method: "OFFLINE",
     methodLabel: "오프라인",
-    recruit: {
-      current: 3,
-      max: 5,
-      min: 3,
-      pendingApplicationCount: 0,
-      recruitStatus: "RECRUITING",
-      recruitStatusLabel: "모집 중",
-      ...options.recruit,
-    },
+    participants: options.participants ?? createParticipants(recruit.current),
+    recruit,
     region: { label: "서울 강남구", sigunguId: 1 },
     resumePublic: true,
     roomId,
@@ -188,6 +223,65 @@ describe("InterviewDetailContent", () => {
     await expect.element(screen.getByRole("heading", { name: "꼼꼼한 여우 12" })).toBeVisible();
     await expect
       .element(screen.getByText("활동률 상위 10% · 최근 출석 2/3회 · 누적 불참 0회"))
+      .toBeVisible();
+    await expect
+      .element(screen.getByRole("link", { name: "참가 신청하기" }))
+      .toHaveAttribute("href", `/interviews/${roomId}/apply`);
+  });
+
+  it("참여자 1명이면 방장을 첫 번째 아바타로 표시한다", async () => {
+    mocks.roomDetail.mockResolvedValue(
+      roomResponse(createRoom({ participants: createParticipants(1), recruit: { current: 1 } })),
+    );
+    const { screen } = await renderDetail();
+
+    const participantList = screen.getByRole("list", { name: "현재 참여자 1명" });
+    await expect.element(participantList).toBeVisible();
+    expect(participantList.getByRole("listitem").elements()).toHaveLength(1);
+    await expect
+      .element(participantList.getByRole("listitem", { name: "꼼꼼한 여우 12 (방장)" }))
+      .toBeVisible();
+    await expect.element(participantList.getByText(/^\+/)).not.toBeInTheDocument();
+  });
+
+  it("참여자 5명이면 모든 아바타를 표시한다", async () => {
+    await page.viewport(390, 844);
+    mocks.roomDetail.mockResolvedValue(
+      roomResponse(createRoom({ participants: createParticipants(5), recruit: { current: 5 } })),
+    );
+    const { screen } = await renderDetail();
+
+    const participantList = screen.getByRole("list", { name: "현재 참여자 5명" });
+    await expect.element(participantList).toBeVisible();
+    expect(participantList.getByRole("listitem").elements()).toHaveLength(5);
+    await expect.element(participantList.getByText(/^\+/)).not.toBeInTheDocument();
+  });
+
+  it("참여자가 5명을 넘으면 방장을 먼저 정렬하고 나머지 인원을 +N으로 표시한다", async () => {
+    mocks.roomDetail.mockResolvedValue(
+      roomResponse(createRoom({ participants: createParticipants(6, 2), recruit: { current: 6 } })),
+    );
+    const { screen } = await renderDetail();
+
+    const participantList = screen.getByRole("list", { name: "현재 참여자 6명" });
+    await expect.element(participantList).toBeVisible();
+    const items = participantList.getByRole("listitem").elements();
+    expect(items).toHaveLength(6);
+    expect(items[0]).toHaveAttribute("aria-label", "꼼꼼한 여우 12 (방장)");
+    expect(items[5]).toHaveAttribute("aria-label", "그 외 1명");
+    expect(items[5]).toHaveTextContent("+1");
+  });
+
+  it("참여자 요약이 모집 인원과 다르면 아바타만 숨기고 모집 현황과 신청 행동을 유지한다", async () => {
+    mocks.roomDetail.mockResolvedValue(
+      roomResponse(createRoom({ participants: createParticipants(2), recruit: { current: 3 } })),
+    );
+    const { screen } = await renderDetail();
+
+    await expect.element(screen.getByRole("list", { name: /현재 참여자/ })).not.toBeInTheDocument();
+    await expect.element(screen.getByText("3 / 5명")).toBeVisible();
+    await expect
+      .element(screen.getByRole("progressbar", { name: "모집 현황 3/5명" }))
       .toBeVisible();
     await expect
       .element(screen.getByRole("link", { name: "참가 신청하기" }))

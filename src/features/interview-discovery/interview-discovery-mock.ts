@@ -14,8 +14,8 @@ function createRoom(
     method: "ONLINE",
     methodLabel: "온라인",
     recruit: {
-      current: 2,
-      max: 4,
+      current: 8,
+      max: 10,
       pending: 0,
       recruitStatus: "RECRUITING",
       recruitStatusLabel: "모집 중",
@@ -48,8 +48,8 @@ const MOCK_INTERVIEW_ROOMS = [
     jobPosting: { jobPostingId: 102, postingName: "Backend Developer" },
     jobRole: { code: "BACKEND", displayName: "백엔드", jobRoleId: 11 },
     recruit: {
-      current: 3,
-      max: 4,
+      current: 9,
+      max: 10,
       pending: 1,
       recruitStatus: "RECRUITING",
       recruitStatusLabel: "모집 중",
@@ -71,8 +71,8 @@ const MOCK_INTERVIEW_ROOMS = [
     method: "OFFLINE",
     methodLabel: "오프라인",
     recruit: {
-      current: 4,
-      max: 4,
+      current: 10,
+      max: 10,
       pending: 0,
       recruitStatus: "CLOSED",
       recruitStatusLabel: "모집 완료",

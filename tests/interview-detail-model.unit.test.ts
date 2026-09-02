@@ -21,6 +21,11 @@ function createRoom(overrides: Partial<InterviewDetail> = {}): InterviewDetail {
     hostMemberId: "019db000-0000-7000-8000-000000001001",
     method: "ONLINE",
     methodLabel: "온라인",
+    participants: [
+      { memberId: "019db000-0000-7000-8000-000000001001", nickname: "꼼꼼한 여우 12" },
+      { memberId: "019db000-0000-7000-8000-000000001002", nickname: "성실한 수달 02" },
+      { memberId: "019db000-0000-7000-8000-000000001003", nickname: "차분한 라쿤 03" },
+    ],
     recruit: {
       current: 3,
       max: 5,
