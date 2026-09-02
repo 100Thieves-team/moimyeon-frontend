@@ -103,7 +103,7 @@ function room(roomId: string, title: string) {
     roundLabel: "1차",
     schedule: { date: "2026-09-01", durationMinutes: 60, startTime: "19:00" },
     title,
-    viewer: { actions: [], relation: "ANONYMOUS" },
+    viewer: null,
   };
 }
 

@@ -55,6 +55,7 @@ import {
   leaveProgressFollowUpQuestion,
   leaveProgressQuestion,
   leaveQuestionComment,
+  makeResumeDefault,
   memberMe,
   myRoomApplication,
   nicknameAvailability,
@@ -218,6 +219,9 @@ import type {
   LeaveQuestionCommentData,
   LeaveQuestionCommentError,
   LeaveQuestionCommentResponse,
+  MakeResumeDefaultData,
+  MakeResumeDefaultError,
+  MakeResumeDefaultResponse,
   MemberMeData,
   MemberMeError,
   MemberMeResponse,
@@ -1607,7 +1611,7 @@ export const roomDetailQueryKey = (options: Options<RoomDetailData>) =>
 /**
  * 룸 단건 조회
  *
- * 룸의 실제 저장 데이터 + 현재 인원 + 방장 식별자 + 표시명을 반환한다(§6 공개 데이터). 현재 인원 = 활성 참여 수, 모집 상태는 정원 충족 여부로 계산한다. 회사·공고·직무·지역 표시명은 목록과 같은 규칙으로 내려간다 — 참조가 끊어졌을 때(회사 미매칭 공고, 폐기된 직무 등) null 로 내려가고 raw id(jobPostingId·jobRoleId·sigunguId)는 그대로 남는다. 방장 프로필/신뢰 지표 enrich 는 별도 이슈. 존재하지 않는 룸은 404(E1405).
+ * 룸의 실제 저장 데이터 + 현재 인원 + 방장 식별자 + 표시명 + 조회자 본인의 사실(viewer)을 반환한다(§6 공개 데이터). 현재 인원 = 활성 참여 수, 모집 상태는 정원 충족 여부로 계산한다. 회사·공고·직무·지역 표시명은 목록과 같은 규칙이다 — 참조가 끊어지면(회사 미매칭 공고, 폐기된 직무 등) 해당 객체만 null 로 내려간다. 판정 결과(가능한 행동·확정 준비 여부)는 내리지 않는다 — 버튼 판정은 화면이 하고, 강제는 신청·확정 API 가 한다. 존재하지 않는 룸은 404(E1405).
  */
 export const roomDetailOptions = (options: Options<RoomDetailData>) =>
   queryOptions<
@@ -2080,7 +2084,7 @@ export const createRoomCommentMutation = (
 /**
  * 룸 진행 확정
  *
- * 방장이 진행을 확정한다(「진행 확정」 §4.2). 룸 상태가 CONFIRMED 가 되고 참여자·인원이 고정되며, 남아 있던 대기 신청은 같은 트랜잭션에서 일괄 종료된다(반려가 아니므로 재신청 차단에 걸리지 않는다). 확정 이후에는 룸 정보 수정·신규 신청·수락이 모두 막힌다(§4.3). 조건은 룸 상세의 confirmation 블록과 같은 판정을 쓴다 — 인원 미달은 E1421, 일정 경과는 E1422, 이미 확정·취소·완료·진행 중인 룸은 E1410 이다. 같은 요청을 두 번 보내도 한 번만 처리된다.
+ * 방장이 진행을 확정한다(「진행 확정」 §4.2). 룸 상태가 CONFIRMED 가 되고 참여자·인원이 고정되며, 남아 있던 대기 신청은 같은 트랜잭션에서 일괄 종료된다(반려가 아니므로 재신청 차단에 걸리지 않는다). 확정 이후에는 룸 정보 수정·신규 신청·수락이 모두 막힌다(§4.3). 확정 조건은 서버가 실행 시점에 룸 행을 잠근 뒤 검증한다 — 인원 미달은 E1421, 일정 경과는 E1422, 이미 확정·취소·완료·진행 중인 룸은 E1410 이다. 같은 요청을 두 번 보내도 한 번만 처리된다.
  */
 export const confirmRoomMutation = (
   options?: Partial<Options<ConfirmRoomData>>,
@@ -2464,6 +2468,35 @@ export const deletePreparationQuestionMutation = (
   > = {
     mutationFn: async (fnOptions) => {
       const { data } = await deletePreparationQuestion({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+/**
+ * 기본 이력서 지정
+ *
+ * 인증 회원이 소유한 AI 요약 완료 이력서를 기본 이력서로 지정한다. 기존 기본 이력서는 함께 해제되며 이미 기본인 이력서를 다시 지정해도 성공하는 멱등 계약이다. 성공 응답에는 별도 데이터가 없으므로 클라이언트는 로컬 목록을 갱신하거나 목록 API를 다시 조회한다. 식별자 형식 오류는 400(E400), 인증 정보 없음은 401(E1102), 탈퇴 등으로 회원이 존재하지 않으면 404(E1006), 존재하지 않거나 본인 소유가 아닌 이력서는 404(E1010), AI 요약이 완료되지 않은 이력서는 409(E1012)로 응답한다.
+ */
+export const makeResumeDefaultMutation = (
+  options?: Partial<Options<MakeResumeDefaultData>>,
+): UseMutationOptions<
+  MakeResumeDefaultResponse,
+  MakeResumeDefaultError,
+  Options<MakeResumeDefaultData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    MakeResumeDefaultResponse,
+    MakeResumeDefaultError,
+    Options<MakeResumeDefaultData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await makeResumeDefault({
         ...options,
         ...fnOptions,
         throwOnError: true,
