@@ -173,6 +173,36 @@ export type V1RoomsRoomIdComments1160873406 = {
   content: string;
 };
 
+export type Post191457252 = {
+  /**
+   * ResultType
+   */
+  result: string;
+  data?: {
+    /**
+     * Result Date
+     */
+    date: string;
+    /**
+     * Result Data
+     */
+    result: string;
+    /**
+     * Result Datetime
+     */
+    datetime: string;
+    /**
+     * Result Items
+     */
+    items: Array<{
+      /**
+       * Result Item
+       */
+      key: string;
+    }>;
+  } | null;
+};
+
 export type V1RoomsRoomIdComments1495367468 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -237,36 +267,6 @@ export type V1RoomsRoomIdComments1495367468 = {
      * 작성 가능 여부. false 면 읽기 전용
      */
     writable: boolean;
-  } | null;
-};
-
-export type Post191457252 = {
-  /**
-   * ResultType
-   */
-  result: string;
-  data?: {
-    /**
-     * Result Date
-     */
-    date: string;
-    /**
-     * Result Data
-     */
-    result: string;
-    /**
-     * Result Datetime
-     */
-    datetime: string;
-    /**
-     * Result Items
-     */
-    items: Array<{
-      /**
-       * Result Item
-       */
-      key: string;
-    }>;
   } | null;
 };
 
@@ -424,6 +424,13 @@ export type V1FollowUpQuestions140122441 = {
      */
     questionId: number;
   } | null;
+};
+
+export type Post1780624183 = {
+  /**
+   * ExampleBody Data Field
+   */
+  data: string;
 };
 
 export type V1MembersMeRooms257716809 = {
@@ -841,13 +848,6 @@ export type V1MembersMeRooms257716809 = {
   } | null;
 };
 
-export type Post1780624183 = {
-  /**
-   * ExampleBody Data Field
-   */
-  data: string;
-};
-
 export type V1RoomsRoomIdQuestions282474051 = {
   /**
    * 질문 대상 회원 id (UUID)
@@ -857,213 +857,6 @@ export type V1RoomsRoomIdQuestions282474051 = {
    * 질문 본문 (공백 불가, 최대 500자)
    */
   content: string;
-};
-
-export type V1RoomsRoomId593421515 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 조회자와 이 룸의 관계·행동. 목록과 같은 객체다
-     */
-    viewer: {
-      /**
-       * 할 수 있는 것이 하나도 없는 이유 (ROOM_CONFIRMED | ROOM_CANCELED | ROOM_COMPLETED | SCHEDULE_PASSED | APPLICATION_REJECTED | REMOVED_FROM_ROOM | MEMBER_SUSPENDED | PARTICIPATION_SLOT_EXCEEDED | APPLICATION_LIMIT_EXCEEDED). actions 가 비어 있을 때만 값이 있다. 정원 도달은 사유가 아니다 — 확정 전이면 APPLY_WAITLIST 로 접수된다
-       */
-      blockReason?: string | null;
-      /**
-       * 취할 수 있는 행동. 순서가 계약이며 첫 원소가 주 버튼이다 (LOGIN_REQUIRED | APPLY | APPLY_WAITLIST | VIEW_MY_APPLICATION | WITHDRAW_APPLICATION | VIEW_MY_ROOM | MANAGE_ROOM). 표시 문구는 클라이언트가 만든다
-       */
-      actions: Array<
-        | {
-            [key: string]: unknown;
-          }
-        | boolean
-        | string
-        | number
-      >;
-      /**
-       * 조회자와 이 룸의 관계 (ANONYMOUS 비로그인 | NONE 무관계 | APPLIED 신청 대기 | WITHDRAWN 철회 | APPLICATION_CLOSED 시스템이 끝낸 신청(룸 취소·확정·참여 슬롯 초과) | REJECTED 반려 | REMOVED 강퇴 | PARTICIPANT 참여 중 | HOST 방장). 배지(`참여 중`·`내가 만든 룸`)를 이 값으로 그린다
-       */
-      relation: string;
-    };
-    /**
-     * 방장 회원 식별자 (UUID)
-     */
-    hostMemberId: string;
-    /**
-     * 이력서 원본 공개 여부 (룸 속성)
-     */
-    resumePublic: boolean;
-    /**
-     * 진행 방식 (ONLINE | OFFLINE)
-     */
-    method: string;
-    /**
-     * 룸 설명 (선택)
-     */
-    description?: string | null;
-    /**
-     * 채용 공고 (폐기됐으면 null)
-     */
-    jobPosting?: {
-      /**
-       * 채용 공고 id
-       */
-      jobPostingId?: number | null;
-      /**
-       * 채용 공고명
-       */
-      postingName?: string | null;
-    } | null;
-    /**
-     * 진행 확정 준비 여부. 이 룸의 사실이며 조회자가 확정할 수 있는지와는 다르다
-     */
-    confirmation: {
-      /**
-       * 확정 가능 여부 (모집 중 && 일정 미경과 && 인원 >= 최소 인원)
-       */
-      ready: boolean;
-      /**
-       * 확정할 수 없는 사유. ready 가 true 면 null
-       */
-      blockReason?: {
-        /**
-         * 사유 코드 (ROOM_CONFIRMED | ROOM_IN_PROGRESS | ROOM_COMPLETED | ROOM_CANCELED | SCHEDULE_PASSED | BELOW_MIN_CAPACITY)
-         */
-        code?: string | null;
-        /**
-         * 화면에 그대로 쓰는 사유 문구. 인원 미달이면 현재 인원과 최소 인원이 들어간다
-         */
-        label?: string | null;
-      } | null;
-    };
-    /**
-     * 면접 유형 (선택)
-     */
-    type?: string | null;
-    /**
-     * 룸 제목
-     */
-    title: string;
-    /**
-     * 룸 id (UUID)
-     */
-    roomId: string;
-    schedule?: {
-      /**
-       * 예상 소요 시간(분)
-       */
-      durationMinutes: number;
-      /**
-       * 진행 시작 일시 (ISO-8601)
-       */
-      startAt: string;
-    } | null;
-    /**
-     * 오프라인 지역 시군구 id (온라인이면 null)
-     */
-    sigunguId?: number | null;
-    /**
-     * 면접 회차 (FIRST | SECOND | THIRD | ETC)
-     */
-    round: string;
-    /**
-     * 채용 공고 id (회사는 공고에서 파생)
-     */
-    jobPostingId: number;
-    recruit?: {
-      /**
-       * 현재 인원 (활성 참여 수, 방장 포함)
-       */
-      current: number;
-      /**
-       * 최소 인원
-       */
-      min: number;
-      /**
-       * 대기 중인 참가 신청 수. 수만 공개하고 대기자 목록은 방장 외 비공개다
-       */
-      pendingApplicationCount: number;
-      /**
-       * 최대 인원
-       */
-      max: number;
-      /**
-       * 모집 상태 (RECRUITING | CLOSED, 정원 충족 시 CLOSED)
-       */
-      recruitStatus: string;
-      /**
-       * 모집 상태 표시명 (모집 중 | 모집 마감)
-       */
-      recruitStatusLabel: string;
-    } | null;
-    /**
-     * 진행 방식 표시명
-     */
-    methodLabel: string;
-    /**
-     * 직무 (폐기됐으면 null)
-     */
-    jobRole?: {
-      /**
-       * 직무 코드
-       */
-      code?: string | null;
-      /**
-       * 직무 표시명
-       */
-      displayName?: string | null;
-      /**
-       * 직무 id
-       */
-      jobRoleId?: number | null;
-    } | null;
-    /**
-     * 직무 id
-     */
-    jobRoleId: number;
-    /**
-     * 면접 유형 표시명 (선택)
-     */
-    typeLabel?: string | null;
-    /**
-     * 회사 (공고에서 파생. 회사를 알 수 없으면 null)
-     */
-    company?: {
-      /**
-       * 회사 id
-       */
-      companyId?: number | null;
-      /**
-       * 회사명
-       */
-      name?: string | null;
-    } | null;
-    /**
-     * 오프라인 지역 (온라인이거나 폐기된 지역이면 null)
-     */
-    region?: {
-      /**
-       * 지역 시군구 id
-       */
-      sigunguId?: number | null;
-      /**
-       * 지역 표시명
-       */
-      label?: string | null;
-    } | null;
-    /**
-     * 면접 회차 표시명
-     */
-    roundLabel: string;
-    /**
-     * 룸 상태 (RECRUITING | CONFIRMED | IN_PROGRESS | COMPLETED | CANCELED)
-     */
-    status: string;
-  } | null;
 };
 
 export type V1RoomsRoomIdReviews1785905513 = {
@@ -1781,6 +1574,21 @@ export type V1MembersMeProfile466680720 = {
   interestCompanyIds?: Array<number> | null;
 };
 
+export type V1QuestionsQuestionId496267733 = {
+  /**
+   * 라운드 면접자 회원 id (UUID)
+   */
+  intervieweeMemberId: string;
+  /**
+   * 질문했으면 true, 되돌리면 false
+   */
+  asked: boolean;
+  /**
+   * 룸 id (UUID)
+   */
+  roomId: string;
+};
+
 export type V1RoomsRoomIdApplicationsMe2061746466 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -1842,21 +1650,6 @@ export type V1RoomsRoomIdApplicationsMe2061746466 = {
      */
     status: string;
   } | null;
-};
-
-export type V1QuestionsQuestionId496267733 = {
-  /**
-   * 라운드 면접자 회원 id (UUID)
-   */
-  intervieweeMemberId: string;
-  /**
-   * 질문했으면 true, 되돌리면 false
-   */
-  asked: boolean;
-  /**
-   * 룸 id (UUID)
-   */
-  roomId: string;
 };
 
 export type V1MembersMemberIdProfile655149006 = {
@@ -2234,6 +2027,211 @@ export type V1Rooms583341076 = {
     roomId: string;
     /**
      * 룸 상태 (RECRUITING)
+     */
+    status: string;
+  } | null;
+};
+
+export type V1RoomsRoomId1048010400 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 조회자 본인에 대한 사실. 비로그인이면 null 이다. 버튼·배지 판정은 화면 소관이고, 신청 가능 여부의 강제와 사유는 신청 API 의 에러 응답(E1002 | E1410 | E1412 | E1413 | E1415 | E1416 | E1425)이 전담한다
+     */
+    viewer?: {
+      /**
+       * 이 룸에 대한 가장 최근 신청 상태 (PENDING | WITHDRAWN | REJECTED | ROOM_CANCELED | ROOM_CONFIRMED | SLOT_EXCEEDED | ACCEPTED). 신청 이력이 없으면 null. 강퇴자는 ACCEPTED 가 남아 있으므로 hasRemovalHistory 를 먼저 봐야 한다
+       */
+      latestApplicationStatus?: string | null;
+      /**
+       * 내가 참여 중인가. 방장도 참여자라 true — isHost 를 먼저 본다
+       */
+      isParticipating?: boolean | null;
+      /**
+       * 내가 이 룸의 방장인가. `내가 만든 룸` 배지와 룸 관리 진입 판정용
+       */
+      isHost?: boolean | null;
+      /**
+       * 이 룸에서 강퇴당한 이력. 자진 이탈은 포함하지 않는다 — 재신청을 막는 것은 강퇴뿐이다
+       */
+      hasRemovalHistory?: boolean | null;
+      /**
+       * 룸과 무관한 회원 축 사실
+       */
+      member?: {
+        /**
+         * 대기 신청 사용량. occupied >= limit 면 신청이 거부된다(E1416)
+         */
+        pendingApplicationQuota?: {
+          /**
+           * 대기 신청 한도
+           */
+          limit?: number | null;
+          /**
+           * 처리 대기 중인 내 신청 수
+           */
+          occupied?: number | null;
+        } | null;
+        /**
+         * 참여 슬롯 사용량. occupied >= limit 면 신청이 거부된다(E1425)
+         */
+        participationSlots?: {
+          /**
+           * 참여 슬롯 한도
+           */
+          limit?: number | null;
+          /**
+           * 참여 중인 룸 수 (방장 포함)
+           */
+          occupied?: number | null;
+        } | null;
+        /**
+         * 이용 제한(제재) 중이면 false
+         */
+        isActive?: boolean | null;
+      } | null;
+    } | null;
+    /**
+     * 방장 회원 식별자 (UUID)
+     */
+    hostMemberId: string;
+    /**
+     * 이력서 원본 공개 여부 (룸 속성)
+     */
+    resumePublic: boolean;
+    /**
+     * 진행 방식 (ONLINE | OFFLINE)
+     */
+    method: string;
+    /**
+     * 룸 설명 (선택)
+     */
+    description?: string | null;
+    /**
+     * 채용 공고 (폐기됐으면 null)
+     */
+    jobPosting?: {
+      /**
+       * 채용 공고 id
+       */
+      jobPostingId?: number | null;
+      /**
+       * 채용 공고명
+       */
+      postingName?: string | null;
+    } | null;
+    /**
+     * 면접 유형 (선택)
+     */
+    type?: string | null;
+    /**
+     * 룸 제목
+     */
+    title: string;
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+    schedule?: {
+      /**
+       * 예상 소요 시간(분)
+       */
+      durationMinutes: number;
+      /**
+       * 진행 시작 일시 (ISO-8601)
+       */
+      startAt: string;
+    } | null;
+    /**
+     * 면접 회차 (FIRST | SECOND | THIRD | ETC)
+     */
+    round: string;
+    recruit?: {
+      /**
+       * 현재 인원 (활성 참여 수, 방장 포함)
+       */
+      current: number;
+      /**
+       * 최소 인원
+       */
+      min: number;
+      /**
+       * 대기 중인 참가 신청 수. 수만 공개하고 대기자 목록은 방장 외 비공개다
+       */
+      pendingApplicationCount: number;
+      /**
+       * 최대 인원
+       */
+      max: number;
+      /**
+       * 모집 상태 (RECRUITING | CLOSED, 정원 충족 시 CLOSED)
+       */
+      recruitStatus: string;
+      /**
+       * 모집 상태 표시명 (모집 중 | 모집 마감)
+       */
+      recruitStatusLabel: string;
+    } | null;
+    /**
+     * 진행 방식 표시명
+     */
+    methodLabel: string;
+    /**
+     * 직무 (폐기됐으면 null)
+     */
+    jobRole?: {
+      /**
+       * 직무 코드
+       */
+      code?: string | null;
+      /**
+       * 직무 표시명
+       */
+      displayName?: string | null;
+      /**
+       * 직무 id
+       */
+      jobRoleId?: number | null;
+    } | null;
+    /**
+     * 면접 유형 표시명 (선택)
+     */
+    typeLabel?: string | null;
+    /**
+     * 회사 (공고에서 파생. 회사를 알 수 없으면 null)
+     */
+    company?: {
+      /**
+       * 회사 id
+       */
+      companyId?: number | null;
+      /**
+       * 회사명
+       */
+      name?: string | null;
+    } | null;
+    /**
+     * 오프라인 지역 (온라인이거나 폐기된 지역이면 null)
+     */
+    region?: {
+      /**
+       * 지역 시군구 id
+       */
+      sigunguId?: number | null;
+      /**
+       * 지역 표시명
+       */
+      label?: string | null;
+    } | null;
+    /**
+     * 면접 회차 표시명
+     */
+    roundLabel: string;
+    /**
+     * 룸 상태 (RECRUITING | CONFIRMED | IN_PROGRESS | COMPLETED | CANCELED)
      */
     status: string;
   } | null;
@@ -2648,7 +2646,7 @@ export type V1ReviewsReviewId20839761 = {
   } | null;
 };
 
-export type V1Rooms1476531183 = {
+export type V1Rooms501055666 = {
   /**
    * 처리 결과 (SUCCESS)
    */
@@ -2663,29 +2661,61 @@ export type V1Rooms1476531183 = {
      */
     rooms: Array<{
       /**
-       * 조회자와 이 룸의 관계·행동. 상세와 같은 객체라 렌더러를 하나만 만들면 된다
+       * 조회자 본인에 대한 사실. 비로그인이면 null 이다. 버튼·배지 판정은 화면 소관이고, 신청 가능 여부의 강제와 사유는 신청 API 의 에러 응답(E1002 | E1410 | E1412 | E1413 | E1415 | E1416 | E1425)이 전담한다
        */
-      viewer: {
+      viewer?: {
         /**
-         * 할 수 있는 것이 하나도 없는 이유 (ROOM_CONFIRMED | ROOM_CANCELED | ROOM_COMPLETED | SCHEDULE_PASSED | APPLICATION_REJECTED | REMOVED_FROM_ROOM | MEMBER_SUSPENDED | PARTICIPATION_SLOT_EXCEEDED | APPLICATION_LIMIT_EXCEEDED). actions 가 비어 있을 때만 값이 있다. 정원 도달은 사유가 아니다 — 확정 전이면 APPLY_WAITLIST 로 접수된다
+         * 이 룸에 대한 가장 최근 신청 상태 (PENDING | WITHDRAWN | REJECTED | ROOM_CANCELED | ROOM_CONFIRMED | SLOT_EXCEEDED | ACCEPTED). 신청 이력이 없으면 null. 강퇴자는 ACCEPTED 가 남아 있으므로 hasRemovalHistory 를 먼저 봐야 한다
          */
-        blockReason?: string | null;
+        latestApplicationStatus?: string | null;
         /**
-         * 취할 수 있는 행동. 순서가 계약이며 첫 원소가 주 버튼이다 (LOGIN_REQUIRED | APPLY | APPLY_WAITLIST | VIEW_MY_APPLICATION | WITHDRAW_APPLICATION | VIEW_MY_ROOM | MANAGE_ROOM). 표시 문구는 클라이언트가 만든다
+         * 내가 참여 중인가. 방장도 참여자라 true — isHost 를 먼저 본다
          */
-        actions: Array<
-          | {
-              [key: string]: unknown;
-            }
-          | boolean
-          | string
-          | number
-        >;
+        isParticipating?: boolean | null;
         /**
-         * 조회자와 이 룸의 관계 (ANONYMOUS 비로그인 | NONE 무관계 | APPLIED 신청 대기 | WITHDRAWN 철회 | APPLICATION_CLOSED 시스템이 끝낸 신청(룸 취소·확정·참여 슬롯 초과) | REJECTED 반려 | REMOVED 강퇴 | PARTICIPANT 참여 중 | HOST 방장). 배지(`참여 중`·`내가 만든 룸`)를 이 값으로 그린다
+         * 내가 이 룸의 방장인가. `내가 만든 룸` 배지와 룸 관리 진입 판정용
          */
-        relation: string;
-      };
+        isHost?: boolean | null;
+        /**
+         * 이 룸에서 강퇴당한 이력. 자진 이탈은 포함하지 않는다 — 재신청을 막는 것은 강퇴뿐이다
+         */
+        hasRemovalHistory?: boolean | null;
+        /**
+         * 룸과 무관한 회원 축 사실
+         */
+        member?: {
+          /**
+           * 대기 신청 사용량. occupied >= limit 면 신청이 거부된다(E1416)
+           */
+          pendingApplicationQuota?: {
+            /**
+             * 대기 신청 한도
+             */
+            limit?: number | null;
+            /**
+             * 처리 대기 중인 내 신청 수
+             */
+            occupied?: number | null;
+          } | null;
+          /**
+           * 참여 슬롯 사용량. occupied >= limit 면 신청이 거부된다(E1425)
+           */
+          participationSlots?: {
+            /**
+             * 참여 슬롯 한도
+             */
+            limit?: number | null;
+            /**
+             * 참여 중인 룸 수 (방장 포함)
+             */
+            occupied?: number | null;
+          } | null;
+          /**
+           * 이용 제한(제재) 중이면 false
+           */
+          isActive?: boolean | null;
+        } | null;
+      } | null;
       /**
        * 진행 방식 코드 (ONLINE | OFFLINE)
        */
@@ -3765,7 +3795,7 @@ export type RoomsResponses = {
   /**
    * 200
    */
-  200: V1Rooms1476531183;
+  200: V1Rooms501055666;
 };
 
 export type RoomsResponse = RoomsResponses[keyof RoomsResponses];
@@ -4730,7 +4760,7 @@ export type RoomDetailResponses = {
   /**
    * 200
    */
-  200: V1RoomsRoomId593421515;
+  200: V1RoomsRoomId1048010400;
 };
 
 export type RoomDetailResponse = RoomDetailResponses[keyof RoomDetailResponses];
@@ -5682,6 +5712,49 @@ export type DeletePreparationQuestionResponses = {
 
 export type DeletePreparationQuestionResponse =
   DeletePreparationQuestionResponses[keyof DeletePreparationQuestionResponses];
+
+export type MakeResumeDefaultData = {
+  body?: never;
+  path: {
+    /**
+     * 이력서 식별자 (UUID)
+     */
+    resumeId: string;
+  };
+  query?: never;
+  url: "/v1/members/me/resumes/{resumeId}/make-default";
+};
+
+export type MakeResumeDefaultErrors = {
+  /**
+   * 400
+   */
+  400: V1RoomsCreationLimit910352763;
+  /**
+   * 401
+   */
+  401: V1RoomsCreationLimit910352763;
+  /**
+   * 404
+   */
+  404: V1RoomsCreationLimit910352763;
+  /**
+   * 409
+   */
+  409: V1RoomsCreationLimit910352763;
+};
+
+export type MakeResumeDefaultError = MakeResumeDefaultErrors[keyof MakeResumeDefaultErrors];
+
+export type MakeResumeDefaultResponses = {
+  /**
+   * 200
+   */
+  200: V1AuthLogout198252895;
+};
+
+export type MakeResumeDefaultResponse =
+  MakeResumeDefaultResponses[keyof MakeResumeDefaultResponses];
 
 export type RetryResumeSummaryData = {
   body?: never;

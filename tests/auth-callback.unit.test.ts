@@ -78,6 +78,23 @@ describe("OAuth callback", () => {
     expectLoginIntentCleared(response);
   });
 
+  it("면접 상세에서 시작한 로그인은 같은 상세 경로로 돌려보낸다", async () => {
+    const roomPath = "/interviews/019db000-0000-7000-8000-000000002001";
+    const response = await GET(createCallbackRequest(roomPath));
+
+    expect(response.status).toBe(303);
+    expect(response.headers.get("Location")).toBe(`https://moimyeon.plady.io${roomPath}`);
+    expectLoginIntentCleared(response);
+  });
+
+  it("허용되지 않은 로그인 복귀 경로는 홈으로 제한한다", async () => {
+    const response = await GET(createCallbackRequest("https://malicious.example"));
+
+    expect(response.status).toBe(303);
+    expect(response.headers.get("Location")).toBe("https://moimyeon.plady.io/");
+    expectLoginIntentCleared(response);
+  });
+
   it.each([
     ["회원 조회 실패", () => Promise.resolve({ data: undefined, error: { result: "ERROR" } })],
     ["네트워크 오류", () => Promise.reject(new Error("network error"))],

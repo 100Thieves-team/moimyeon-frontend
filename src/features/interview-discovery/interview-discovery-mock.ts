@@ -28,7 +28,7 @@ function createRoom(
       durationMinutes: 60,
       startTime: "19:00",
     },
-    viewer: { actions: ["LOGIN_REQUIRED"], relation: "ANONYMOUS" },
+    viewer: null,
     ...room,
   };
 }
@@ -57,7 +57,12 @@ const MOCK_INTERVIEW_ROOMS = [
     round: "SECOND",
     roundLabel: "2차",
     title: "카카오 백엔드 2차 면접 스터디",
-    viewer: { actions: ["VIEW_MY_ROOM"], relation: "PARTICIPANT" },
+    viewer: {
+      hasRemovalHistory: false,
+      isHost: false,
+      isParticipating: true,
+      latestApplicationStatus: "ACCEPTED",
+    },
   }),
   createRoom(3, {
     company: { companyId: 43431, name: "토스" },
@@ -74,7 +79,12 @@ const MOCK_INTERVIEW_ROOMS = [
     },
     region: { label: "서울 송파구", sigunguId: 2 },
     title: "토스 프로덕트 디자이너 포트폴리오 면접",
-    viewer: { actions: ["MANAGE_ROOM"], relation: "HOST" },
+    viewer: {
+      hasRemovalHistory: false,
+      isHost: true,
+      isParticipating: true,
+      latestApplicationStatus: null,
+    },
   }),
   createRoom(4, {
     company: { companyId: 43432, name: "쿠팡" },
@@ -141,6 +151,10 @@ const MOCK_INTERVIEW_ROOMS = [
     title: "컬리 QA 엔지니어 실무 면접",
   }),
 ] satisfies InterviewRoom[];
+
+export function getMockInterviewRoom(roomId: string) {
+  return MOCK_INTERVIEW_ROOMS.find((room) => room.roomId === roomId) ?? null;
+}
 
 export function getMockInterviewRooms(searchParams: URLSearchParams): RoomsResponse {
   const companyId = searchParams.get("companyId");

@@ -52,8 +52,8 @@ vi.mock("next/navigation", () => ({
 type TriggerName = "로그인" | "면접 만들기";
 
 const dialogTitleByTrigger: Record<TriggerName, string> = {
-  로그인: "로그인하고 함께 면접을 준비해 보세요",
-  "면접 만들기": "로그인하고 면접을 만들어 보세요",
+  로그인: "로그인하고 함께 면접을 준비하세요",
+  "면접 만들기": "로그인하고 면접을 만드세요",
 };
 
 beforeEach(async () => {
