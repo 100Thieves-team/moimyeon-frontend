@@ -16,6 +16,7 @@ import {
   type InterviewViewerState,
 } from "./interview-detail-model";
 import * as styles from "./interview-detail.css";
+import { ParticipantAvatarStack } from "./participant-avatar-stack";
 
 function WithdrawAction({ roomId }: { roomId: string }) {
   const queryClient = useQueryClient();
@@ -112,6 +113,11 @@ export function InterviewActionCard({ room }: { room: InterviewDetail }) {
             className={styles.actionProgress}
             max={Math.max(max, 1)}
             value={Math.min(current, Math.max(max, 1))}
+          />
+          <ParticipantAvatarStack
+            currentCount={current}
+            hostMemberId={room.hostMemberId}
+            participants={room.participants}
           />
         </div>
       )}

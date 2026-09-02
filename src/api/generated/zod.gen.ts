@@ -573,6 +573,23 @@ export const zV1CompaniesCompanyIdJobPostings1890921117 = z.object({
     .nullish(),
 });
 
+export const zV1RoomProgresses612761132 = z.object({
+  result: z.string(),
+  data: z
+    .object({
+      hostMemberId: z.string(),
+      attendances: z.array(
+        z.object({
+          nickname: z.string(),
+          status: z.string(),
+          memberId: z.string(),
+        }),
+      ),
+      status: z.string(),
+    })
+    .nullish(),
+});
+
 export const zV1MembersMe1349704155 = z.object({
   result: z.string(),
   data: z
@@ -592,23 +609,6 @@ export const zV1MembersMe1349704155 = z.object({
       email: z.string(),
       status: z.string(),
       memberId: z.string(),
-    })
-    .nullish(),
-});
-
-export const zV1RoomProgresses612761132 = z.object({
-  result: z.string(),
-  data: z
-    .object({
-      hostMemberId: z.string(),
-      attendances: z.array(
-        z.object({
-          nickname: z.string(),
-          status: z.string(),
-          memberId: z.string(),
-        }),
-      ),
-      status: z.string(),
     })
     .nullish(),
 });
@@ -731,6 +731,98 @@ export const zV1QuestionsQuestionId496267733 = z.object({
   intervieweeMemberId: z.string(),
   asked: z.boolean(),
   roomId: z.string(),
+});
+
+export const zV1RoomsRoomId349770905 = z.object({
+  result: z.string(),
+  data: z
+    .object({
+      viewer: z
+        .object({
+          latestApplicationStatus: z.string().nullish(),
+          isParticipating: z.boolean().nullish(),
+          isHost: z.boolean().nullish(),
+          hasRemovalHistory: z.boolean().nullish(),
+          member: z
+            .object({
+              pendingApplicationQuota: z
+                .object({
+                  limit: z.number().nullish(),
+                  occupied: z.number().nullish(),
+                })
+                .nullish(),
+              participationSlots: z
+                .object({
+                  limit: z.number().nullish(),
+                  occupied: z.number().nullish(),
+                })
+                .nullish(),
+              isActive: z.boolean().nullish(),
+            })
+            .nullish(),
+        })
+        .nullish(),
+      hostMemberId: z.string(),
+      resumePublic: z.boolean(),
+      method: z.string(),
+      description: z.string().nullish(),
+      jobPosting: z
+        .object({
+          jobPostingId: z.number().nullish(),
+          postingName: z.string().nullish(),
+        })
+        .nullish(),
+      type: z.string().nullish(),
+      title: z.string(),
+      roomId: z.string(),
+      schedule: z
+        .object({
+          durationMinutes: z.number(),
+          startAt: z.string(),
+        })
+        .nullish(),
+      round: z.string(),
+      recruit: z
+        .object({
+          current: z.number(),
+          min: z.number(),
+          pendingApplicationCount: z.number(),
+          max: z.number(),
+          recruitStatus: z.string(),
+          recruitStatusLabel: z.string(),
+        })
+        .nullish(),
+      methodLabel: z.string(),
+      jobRole: z
+        .object({
+          code: z.string().nullish(),
+          displayName: z.string().nullish(),
+          jobRoleId: z.number().nullish(),
+        })
+        .nullish(),
+      typeLabel: z.string().nullish(),
+      company: z
+        .object({
+          companyId: z.number().nullish(),
+          name: z.string().nullish(),
+        })
+        .nullish(),
+      region: z
+        .object({
+          sigunguId: z.number().nullish(),
+          label: z.string().nullish(),
+        })
+        .nullish(),
+      roundLabel: z.string(),
+      participants: z.array(
+        z.object({
+          nickname: z.string(),
+          memberId: z.string(),
+        }),
+      ),
+      status: z.string(),
+    })
+    .nullish(),
 });
 
 export const zV1RoomsRoomIdApplicationsMe2061746466 = z.object({
@@ -952,92 +1044,6 @@ export const zV1Rooms583341076 = z.object({
   data: z
     .object({
       roomId: z.string(),
-      status: z.string(),
-    })
-    .nullish(),
-});
-
-export const zV1RoomsRoomId1048010400 = z.object({
-  result: z.string(),
-  data: z
-    .object({
-      viewer: z
-        .object({
-          latestApplicationStatus: z.string().nullish(),
-          isParticipating: z.boolean().nullish(),
-          isHost: z.boolean().nullish(),
-          hasRemovalHistory: z.boolean().nullish(),
-          member: z
-            .object({
-              pendingApplicationQuota: z
-                .object({
-                  limit: z.number().nullish(),
-                  occupied: z.number().nullish(),
-                })
-                .nullish(),
-              participationSlots: z
-                .object({
-                  limit: z.number().nullish(),
-                  occupied: z.number().nullish(),
-                })
-                .nullish(),
-              isActive: z.boolean().nullish(),
-            })
-            .nullish(),
-        })
-        .nullish(),
-      hostMemberId: z.string(),
-      resumePublic: z.boolean(),
-      method: z.string(),
-      description: z.string().nullish(),
-      jobPosting: z
-        .object({
-          jobPostingId: z.number().nullish(),
-          postingName: z.string().nullish(),
-        })
-        .nullish(),
-      type: z.string().nullish(),
-      title: z.string(),
-      roomId: z.string(),
-      schedule: z
-        .object({
-          durationMinutes: z.number(),
-          startAt: z.string(),
-        })
-        .nullish(),
-      round: z.string(),
-      recruit: z
-        .object({
-          current: z.number(),
-          min: z.number(),
-          pendingApplicationCount: z.number(),
-          max: z.number(),
-          recruitStatus: z.string(),
-          recruitStatusLabel: z.string(),
-        })
-        .nullish(),
-      methodLabel: z.string(),
-      jobRole: z
-        .object({
-          code: z.string().nullish(),
-          displayName: z.string().nullish(),
-          jobRoleId: z.number().nullish(),
-        })
-        .nullish(),
-      typeLabel: z.string().nullish(),
-      company: z
-        .object({
-          companyId: z.number().nullish(),
-          name: z.string().nullish(),
-        })
-        .nullish(),
-      region: z
-        .object({
-          sigunguId: z.number().nullish(),
-          label: z.string().nullish(),
-        })
-        .nullish(),
-      roundLabel: z.string(),
       status: z.string(),
     })
     .nullish(),
@@ -1911,7 +1917,7 @@ export const zRoomDetailPath = z.object({
 /**
  * 200
  */
-export const zRoomDetailResponse = zV1RoomsRoomId1048010400;
+export const zRoomDetailResponse = zV1RoomsRoomId349770905;
 
 export const zJobPostingsPath = z.object({
   companyId: z.string(),

@@ -502,7 +502,7 @@ export type {
   V1RoomsCreationLimit910352763,
   V1RoomsFormOptions38619118,
   V1RoomsRejectReasons1951847967,
-  V1RoomsRoomId1048010400,
+  V1RoomsRoomId349770905,
   V1RoomsRoomIdApplications1094172635,
   V1RoomsRoomIdApplications1651584797,
   V1RoomsRoomIdApplications240308819,
