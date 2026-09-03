@@ -2,16 +2,17 @@ import type {
   CreateRoomData,
   ParticipationSlotsResponse,
   RegionsResponse,
-  ResumesResponse,
   RoomFormOptionsResponse,
   SearchJobPostingsResponse,
 } from "@/api";
+import type { Resumes } from "@/features/resume/resume-model";
+
+export { getResumesData } from "@/features/resume/resume-model";
+export type { Resumes, ResumeItem } from "@/features/resume/resume-model";
 
 export type ParticipationSlots = NonNullable<ParticipationSlotsResponse["data"]>;
 export type Regions = NonNullable<RegionsResponse["data"]>;
 export type RoomFormOptions = NonNullable<RoomFormOptionsResponse["data"]>;
-export type Resumes = NonNullable<ResumesResponse["data"]>;
-export type ResumeItem = Resumes["resumes"][number];
 export type SelectedJobPosting = NonNullable<
   SearchJobPostingsResponse["data"]
 >["jobPostings"][number];
@@ -163,14 +164,6 @@ export function toCreateRoomBody(values: InterviewCreateFormValues): CreateRoomB
     title: values.title.trim(),
     type: values.type,
   };
-}
-
-export function getResumesData(response: ResumesResponse): Resumes {
-  if (response.data === undefined || response.data === null) {
-    throw new Error("Failed to load resumes");
-  }
-
-  return response.data;
 }
 
 export function getInterviewCreateDefaultValues(
