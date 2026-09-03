@@ -1,10 +1,12 @@
 "use client";
 
 import { AlertDialog } from "@base-ui/react/alert-dialog";
+import { Checkbox } from "@base-ui/react/checkbox";
 import { Form } from "@base-ui/react/form";
 import { Toast } from "@base-ui/react/toast";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { Check } from "lucide-react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import {
   deleteReviewMutation,
@@ -112,6 +114,24 @@ export function EditReviewForm({ onCompleted, roomId, target }: EditReviewFormPr
     <FormProvider {...methods}>
       <Form className={styles.form} onSubmit={submitForm}>
         <ReviewFormFields />
+        <label
+          className={styles.anonymousRowLocked}
+          htmlFor={`review-anonymous-${target.memberId}`}
+        >
+          <Checkbox.Root
+            checked={review.anonymous}
+            className={styles.checkbox}
+            disabled
+            id={`review-anonymous-${target.memberId}`}
+            name="anonymous"
+          >
+            <Checkbox.Indicator className={styles.checkboxIndicator}>
+              <Check size={12} strokeWidth={3} />
+            </Checkbox.Indicator>
+          </Checkbox.Root>
+          <span className={styles.anonymousLabel}>익명으로 남기기</span>
+          <span className={styles.anonymousHint}>익명 여부는 수정할 수 없어요</span>
+        </label>
         <div className={styles.footer}>
           <AlertDialog.Root onOpenChange={setDeleteDialogOpen} open={deleteDialogOpen}>
             <AlertDialog.Trigger

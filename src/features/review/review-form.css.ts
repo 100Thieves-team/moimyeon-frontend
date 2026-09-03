@@ -88,12 +88,27 @@ export const textarea = style({
   },
 });
 
-export const anonymousRow = style({
+const anonymousRowBase = {
   display: "flex",
   alignItems: "center",
   gap: "0.8rem",
-  cursor: "pointer",
   width: "fit-content",
+} as const;
+
+export const anonymousRow = style({
+  ...anonymousRowBase,
+  cursor: "pointer",
+});
+
+export const anonymousHint = style({
+  fontSize: "1.2rem",
+  color: vars.color.tertiary,
+});
+
+export const anonymousRowLocked = style({
+  ...anonymousRowBase,
+  cursor: "default",
+  opacity: 0.75,
 });
 
 export const checkbox = style({
