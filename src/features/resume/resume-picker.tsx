@@ -3,20 +3,15 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Check, X } from "lucide-react";
-import { type ChangeEvent, type Ref, useRef, useState } from "react";
-import type { ResumeResponse, ResumesResponse } from "@/api";
-import {
-  createResumeMutation,
-  resumesOptions,
-  resumesQueryKey,
-} from "@/api/generated/@tanstack/react-query.gen";
+import { type Ref, useRef, useState } from "react";
+import { resumesOptions } from "@/api/generated/@tanstack/react-query.gen";
 import { Button } from "@/components/button";
-import { getResumesData, type ResumeItem } from "./resume-model";
+import { formatFileSize, getResumesData, type ResumeItem } from "./resume-model";
+import { useResumeUpload } from "./use-resume-upload";
 import * as styles from "./resume-picker.css";
 
-const MAX_RESUME_SIZE_BYTES = 10 * 1024 * 1024;
 const SUMMARY_POLL_INTERVAL_MS = 3_000;
 
 type ResumePickerProps = {
@@ -27,32 +22,6 @@ type ResumePickerProps = {
   triggerRef: Ref<HTMLButtonElement>;
   value: string;
 };
-
-function getErrorMessage(error: unknown, fallback: string) {
-  if (typeof error !== "object" || error === null || !("error" in error)) {
-    return fallback;
-  }
-
-  const detail = error.error;
-
-  if (typeof detail !== "object" || detail === null || !("message" in detail)) {
-    return fallback;
-  }
-
-  return typeof detail.message === "string" ? detail.message : fallback;
-}
-
-function formatFileSize(sizeBytes?: number) {
-  if (sizeBytes === undefined) {
-    return "크기 정보 없음";
-  }
-
-  if (sizeBytes < 1024 * 1024) {
-    return `${Math.max(1, Math.round(sizeBytes / 1024))}KB`;
-  }
-
-  return `${(sizeBytes / (1024 * 1024)).toFixed(1).replace(/\.0$/, "")}MB`;
-}
 
 function formatUsedDate(usedAt?: string | null) {
   const match = usedAt?.match(/^\d{4}-(\d{2})-(\d{2})/);
@@ -77,33 +46,6 @@ function formatResumeMeta(resume: ResumeItem) {
   }
 
   return fileSize;
-}
-
-function upsertResume(
-  current: ResumesResponse | undefined,
-  nextResume: NonNullable<ResumeResponse["data"]>,
-) {
-  if (current?.data === undefined || current.data === null) {
-    return current;
-  }
-
-  const existingResume = current.data.resumes.find(
-    (resume) => resume.resumeId === nextResume.resumeId,
-  );
-  const mergedResume = { ...existingResume, ...nextResume };
-  const hasResume = existingResume !== undefined;
-
-  return {
-    ...current,
-    data: {
-      ...current.data,
-      resumes: hasResume
-        ? current.data.resumes.map((resume) =>
-            resume.resumeId === nextResume.resumeId ? mergedResume : resume,
-          )
-        : [mergedResume, ...current.data.resumes],
-    },
-  };
 }
 
 export function useResumePickerData(selectedResumeId: string) {
@@ -154,59 +96,18 @@ export function ResumePicker({
   triggerRef,
   value,
 }: ResumePickerProps) {
-  const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [draftResumeId, setDraftResumeId] = useState(value);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const createResume = useMutation(createResumeMutation());
-
-  const uploadResume = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.currentTarget.files?.[0];
-    event.currentTarget.value = "";
-
-    if (!file) return;
-
-    setUploadError(null);
-
-    if (file.type !== "application/pdf" || !file.name.toLowerCase().endsWith(".pdf")) {
-      setUploadError("PDF 파일만 올릴 수 있어요.");
-      return;
-    }
-
-    if (file.size === 0) {
-      setUploadError("비어 있는 파일은 올릴 수 없어요.");
-      return;
-    }
-
-    if (file.size > MAX_RESUME_SIZE_BYTES) {
-      setUploadError("이력서는 10MB 이하의 PDF 파일만 올릴 수 있어요.");
-      return;
-    }
-
-    try {
-      const response = await createResume.mutateAsync({ body: { file } });
-      const uploadedResume = response.data;
-
-      if (uploadedResume === undefined || uploadedResume === null) {
-        throw new Error("Resume response did not include data.");
-      }
-
-      queryClient.setQueryData<ResumesResponse>(resumesQueryKey(), (current) =>
-        upsertResume(current, uploadedResume),
-      );
-      setDraftResumeId(uploadedResume.resumeId);
-      await queryClient.invalidateQueries({ queryKey: resumesQueryKey() });
-    } catch (error) {
-      setUploadError(getErrorMessage(error, "이력서를 올리지 못했어요. 다시 시도해 주세요."));
-    }
-  };
+  const { isUploading, resetUploadError, uploadError, uploadResume } = useResumeUpload(
+    (uploadedResume) => setDraftResumeId(uploadedResume.resumeId),
+  );
 
   return (
     <Dialog.Root
       onOpenChange={(open) => {
         if (open) {
           setDraftResumeId(value);
-          setUploadError(null);
+          resetUploadError();
         } else {
           onBlur();
         }
@@ -295,13 +196,13 @@ export function ResumePicker({
             />
             <Button
               className={styles.resumeUploadButton}
-              disabled={createResume.isPending}
+              disabled={isUploading}
               onClick={() => fileInputRef.current?.click()}
               size="sm"
               type="button"
               variant="secondary"
             >
-              {createResume.isPending ? "업로드 중..." : "이력서 업로드"}
+              {isUploading ? "업로드 중..." : "이력서 업로드"}
             </Button>
             {uploadError ? (
               <p className={styles.resumeUploadError} role="alert">

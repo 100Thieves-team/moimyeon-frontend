@@ -80,6 +80,7 @@ async function renderMyPageShell() {
       <MyPageShell
         reviews={<p>받은 후기 목록</p>}
         profile={<p>프로필 편집 폼</p>}
+        resumePanel={<p>이력서 관리 패널</p>}
         publicProfile={myPageData.publicProfile}
       />
     </QueryClientProvider>,
@@ -101,11 +102,24 @@ describe("MyPageShell", () => {
     await expect
       .element(screen.getByRole("tab", { name: "프로필 수정" }))
       .toHaveAttribute("aria-selected", "true");
-    await expect.element(screen.getByRole("tab", { name: "이력서 관리" })).toBeDisabled();
+    await expect.element(screen.getByRole("tab", { name: "이력서 관리" })).toBeEnabled();
     await expect.element(screen.getByRole("tab", { name: "받은 후기" })).toBeEnabled();
     await expect.element(screen.getByRole("heading", { name: "프로필 수정" })).toBeVisible();
     await expect.element(screen.getByText("회원 탈퇴")).not.toBeInTheDocument();
     await expect.element(screen.getByText("3", { exact: true })).not.toBeInTheDocument();
+  });
+
+  it("이력서 관리 탭을 선택하면 이력서 패널을 보여준다", async () => {
+    const { screen } = await renderMyPageShell();
+
+    await screen.getByRole("tab", { name: "이력서 관리" }).click();
+
+    await expect
+      .element(screen.getByRole("tab", { name: "이력서 관리" }))
+      .toHaveAttribute("aria-selected", "true");
+    await expect.element(screen.getByRole("heading", { name: "이력서 관리" })).toBeVisible();
+    await expect.element(screen.getByText("이력서 관리 패널")).toBeVisible();
+    await expect.element(screen.getByText("프로필 편집 폼")).not.toBeInTheDocument();
   });
 
   it("로그아웃 요청 중 버튼을 비활성화하고 성공하면 홈으로 이동한다", async () => {

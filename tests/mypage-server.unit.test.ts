@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   jobRoles: vi.fn(),
   memberMe: vi.fn(),
   publicProfile: vi.fn(),
+  resumes: vi.fn(),
 }));
 
 type QueryOptions = {
@@ -41,6 +42,13 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
     },
     queryKey: ["publicProfile", options.path?.memberId],
   }),
+  resumesOptions: (options: QueryOptions = {}) => ({
+    queryFn: async ({ signal }: { signal: AbortSignal }) => {
+      const result = await mocks.resumes({ ...options, signal, throwOnError: true });
+      return result.data;
+    },
+    queryKey: ["resumes"],
+  }),
 }));
 
 import MyPage from "@/app/(site)/mypage/page";
@@ -68,6 +76,7 @@ beforeEach(() => {
   mocks.memberMe.mockResolvedValue(sdkSuccess(member));
   mocks.publicProfile.mockResolvedValue(sdkSuccess(publicProfile));
   mocks.jobRoles.mockResolvedValue(sdkSuccess(jobRoles));
+  mocks.resumes.mockResolvedValue(sdkSuccess({ maxCount: 10, resumes: [] }));
 });
 
 describe("MyPage server prefetch", () => {
@@ -88,6 +97,9 @@ describe("MyPage server prefetch", () => {
         throwOnError: true,
       }),
     );
+    expect(mocks.resumes).toHaveBeenCalledWith(
+      expect.objectContaining({ cache: "no-store", client: serverClient, throwOnError: true }),
+    );
   });
 
   it("회원 조회가 실패하면 원본 오류를 전파하고 공개 프로필 조회는 생략한다", async () => {
@@ -100,5 +112,6 @@ describe("MyPage server prefetch", () => {
     await expect(MyPage()).rejects.toBe(error);
     expect(mocks.jobRoles).toHaveBeenCalledOnce();
     expect(mocks.publicProfile).not.toHaveBeenCalled();
+    expect(mocks.resumes).not.toHaveBeenCalled();
   });
 });

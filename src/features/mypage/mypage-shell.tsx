@@ -10,6 +10,7 @@ type MyPageShellProps = {
   reviews?: ReactNode;
   profile: ReactNode;
   publicProfile: MyPageData["publicProfile"];
+  resumePanel: ReactNode;
 };
 
 type TrustStatsProps = {
@@ -78,7 +79,7 @@ function TrustStats({ trust }: TrustStatsProps) {
   );
 }
 
-export function MyPageShell({ reviews, profile, publicProfile }: MyPageShellProps) {
+export function MyPageShell({ reviews, profile, publicProfile, resumePanel }: MyPageShellProps) {
   const jobTitle = publicProfile.interestJobRoles.map((jobRole) => jobRole.displayName).join(" · ");
   const avatarLabel = Array.from(publicProfile.nickname.trim())[0] ?? "?";
 
@@ -111,7 +112,7 @@ export function MyPageShell({ reviews, profile, publicProfile }: MyPageShellProp
             <Tabs.Tab className={styles.tab} value="profile">
               프로필 수정
             </Tabs.Tab>
-            <Tabs.Tab className={styles.tab} disabled value="resume">
+            <Tabs.Tab className={styles.tab} value="resume">
               이력서 관리
             </Tabs.Tab>
             <Tabs.Tab className={styles.tab} value="received-reviews">
@@ -126,6 +127,11 @@ export function MyPageShell({ reviews, profile, publicProfile }: MyPageShellProp
 
           <Tabs.Panel className={styles.editorCard} value="received-reviews">
             {reviews}
+          </Tabs.Panel>
+
+          <Tabs.Panel className={styles.editorCard} value="resume">
+            <h2 className={panelStyles.title}>이력서 관리</h2>
+            {resumePanel}
           </Tabs.Panel>
         </Tabs.Root>
       </div>

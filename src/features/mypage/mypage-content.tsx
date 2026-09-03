@@ -11,6 +11,7 @@ import type { MemberMeResponse } from "@/api/generated";
 import { MyPageShell } from "./mypage-shell";
 import { ProfileEditor } from "./profile-editor";
 import { ReceivedReviews, ReceivedReviewsFallback } from "./received-reviews";
+import { ResumeManager } from "./resume-manager";
 
 type Member = NonNullable<MemberMeResponse["data"]>;
 
@@ -42,6 +43,11 @@ function MyPageDetails({ member }: MyPageDetailsProps) {
       }
       profile={<ProfileEditor jobRoleGroups={jobRoles.groups} member={member} />}
       publicProfile={publicProfile}
+      resumePanel={
+        <Suspense fallback={null}>
+          <ResumeManager />
+        </Suspense>
+      }
     />
   );
 }
