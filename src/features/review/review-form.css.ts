@@ -1,20 +1,11 @@
 import { style } from "@vanilla-extract/css";
-import { vars } from "@/styles";
+import { media, vars } from "@/styles";
 
 export const form = style({
   display: "flex",
   flexDirection: "column",
   gap: vars.spacing.lg,
   width: "100%",
-});
-
-export const editNotice = style({
-  padding: "0.9rem 1.2rem",
-  borderRadius: vars.radius.control,
-  backgroundColor: vars.color.fillTertiary,
-  fontSize: "1.25rem",
-  lineHeight: 1.5,
-  color: vars.color.secondary,
 });
 
 export const field = style({
@@ -70,6 +61,9 @@ export const tagChip = style({
       outlineOffset: "2px",
     },
   },
+  "@media": {
+    [media.reducedMotion]: { transition: "none" },
+  },
 });
 
 export const textarea = style({
@@ -124,6 +118,9 @@ export const checkbox = style({
       outline: `2px solid ${vars.color.primary}`,
       outlineOffset: "2px",
     },
+  },
+  "@media": {
+    [media.reducedMotion]: { transition: "none" },
   },
 });
 
@@ -203,10 +200,14 @@ export const dialogActions = style({
 
 export const deleteConfirmButton = style({
   backgroundColor: vars.color.red,
-  selectors: {
-    "&:hover:not([data-disabled])": {
-      backgroundColor: vars.color.red,
-      opacity: 0.9,
+  "@media": {
+    [media.hover]: {
+      selectors: {
+        "&:hover:not([data-disabled])": {
+          backgroundColor: vars.color.red,
+          opacity: 0.9,
+        },
+      },
     },
   },
 });

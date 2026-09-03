@@ -13,7 +13,7 @@ export function TrustCard({ memberId }: TrustCardProps) {
   const { data: profileResponse } = useSuspenseQuery(publicProfileOptions({ path: { memberId } }));
   const profile = profileResponse.data;
 
-  if (profile === undefined) {
+  if (profile === undefined || profile === null) {
     throw new Error("Failed to load public profile");
   }
 

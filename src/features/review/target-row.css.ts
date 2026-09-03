@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { vars } from "@/styles";
+import { media, vars } from "@/styles";
 
 export const row = style({
   display: "flex",
@@ -111,6 +111,9 @@ export const chevron = style({
   flexShrink: 0,
   color: vars.color.tertiary,
   transition: `transform ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
+  "@media": {
+    [media.reducedMotion]: { transition: "none" },
+  },
 });
 
 export const chevronOpen = style([
@@ -127,4 +130,13 @@ export const panel = style({
 export const panelContent = style({
   paddingBottom: vars.spacing.md,
   paddingLeft: "5.4rem",
+});
+
+export const queryState = style({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  gap: vars.spacing.sm,
+  fontSize: "1.3rem",
+  color: vars.color.secondary,
 });

@@ -80,3 +80,41 @@ export const targetList = style({
   border: `1px solid ${vars.color.strokeLight}`,
   backgroundColor: vars.color.background,
 });
+
+export const errorPage = style({
+  display: "flex",
+  justifyContent: "center",
+  padding: `${vars.spacing.xl} ${vars.spacing.lg}`,
+});
+
+export const errorCard = style({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  gap: vars.spacing.md,
+  width: "100%",
+  maxWidth: "52rem",
+  padding: vars.spacing.xl,
+  border: `1px solid ${vars.color.strokeLight}`,
+  borderRadius: vars.radius.media,
+  backgroundColor: vars.color.background,
+});
+
+export const errorTitle = style({
+  fontSize: "2rem",
+  fontWeight: 700,
+  color: vars.color.primary,
+});
+
+export const errorDescription = style({
+  fontSize: "1.4rem",
+  lineHeight: 1.6,
+  color: vars.color.secondary,
+});
+
+export const errorActions = style({
+  display: "flex",
+  flexWrap: "wrap",
+  gap: vars.spacing.sm,
+  paddingTop: vars.spacing.sm,
+});

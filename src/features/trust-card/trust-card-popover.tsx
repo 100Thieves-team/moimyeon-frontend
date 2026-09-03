@@ -1,7 +1,11 @@
 "use client";
 
 import { Popover } from "@base-ui/react/popover";
-import { Suspense, type ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import type { ReactNode } from "react";
+import { publicProfileQueryKey } from "@/api/generated/@tanstack/react-query.gen";
+import { Button } from "@/components/button";
+import { QueryBoundary } from "@/components/query-boundary";
 import { TrustCard } from "./trust-card";
 import * as styles from "./trust-card.css";
 
@@ -10,6 +14,26 @@ type TrustCardPopoverProps = {
   trigger: ReactNode;
   triggerLabel: string;
 };
+
+function TrustCardError({ memberId, retry }: { memberId: string; retry: () => void }) {
+  const queryClient = useQueryClient();
+  const retryProfile = () => {
+    queryClient.removeQueries({
+      exact: true,
+      queryKey: publicProfileQueryKey({ path: { memberId } }),
+    });
+    retry();
+  };
+
+  return (
+    <div className={styles.queryState}>
+      <p role="alert">공개 신뢰 카드를 불러오지 못했어요.</p>
+      <Button onClick={retryProfile} size="sm" type="button" variant="secondary">
+        다시 불러오기
+      </Button>
+    </div>
+  );
+}
 
 export function TrustCardPopover({ memberId, trigger, triggerLabel }: TrustCardPopoverProps) {
   return (
@@ -23,9 +47,13 @@ export function TrustCardPopover({ memberId, trigger, triggerLabel }: TrustCardP
       <Popover.Portal>
         <Popover.Positioner align="start" side="bottom" sideOffset={8}>
           <Popover.Popup className={styles.popup}>
-            <Suspense fallback={<p className={styles.loading}>불러오는 중…</p>}>
+            <QueryBoundary
+              errorFallback={TrustCardError}
+              errorFallbackProps={{ memberId }}
+              pendingFallback={<p className={styles.loading}>불러오는 중…</p>}
+            >
               <TrustCard memberId={memberId} />
-            </Suspense>
+            </QueryBoundary>
           </Popover.Popup>
         </Popover.Positioner>
       </Popover.Portal>

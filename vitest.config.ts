@@ -10,13 +10,17 @@ const rootDirectory = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   optimizeDeps: {
     include: [
+      "@base-ui/react/alert-dialog",
       "@base-ui/react/avatar",
       "@base-ui/react/button",
+      "@base-ui/react/checkbox",
+      "@base-ui/react/collapsible",
       "@base-ui/react/combobox",
       "@base-ui/react/dialog",
       "@base-ui/react/field",
       "@base-ui/react/form",
       "@base-ui/react/merge-props",
+      "@base-ui/react/popover",
       "@base-ui/react/radio",
       "@base-ui/react/radio-group",
       "@base-ui/react/select",

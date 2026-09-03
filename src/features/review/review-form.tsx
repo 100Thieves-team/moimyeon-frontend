@@ -13,28 +13,30 @@ import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import {
   deleteReviewMutation,
+  getReviewQueryKey,
   getReviewTargetsQueryKey,
   skipReviewMutation,
   submitReviewMutation,
   updateReviewMutation,
 } from "@/api/generated/@tanstack/react-query.gen";
-import type {
-  DeleteReviewError,
-  SkipReviewError,
-  SubmitReviewError,
-  UpdateReviewError,
-} from "@/api/generated";
 import { Button } from "@/components/button";
-import { REVIEW_TAG_LABELS, type ReviewTarget } from "./review-model";
+import { REVIEW_TAG_LABELS, type ReviewFormInitialValues, type ReviewTarget } from "./review-model";
 import * as styles from "./review-form.css";
 
 type ReviewFormProps = {
   onCompleted: () => void;
-  /* SUBMITTED 대상의 수정 모드. targets 확장(제출값 조회)이 생기면 프리필로 교체한다 */
-  reviewId?: number | null;
   roomId: string;
   target: ReviewTarget;
-};
+} & (
+  | {
+      mode: "create";
+    }
+  | {
+      initialValues: ReviewFormInitialValues;
+      mode: "edit";
+      reviewId: number;
+    }
+);
 
 type ReviewFormValues = {
   anonymous: boolean;
@@ -43,15 +45,28 @@ type ReviewFormValues = {
 };
 
 function getApiErrorMessage(error: unknown) {
-  const apiError = (
-    error as DeleteReviewError | SkipReviewError | SubmitReviewError | UpdateReviewError
-  ).error;
+  if (typeof error !== "object" || error === null || !("error" in error)) {
+    return "요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.";
+  }
 
-  return apiError?.message ?? "요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.";
+  const apiError = error.error;
+
+  if (
+    typeof apiError !== "object" ||
+    apiError === null ||
+    !("message" in apiError) ||
+    typeof apiError.message !== "string"
+  ) {
+    return "요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.";
+  }
+
+  return apiError.message;
 }
 
-export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewFormProps) {
-  const isEdit = reviewId !== undefined && reviewId !== null;
+export function ReviewForm(props: ReviewFormProps) {
+  const { onCompleted, roomId, target } = props;
+  const reviewId = props.mode === "edit" ? props.reviewId : null;
+  const isEdit = props.mode === "edit";
   const queryClient = useQueryClient();
   const toastManager = Toast.useToastManager();
   const submitReview = useMutation(submitReviewMutation());
@@ -65,11 +80,14 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
     handleSubmit,
     setError,
   } = useForm<ReviewFormValues>({
-    defaultValues: {
-      anonymous: true,
-      content: "",
-      tags: [],
-    },
+    defaultValues:
+      props.mode === "edit"
+        ? props.initialValues
+        : {
+            anonymous: true,
+            content: "",
+            tags: [],
+          },
   });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const isBusy = isSubmitting || skipReview.isPending || deleteReview.isPending;
@@ -82,11 +100,13 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
       queryKey: getReviewTargetsQueryKey({ path: { roomId } }),
     });
 
+  const clearServerError = () => clearErrors("root.serverError");
+
   const submitForm = handleSubmit(async ({ anonymous, content, tags }) => {
     const normalizedContent = content.trim() === "" ? null : content.trim();
 
     try {
-      if (isEdit) {
+      if (reviewId !== null) {
         await updateReview.mutateAsync({
           body: { content: normalizedContent, tags },
           path: { reviewId: String(reviewId) },
@@ -104,12 +124,22 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
         });
       }
     } catch (error) {
-      setError("root", { message: getApiErrorMessage(error), type: "server" });
+      setError("root.serverError", { message: getApiErrorMessage(error), type: "server" });
 
       return;
     }
 
-    await invalidateTargets();
+    const invalidations = [invalidateTargets()];
+
+    if (reviewId !== null) {
+      invalidations.push(
+        queryClient.invalidateQueries({
+          queryKey: getReviewQueryKey({ path: { reviewId: String(reviewId) } }),
+        }),
+      );
+    }
+
+    await Promise.all(invalidations);
     toastManager.add({
       title: isEdit
         ? `${target.nickname} 님에게 남긴 후기를 수정했어요`
@@ -119,21 +149,25 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
   });
 
   const deleteSubmittedReview = async () => {
-    if (!isEdit) {
+    if (reviewId === null) {
       return;
     }
 
-    clearErrors("root");
+    clearServerError();
 
     try {
       await deleteReview.mutateAsync({ path: { reviewId: String(reviewId) } });
     } catch (error) {
-      setError("root", { message: getApiErrorMessage(error), type: "server" });
+      setError("root.serverError", { message: getApiErrorMessage(error), type: "server" });
 
       return;
     }
 
     await invalidateTargets();
+    queryClient.removeQueries({
+      exact: true,
+      queryKey: getReviewQueryKey({ path: { reviewId: String(reviewId) } }),
+    });
     toastManager.add({ title: "후기를 삭제했어요. 다시 작성할 수 있어요" });
     onCompleted();
   };
@@ -144,7 +178,7 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
   };
 
   const skipTarget = async () => {
-    clearErrors("root");
+    clearServerError();
 
     try {
       await skipReview.mutateAsync({
@@ -152,7 +186,7 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
         path: { roomId },
       });
     } catch (error) {
-      setError("root", { message: getApiErrorMessage(error), type: "server" });
+      setError("root.serverError", { message: getApiErrorMessage(error), type: "server" });
 
       return;
     }
@@ -164,11 +198,6 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
 
   return (
     <Form className={styles.form} onSubmit={submitForm}>
-      {isEdit && (
-        <p className={styles.editNotice}>
-          이전에 남긴 내용은 불러오지 못해요. 저장하면 새로 입력한 내용으로 교체돼요.
-        </p>
-      )}
       <Controller
         control={control}
         name="tags"
@@ -189,7 +218,7 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
               className={styles.tagChips}
               multiple
               onValueChange={(nextValue) => {
-                clearErrors("root");
+                clearServerError();
                 field.onChange(nextValue);
               }}
               value={field.value}
@@ -227,7 +256,7 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
               name={field.name}
               onBlur={field.onBlur}
               onChange={(event) => {
-                clearErrors("root");
+                clearServerError();
                 field.onChange(event);
               }}
               placeholder="어땠는지 한 줄이면 충분해요. 후기 원문은 상대에게만 보여요."
@@ -254,7 +283,10 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
                 inputRef={field.ref}
                 name={field.name}
                 onBlur={field.onBlur}
-                onCheckedChange={(checked) => field.onChange(checked)}
+                onCheckedChange={(checked) => {
+                  clearServerError();
+                  field.onChange(checked);
+                }}
               >
                 <Checkbox.Indicator className={styles.checkboxIndicator}>
                   <Check size={12} strokeWidth={3} />
@@ -266,7 +298,11 @@ export function ReviewForm({ onCompleted, reviewId, roomId, target }: ReviewForm
           )}
         />
       )}
-      {errors.root !== undefined && <p className={styles.rootError}>{errors.root.message}</p>}
+      {errors.root?.serverError !== undefined && (
+        <p className={styles.rootError} role="alert">
+          {errors.root.serverError.message}
+        </p>
+      )}
       <div className={styles.footer}>
         {isEdit ? (
           <AlertDialog.Root onOpenChange={setDeleteDialogOpen} open={deleteDialogOpen}>

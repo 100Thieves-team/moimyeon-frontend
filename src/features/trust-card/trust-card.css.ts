@@ -33,6 +33,15 @@ export const loading = style({
   color: vars.color.tertiary,
 });
 
+export const queryState = style({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  gap: vars.spacing.sm,
+  fontSize: "1.3rem",
+  color: vars.color.secondary,
+});
+
 export const card = style({
   display: "flex",
   flexDirection: "column",

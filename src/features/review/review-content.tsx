@@ -9,6 +9,7 @@ import {
 import { formatCompletedDate, isSubmittedTarget } from "./review-model";
 import * as styles from "./review-content.css";
 import { TargetRow } from "./target-row";
+import { SubmittedTargetRow } from "./target-row";
 
 type ReviewContentProps = {
   roomId: string;
@@ -25,11 +26,11 @@ export function ReviewContent({ roomId }: ReviewContentProps) {
   const room = roomResponse.data;
   const reviewTargets = targetsResponse.data;
 
-  if (room === undefined) {
+  if (room === undefined || room === null) {
     throw new Error("Failed to load room detail");
   }
 
-  if (reviewTargets === undefined) {
+  if (reviewTargets === undefined || reviewTargets === null) {
     throw new Error("Failed to load review targets");
   }
 
@@ -63,23 +64,31 @@ export function ReviewContent({ roomId }: ReviewContentProps) {
           </p>
         </section>
         <section aria-label="후기 작성 대상" className={styles.targetList}>
-          {targets.map((target) => (
-            <TargetRow
-              expanded={expandedMemberId === target.memberId}
-              isHost={target.memberId === room.hostMemberId}
-              key={target.memberId}
-              onCompleted={
-                isSubmittedTarget(target)
-                  ? () => setExpandedMemberId(null)
-                  : () => openNextWritable(target.memberId)
-              }
-              roomId={roomId}
-              onExpandedChange={(expanded) => {
+          {targets.map((target) => {
+            const commonProps = {
+              expanded: expandedMemberId === target.memberId,
+              isHost: target.memberId === room.hostMemberId,
+              onExpandedChange: (expanded: boolean) => {
                 setExpandedMemberId(expanded ? target.memberId : null);
-              }}
-              target={target}
-            />
-          ))}
+              },
+              roomId,
+              target,
+            };
+
+            return isSubmittedTarget(target) ? (
+              <SubmittedTargetRow
+                {...commonProps}
+                key={target.memberId}
+                onCompleted={() => setExpandedMemberId(null)}
+              />
+            ) : (
+              <TargetRow
+                {...commonProps}
+                key={target.memberId}
+                onCompleted={() => openNextWritable(target.memberId)}
+              />
+            );
+          })}
         </section>
       </div>
     </main>
