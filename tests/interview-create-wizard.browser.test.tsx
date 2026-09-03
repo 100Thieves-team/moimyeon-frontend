@@ -610,7 +610,7 @@ describe("InterviewCreateWizard", () => {
 
     await screen.getByRole("button", { name: "변경하기" }).click();
     await screen.getByRole("radio", { name: "포트폴리오_2026.pdf" }).click();
-    await screen.getByRole("button", { name: "이 이력서 쓰기" }).click();
+    await screen.getByRole("button", { name: "선택하기" }).click();
 
     await expect.element(screen.getByText("포트폴리오_2026.pdf", { exact: true })).toBeVisible();
     await expect.element(screen.getByText("AI 요약을 만들지 못했어요.")).toBeVisible();
@@ -704,7 +704,7 @@ describe("InterviewCreateWizard", () => {
 
     await screen.getByRole("button", { name: "변경하기" }).click();
     await screen.getByRole("radio", { name: "김민수_이력서_영문.pdf" }).click();
-    await screen.getByRole("button", { name: "이 이력서 쓰기" }).click();
+    await screen.getByRole("button", { name: "선택하기" }).click();
 
     await expect
       .poll(() => mocks.resumes.mock.calls.length, { timeout: 5_000 })
@@ -739,7 +739,7 @@ describe("InterviewCreateWizard", () => {
 
     await expect.poll(() => mocks.createResume.mock.calls.length).toBe(1);
     await expect.element(screen.getByRole("radio", { name: "새_이력서.pdf" })).toBeChecked();
-    await screen.getByRole("button", { name: "이 이력서 쓰기" }).click();
+    await screen.getByRole("button", { name: "선택하기" }).click();
     await expect.element(screen.getByText("새_이력서.pdf", { exact: true })).toBeVisible();
   });
 });

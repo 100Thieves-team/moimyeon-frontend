@@ -152,10 +152,16 @@ export function getInterviewRelationLabel(room: InterviewDetail) {
 export function formatInterviewSchedule(schedule: InterviewDetail["schedule"]) {
   if (!schedule) return "일정 정보 없음";
 
+  return `${formatInterviewStart(schedule)} · ${schedule.durationMinutes}분`;
+}
+
+export function formatInterviewStart(schedule: InterviewDetail["schedule"]) {
+  if (!schedule) return "일정 정보 없음";
+
   const date = new Date(schedule.startAt);
 
   if (Number.isNaN(date.getTime())) {
-    return `${schedule.startAt} · ${schedule.durationMinutes}분`;
+    return schedule.startAt;
   }
 
   const dateLabel = new Intl.DateTimeFormat("ko-KR", {
@@ -169,7 +175,7 @@ export function formatInterviewSchedule(schedule: InterviewDetail["schedule"]) {
     minute: "2-digit",
   }).format(date);
 
-  return `${dateLabel} ${timeLabel} · ${schedule.durationMinutes}분`;
+  return `${dateLabel} ${timeLabel}`;
 }
 
 export function getInterviewMetaLabels(room: InterviewDetail) {
