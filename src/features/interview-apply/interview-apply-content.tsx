@@ -99,14 +99,7 @@ function InterviewApplicationForm({
   });
 
   return (
-    <Form
-      className={styles.formCard}
-      method="post"
-      onSubmit={(event) => {
-        event.preventDefault();
-        void submit();
-      }}
-    >
+    <Form className={styles.formCard} method="post" onSubmit={submit}>
       <Controller
         control={methods.control}
         name="resumeId"
