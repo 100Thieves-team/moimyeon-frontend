@@ -5,6 +5,7 @@ import {
   MOCK_INTERVIEW_DETAIL_SCENARIOS,
   type MockInterviewDetailCategory,
 } from "@/features/interview-detail/interview-detail-mock";
+import { MOCK_REVIEW_ROOM_ID } from "@/features/review/review-mock";
 import * as styles from "./page.css";
 
 export const metadata: Metadata = {
@@ -57,6 +58,21 @@ export default function InterviewDetailMockPage() {
             </ul>
           </section>
         ))}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>후기 화면</h2>
+          <ul className={styles.grid}>
+            <li>
+              <Link className={styles.card} href={`/interviews/${MOCK_REVIEW_ROOM_ID}/review`}>
+                <strong className={styles.cardTitle}>기존 후기 수정과 신규 작성</strong>
+                <span className={styles.cardDescription}>
+                  제출한 후기 2건의 프리필과 작성 가능한 대상 2명, 공개 신뢰 카드를 함께 확인할 수
+                  있습니다.
+                </span>
+                <span className={styles.cardAction}>후기 화면 보기</span>
+              </Link>
+            </li>
+          </ul>
+        </section>
       </div>
     </main>
   );

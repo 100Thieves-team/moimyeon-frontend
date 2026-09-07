@@ -1,15 +1,15 @@
 "use client";
 
 import { Collapsible } from "@base-ui/react/collapsible";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { Check, ChevronDown } from "lucide-react";
-import type { ReactNode } from "react";
-import { getReviewOptions, getReviewQueryKey } from "@/api/generated/@tanstack/react-query.gen";
-import { Button } from "@/components/button";
-import { QueryBoundary } from "@/components/query-boundary";
+import { Suspense, type ReactNode } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { TrustCardPopover } from "@/features/trust-card/trust-card-popover";
-import { getReviewFormInitialValues, isSubmittedTarget, type ReviewTarget } from "./review-model";
-import { ReviewForm } from "./review-form";
+import { CreateReviewForm } from "./create-review-form";
+import { EditReviewForm, EditReviewFormError } from "./edit-review-form";
+import * as reviewFormStyles from "./review-form.css";
+import type { ReviewTarget } from "./review-model";
 import * as styles from "./target-row.css";
 
 type TargetRowProps = {
@@ -82,7 +82,7 @@ function TargetRowFrame({
           />
         </Collapsible.Trigger>
       </div>
-      <Collapsible.Panel className={styles.panel}>
+      <Collapsible.Panel className={styles.panel} keepMounted={submitted}>
         <div className={styles.panelContent}>{children}</div>
       </Collapsible.Panel>
     </Collapsible.Root>
@@ -92,97 +92,48 @@ function TargetRowFrame({
 export function TargetRow(props: TargetRowProps) {
   return (
     <TargetRowFrame {...props} submitted={false}>
-      <ReviewForm
-        mode="create"
+      <CreateReviewForm
         onCompleted={props.onCompleted}
         roomId={props.roomId}
         target={props.target}
       />
     </TargetRowFrame>
-  );
-}
-
-type SubmittedTargetRowContentProps = TargetRowProps & {
-  reviewId: number;
-};
-
-function SubmittedTargetRowContent({ reviewId, ...props }: SubmittedTargetRowContentProps) {
-  const { data: reviewResponse } = useSuspenseQuery(
-    getReviewOptions({ path: { reviewId: String(reviewId) } }),
-  );
-  const initialValues = getReviewFormInitialValues(reviewResponse, {
-    reviewId,
-    roomId: props.roomId,
-    targetMemberId: props.target.memberId,
-  });
-
-  return (
-    <TargetRowFrame {...props} submitted>
-      <ReviewForm
-        initialValues={initialValues}
-        mode="edit"
-        onCompleted={props.onCompleted}
-        reviewId={reviewId}
-        roomId={props.roomId}
-        target={props.target}
-      />
-    </TargetRowFrame>
-  );
-}
-
-function SubmittedTargetState({ children, ...props }: TargetRowProps & { children: ReactNode }) {
-  return (
-    <TargetRowFrame {...props} submitted>
-      <div className={styles.queryState}>{children}</div>
-    </TargetRowFrame>
-  );
-}
-
-function SubmittedTargetError({ retry, ...props }: TargetRowProps & { retry: () => void }) {
-  const queryClient = useQueryClient();
-  const retryReview = () => {
-    const reviewId = props.target.reviewId;
-
-    if (reviewId !== undefined && reviewId !== null) {
-      queryClient.removeQueries({
-        exact: true,
-        queryKey: getReviewQueryKey({ path: { reviewId: String(reviewId) } }),
-      });
-    }
-
-    retry();
-  };
-
-  return (
-    <SubmittedTargetState {...props}>
-      <p role="alert">기존 후기를 불러오지 못했어요.</p>
-      <Button onClick={retryReview} size="sm" type="button" variant="secondary">
-        다시 불러오기
-      </Button>
-    </SubmittedTargetState>
   );
 }
 
 export function SubmittedTargetRow(props: TargetRowProps) {
-  if (!isSubmittedTarget(props.target) || props.target.reviewId == null) {
+  if (props.target.reviewId == null) {
     return (
-      <SubmittedTargetState {...props}>
-        <p role="alert">기존 후기를 불러오지 못했어요.</p>
-      </SubmittedTargetState>
+      <TargetRowFrame {...props} submitted>
+        <div className={styles.queryState}>
+          <p role="alert">기존 후기를 불러오지 못했어요.</p>
+        </div>
+      </TargetRowFrame>
     );
   }
 
   const reviewId = props.target.reviewId;
 
   return (
-    <QueryBoundary
-      errorFallback={SubmittedTargetError}
-      errorFallbackProps={props}
-      pendingFallback={
-        <SubmittedTargetState {...props}>기존 후기를 불러오는 중이에요.</SubmittedTargetState>
-      }
-    >
-      <SubmittedTargetRowContent {...props} reviewId={reviewId} />
-    </QueryBoundary>
+    <TargetRowFrame {...props} submitted>
+      <QueryErrorResetBoundary>
+        {({ reset }) => (
+          <ErrorBoundary FallbackComponent={EditReviewFormError} onReset={reset}>
+            <Suspense
+              fallback={
+                <p className={reviewFormStyles.queryState}>기존 후기를 불러오는 중이에요.</p>
+              }
+            >
+              <EditReviewForm
+                onCompleted={props.onCompleted}
+                reviewId={reviewId}
+                roomId={props.roomId}
+                target={props.target}
+              />
+            </Suspense>
+          </ErrorBoundary>
+        )}
+      </QueryErrorResetBoundary>
+    </TargetRowFrame>
   );
 }

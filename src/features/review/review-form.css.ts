@@ -135,11 +135,6 @@ export const anonymousLabel = style({
   color: vars.color.primary,
 });
 
-export const anonymousHint = style({
-  fontSize: "1.2rem",
-  color: vars.color.tertiary,
-});
-
 export const fieldError = style({
   fontSize: "1.25rem",
   color: vars.color.red,
@@ -148,6 +143,15 @@ export const fieldError = style({
 export const rootError = style({
   fontSize: "1.25rem",
   color: vars.color.red,
+});
+
+export const queryState = style({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  gap: vars.spacing.sm,
+  fontSize: "1.3rem",
+  color: vars.color.secondary,
 });
 
 export const deleteButton = style({
@@ -215,7 +219,8 @@ export const deleteConfirmButton = style({
 export const footer = style({
   display: "flex",
   alignItems: "center",
-  justifyContent: "space-between",
+  justifyContent: "flex-end",
+  gap: vars.spacing.sm,
   paddingTop: vars.spacing.md,
   borderTop: `1px solid ${vars.color.strokeLight}`,
 });

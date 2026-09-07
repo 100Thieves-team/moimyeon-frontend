@@ -1,18 +1,27 @@
-import type {
-  GetReviewResponse,
-  GetReviewTargetsResponse,
-  RoomDetailResponse,
-} from "@/api/generated";
+import type { GetReviewTargetsResponse, RoomDetailResponse } from "@/api/generated";
 
 export type RoomDetail = NonNullable<RoomDetailResponse["data"]>;
 export type ReviewTargets = NonNullable<GetReviewTargetsResponse["data"]>;
 export type ReviewTarget = ReviewTargets["targets"][number];
 
-export type ReviewFormInitialValues = {
-  anonymous: boolean;
-  content: string;
-  tags: string[];
-};
+export function getReviewErrorMessage(error: unknown) {
+  if (typeof error !== "object" || error === null || !("error" in error)) {
+    return "요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.";
+  }
+
+  const apiError = error.error;
+
+  if (
+    typeof apiError !== "object" ||
+    apiError === null ||
+    !("message" in apiError) ||
+    typeof apiError.message !== "string"
+  ) {
+    return "요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.";
+  }
+
+  return apiError.message;
+}
 
 const completedDateFormatter = new Intl.DateTimeFormat("ko-KR", {
   day: "numeric",
@@ -55,31 +64,3 @@ export const REVIEW_TAG_LABELS = [
   "피드백이 구체적이에요",
   "소통이 원활해요",
 ] as const;
-
-function isReviewTagLabel(value: unknown): value is (typeof REVIEW_TAG_LABELS)[number] {
-  return REVIEW_TAG_LABELS.some((label) => label === value);
-}
-
-export function getReviewFormInitialValues(
-  response: GetReviewResponse,
-  expected: { reviewId: number; roomId: string; targetMemberId: string },
-): ReviewFormInitialValues {
-  const review = response.data;
-
-  if (
-    review === undefined ||
-    review === null ||
-    review.reviewId !== expected.reviewId ||
-    review.roomId !== expected.roomId ||
-    review.targetMemberId !== expected.targetMemberId ||
-    !review.tags.every(isReviewTagLabel)
-  ) {
-    throw new Error("Failed to load submitted review");
-  }
-
-  return {
-    anonymous: review.anonymous,
-    content: review.content ?? "",
-    tags: review.tags,
-  };
-}

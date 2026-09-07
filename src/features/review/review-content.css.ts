@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { vars } from "@/styles";
+import { media, vars } from "@/styles";
 
 export const page = style({
   display: "flex",
@@ -24,52 +24,55 @@ export const title = style({
 
 export const sessionCard = style({
   display: "flex",
+  minWidth: 0,
   alignItems: "center",
-  gap: vars.spacing.md,
-  padding: `${vars.spacing.md} ${vars.spacing.lg}`,
-  borderRadius: vars.radius.media,
+  gap: "1.4rem",
+  padding: "1.4rem 1.8rem",
   border: `1px solid ${vars.color.strokeLight}`,
+  borderRadius: vars.radius.floating,
   backgroundColor: vars.color.background,
-});
-
-export const sessionAvatar = style({
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  flexShrink: 0,
-  width: "3.8rem",
-  height: "3.8rem",
-  borderRadius: "1.1rem",
-  backgroundColor: vars.color.blue10,
-  fontSize: "1.3rem",
-  fontWeight: 700,
-  color: vars.color.blue,
 });
 
 export const sessionInfo = style({
   display: "flex",
+  minWidth: 0,
+  flex: "1 1 auto",
   flexDirection: "column",
   gap: "0.2rem",
-  flex: "1 0 0",
-  minWidth: "0.1rem",
 });
 
 export const sessionTitle = style({
-  fontSize: "1.45rem",
-  fontWeight: 500,
+  overflow: "hidden",
   color: vars.color.primary,
+  fontSize: "1.6rem",
+  fontWeight: 500,
+  lineHeight: "2.1rem",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
 });
 
 export const sessionDate = style({
-  fontSize: "1.25rem",
+  overflow: "hidden",
   color: vars.color.tertiary,
+  fontSize: "1.4rem",
+  lineHeight: "1.9rem",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
 });
 
-export const sessionProgress = style({
-  flexShrink: 0,
-  fontSize: "1.25rem",
-  fontWeight: 500,
-  color: vars.color.secondary,
+export const detailLink = style({
+  flex: "0 0 auto",
+  paddingBlock: "0.8rem",
+  color: vars.color.tertiary,
+  fontSize: "1.4rem",
+  lineHeight: "1.9rem",
+  textDecoration: "none",
+  selectors: {
+    "&:focus-visible": { outline: `2px solid ${vars.color.primary}`, outlineOffset: "2px" },
+  },
+  "@media": {
+    [media.hover]: { selectors: { "&:hover": { color: vars.color.primary } } },
+  },
 });
 
 export const targetList = style({

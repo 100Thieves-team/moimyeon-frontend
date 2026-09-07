@@ -13,7 +13,6 @@ const mocks = vi.hoisted(() => ({
   getReviewTargets: vi.fn(),
   publicProfile: vi.fn(),
   roomDetail: vi.fn(),
-  skipReview: vi.fn(),
   submitReview: vi.fn(),
   updateReview: vi.fn(),
 }));
@@ -45,7 +44,6 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
     queryFn: () => mocks.roomDetail(path.roomId),
     queryKey: ["roomDetail", path.roomId],
   }),
-  skipReviewMutation: () => ({ mutationFn: (options: unknown) => mocks.skipReview(options) }),
   submitReviewMutation: () => ({ mutationFn: (options: unknown) => mocks.submitReview(options) }),
   updateReviewMutation: () => ({ mutationFn: (options: unknown) => mocks.updateReview(options) }),
 }));
@@ -169,7 +167,6 @@ beforeEach(async () => {
   );
   mocks.publicProfile.mockResolvedValue(publicProfileResponse);
   mocks.deleteReview.mockResolvedValue({ result: "SUCCESS" });
-  mocks.skipReview.mockResolvedValue({ result: "SUCCESS" });
   mocks.submitReview.mockResolvedValue({ result: "SUCCESS" });
   mocks.updateReview.mockResolvedValue({ result: "SUCCESS" });
   await page.viewport(1000, 900);
@@ -214,6 +211,27 @@ describe("ReviewContent", () => {
         tags: ["피드백이 구체적이에요"],
       },
       path: { reviewId: "101" },
+    });
+  });
+
+  it("작성 가능한 대상에게 새 후기를 제출한다", async () => {
+    const screen = await renderReviewContent();
+    await screen.getByRole("button", { name: "차분한 고래 후기 작성 펼치기" }).click();
+    await expect.element(screen.getByRole("button", { name: "건너뛰기" })).not.toBeInTheDocument();
+    await screen.getByRole("button", { name: "준비가 성실해요" }).click();
+    await screen.getByRole("textbox", { name: "한 줄 후기" }).fill("함께 연습하기 좋았어요.");
+
+    await screen.getByRole("button", { name: "후기 제출하기" }).click();
+
+    await expect.poll(() => mocks.submitReview.mock.calls.length).toBe(1);
+    expect(mocks.submitReview).toHaveBeenCalledWith({
+      body: {
+        anonymous: true,
+        content: "함께 연습하기 좋았어요.",
+        tags: ["준비가 성실해요"],
+        targetMemberId: hostMemberId,
+      },
+      path: { roomId },
     });
   });
 
