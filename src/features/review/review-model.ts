@@ -1,8 +1,8 @@
-import type { GetReviewTargetsResponse, RoomDetailResponse } from "@/api/generated";
+import type { GetReviewOverviewResponse, RoomDetailResponse } from "@/api/generated";
 
 export type RoomDetail = NonNullable<RoomDetailResponse["data"]>;
-export type ReviewTargets = NonNullable<GetReviewTargetsResponse["data"]>;
-export type ReviewTarget = ReviewTargets["targets"][number];
+export type ReviewOverview = NonNullable<GetReviewOverviewResponse["data"]>;
+export type ReviewTarget = ReviewOverview["targets"][number];
 
 export function getReviewErrorMessage(error: unknown) {
   if (typeof error !== "object" || error === null || !("error" in error)) {

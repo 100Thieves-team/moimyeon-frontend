@@ -5,13 +5,11 @@ import { Form } from "@base-ui/react/form";
 import { Toast } from "@base-ui/react/toast";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import type { FallbackProps } from "react-error-boundary";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import {
   deleteReviewMutation,
-  getReviewOptions,
-  getReviewQueryKey,
-  getReviewTargetsQueryKey,
+  getReviewOverviewOptions,
+  getReviewOverviewQueryKey,
   updateReviewMutation,
 } from "@/api/generated/@tanstack/react-query.gen";
 import { Button } from "@/components/button";
@@ -21,27 +19,33 @@ import { getReviewErrorMessage, REVIEW_TAG_LABELS, type ReviewTarget } from "./r
 
 type EditReviewFormProps = {
   onCompleted: () => void;
-  reviewId: number;
   roomId: string;
   target: ReviewTarget;
 };
 
-type EditReviewFormContentProps = EditReviewFormProps & {
-  initialValues: ReviewFormValues;
-};
-
-function EditReviewFormContent({
-  initialValues,
-  onCompleted,
-  reviewId,
-  roomId,
-  target,
-}: EditReviewFormContentProps) {
+export function EditReviewForm({ onCompleted, roomId, target }: EditReviewFormProps) {
+  const { data: overviewResponse } = useSuspenseQuery(
+    getReviewOverviewOptions({ path: { roomId } }),
+  );
+  const review = overviewResponse.data?.reviews.find(
+    ({ targetMemberId }) => targetMemberId === target.memberId,
+  );
+  const reviewTags = review?.tags.every(
+    (tag): tag is string =>
+      typeof tag === "string" && REVIEW_TAG_LABELS.some((label) => label === tag),
+  )
+    ? review.tags
+    : undefined;
   const queryClient = useQueryClient();
   const toastManager = Toast.useToastManager();
   const updateReview = useMutation(updateReviewMutation());
   const deleteReview = useMutation(deleteReviewMutation());
-  const methods = useForm<ReviewFormValues>({ defaultValues: initialValues });
+  const methods = useForm<ReviewFormValues>({
+    defaultValues:
+      review !== undefined && reviewTags !== undefined
+        ? { content: review.content, tags: reviewTags }
+        : { content: "", tags: [] },
+  });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [watchedTags, watchedContent] = useWatch({
     control: methods.control,
@@ -49,6 +53,12 @@ function EditReviewFormContent({
   });
   const isBusy = methods.formState.isSubmitting || deleteReview.isPending;
   const hasInput = watchedTags.length > 0 || watchedContent.trim() !== "";
+
+  if (review === undefined || reviewTags === undefined) {
+    throw new Error("Failed to load submitted review");
+  }
+
+  const { reviewId } = review;
 
   const submitForm = methods.handleSubmit(async ({ content, tags }) => {
     try {
@@ -65,14 +75,9 @@ function EditReviewFormContent({
       return;
     }
 
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: getReviewTargetsQueryKey({ path: { roomId } }),
-      }),
-      queryClient.invalidateQueries({
-        queryKey: getReviewQueryKey({ path: { reviewId: String(reviewId) } }),
-      }),
-    ]);
+    await queryClient.invalidateQueries({
+      queryKey: getReviewOverviewQueryKey({ path: { roomId } }),
+    });
     toastManager.add({ title: `${target.nickname} 님에게 남긴 후기를 수정했어요` });
     onCompleted();
   });
@@ -92,11 +97,7 @@ function EditReviewFormContent({
     }
 
     await queryClient.invalidateQueries({
-      queryKey: getReviewTargetsQueryKey({ path: { roomId } }),
-    });
-    queryClient.removeQueries({
-      exact: true,
-      queryKey: getReviewQueryKey({ path: { reviewId: String(reviewId) } }),
+      queryKey: getReviewOverviewQueryKey({ path: { roomId } }),
     });
     toastManager.add({ title: "후기를 삭제했어요. 다시 작성할 수 있어요" });
     onCompleted();
@@ -158,44 +159,5 @@ function EditReviewFormContent({
         </div>
       </Form>
     </FormProvider>
-  );
-}
-
-export function EditReviewForm(props: EditReviewFormProps) {
-  const { data: reviewResponse } = useSuspenseQuery(
-    getReviewOptions({ path: { reviewId: String(props.reviewId) } }),
-  );
-  const review = reviewResponse.data;
-
-  if (
-    review === undefined ||
-    review === null ||
-    !review.tags.every(
-      (tag): tag is string =>
-        typeof tag === "string" && REVIEW_TAG_LABELS.some((label) => label === tag),
-    )
-  ) {
-    throw new Error("Failed to load submitted review");
-  }
-
-  return (
-    <EditReviewFormContent
-      {...props}
-      initialValues={{
-        content: review.content ?? "",
-        tags: review.tags,
-      }}
-    />
-  );
-}
-
-export function EditReviewFormError({ resetErrorBoundary }: FallbackProps) {
-  return (
-    <div className={styles.queryState}>
-      <p role="alert">기존 후기를 불러오지 못했어요.</p>
-      <Button onClick={resetErrorBoundary} size="sm" type="button" variant="secondary">
-        다시 불러오기
-      </Button>
-    </div>
   );
 }

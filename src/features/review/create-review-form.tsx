@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Check } from "lucide-react";
 import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
 import {
-  getReviewTargetsQueryKey,
+  getReviewOverviewQueryKey,
   submitReviewMutation,
 } from "@/api/generated/@tanstack/react-query.gen";
 import { Button } from "@/components/button";
@@ -64,7 +64,7 @@ export function CreateReviewForm({ onCompleted, roomId, target }: CreateReviewFo
     }
 
     await queryClient.invalidateQueries({
-      queryKey: getReviewTargetsQueryKey({ path: { roomId } }),
+      queryKey: getReviewOverviewQueryKey({ path: { roomId } }),
     });
     toastManager.add({ title: `${target.nickname} 님에게 후기를 남겼어요` });
     onCompleted();

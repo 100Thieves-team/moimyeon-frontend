@@ -1,12 +1,12 @@
 import type {
-  GetReviewResponse,
-  GetReviewTargetsResponse,
+  GetReviewOverviewResponse,
   PublicProfileResponse,
   RoomDetailResponse,
   SubmitReviewResponse,
 } from "@/api";
 
-type MockReview = NonNullable<GetReviewResponse["data"]>;
+type MockReviewOverview = NonNullable<GetReviewOverviewResponse["data"]>;
+type MockReview = MockReviewOverview["reviews"][number];
 type MockProfile = NonNullable<PublicProfileResponse["data"]>;
 
 export const MOCK_REVIEW_ROOM_ID = "00000000-0000-4000-8002-000000000001";
@@ -32,19 +32,15 @@ const initialReviews: MockReview[] = [
     anonymous: true,
     content: "답변의 강점과 보완점을 구체적으로 짚어 주셨어요.",
     reviewId: 9101,
-    roomId: MOCK_REVIEW_ROOM_ID,
     tags: ["시간을 잘 지켜요", "피드백이 구체적이에요"],
     targetMemberId: MOCK_REVIEW_MEMBER_IDS[0],
-    targetNickname: mockMembers[0].nickname,
   },
   {
     anonymous: false,
     content: "꼬리 질문 덕분에 실전처럼 연습할 수 있었어요.",
     reviewId: 9102,
-    roomId: MOCK_REVIEW_ROOM_ID,
     tags: ["질문이 날카로워요", "소통이 원활해요"],
     targetMemberId: MOCK_REVIEW_MEMBER_IDS[1],
-    targetNickname: mockMembers[1].nickname,
   },
 ];
 
@@ -172,7 +168,7 @@ export function getMockReviewRoomDetail(roomId: string): RoomDetailResponse | nu
   };
 }
 
-export function getMockReviewTargets(roomId: string): GetReviewTargetsResponse | null {
+export function getMockReviewOverview(roomId: string): GetReviewOverviewResponse | null {
   if (!isMockReviewRoom(roomId)) return null;
 
   const targets = mockMembers.map((member) => {
@@ -182,25 +178,19 @@ export function getMockReviewTargets(roomId: string): GetReviewTargetsResponse |
 
     return {
       ...member,
-      reviewId: review?.reviewId ?? null,
       status: review ? "SUBMITTED" : "WRITABLE",
     };
   });
 
   return {
     data: {
+      reviews: structuredClone([...reviews.values()]),
       submittedCount: targets.filter(({ status }) => status === "SUBMITTED").length,
       targets,
       totalCount: targets.length,
     },
     result: "SUCCESS",
   };
-}
-
-export function getMockReview(reviewId: number): GetReviewResponse | null {
-  const review = reviews.get(reviewId);
-
-  return review ? { data: structuredClone(review), result: "SUCCESS" } : null;
 }
 
 export function getMockReviewProfile(memberId: string): PublicProfileResponse | null {
@@ -229,12 +219,10 @@ export function submitMockReview(roomId: string, body: unknown): SubmitReviewRes
   const reviewId = nextReviewId++;
   reviews.set(reviewId, {
     anonymous: body.anonymous,
-    content: body.content,
+    content: body.content ?? "",
     reviewId,
-    roomId,
     tags,
     targetMemberId: target.memberId,
-    targetNickname: target.nickname,
   });
 
   return { data: { reviewId }, result: "SUCCESS" };
@@ -251,7 +239,7 @@ export function updateMockReview(reviewId: number, body: unknown) {
     return false;
   }
 
-  reviews.set(reviewId, { ...review, content: body.content, tags: body.tags });
+  reviews.set(reviewId, { ...review, content: body.content ?? "", tags: body.tags });
   return true;
 }
 

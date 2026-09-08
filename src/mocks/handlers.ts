@@ -6,10 +6,9 @@ import {
 } from "@/features/interview-detail/interview-detail-mock";
 import {
   deleteMockReview,
-  getMockReview,
+  getMockReviewOverview,
   getMockReviewProfile,
   getMockReviewRoomDetail,
-  getMockReviewTargets,
   isMockReviewId,
   isMockReviewRoom,
   submitMockReview,
@@ -35,8 +34,8 @@ export const handlers = [
 
     return response ? HttpResponse.json(response) : passthrough();
   }),
-  http.get("*/v1/rooms/:roomId/review-targets", ({ params }) => {
-    const response = getMockReviewTargets(String(params.roomId));
+  http.get("*/v1/rooms/:roomId/reviews/overview", ({ params }) => {
+    const response = getMockReviewOverview(String(params.roomId));
 
     return response ? HttpResponse.json(response) : passthrough();
   }),
@@ -50,14 +49,6 @@ export const handlers = [
     return response
       ? HttpResponse.json(response, { status: 201 })
       : mockError("후기 요청을 확인해 주세요.", 400);
-  }),
-  http.get("*/v1/reviews/:reviewId", ({ params }) => {
-    const reviewId = Number(params.reviewId);
-
-    if (!isMockReviewId(reviewId)) return passthrough();
-
-    const response = getMockReview(reviewId);
-    return response ? HttpResponse.json(response) : mockError("후기를 찾을 수 없어요.", 404);
   }),
   http.put("*/v1/reviews/:reviewId", async ({ params, request }) => {
     const reviewId = Number(params.reviewId);

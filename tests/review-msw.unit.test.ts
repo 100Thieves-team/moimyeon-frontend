@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import type { GetReviewResponse, GetReviewTargetsResponse, SubmitReviewResponse } from "@/api";
+import type { GetReviewOverviewResponse, SubmitReviewResponse } from "@/api";
 import { MOCK_REVIEW_ROOM_ID, resetMockReviewState } from "@/features/review/review-mock";
 import { server } from "@/mocks/node";
 
@@ -8,25 +8,23 @@ beforeEach(() => resetMockReviewState());
 afterAll(() => server.close());
 
 describe("review MSW handlers", () => {
-  it("기존 후기를 조회하고 신규 작성·수정·삭제 결과를 대상 목록에 반영한다", async () => {
-    const targetsUrl = `https://api.example.test/v1/rooms/${MOCK_REVIEW_ROOM_ID}/review-targets`;
-    const initialTargetsResponse = await fetch(targetsUrl);
-    const initialTargets = (await initialTargetsResponse.json()) as GetReviewTargetsResponse;
-    const submittedTarget = initialTargets.data?.targets.find(
+  it("후기 개요를 조회하고 신규 작성·수정·삭제 결과를 다시 반영한다", async () => {
+    const overviewUrl = `https://api.example.test/v1/rooms/${MOCK_REVIEW_ROOM_ID}/reviews/overview`;
+    const initialOverviewResponse = await fetch(overviewUrl);
+    const initialOverview = (await initialOverviewResponse.json()) as GetReviewOverviewResponse;
+    const submittedTarget = initialOverview.data?.targets.find(
       ({ status }) => status === "SUBMITTED",
     );
-    const writableTarget = initialTargets.data?.targets.find(({ status }) => status === "WRITABLE");
-
-    expect(initialTargets.data?.submittedCount).toBe(2);
-    expect(submittedTarget?.reviewId).toBeDefined();
-    expect(writableTarget).toBeDefined();
-
-    const existingReviewResponse = await fetch(
-      `https://api.example.test/v1/reviews/${submittedTarget?.reviewId}`,
+    const writableTarget = initialOverview.data?.targets.find(
+      ({ status }) => status === "WRITABLE",
     );
-    const existingReview = (await existingReviewResponse.json()) as GetReviewResponse;
+    const existingReview = initialOverview.data?.reviews.find(
+      ({ targetMemberId }) => targetMemberId === submittedTarget?.memberId,
+    );
 
-    expect(existingReview.data).toEqual(
+    expect(initialOverview.data?.submittedCount).toBe(2);
+    expect(writableTarget).toBeDefined();
+    expect(existingReview).toEqual(
       expect.objectContaining({
         content: expect.any(String),
         targetMemberId: submittedTarget?.memberId,
@@ -52,9 +50,12 @@ describe("review MSW handlers", () => {
     expect(createResponse.status).toBe(201);
     expect(reviewId).toBeDefined();
 
-    const submittedTargetsResponse = await fetch(targetsUrl);
-    const submittedTargets = (await submittedTargetsResponse.json()) as GetReviewTargetsResponse;
-    expect(submittedTargets.data?.submittedCount).toBe(3);
+    const submittedOverviewResponse = await fetch(overviewUrl);
+    const submittedOverview = (await submittedOverviewResponse.json()) as GetReviewOverviewResponse;
+    expect(submittedOverview.data?.submittedCount).toBe(3);
+    expect(submittedOverview.data?.reviews).toContainEqual(
+      expect.objectContaining({ reviewId, targetMemberId: writableTarget?.memberId }),
+    );
 
     const updateResponse = await fetch(`https://api.example.test/v1/reviews/${reviewId}`, {
       body: JSON.stringify({ content: "수정한 후기예요.", tags: ["소통이 원활해요"] }),
@@ -63,9 +64,9 @@ describe("review MSW handlers", () => {
     });
     expect(updateResponse.ok).toBe(true);
 
-    const updatedReviewResponse = await fetch(`https://api.example.test/v1/reviews/${reviewId}`);
-    const updatedReview = (await updatedReviewResponse.json()) as GetReviewResponse;
-    expect(updatedReview.data).toEqual(
+    const updatedOverviewResponse = await fetch(overviewUrl);
+    const updatedOverview = (await updatedOverviewResponse.json()) as GetReviewOverviewResponse;
+    expect(updatedOverview.data?.reviews.find((review) => review.reviewId === reviewId)).toEqual(
       expect.objectContaining({ content: "수정한 후기예요.", tags: ["소통이 원활해요"] }),
     );
 
@@ -74,11 +75,14 @@ describe("review MSW handlers", () => {
     });
     expect(deleteResponse.ok).toBe(true);
 
-    const restoredTargetsResponse = await fetch(targetsUrl);
-    const restoredTargets = (await restoredTargetsResponse.json()) as GetReviewTargetsResponse;
-    expect(restoredTargets.data?.submittedCount).toBe(2);
+    const restoredOverviewResponse = await fetch(overviewUrl);
+    const restoredOverview = (await restoredOverviewResponse.json()) as GetReviewOverviewResponse;
+    expect(restoredOverview.data?.submittedCount).toBe(2);
     expect(
-      restoredTargets.data?.targets.find(({ memberId }) => memberId === writableTarget?.memberId),
-    ).toEqual(expect.objectContaining({ reviewId: null, status: "WRITABLE" }));
+      restoredOverview.data?.targets.find(({ memberId }) => memberId === writableTarget?.memberId),
+    ).toEqual(expect.objectContaining({ status: "WRITABLE" }));
+    expect(restoredOverview.data?.reviews.some((review) => review.reviewId === reviewId)).toBe(
+      false,
+    );
   });
 });

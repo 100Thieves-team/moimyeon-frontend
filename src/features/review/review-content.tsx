@@ -4,7 +4,7 @@ import { useSuspenseQueries } from "@tanstack/react-query";
 import Link from "next/link";
 import { useState } from "react";
 import {
-  getReviewTargetsOptions,
+  getReviewOverviewOptions,
   roomDetailOptions,
 } from "@/api/generated/@tanstack/react-query.gen";
 import { formatCompletedDate, isSubmittedTarget } from "./review-model";
@@ -17,26 +17,26 @@ type ReviewContentProps = {
 };
 
 export function ReviewContent({ roomId }: ReviewContentProps) {
-  const [{ data: roomResponse }, { data: targetsResponse }] = useSuspenseQueries({
+  const [{ data: roomResponse }, { data: overviewResponse }] = useSuspenseQueries({
     queries: [
       roomDetailOptions({ path: { roomId } }),
-      getReviewTargetsOptions({ path: { roomId } }),
+      getReviewOverviewOptions({ path: { roomId } }),
     ],
   });
   const [expandedMemberId, setExpandedMemberId] = useState<string | null>(null);
   const room = roomResponse.data;
-  const reviewTargets = targetsResponse.data;
+  const reviewOverview = overviewResponse.data;
 
   if (room === undefined || room === null) {
     throw new Error("Failed to load room detail");
   }
 
-  if (reviewTargets === undefined || reviewTargets === null) {
-    throw new Error("Failed to load review targets");
+  if (reviewOverview === undefined || reviewOverview === null) {
+    throw new Error("Failed to load review overview");
   }
 
   const completedDate = formatCompletedDate(room.schedule?.startAt);
-  const { targets } = reviewTargets;
+  const { targets } = reviewOverview;
 
   /* 제출을 마치면 리스트 순서상 다음 WRITABLE 대상을 이어서 연다 (끝이면 앞에서부터) */
   const openNextWritable = (memberId: string) => {

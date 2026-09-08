@@ -1,14 +1,11 @@
 "use client";
 
 import { Collapsible } from "@base-ui/react/collapsible";
-import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { Check, ChevronDown } from "lucide-react";
-import { Suspense, type ReactNode } from "react";
-import { ErrorBoundary } from "react-error-boundary";
+import type { ReactNode } from "react";
 import { TrustCardPopover } from "@/features/trust-card/trust-card-popover";
 import { CreateReviewForm } from "./create-review-form";
-import { EditReviewForm, EditReviewFormError } from "./edit-review-form";
-import * as reviewFormStyles from "./review-form.css";
+import { EditReviewForm } from "./edit-review-form";
 import type { ReviewTarget } from "./review-model";
 import * as styles from "./target-row.css";
 
@@ -102,38 +99,9 @@ export function TargetRow(props: TargetRowProps) {
 }
 
 export function SubmittedTargetRow(props: TargetRowProps) {
-  if (props.target.reviewId == null) {
-    return (
-      <TargetRowFrame {...props} submitted>
-        <div className={styles.queryState}>
-          <p role="alert">기존 후기를 불러오지 못했어요.</p>
-        </div>
-      </TargetRowFrame>
-    );
-  }
-
-  const reviewId = props.target.reviewId;
-
   return (
     <TargetRowFrame {...props} submitted>
-      <QueryErrorResetBoundary>
-        {({ reset }) => (
-          <ErrorBoundary FallbackComponent={EditReviewFormError} onReset={reset}>
-            <Suspense
-              fallback={
-                <p className={reviewFormStyles.queryState}>기존 후기를 불러오는 중이에요.</p>
-              }
-            >
-              <EditReviewForm
-                onCompleted={props.onCompleted}
-                reviewId={reviewId}
-                roomId={props.roomId}
-                target={props.target}
-              />
-            </Suspense>
-          </ErrorBoundary>
-        )}
-      </QueryErrorResetBoundary>
+      <EditReviewForm onCompleted={props.onCompleted} roomId={props.roomId} target={props.target} />
     </TargetRowFrame>
   );
 }

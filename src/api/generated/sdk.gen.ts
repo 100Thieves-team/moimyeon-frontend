@@ -94,6 +94,9 @@ import type {
   GetReceivedReviewsResponses,
   GetReviewData,
   GetReviewErrors,
+  GetReviewOverviewData,
+  GetReviewOverviewErrors,
+  GetReviewOverviewResponses,
   GetReviewResponses,
   GetReviewTargetsData,
   GetReviewTargetsErrors,
@@ -262,6 +265,7 @@ import {
   zGetQuestionCardSetsResponse,
   zGetQuestionCommentsResponse,
   zGetReceivedReviewsResponse,
+  zGetReviewOverviewResponse,
   zGetReviewResponse,
   zGetReviewTargetsResponse,
   zGetRoomCommentsResponse,
@@ -1459,9 +1463,11 @@ export const skipReview = <ThrowOnError extends boolean = true>(
   });
 
 /**
- * 후기 작성 대상 조회
+ * 후기 작성 대상 조회 (Deprecated)
  *
- * 완료 룸의 출석자 중 본인을 제외한 후기 대상과 제출 진행 상태를 조회한다. 미인증 E1102, 룸 없음 E1405, 완료 전 E2001, 작성자 결석 E2002로 응답한다.
+ * Deprecated: GET /v1/rooms/{roomId}/reviews/overview로 이전한다. 기존 클라이언트의 전환 기간에만 후기 대상과 제출 진행 상태를 이전 응답 계약으로 제공한다.
+ *
+ * @deprecated
  */
 export const getReviewTargets = <ThrowOnError extends boolean = true>(
   options: Options<GetReviewTargetsData, ThrowOnError>,
@@ -1567,7 +1573,7 @@ export const deleteRoomComment = <ThrowOnError extends boolean = true>(
 /**
  * 룸 나가기
  *
- * 참여 중이 아니면 나갈 수 없다(E1419). 신청만 넣은 사용자와 이미 나간 사람이 모두 여기에 해당한다.
+ * 참여자가 스스로 룸에서 나간다(「룸 참여」 §4.6). 모집 중에는 자유롭게 나갈 수 있고, 진행이 확정된 뒤에도 현재 인원이 최소 진행 인원보다 많으면 나갈 수 있다. 나가면 자리가 비어 방장이 대기 신청을 수락할 수 있고, 모집 중이면 같은 룸에 다시 신청할 수 있다. 방장이 나가면 방장 자리가 자동으로 넘어간다(참여자 → 대기 신청자 순). 넘길 사람이 아무도 없으면 룸이 취소된다.
  */
 export const roomLeave = <ThrowOnError extends boolean = true>(
   options: Options<RoomLeaveData, ThrowOnError>,
@@ -1595,7 +1601,7 @@ export const getQuestionCardSet = <ThrowOnError extends boolean = true>(
 /**
  * 진행 준비 질문 삭제
  *
- * 다른 작성자의 활성 꼬리질문이 달린 원 질문은 삭제하지 않는다.
+ * CONFIRMED 룸에서 본인이 작성한 질문 또는 꼬리질문을 소프트 삭제한다. 다른 작성자의 활성 꼬리질문이 달린 원 질문은 E1508로 거부한다.
  */
 export const deletePreparationQuestion = <ThrowOnError extends boolean = true>(
   options: Options<DeletePreparationQuestionData, ThrowOnError>,
@@ -1613,6 +1619,22 @@ export const deletePreparationQuestion = <ThrowOnError extends boolean = true>(
     url: "/v1/rooms/{roomId}/questions/{questionId}",
     ...options,
   });
+
+/**
+ * 룸별 후기 작성 개요 조회
+ *
+ * 완료 룸의 출석자 중 본인을 제외한 후기 대상, 대상별 작성 상태와 작성자가 해당 룸에 제출한 후기를 조회한다. 미인증 E1102, 룸 없음 E1405, 완료 전 E2001, 작성자 결석 E2002로 응답한다.
+ */
+export const getReviewOverview = <ThrowOnError extends boolean = true>(
+  options: Options<GetReviewOverviewData, ThrowOnError>,
+): RequestResult<GetReviewOverviewResponses, GetReviewOverviewErrors, ThrowOnError> =>
+  (options.client ?? client).get<GetReviewOverviewResponses, GetReviewOverviewErrors, ThrowOnError>(
+    {
+      responseValidator: async (data) => await zGetReviewOverviewResponse.parseAsync(data),
+      url: "/v1/rooms/{roomId}/reviews/overview",
+      ...options,
+    },
+  );
 
 /**
  * 기본 이력서 지정

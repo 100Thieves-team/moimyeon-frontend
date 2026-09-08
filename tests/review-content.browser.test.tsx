@@ -9,8 +9,7 @@ import "@/styles/global.css";
 
 const mocks = vi.hoisted(() => ({
   deleteReview: vi.fn(),
-  getReview: vi.fn(),
-  getReviewTargets: vi.fn(),
+  getReviewOverview: vi.fn(),
   publicProfile: vi.fn(),
   roomDetail: vi.fn(),
   submitReview: vi.fn(),
@@ -19,17 +18,12 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
   deleteReviewMutation: () => ({ mutationFn: (options: unknown) => mocks.deleteReview(options) }),
-  getReviewOptions: ({ path }: { path: { reviewId: string } }) => ({
-    queryFn: () => mocks.getReview(path.reviewId),
-    queryKey: ["getReview", path.reviewId],
+  getReviewOverviewOptions: ({ path }: { path: { roomId: string } }) => ({
+    queryFn: () => mocks.getReviewOverview(path.roomId),
+    queryKey: ["getReviewOverview", path.roomId],
   }),
-  getReviewQueryKey: ({ path }: { path: { reviewId: string } }) => ["getReview", path.reviewId],
-  getReviewTargetsOptions: ({ path }: { path: { roomId: string } }) => ({
-    queryFn: () => mocks.getReviewTargets(path.roomId),
-    queryKey: ["getReviewTargets", path.roomId],
-  }),
-  getReviewTargetsQueryKey: ({ path }: { path: { roomId: string } }) => [
-    "getReviewTargets",
+  getReviewOverviewQueryKey: ({ path }: { path: { roomId: string } }) => [
+    "getReviewOverview",
     path.roomId,
   ],
   publicProfileOptions: ({ path }: { path: { memberId: string } }) => ({
@@ -63,59 +57,45 @@ const roomResponse = {
   result: "SUCCESS",
 };
 
-const targetsResponse = {
+const overviewResponse = {
   data: {
+    reviews: [
+      {
+        anonymous: true,
+        content: "구체적으로 피드백해 주셨어요.",
+        reviewId: 101,
+        tags: ["피드백이 구체적이에요"],
+        targetMemberId: submittedMemberId,
+      },
+      {
+        anonymous: false,
+        content: "질문이 명확했어요.",
+        reviewId: 102,
+        tags: ["질문이 날카로워요"],
+        targetMemberId: secondSubmittedMemberId,
+      },
+    ],
     submittedCount: 2,
     targets: [
       {
         memberId: submittedMemberId,
         nickname: "꼼꼼한 수달",
-        reviewId: 101,
         status: "SUBMITTED",
       },
       {
         memberId: secondSubmittedMemberId,
         nickname: "명쾌한 여우",
-        reviewId: 102,
         status: "SUBMITTED",
       },
       {
         memberId: hostMemberId,
         nickname: "차분한 고래",
-        reviewId: null,
         status: "WRITABLE",
       },
     ],
     totalCount: 3,
   },
   result: "SUCCESS",
-};
-
-const reviews = {
-  "101": {
-    data: {
-      anonymous: true,
-      content: "구체적으로 피드백해 주셨어요.",
-      reviewId: 101,
-      roomId,
-      tags: ["피드백이 구체적이에요"],
-      targetMemberId: submittedMemberId,
-      targetNickname: "꼼꼼한 수달",
-    },
-    result: "SUCCESS",
-  },
-  "102": {
-    data: {
-      anonymous: false,
-      content: "질문이 명확했어요.",
-      reviewId: 102,
-      roomId,
-      tags: ["질문이 날카로워요"],
-      targetMemberId: secondSubmittedMemberId,
-      targetNickname: "명쾌한 여우",
-    },
-    result: "SUCCESS",
-  },
 };
 
 const publicProfileResponse = {
@@ -145,7 +125,6 @@ function createQueryClient() {
 async function renderReviewContent() {
   const queryClient = createQueryClient();
   queryClient.setQueryData(["roomDetail", roomId], roomResponse);
-  queryClient.setQueryData(["getReviewTargets", roomId], targetsResponse);
 
   return render(
     <QueryClientProvider client={queryClient}>
@@ -161,10 +140,7 @@ async function renderReviewContent() {
 beforeEach(async () => {
   vi.clearAllMocks();
   mocks.roomDetail.mockResolvedValue(roomResponse);
-  mocks.getReviewTargets.mockResolvedValue(targetsResponse);
-  mocks.getReview.mockImplementation((reviewId: keyof typeof reviews) =>
-    Promise.resolve(reviews[reviewId]),
-  );
+  mocks.getReviewOverview.mockResolvedValue(overviewResponse);
   mocks.publicProfile.mockResolvedValue(publicProfileResponse);
   mocks.deleteReview.mockResolvedValue({ result: "SUCCESS" });
   mocks.submitReview.mockResolvedValue({ result: "SUCCESS" });
@@ -176,11 +152,7 @@ describe("ReviewContent", () => {
   it("행을 펼치기 전에 제출된 모든 후기를 불러오고 기존 값으로 폼을 채운다", async () => {
     const screen = await renderReviewContent();
 
-    await expect.poll(() => mocks.getReview.mock.calls.length).toBe(2);
-    expect(mocks.getReview.mock.calls.map(([reviewId]) => reviewId).toSorted()).toEqual([
-      "101",
-      "102",
-    ]);
+    await expect.poll(() => mocks.getReviewOverview.mock.calls.length).toBe(1);
 
     await screen.getByRole("button", { name: "꼼꼼한 수달 후기 수정 펼치기" }).click();
 
@@ -190,7 +162,7 @@ describe("ReviewContent", () => {
     await expect
       .element(screen.getByRole("button", { name: "피드백이 구체적이에요" }))
       .toHaveAttribute("data-pressed", "");
-    expect(mocks.getReview).toHaveBeenCalledTimes(2);
+    expect(mocks.getReviewOverview).toHaveBeenCalledTimes(1);
     await expect
       .element(screen.getByText("이전에 남긴 내용은 불러오지 못해요."))
       .not.toBeInTheDocument();
@@ -198,7 +170,7 @@ describe("ReviewContent", () => {
 
   it("프리필된 후기를 수정할 때 익명 여부를 제외한 값만 보낸다", async () => {
     const screen = await renderReviewContent();
-    await expect.poll(() => mocks.getReview.mock.calls.length).toBe(2);
+    await expect.poll(() => mocks.getReviewOverview.mock.calls.length).toBe(1);
     await screen.getByRole("button", { name: "꼼꼼한 수달 후기 수정 펼치기" }).click();
     await screen.getByRole("textbox", { name: "한 줄 후기" }).fill("함께 연습하기 좋았어요.");
 
@@ -212,6 +184,7 @@ describe("ReviewContent", () => {
       },
       path: { reviewId: "101" },
     });
+    await expect.poll(() => mocks.getReviewOverview.mock.calls.length).toBe(2);
   });
 
   it("작성 가능한 대상에게 새 후기를 제출한다", async () => {
@@ -233,42 +206,26 @@ describe("ReviewContent", () => {
       },
       path: { roomId },
     });
+    await expect.poll(() => mocks.getReviewOverview.mock.calls.length).toBe(2);
   });
 
-  it("한 후기 조회가 실패해도 다른 행을 수정할 수 있고 실패한 행을 재시도한다", async () => {
-    mocks.getReview.mockImplementation((reviewId: keyof typeof reviews) =>
-      reviewId === "101"
-        ? Promise.reject(new Error("network"))
-        : Promise.resolve(reviews[reviewId]),
-    );
+  it("제출한 후기를 삭제하고 후기 개요를 다시 불러온다", async () => {
     const screen = await renderReviewContent();
-    await expect.poll(() => mocks.getReview.mock.calls.length).toBe(2);
-
-    await screen.getByRole("button", { name: "명쾌한 여우 후기 수정 펼치기" }).click();
-    await expect
-      .element(screen.getByRole("textbox", { name: "한 줄 후기" }))
-      .toHaveValue("질문이 명확했어요.");
+    await expect.poll(() => mocks.getReviewOverview.mock.calls.length).toBe(1);
 
     await screen.getByRole("button", { name: "꼼꼼한 수달 후기 수정 펼치기" }).click();
-    await expect
-      .element(screen.getByRole("alert"))
-      .toHaveTextContent("기존 후기를 불러오지 못했어요.");
+    await screen.getByRole("button", { name: "후기 삭제하기" }).click();
+    await screen.getByRole("button", { name: "삭제하기" }).click();
 
-    mocks.getReview.mockImplementation((reviewId: keyof typeof reviews) =>
-      Promise.resolve(reviews[reviewId]),
-    );
-    await screen.getByRole("button", { name: "다시 불러오기" }).click();
-
-    await expect
-      .element(screen.getByRole("textbox", { name: "한 줄 후기" }))
-      .toHaveValue("구체적으로 피드백해 주셨어요.");
-    expect(mocks.getReview).toHaveBeenCalledTimes(3);
+    await expect.poll(() => mocks.deleteReview.mock.calls.length).toBe(1);
+    expect(mocks.deleteReview).toHaveBeenCalledWith({ path: { reviewId: "101" } });
+    await expect.poll(() => mocks.getReviewOverview.mock.calls.length).toBe(2);
   });
 
   it("공개 신뢰 카드 조회 실패를 팝오버 안에서 재시도한다", async () => {
     mocks.publicProfile.mockRejectedValueOnce(new Error("network"));
     const screen = await renderReviewContent();
-    await expect.poll(() => mocks.getReview.mock.calls.length).toBe(2);
+    await expect.poll(() => mocks.getReviewOverview.mock.calls.length).toBe(1);
 
     await screen.getByRole("button", { name: "꼼꼼한 수달 공개 신뢰 카드 열기" }).click();
     await expect
