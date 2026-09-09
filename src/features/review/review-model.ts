@@ -26,6 +26,7 @@ export function getReviewErrorMessage(error: unknown) {
 const completedDateFormatter = new Intl.DateTimeFormat("ko-KR", {
   day: "numeric",
   month: "long",
+  timeZone: "Asia/Seoul",
   weekday: "short",
 });
 

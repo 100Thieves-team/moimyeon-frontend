@@ -110,7 +110,7 @@ export function isMockReviewRoom(roomId: string) {
 }
 
 export function isMockReviewId(reviewId: number) {
-  return reviewId >= 9101 && reviewId < 9200;
+  return reviewId >= 9101 && reviewId < nextReviewId;
 }
 
 export function resetMockReviewState() {
