@@ -859,6 +859,72 @@ export type V1RoomsRoomIdQuestions282474051 = {
   content: string;
 };
 
+export type V1RoomsRoomIdReviewsOverview1524615499 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 작성자가 이 룸에 제출한 후기 (빈 배열 가능)
+     */
+    reviews: Array<{
+      /**
+       * 후기 대상 회원 id
+       */
+      targetMemberId: string;
+      /**
+       * 작성자 닉네임 비공개 여부
+       */
+      anonymous: boolean;
+      /**
+       * 후기 id
+       */
+      reviewId: number;
+      /**
+       * 텍스트 후기 (작성하지 않았으면 빈 문자열)
+       */
+      content: string;
+      /**
+       * 평가 태그 (빈 배열 가능)
+       */
+      tags: Array<
+        | {
+            [key: string]: unknown;
+          }
+        | boolean
+        | string
+        | number
+      >;
+    }>;
+    /**
+     * 제출 완료한 대상 수
+     */
+    submittedCount: number;
+    /**
+     * 후기 작성 대상 수
+     */
+    totalCount: number;
+    /**
+     * 후기 작성 대상
+     */
+    targets: Array<{
+      /**
+       * 대상 닉네임
+       */
+      nickname: string;
+      /**
+       * 작성 상태 (WRITABLE | SUBMITTED)
+       */
+      status: string;
+      /**
+       * 대상 회원 id
+       */
+      memberId: string;
+    }>;
+  } | null;
+};
+
 export type V1RoomsRoomIdReviews1785905513 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -961,44 +1027,6 @@ export type V1FollowUpQuestions1363007138 = {
   roomId: string;
 };
 
-export type V1RoomsRoomIdReviewTargets2072286757 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 제출 완료한 대상 수
-     */
-    submittedCount: number;
-    /**
-     * 후기 작성 대상 수
-     */
-    totalCount: number;
-    /**
-     * 후기 작성 대상
-     */
-    targets: Array<{
-      /**
-       * 대상 닉네임
-       */
-      nickname: string;
-      /**
-       * 제출된 후기 id. WRITABLE 대상이면 null
-       */
-      reviewId?: number | null;
-      /**
-       * 작성 상태 (WRITABLE | SUBMITTED)
-       */
-      status: string;
-      /**
-       * 대상 회원 id
-       */
-      memberId: string;
-    }>;
-  } | null;
-};
-
 export type V1RoomsFormOptions38619118 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -1070,6 +1098,44 @@ export type V1RoomsFormOptions38619118 = {
        * 회차 표시명
        */
       label: string;
+    }>;
+  } | null;
+};
+
+export type V1RoomsRoomIdReviewTargets2072286757 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 제출 완료한 대상 수
+     */
+    submittedCount: number;
+    /**
+     * 후기 작성 대상 수
+     */
+    totalCount: number;
+    /**
+     * 후기 작성 대상
+     */
+    targets: Array<{
+      /**
+       * 대상 닉네임
+       */
+      nickname: string;
+      /**
+       * 제출된 후기 id. WRITABLE 대상이면 null
+       */
+      reviewId?: number | null;
+      /**
+       * 작성 상태 (WRITABLE | SUBMITTED)
+       */
+      status: string;
+      /**
+       * 대상 회원 id
+       */
+      memberId: string;
     }>;
   } | null;
 };
@@ -1264,40 +1330,6 @@ export type V1CompaniesCompanyIdJobPostings1890921117 = {
   } | null;
 };
 
-export type V1RoomProgresses612761132 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 진행을 시작한 방장 회원 id
-     */
-    hostMemberId: string;
-    /**
-     * 확정된 출석 목록
-     */
-    attendances: Array<{
-      /**
-       * 참여자 닉네임. 탈퇴한 회원은 대체 표기로 내려간다
-       */
-      nickname: string;
-      /**
-       * ATTENDED | ABSENT
-       */
-      status: string;
-      /**
-       * 참여자 회원 id
-       */
-      memberId: string;
-    }>;
-    /**
-     * 시작 후 룸 상태 (IN_PROGRESS)
-     */
-    status: string;
-  } | null;
-};
-
 export type V1MembersMe1349704155 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -1350,6 +1382,40 @@ export type V1MembersMe1349704155 = {
      * 회원 식별자 (UUID)
      */
     memberId: string;
+  } | null;
+};
+
+export type V1RoomProgresses612761132 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 진행을 시작한 방장 회원 id
+     */
+    hostMemberId: string;
+    /**
+     * 확정된 출석 목록
+     */
+    attendances: Array<{
+      /**
+       * 참여자 닉네임. 탈퇴한 회원은 대체 표기로 내려간다
+       */
+      nickname: string;
+      /**
+       * ATTENDED | ABSENT
+       */
+      status: string;
+      /**
+       * 참여자 회원 id
+       */
+      memberId: string;
+    }>;
+    /**
+     * 시작 후 룸 상태 (IN_PROGRESS)
+     */
+    status: string;
   } | null;
 };
 
@@ -1589,6 +1655,69 @@ export type V1QuestionsQuestionId496267733 = {
   roomId: string;
 };
 
+export type V1RoomsRoomIdApplicationsMe2061746466 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    resume?: {
+      file?: {
+        /**
+         * 제출 당시 파일명
+         */
+        originalName: string;
+        /**
+         * 제출 당시 파일 MIME 타입
+         */
+        contentType: string;
+        /**
+         * 제출 당시 파일 크기 (bytes)
+         */
+        sizeBytes: number;
+      } | null;
+      /**
+       * 제출 원본이 된 보관 이력서 id (UUID)
+       */
+      resumeId: string;
+      aiSummary?: {
+        /**
+         * AI 요약 내용 (DONE일 때 제공)
+         */
+        text?: string | null;
+        /**
+         * AI 요약 상태 (PROCESSING | DONE | FAILED)
+         */
+        status: string;
+      } | null;
+    } | null;
+    /**
+     * 내가 입력한 전달 사항 (미입력 시 빈 문자열)
+     */
+    note: string;
+    /**
+     * 참가 신청 id
+     */
+    applicationId: number;
+    /**
+     * 신청 시각 (yyyy-MM-ddTHH:mm:ss)
+     */
+    appliedAt: string;
+    /**
+     * 신청자에게 표시할 상태명
+     */
+    statusLabel: string;
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+    /**
+     * 신청 상태 (PENDING | ACCEPTED | REJECTED | WITHDRAWN | ROOM_CANCELED | ROOM_CONFIRMED)
+     */
+    status: string;
+  } | null;
+};
+
 export type V1RoomsRoomId349770905 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -1802,69 +1931,6 @@ export type V1RoomsRoomId349770905 = {
     }>;
     /**
      * 룸 상태 (RECRUITING | CONFIRMED | IN_PROGRESS | COMPLETED | CANCELED)
-     */
-    status: string;
-  } | null;
-};
-
-export type V1RoomsRoomIdApplicationsMe2061746466 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    resume?: {
-      file?: {
-        /**
-         * 제출 당시 파일명
-         */
-        originalName: string;
-        /**
-         * 제출 당시 파일 MIME 타입
-         */
-        contentType: string;
-        /**
-         * 제출 당시 파일 크기 (bytes)
-         */
-        sizeBytes: number;
-      } | null;
-      /**
-       * 제출 원본이 된 보관 이력서 id (UUID)
-       */
-      resumeId: string;
-      aiSummary?: {
-        /**
-         * AI 요약 내용 (DONE일 때 제공)
-         */
-        text?: string | null;
-        /**
-         * AI 요약 상태 (PROCESSING | DONE | FAILED)
-         */
-        status: string;
-      } | null;
-    } | null;
-    /**
-     * 내가 입력한 전달 사항 (미입력 시 빈 문자열)
-     */
-    note: string;
-    /**
-     * 참가 신청 id
-     */
-    applicationId: number;
-    /**
-     * 신청 시각 (yyyy-MM-ddTHH:mm:ss)
-     */
-    appliedAt: string;
-    /**
-     * 신청자에게 표시할 상태명
-     */
-    statusLabel: string;
-    /**
-     * 룸 id (UUID)
-     */
-    roomId: string;
-    /**
-     * 신청 상태 (PENDING | ACCEPTED | REJECTED | WITHDRAWN | ROOM_CANCELED | ROOM_CONFIRMED)
      */
     status: string;
   } | null;
@@ -2381,6 +2447,51 @@ export type V1MembersMeProfile934225230 = {
   } | null;
 };
 
+export type V1MembersMeReceivedReviews2000779045 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 현재 페이지의 받은 후기
+     */
+    reviews: Array<{
+      /**
+       * 작성자 표시명. 익명이면 익명의 참여자, 공개이면 현재 닉네임
+       */
+      authorNickname: string;
+      /**
+       * 후기 id
+       */
+      reviewId: number;
+      /**
+       * 한 줄 후기 (작성하지 않았으면 빈 문자열)
+       */
+      content: string;
+      /**
+       * 평가 태그
+       */
+      tags: Array<
+        | {
+            [key: string]: unknown;
+          }
+        | boolean
+        | string
+        | number
+      >;
+    }>;
+    /**
+     * 다음 페이지 존재 여부
+     */
+    hasNext: boolean;
+    /**
+     * 공개 가능한 받은 후기 전체 수
+     */
+    totalCount: number;
+  } | null;
+};
+
 export type V1RoomsRoomIdApplicationsApplicationIdReject855969760 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -2612,50 +2723,6 @@ export type V1RoomsRoomIdApplications1094172635 = {
         memberId: string;
       } | null;
     }>;
-  } | null;
-};
-
-export type V1ReviewsReviewId20839761 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 후기 대상 회원 id
-     */
-    targetMemberId: string;
-    /**
-     * 익명 작성 여부
-     */
-    anonymous: boolean;
-    /**
-     * 후기 id
-     */
-    reviewId: number;
-    /**
-     * 한 줄 후기 (null 가능)
-     */
-    content?: string | null;
-    /**
-     * 후기 대상 회원 닉네임. 탈퇴한 회원은 대체 표기로 내려간다
-     */
-    targetNickname: string;
-    /**
-     * 후기가 작성된 룸 id
-     */
-    roomId: string;
-    /**
-     * 평가 태그 (빈 배열 가능)
-     */
-    tags: Array<
-      | {
-          [key: string]: unknown;
-        }
-      | boolean
-      | string
-      | number
-    >;
   } | null;
 };
 
@@ -2907,51 +2974,6 @@ export type V1Terms1673199050 = {
   } | null;
 };
 
-export type V1MembersMeReceivedReviews785981355 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 현재 페이지의 받은 후기
-     */
-    reviews: Array<{
-      /**
-       * 작성자 표시명. 익명이면 익명의 참여자, 공개이면 현재 닉네임
-       */
-      authorNickname: string;
-      /**
-       * 후기 id
-       */
-      reviewId: number;
-      /**
-       * 한 줄 후기 (null 가능)
-       */
-      content?: string | null;
-      /**
-       * 평가 태그
-       */
-      tags: Array<
-        | {
-            [key: string]: unknown;
-          }
-        | boolean
-        | string
-        | number
-      >;
-    }>;
-    /**
-     * 다음 페이지 존재 여부
-     */
-    hasNext: boolean;
-    /**
-     * 공개 가능한 받은 후기 전체 수
-     */
-    totalCount: number;
-  } | null;
-};
-
 export type V1JobPostingsSearch1628359421 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -3144,6 +3166,50 @@ export type V1RoomsRoomIdQuestionSets2052308651 = {
      * 내 카드셋에 활성 질문 또는 꼬리질문을 남긴 참여자 수
      */
     myCardSetPreparerCount: number;
+  } | null;
+};
+
+export type V1ReviewsReviewId949065321 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 후기 대상 회원 id
+     */
+    targetMemberId: string;
+    /**
+     * 익명 작성 여부
+     */
+    anonymous: boolean;
+    /**
+     * 후기 id
+     */
+    reviewId: number;
+    /**
+     * 한 줄 후기 (작성하지 않았으면 빈 문자열)
+     */
+    content: string;
+    /**
+     * 후기 대상 회원 닉네임. 탈퇴한 회원은 대체 표기로 내려간다
+     */
+    targetNickname: string;
+    /**
+     * 후기가 작성된 룸 id
+     */
+    roomId: string;
+    /**
+     * 평가 태그 (빈 배열 가능)
+     */
+    tags: Array<
+      | {
+          [key: string]: unknown;
+        }
+      | boolean
+      | string
+      | number
+    >;
   } | null;
 };
 
@@ -4639,7 +4705,7 @@ export type GetReviewResponses = {
   /**
    * 200
    */
-  200: V1ReviewsReviewId20839761;
+  200: V1ReviewsReviewId949065321;
 };
 
 export type GetReviewResponse = GetReviewResponses[keyof GetReviewResponses];
@@ -4869,7 +4935,7 @@ export type GetReceivedReviewsData = {
   path?: never;
   query: {
     /**
-     * 직전 페이지 마지막 후기 id
+     * 양수가 아닌 마지막 후기 id
      */
     lastReviewId: string;
     /**
@@ -4897,7 +4963,7 @@ export type GetReceivedReviewsResponses = {
   /**
    * 200
    */
-  200: V1MembersMeReceivedReviews785981355;
+  200: V1MembersMeReceivedReviews2000779045;
 };
 
 export type GetReceivedReviewsResponse =
@@ -5081,9 +5147,6 @@ export type RoomApplicationsResponse = RoomApplicationsResponses[keyof RoomAppli
 export type SubmitRoomApplicationData = {
   body?: V1RoomsRoomIdApplications240308819;
   path: {
-    /**
-     * 참가 신청할 룸 id (UUID)
-     */
     roomId: string;
   };
   query?: never;
@@ -5117,9 +5180,6 @@ export type SubmitRoomApplicationResponse =
 export type CancelRoomData = {
   body?: never;
   path: {
-    /**
-     * 취소할 룸 식별자
-     */
     roomId: string;
   };
   query?: never;
@@ -5147,6 +5207,9 @@ export type CancelRoomResponse = CancelRoomResponses[keyof CancelRoomResponses];
 export type GetRoomCommentsData = {
   body?: never;
   path: {
+    /**
+     * 룸 id (UUID)
+     */
     roomId: string;
   };
   query?: {
@@ -5283,6 +5346,9 @@ export type RoomParticipantsResponse = RoomParticipantsResponses[keyof RoomParti
 export type GetQuestionCardSetsData = {
   body?: never;
   path: {
+    /**
+     * 룸 id (UUID)
+     */
     roomId: string;
   };
   query?: never;
@@ -5699,7 +5765,13 @@ export type GetQuestionCardSetResponse =
 export type DeletePreparationQuestionData = {
   body?: never;
   path: {
+    /**
+     * 룸 id (UUID)
+     */
     roomId: string;
+    /**
+     * 삭제할 질문 또는 꼬리질문 id
+     */
     questionId: string;
   };
   query?: never;
@@ -5725,6 +5797,49 @@ export type DeletePreparationQuestionResponses = {
 
 export type DeletePreparationQuestionResponse =
   DeletePreparationQuestionResponses[keyof DeletePreparationQuestionResponses];
+
+export type GetReviewOverviewData = {
+  body?: never;
+  path: {
+    /**
+     * 완료된 룸 id (UUID)
+     */
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/reviews/overview";
+};
+
+export type GetReviewOverviewErrors = {
+  /**
+   * 401
+   */
+  401: V1RoomsCreationLimit910352763;
+  /**
+   * 403
+   */
+  403: V1RoomsCreationLimit910352763;
+  /**
+   * 404
+   */
+  404: V1RoomsCreationLimit910352763;
+  /**
+   * 409
+   */
+  409: V1RoomsCreationLimit910352763;
+};
+
+export type GetReviewOverviewError = GetReviewOverviewErrors[keyof GetReviewOverviewErrors];
+
+export type GetReviewOverviewResponses = {
+  /**
+   * 200
+   */
+  200: V1RoomsRoomIdReviewsOverview1524615499;
+};
+
+export type GetReviewOverviewResponse =
+  GetReviewOverviewResponses[keyof GetReviewOverviewResponses];
 
 export type MakeResumeDefaultData = {
   body?: never;
@@ -5864,7 +5979,13 @@ export type RejectApplicationResponse =
 export type LeavePreparationFollowUpQuestionData = {
   body?: V1RoomsRoomIdQuestionsQuestionIdFollowUps1317980453;
   path: {
+    /**
+     * 룸 id (UUID)
+     */
     roomId: string;
+    /**
+     * 원 질문 id
+     */
     questionId: string;
   };
   query?: never;

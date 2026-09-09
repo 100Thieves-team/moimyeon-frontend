@@ -47,7 +47,6 @@ export const roomSummary = style({
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.floating,
   backgroundColor: vars.color.background,
-  boxShadow: vars.shadow.cardRaise,
 });
 
 export const roomCopy = style({
@@ -101,7 +100,6 @@ export const formCard = style({
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.media,
   backgroundColor: vars.color.background,
-  boxShadow: vars.shadow.cardRaise,
   "@media": { "screen and (max-width: 599px)": { padding: "2rem" } },
 });
 

@@ -35,3 +35,16 @@ description: 모이면의 React, Next.js App Router, Base UI, React Hook Form, T
 - `src/api/generated`는 직접 수정하지 않는다. OpenAPI 스키마 또는 generator 설정을 변경한 뒤 pnpm generate:api로 SDK를 다시 생성한다. 생성 후 전체 diff를 확인하고, 원격 OpenAPI의 다른 변경으로 생긴 예상하지 못한 결과는 현재 작업에 포함할지 확인한다.
 - SDK는 기본적으로 API 실패를 throw한다. 이 경우 성공 결과만 반환되므로 오류는 catch 또는 error boundary에서 처리한다. 특정 상태 코드나 API 오류 코드를 반환값으로 분기해야 할 때만 throwOnError: false를 사용하고 result.error와 result.response를 직접 확인한다.
 - Mutation 성공 후 변경된 데이터를 사용하는 생성 query key를 invalidate한다.
+
+## 개발 모킹
+
+- Server Component의 prefetch는 브라우저 Service Worker가 가로챌 수 없으므로 Node용 MSW `setupServer`도 함께 사용한다.
+- Next.js가 `globalThis.fetch`를 다시 패치해 먼저 설치된 MSW interceptor를 무효화할 수 있으므로, Node MSW는 `instrumentation.ts`가 아닌 Next의 fetch 패치 이후 평가되는 루트 `src/app/layout.tsx` 모듈에서 시작한다.
+- 브라우저에서는 `src/mocks/msw-provider.tsx`가 `worker.start()` 완료까지 렌더링을 보류해야 한다. 초기 요청이 Service Worker 등록보다 먼저 실행되는 경합을 만들지 않는다.
+
+### 출처
+
+- [Next.js discussion #56446: instrumentation은 Next.js의 전역 fetch 패치보다 먼저 실행됨](https://github.com/vercel/next.js/discussions/56446)
+- [Next.js PR #68193: 사용자 fetch 패치를 보존하기 위한 복원 시점 변경과 루트 layout 기반 MSW 예제](https://github.com/vercel/next.js/pull/68193)
+- [MSW examples PR #101: App Router에서 루트 layout과 Suspense 기반 MSW Provider를 구성한 예제](https://github.com/mswjs/examples/pull/101)
+- [MSW issue #1644: Next.js App Router의 서버 프로세스와 전역 interceptor 제약 조사](https://github.com/mswjs/msw/issues/1644)
