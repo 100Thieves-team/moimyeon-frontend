@@ -58,7 +58,7 @@ export function ReceivedReviews() {
       const { data: response } = await getReceivedReviews(pageOptions(pageParam));
       const page = response.data;
 
-      if (page === undefined) {
+      if (page == null) {
         throw new Error("Failed to load received reviews");
       }
 
