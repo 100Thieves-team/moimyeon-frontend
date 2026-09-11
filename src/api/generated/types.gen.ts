@@ -173,36 +173,6 @@ export type V1RoomsRoomIdComments1160873406 = {
   content: string;
 };
 
-export type Post191457252 = {
-  /**
-   * ResultType
-   */
-  result: string;
-  data?: {
-    /**
-     * Result Date
-     */
-    date: string;
-    /**
-     * Result Data
-     */
-    result: string;
-    /**
-     * Result Datetime
-     */
-    datetime: string;
-    /**
-     * Result Items
-     */
-    items: Array<{
-      /**
-       * Result Item
-       */
-      key: string;
-    }>;
-  } | null;
-};
-
 export type V1RoomsRoomIdComments1495367468 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -267,6 +237,36 @@ export type V1RoomsRoomIdComments1495367468 = {
      * 작성 가능 여부. false 면 읽기 전용
      */
     writable: boolean;
+  } | null;
+};
+
+export type Post191457252 = {
+  /**
+   * ResultType
+   */
+  result: string;
+  data?: {
+    /**
+     * Result Date
+     */
+    date: string;
+    /**
+     * Result Data
+     */
+    result: string;
+    /**
+     * Result Datetime
+     */
+    datetime: string;
+    /**
+     * Result Items
+     */
+    items: Array<{
+      /**
+       * Result Item
+       */
+      key: string;
+    }>;
   } | null;
 };
 
@@ -1655,69 +1655,6 @@ export type V1QuestionsQuestionId496267733 = {
   roomId: string;
 };
 
-export type V1RoomsRoomIdApplicationsMe2061746466 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    resume?: {
-      file?: {
-        /**
-         * 제출 당시 파일명
-         */
-        originalName: string;
-        /**
-         * 제출 당시 파일 MIME 타입
-         */
-        contentType: string;
-        /**
-         * 제출 당시 파일 크기 (bytes)
-         */
-        sizeBytes: number;
-      } | null;
-      /**
-       * 제출 원본이 된 보관 이력서 id (UUID)
-       */
-      resumeId: string;
-      aiSummary?: {
-        /**
-         * AI 요약 내용 (DONE일 때 제공)
-         */
-        text?: string | null;
-        /**
-         * AI 요약 상태 (PROCESSING | DONE | FAILED)
-         */
-        status: string;
-      } | null;
-    } | null;
-    /**
-     * 내가 입력한 전달 사항 (미입력 시 빈 문자열)
-     */
-    note: string;
-    /**
-     * 참가 신청 id
-     */
-    applicationId: number;
-    /**
-     * 신청 시각 (yyyy-MM-ddTHH:mm:ss)
-     */
-    appliedAt: string;
-    /**
-     * 신청자에게 표시할 상태명
-     */
-    statusLabel: string;
-    /**
-     * 룸 id (UUID)
-     */
-    roomId: string;
-    /**
-     * 신청 상태 (PENDING | ACCEPTED | REJECTED | WITHDRAWN | ROOM_CANCELED | ROOM_CONFIRMED)
-     */
-    status: string;
-  } | null;
-};
-
 export type V1RoomsRoomId349770905 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -1931,6 +1868,69 @@ export type V1RoomsRoomId349770905 = {
     }>;
     /**
      * 룸 상태 (RECRUITING | CONFIRMED | IN_PROGRESS | COMPLETED | CANCELED)
+     */
+    status: string;
+  } | null;
+};
+
+export type V1RoomsRoomIdApplicationsMe2061746466 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    resume?: {
+      file?: {
+        /**
+         * 제출 당시 파일명
+         */
+        originalName: string;
+        /**
+         * 제출 당시 파일 MIME 타입
+         */
+        contentType: string;
+        /**
+         * 제출 당시 파일 크기 (bytes)
+         */
+        sizeBytes: number;
+      } | null;
+      /**
+       * 제출 원본이 된 보관 이력서 id (UUID)
+       */
+      resumeId: string;
+      aiSummary?: {
+        /**
+         * AI 요약 내용 (DONE일 때 제공)
+         */
+        text?: string | null;
+        /**
+         * AI 요약 상태 (PROCESSING | DONE | FAILED)
+         */
+        status: string;
+      } | null;
+    } | null;
+    /**
+     * 내가 입력한 전달 사항 (미입력 시 빈 문자열)
+     */
+    note: string;
+    /**
+     * 참가 신청 id
+     */
+    applicationId: number;
+    /**
+     * 신청 시각 (yyyy-MM-ddTHH:mm:ss)
+     */
+    appliedAt: string;
+    /**
+     * 신청자에게 표시할 상태명
+     */
+    statusLabel: string;
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+    /**
+     * 신청 상태 (PENDING | ACCEPTED | REJECTED | WITHDRAWN | ROOM_CANCELED | ROOM_CONFIRMED)
      */
     status: string;
   } | null;
@@ -2447,6 +2447,45 @@ export type V1MembersMeProfile934225230 = {
   } | null;
 };
 
+export type V1RoomsRoomIdApplicationsApplicationIdReject855969760 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    recruit?: {
+      /**
+       * 현재 인원 (반려는 변동 없음)
+       */
+      current: number;
+      /**
+       * 최대 인원
+       */
+      max: number;
+      /**
+       * 모집 상태 (RECRUITING | CLOSED)
+       */
+      recruitStatus: string;
+      /**
+       * 모집 상태 표시명
+       */
+      recruitStatusLabel: string;
+    } | null;
+    /**
+     * 처리된 신청 id
+     */
+    applicationId: number;
+    /**
+     * 신청 상태 표시명 (반려)
+     */
+    statusLabel: string;
+    /**
+     * 신청 상태 (REJECTED)
+     */
+    status: string;
+  } | null;
+};
+
 export type V1MembersMeReceivedReviews2000779045 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -2489,45 +2528,6 @@ export type V1MembersMeReceivedReviews2000779045 = {
      * 공개 가능한 받은 후기 전체 수
      */
     totalCount: number;
-  } | null;
-};
-
-export type V1RoomsRoomIdApplicationsApplicationIdReject855969760 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    recruit?: {
-      /**
-       * 현재 인원 (반려는 변동 없음)
-       */
-      current: number;
-      /**
-       * 최대 인원
-       */
-      max: number;
-      /**
-       * 모집 상태 (RECRUITING | CLOSED)
-       */
-      recruitStatus: string;
-      /**
-       * 모집 상태 표시명
-       */
-      recruitStatusLabel: string;
-    } | null;
-    /**
-     * 처리된 신청 id
-     */
-    applicationId: number;
-    /**
-     * 신청 상태 표시명 (반려)
-     */
-    statusLabel: string;
-    /**
-     * 신청 상태 (REJECTED)
-     */
-    status: string;
   } | null;
 };
 
@@ -4933,15 +4933,15 @@ export type UpdateProfileResponse = UpdateProfileResponses[keyof UpdateProfileRe
 export type GetReceivedReviewsData = {
   body?: never;
   path?: never;
-  query: {
+  query?: {
     /**
-     * 양수가 아닌 마지막 후기 id
+     * 직전 페이지 마지막 후기 id (양수, 선택). 첫 페이지는 생략한다
      */
-    lastReviewId: string;
+    lastReviewId?: string;
     /**
-     * 페이지 크기. 허용 범위 1~50 밖이면 기본값 20을 사용한다
+     * 페이지 크기 (1~50, 기본 20). 생략하거나 범위 밖이면 기본값으로 조회한다
      */
-    size: string;
+    size?: string;
   };
   url: "/v1/members/me/received-reviews";
 };
