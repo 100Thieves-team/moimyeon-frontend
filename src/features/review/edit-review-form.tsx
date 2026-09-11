@@ -130,7 +130,6 @@ export function EditReviewForm({ onCompleted, roomId, target }: EditReviewFormPr
             </Checkbox.Indicator>
           </Checkbox.Root>
           <span className={styles.anonymousLabel}>익명으로 남기기</span>
-          <span className={styles.anonymousHint}>익명 여부는 수정할 수 없어요</span>
         </label>
         <div className={styles.footer}>
           <AlertDialog.Root onOpenChange={setDeleteDialogOpen} open={deleteDialogOpen}>

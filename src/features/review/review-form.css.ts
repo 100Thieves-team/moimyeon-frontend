@@ -100,11 +100,6 @@ export const anonymousRow = style({
   cursor: "pointer",
 });
 
-export const anonymousHint = style({
-  fontSize: "1.2rem",
-  color: vars.color.tertiary,
-});
-
 export const anonymousRowLocked = style({
   ...anonymousRowBase,
   cursor: "default",
@@ -125,6 +120,9 @@ export const checkbox = style({
   cursor: "pointer",
   transition: `background-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, border-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
   selectors: {
+    "&[data-disabled]": {
+      cursor: "default",
+    },
     "&[data-checked]": {
       borderColor: vars.color.fillPrimary,
       backgroundColor: vars.color.fillPrimary,
