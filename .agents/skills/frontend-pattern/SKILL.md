@@ -11,14 +11,16 @@ description: 모이면의 React, Next.js App Router, Base UI, React Hook Form, T
 
 ## 폼
 
-- Base UI `Form`과 React Hook Form의 `handleSubmit`으로 제출을 처리한다.
-- Base UI 및 사용자 정의 controlled input에는 `Controller`를 사용한다.
-- 필드 단위 검증은 `Controller.rules`에 둔다.
+- 모든 폼의 제출, 입력 검증, 오류 상태는 React Hook Form으로 일관되게 관리한다. 검증 오류를 별도 `useState`로 중복 관리하거나 이벤트 핸들러에서 직접 검증 후 mutation을 호출하지 않는다.
+- Base UI `Form`의 `onSubmit`에 React Hook Form의 `handleSubmit`으로 만든 제출 핸들러를 연결한다. 파일 선택 즉시 업로드하는 흐름도 `handleSubmit`을 거쳐 검증된 값으로 mutation을 호출한다.
+- 필드 연결에는 `useController` 훅 대신 `Controller` 컴포넌트를 사용한다. 공용 훅은 `useForm`의 `control`과 제출 핸들러를 반환하고, 입력을 렌더링하는 컴포넌트에서 `Controller`를 배치한다.
+- 필드 단위 검증은 `Controller.rules`에 둔다. 재사용하는 순수 검증 함수는 `rules.validate`에서 호출한다.
 - 각 Controller를 다음과 같이 명시적으로 연결한다.
   - `field.name`, `fieldState.invalid`, `fieldState.isTouched`, `fieldState.isDirty`를 `Field.Root`에 전달한다.
   - `field.value`, `field.onBlur`, `field.onChange`를 Base UI 컴포넌트의 값 관련 props에 연결한다. 폼 값과 컴포넌트 값의 타입이 다르면 Controller의 render 안에서 배열, null, 사용자 정의 callback 형식을 변환한다.
   - `field.ref`를 `ref` 또는 `inputRef`를 통해 실제 포커스 대상으로 전달한다.
   - 컨트롤에 맞는 표시용 label(`Field.Label`), 필요시 `Field.Description`, 오류 메시지를 담은 `Field.Error match={Boolean(fieldState.error)}`를 렌더링한다.
+- 파일 input은 `Controller`의 render 안에서 `event.currentTarget.files`를 폼 값으로 변환한다. `File` 객체를 input의 `value`에 전달하지 않는다.
 - 서버의 필드 오류는 `setError`로 표현하고, 특정 필드에 속하지 않는 오류는 root error로 관리한다. 사용자가 관련 입력을 수정하면 오래된 서버 오류를 제거한다.
 
 ## 서버 상태와 Suspense 스트리밍
