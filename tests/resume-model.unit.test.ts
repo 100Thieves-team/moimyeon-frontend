@@ -16,23 +16,19 @@ const baseResume: ResumeItem = {
 };
 
 describe("formatRegisteredMeta", () => {
-  it("등록한 지 1시간이 지나지 않은 이력서는 방금 올림으로 표시한다", () => {
-    const now = new Date("2026-08-31T12:00:00").getTime();
-
-    expect(formatRegisteredMeta(baseResume, now)).toBe("방금 올림 · 212KB");
+  it("등록일을 월 일 업로드 형식으로 표시한다", () => {
+    expect(formatRegisteredMeta(baseResume)).toBe("8월 31일 업로드 · 212KB");
   });
 
-  it("등록한 지 1시간이 지난 이력서는 등록 날짜로 표시한다", () => {
-    const now = new Date("2026-08-31T12:31:00").getTime();
-
-    expect(formatRegisteredMeta(baseResume, now)).toBe("8월 31일 업데이트 · 212KB");
+  it("월과 일의 앞자리 0을 제거한다", () => {
+    expect(formatRegisteredMeta({ ...baseResume, registeredAt: "2026-09-01T11:30:00" })).toBe(
+      "9월 1일 업로드 · 212KB",
+    );
   });
 
   it("파일 정보가 없으면 크기 정보 없음으로 표시한다", () => {
-    const now = new Date("2026-09-30T12:00:00").getTime();
-
-    expect(formatRegisteredMeta({ ...baseResume, file: undefined }, now)).toBe(
-      "8월 31일 업데이트 · 크기 정보 없음",
+    expect(formatRegisteredMeta({ ...baseResume, file: undefined })).toBe(
+      "8월 31일 업로드 · 크기 정보 없음",
     );
   });
 });

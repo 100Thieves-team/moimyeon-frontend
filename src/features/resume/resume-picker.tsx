@@ -190,7 +190,7 @@ export function ResumePicker({
               accept="application/pdf,.pdf"
               aria-label="새 이력서 파일"
               className={styles.visuallyHidden}
-              onChange={(event) => void uploadResume(event)}
+              onChange={uploadResume}
               ref={fileInputRef}
               type="file"
             />

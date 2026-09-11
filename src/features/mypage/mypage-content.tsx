@@ -36,12 +36,12 @@ function MyPageDetails({ member }: MyPageDetailsProps) {
 
   return (
     <MyPageShell
-      reviews={
+      reviewsPanel={
         <Suspense fallback={<ReceivedReviewsFallback />}>
           <ReceivedReviews />
         </Suspense>
       }
-      profile={<ProfileEditor jobRoleGroups={jobRoles.groups} member={member} />}
+      profilePanel={<ProfileEditor jobRoleGroups={jobRoles.groups} member={member} />}
       publicProfile={publicProfile}
       resumePanel={
         <Suspense fallback={null}>

@@ -140,13 +140,11 @@ describe("ResumeManager", () => {
 
     await expect.element(screen.getByText("든든한곰_이력서.pdf")).toBeVisible();
     await expect.element(screen.getByText("기본", { exact: true })).toBeVisible();
-    await expect.element(screen.getByText("7월 12일 업데이트 · 212KB")).toBeVisible();
+    await expect.element(screen.getByText("7월 12일 업로드 · 212KB")).toBeVisible();
     await expect
-      .element(
-        screen.getByText("AI 요약 — 핀테크 백엔드 3년 차 · 결제 정산 배치·대사 · Kotlin·Spring"),
-      )
+      .element(screen.getByText("핀테크 백엔드 3년 차 · 결제 정산 배치·대사 · Kotlin·Spring"))
       .toBeVisible();
-    await expect.element(screen.getByText("AI 요약을 만들고 있어요 — 잠깐이면 돼요")).toBeVisible();
+    await expect.element(screen.getByText("AI 요약을 만들고 있어요")).toBeVisible();
     await expect.element(screen.getByText("AI 요약을 만들지 못했어요.")).toBeVisible();
     await expect
       .element(
@@ -290,9 +288,7 @@ describe("ResumeManager", () => {
       .getByRole("button", { name: "든든한곰_이력서_커머스.pdf AI 요약 다시 만들기" })
       .click();
 
-    await expect
-      .element(screen.getByText("AI 요약 — 커머스 주문·재고 프로젝트 중심"))
-      .toBeVisible();
+    await expect.element(screen.getByText("커머스 주문·재고 프로젝트 중심")).toBeVisible();
     expect(mocks.retryResumeSummary).toHaveBeenCalledWith(
       expect.objectContaining({ path: { resumeId: "resume-failed" } }),
     );

@@ -23,9 +23,27 @@ function getErrorMessage(error: unknown, fallback: string) {
 export function useResumeUpload(onUploaded?: (resume: ResumeDetail) => void) {
   const queryClient = useQueryClient();
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const createResume = useMutation(createResumeMutation());
+  const createResume = useMutation({
+    ...createResumeMutation(),
+    onSuccess: async (response) => {
+      const uploadedResume = response.data;
 
-  const uploadResume = async (event: ChangeEvent<HTMLInputElement>) => {
+      if (uploadedResume === undefined || uploadedResume === null) {
+        throw new Error("Resume response did not include data.");
+      }
+
+      queryClient.setQueryData<ResumesResponse>(resumesQueryKey(), (current) =>
+        upsertResume(current, uploadedResume),
+      );
+      onUploaded?.(uploadedResume);
+      await queryClient.invalidateQueries({ queryKey: resumesQueryKey() });
+    },
+    onError: (error) => {
+      setUploadError(getErrorMessage(error, "이력서를 올리지 못했어요. 다시 시도해 주세요."));
+    },
+  });
+
+  const uploadResume = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0];
     event.currentTarget.value = "";
 
@@ -41,22 +59,7 @@ export function useResumeUpload(onUploaded?: (resume: ResumeDetail) => void) {
       return;
     }
 
-    try {
-      const response = await createResume.mutateAsync({ body: { file } });
-      const uploadedResume = response.data;
-
-      if (uploadedResume === undefined || uploadedResume === null) {
-        throw new Error("Resume response did not include data.");
-      }
-
-      queryClient.setQueryData<ResumesResponse>(resumesQueryKey(), (current) =>
-        upsertResume(current, uploadedResume),
-      );
-      onUploaded?.(uploadedResume);
-      await queryClient.invalidateQueries({ queryKey: resumesQueryKey() });
-    } catch (error) {
-      setUploadError(getErrorMessage(error, "이력서를 올리지 못했어요. 다시 시도해 주세요."));
-    }
+    createResume.mutate({ body: { file } });
   };
 
   return {

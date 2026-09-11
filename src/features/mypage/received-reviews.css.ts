@@ -4,7 +4,7 @@ import { vars } from "@/styles";
 export const container = style({
   display: "flex",
   flexDirection: "column",
-  gap: vars.spacing.xl,
+  gap: vars.spacing.base,
 });
 
 export const header = style({
@@ -92,8 +92,4 @@ export const skeletonLineShort = style({
   width: "24%",
   height: "1.2rem",
   borderRadius: "0.4rem",
-});
-
-export const moreButton = style({
-  marginInline: "auto",
 });

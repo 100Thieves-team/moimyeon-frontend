@@ -16,12 +16,12 @@ import {
   applyDefaultResume,
   formatRegisteredMeta,
   getResumesData,
-  removeResume,
   type ResumeItem,
   upsertResume,
 } from "@/features/resume/resume-model";
 import { useResumeUpload } from "@/features/resume/use-resume-upload";
 import * as styles from "./resume-manager.css";
+import * as panelStyles from "./mypage-panel.css";
 
 const SUMMARY_POLL_INTERVAL_MS = 3_000;
 
@@ -33,7 +33,7 @@ type ResumeSummaryCellProps = {
 };
 
 type DeleteResumeDialogProps = {
-  onDelete: () => Promise<void>;
+  resumeId: string;
   resumeName: string;
 };
 
@@ -55,9 +55,9 @@ function ResumeSummaryCell({ isRetrying, onRetry, resume, retryError }: ResumeSu
   const status = resume.aiSummary?.status;
   const isDone = status === "DONE" && Boolean(resume.aiSummary?.text);
   const message = isDone
-    ? `AI 요약 — ${resume.aiSummary?.text}`
+    ? resume.aiSummary?.text
     : status === "PROCESSING"
-      ? "AI 요약을 만들고 있어요 — 잠깐이면 돼요"
+      ? "AI 요약을 만들고 있어요"
       : status === "FAILED"
         ? (retryError ?? "AI 요약을 만들지 못했어요.")
         : "AI 요약 정보가 아직 없어요.";
@@ -85,23 +85,24 @@ function ResumeSummaryCell({ isRetrying, onRetry, resume, retryError }: ResumeSu
   );
 }
 
-function DeleteResumeDialog({ onDelete, resumeName }: DeleteResumeDialogProps) {
+function DeleteResumeDialog({ resumeId, resumeName }: DeleteResumeDialogProps) {
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
-
-  const deleteResume = async () => {
-    setIsDeleting(true);
-    setDeleteError(null);
-
-    try {
-      await onDelete();
+  const deleteResume = useMutation({
+    ...deleteResumeMutation(),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: resumesQueryKey() });
       setOpen(false);
-    } catch (error) {
+    },
+    onError: (error) => {
       setDeleteError(getErrorMessage(error, "이력서를 삭제하지 못했어요. 다시 시도해 주세요."));
-    } finally {
-      setIsDeleting(false);
-    }
+    },
+  });
+
+  const handleDelete = () => {
+    setDeleteError(null);
+    deleteResume.mutate({ path: { resumeId } });
   };
 
   return (
@@ -137,18 +138,18 @@ function DeleteResumeDialog({ onDelete, resumeName }: DeleteResumeDialogProps) {
           )}
           <div className={styles.dialogFooter}>
             <AlertDialog.Close
-              disabled={isDeleting}
+              disabled={deleteResume.isPending}
               render={<Button size="sm" type="button" variant="secondary" />}
             >
               취소
             </AlertDialog.Close>
             <Button
-              disabled={isDeleting}
-              onClick={() => void deleteResume()}
+              disabled={deleteResume.isPending}
+              onClick={handleDelete}
               size="sm"
               type="button"
             >
-              {isDeleting ? "삭제 중..." : "삭제하기"}
+              {deleteResume.isPending ? "삭제 중..." : "삭제하기"}
             </Button>
           </div>
         </AlertDialog.Popup>
@@ -165,9 +166,45 @@ export function ResumeManager() {
     null,
   );
   const { isUploading, uploadError, uploadResume } = useResumeUpload();
-  const deleteResume = useMutation(deleteResumeMutation());
-  const makeDefault = useMutation(makeResumeDefaultMutation());
-  const retrySummary = useMutation(retryResumeSummaryMutation());
+  const makeDefault = useMutation({
+    ...makeResumeDefaultMutation(),
+    onSuccess: (_, { path: { resumeId } }) => {
+      queryClient.setQueryData<ResumesResponse>(resumesQueryKey(), (current) =>
+        applyDefaultResume(current, resumeId),
+      );
+    },
+    onError: (error, { path: { resumeId } }) => {
+      setDefaultError({
+        message: getErrorMessage(
+          error,
+          "기본 이력서로 지정하지 못했어요. 잠시 후 다시 시도해 주세요.",
+        ),
+        resumeId,
+      });
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: resumesQueryKey() }),
+  });
+  const retrySummary = useMutation({
+    ...retryResumeSummaryMutation(),
+    onSuccess: (response) => {
+      const retriedResume = response.data;
+
+      if (retriedResume === undefined || retriedResume === null) {
+        throw new Error("Retry response did not include data.");
+      }
+
+      queryClient.setQueryData<ResumesResponse>(resumesQueryKey(), (current) =>
+        upsertResume(current, retriedResume),
+      );
+    },
+    onError: (error, { path: { resumeId } }) => {
+      setRetryError({
+        message: getErrorMessage(error, "AI 요약을 만들지 못했어요. 잠시 후 다시 시도해 주세요."),
+        resumeId,
+      });
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: resumesQueryKey() }),
+  });
   const { data: resumesResponse } = useSuspenseQuery({
     ...resumesOptions(),
     refetchInterval: (query) =>
@@ -178,140 +215,100 @@ export function ResumeManager() {
   const { maxCount, resumes } = getResumesData(resumesResponse);
   const isFull = resumes.length >= maxCount;
 
-  const deleteResumeById = async (resumeId: string) => {
-    await deleteResume.mutateAsync({ path: { resumeId } });
-    queryClient.setQueryData<ResumesResponse>(resumesQueryKey(), (current) =>
-      removeResume(current, resumeId),
-    );
-    await queryClient.invalidateQueries({ queryKey: resumesQueryKey() });
-  };
-
-  const makeDefaultById = async (resumeId: string) => {
+  const makeDefaultById = (resumeId: string) => {
     setDefaultError(null);
-
-    try {
-      await makeDefault.mutateAsync({ path: { resumeId } });
-      queryClient.setQueryData<ResumesResponse>(resumesQueryKey(), (current) =>
-        applyDefaultResume(current, resumeId),
-      );
-    } catch (error) {
-      setDefaultError({
-        message: getErrorMessage(error, "기본 이력서로 지정하지 못했어요. 다시 시도해 주세요."),
-        resumeId,
-      });
-    } finally {
-      await queryClient.invalidateQueries({ queryKey: resumesQueryKey() });
-    }
+    makeDefault.mutate({ path: { resumeId } });
   };
 
-  const retrySummaryById = async (resumeId: string) => {
+  const retrySummaryById = (resumeId: string) => {
     setRetryError(null);
-
-    try {
-      const response = await retrySummary.mutateAsync({ path: { resumeId } });
-      const retriedResume = response.data;
-
-      if (retriedResume === undefined || retriedResume === null) {
-        throw new Error("Retry response did not include data.");
-      }
-
-      queryClient.setQueryData<ResumesResponse>(resumesQueryKey(), (current) =>
-        upsertResume(current, retriedResume),
-      );
-    } catch (error) {
-      setRetryError({
-        message: getErrorMessage(error, "AI 요약을 다시 만들지 못했어요. 잠시 후 시도해 주세요."),
-        resumeId,
-      });
-    } finally {
-      await queryClient.invalidateQueries({ queryKey: resumesQueryKey() });
-    }
+    retrySummary.mutate({ path: { resumeId } });
   };
 
   return (
     <div className={styles.manager}>
-      {resumes.length > 0 ? (
-        <ul aria-label="보관 이력서 목록" className={styles.list}>
-          {resumes.map((resume) => (
-            <li className={styles.row} key={resume.resumeId}>
-              <div className={styles.fileCell}>
-                <span className={styles.pdfBadge}>PDF</span>
-                <div className={styles.fileInfo}>
-                  <span className={styles.fileHeading}>
-                    <span className={styles.fileName}>{resume.name}</span>
-                    {resume.isDefault && <span className={styles.defaultBadge}>기본</span>}
-                  </span>
-                  <span className={styles.fileMeta}>{formatRegisteredMeta(resume)}</span>
+      <div className={panelStyles.card}>
+        <h2 className={panelStyles.title}>이력서 관리</h2>
+        {resumes.length > 0 ? (
+          <ul aria-label="보관 이력서 목록" className={styles.list}>
+            {resumes.map((resume) => (
+              <li className={styles.row} key={resume.resumeId}>
+                <div className={styles.fileCell}>
+                  <span className={styles.pdfBadge}>PDF</span>
+                  <div className={styles.fileInfo}>
+                    <span className={styles.fileHeading}>
+                      <span className={styles.fileName}>{resume.name}</span>
+                      {resume.isDefault && <span className={styles.defaultBadge}>기본</span>}
+                    </span>
+                    <span className={styles.fileMeta}>{formatRegisteredMeta(resume)}</span>
+                  </div>
                 </div>
-              </div>
-              <ResumeSummaryCell
-                isRetrying={
-                  retrySummary.isPending &&
-                  retrySummary.variables?.path.resumeId === resume.resumeId
-                }
-                onRetry={() => void retrySummaryById(resume.resumeId)}
-                resume={resume}
-                retryError={retryError?.resumeId === resume.resumeId ? retryError.message : null}
-              />
-              <div className={styles.rowActions}>
-                {!resume.isDefault && (
-                  <button
-                    aria-label={`${resume.name} 기본으로 지정`}
-                    className={styles.makeDefaultButton}
-                    disabled={resume.aiSummary?.status !== "DONE" || makeDefault.isPending}
-                    onClick={() => void makeDefaultById(resume.resumeId)}
-                    type="button"
-                  >
-                    기본으로 지정
-                  </button>
-                )}
-                <DeleteResumeDialog
-                  onDelete={() => deleteResumeById(resume.resumeId)}
-                  resumeName={resume.name}
+                <ResumeSummaryCell
+                  isRetrying={
+                    retrySummary.isPending &&
+                    retrySummary.variables?.path.resumeId === resume.resumeId
+                  }
+                  onRetry={() => retrySummaryById(resume.resumeId)}
+                  resume={resume}
+                  retryError={retryError?.resumeId === resume.resumeId ? retryError.message : null}
                 />
-              </div>
-              {defaultError?.resumeId === resume.resumeId && (
-                <p className={styles.rowError} role="alert">
-                  {defaultError.message}
-                </p>
-              )}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className={styles.empty}>
-          보관 중인 이력서가 아직 없어요.
-          <br />
-          이력서를 올리면 AI 요약과 함께 보관해요.
-        </p>
-      )}
+                <div className={styles.rowActions}>
+                  {!resume.isDefault && (
+                    <button
+                      aria-label={`${resume.name} 기본으로 지정`}
+                      className={styles.makeDefaultButton}
+                      disabled={resume.aiSummary?.status !== "DONE" || makeDefault.isPending}
+                      onClick={() => makeDefaultById(resume.resumeId)}
+                      type="button"
+                    >
+                      기본으로 지정
+                    </button>
+                  )}
+                  <DeleteResumeDialog resumeId={resume.resumeId} resumeName={resume.name} />
+                </div>
+                {defaultError?.resumeId === resume.resumeId && (
+                  <p className={styles.rowError} role="alert">
+                    {defaultError.message}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className={styles.empty}>
+            보관 중인 이력서가 아직 없어요.
+            <br />
+            이력서를 올리면 AI 요약과 함께 보관해요.
+          </p>
+        )}
 
-      <div className={styles.footer}>
-        {uploadError && (
-          <p className={styles.uploadError} role="alert">
-            {uploadError}
-          </p>
-        )}
-        {isFull && (
-          <p className={styles.footerMessage}>
-            이력서는 최대 {maxCount}개까지 보관할 수 있어요. 새로 올리려면 먼저 삭제해 주세요.
-          </p>
-        )}
-        <input
-          accept="application/pdf,.pdf"
-          aria-label="새 이력서 파일"
-          className={styles.visuallyHidden}
-          onChange={(event) => void uploadResume(event)}
-          ref={fileInputRef}
-          type="file"
-        />
-        <Button
-          disabled={isUploading || isFull}
-          onClick={() => fileInputRef.current?.click()}
-          type="button"
-        >
-          {isUploading ? "업로드 중..." : "이력서 업로드"}
-        </Button>
+        <div className={panelStyles.footer}>
+          {uploadError && (
+            <p className={styles.uploadError} role="alert">
+              {uploadError}
+            </p>
+          )}
+          {isFull && (
+            <p className={styles.footerMessage}>
+              이력서는 최대 {maxCount}개까지 보관할 수 있어요. 새로 올리려면 먼저 삭제해 주세요.
+            </p>
+          )}
+          <input
+            accept="application/pdf,.pdf"
+            aria-label="새 이력서 파일"
+            className={styles.visuallyHidden}
+            onChange={uploadResume}
+            ref={fileInputRef}
+            type="file"
+          />
+          <Button
+            disabled={isUploading || isFull}
+            onClick={() => fileInputRef.current?.click()}
+            type="button"
+          >
+            {isUploading ? "업로드 중..." : "이력서 업로드"}
+          </Button>
+        </div>
       </div>
     </div>
   );

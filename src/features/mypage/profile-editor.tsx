@@ -343,33 +343,149 @@ export function ProfileEditor({ jobRoleGroups, member }: ProfileEditorProps) {
 
   return (
     <Form className={styles.form} onSubmit={submitForm}>
-      <div className={styles.firstRow}>
+      <div className={panelStyles.card}>
+        <h2 className={panelStyles.title}>프로필 수정</h2>
+        <div className={styles.firstRow}>
+          <Controller
+            control={control}
+            name="nickname"
+            rules={{
+              validate: async (value) => {
+                const nickname = value.trim();
+
+                if (!nickname) {
+                  return "닉네임을 입력해 주세요.";
+                }
+
+                if (nickname === member.nickname) {
+                  return true;
+                }
+
+                try {
+                  const result = await queryClient.fetchQuery(
+                    nicknameAvailabilityOptions({ query: { nickname } }),
+                  );
+
+                  return result.data?.available || "이미 사용 중인 닉네임이에요.";
+                } catch (error) {
+                  return getErrorMessage(error, "닉네임을 확인하지 못했어요.");
+                }
+              },
+            }}
+            render={({ field, fieldState }) => (
+              <Field.Root
+                className={styles.field}
+                dirty={fieldState.isDirty}
+                invalid={fieldState.invalid}
+                name={field.name}
+                touched={fieldState.isTouched}
+              >
+                <Field.Label className={styles.label}>닉네임</Field.Label>
+                <div className={styles.nicknameInputGroup}>
+                  <Field.Control
+                    className={styles.nicknameInput}
+                    onBlur={field.onBlur}
+                    onValueChange={(nextValue) => {
+                      field.onChange(nextValue);
+                      clearErrors("nickname");
+                      clearErrors("root.serverError");
+                    }}
+                    required
+                    value={field.value}
+                  />
+                  <Button
+                    className={styles.suggestionButton}
+                    disabled={isNicknameSuggestionFetching}
+                    onClick={() => void suggestNickname()}
+                    size="sm"
+                    type="button"
+                    variant="ghost"
+                  >
+                    <RotateCcw aria-hidden="true" size={14} strokeWidth={2} />
+                    {isNicknameSuggestionFetching ? "만드는 중..." : "새로 만들기"}
+                  </Button>
+                </div>
+                <Field.Error
+                  className={`${styles.fieldMessage} ${styles.errorMessage}`}
+                  match={Boolean(fieldState.error)}
+                >
+                  {fieldState.error?.message}
+                </Field.Error>
+              </Field.Root>
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="interestJobRoleIds"
+            render={({ field, fieldState }) => {
+              const selectedJobRoles = jobRoleGroups
+                .flatMap((group) => group.roles)
+                .filter((role) => field.value.includes(role.jobRoleId));
+              const handleValueChange = (nextValue: number[]) => {
+                field.onChange(nextValue);
+                clearErrors("root.serverError");
+              };
+
+              return (
+                <Fragment>
+                  <Field.Root
+                    className={styles.field}
+                    dirty={fieldState.isDirty}
+                    invalid={fieldState.invalid}
+                    name={field.name}
+                    touched={fieldState.isTouched}
+                  >
+                    <Field.Label className={styles.label}>관심 직무</Field.Label>
+                    <div className={jobRoleStyles.fieldFrame}>
+                      <Field.Control
+                        className={jobRoleStyles.fieldTrigger}
+                        onBlur={field.onBlur}
+                        ref={field.ref}
+                        render={<Dialog.Trigger handle={jobRoleDialog} />}
+                        type="button"
+                        value={field.value.join(",")}
+                      />
+                      <div className={jobRoleStyles.fieldContent}>
+                        {selectedJobRoles.length > 0 ? (
+                          selectedJobRoles.map((role) => (
+                            <JobRolePill
+                              key={role.jobRoleId}
+                              onRemove={() =>
+                                handleValueChange(field.value.filter((id) => id !== role.jobRoleId))
+                              }
+                              role={role}
+                              variant="field"
+                            />
+                          ))
+                        ) : (
+                          <span className={pillFieldStyles.placeholder}>
+                            관심 직무를 선택해 주세요.
+                          </span>
+                        )}
+                        <ChevronDown
+                          aria-hidden="true"
+                          className={jobRoleStyles.fieldChevron}
+                          size={16}
+                        />
+                      </div>
+                    </div>
+                  </Field.Root>
+                  <JobRoleDialog
+                    groups={jobRoleGroups}
+                    mode="multiple"
+                    onValueChange={handleValueChange}
+                    value={field.value}
+                  />
+                </Fragment>
+              );
+            }}
+          />
+        </div>
+
         <Controller
           control={control}
-          name="nickname"
-          rules={{
-            validate: async (value) => {
-              const nickname = value.trim();
-
-              if (!nickname) {
-                return "닉네임을 입력해 주세요.";
-              }
-
-              if (nickname === member.nickname) {
-                return true;
-              }
-
-              try {
-                const result = await queryClient.fetchQuery(
-                  nicknameAvailabilityOptions({ query: { nickname } }),
-                );
-
-                return result.data?.available || "이미 사용 중인 닉네임이에요.";
-              } catch (error) {
-                return getErrorMessage(error, "닉네임을 확인하지 못했어요.");
-              }
-            },
-          }}
+          name="bio"
           render={({ field, fieldState }) => (
             <Field.Root
               className={styles.field}
@@ -378,170 +494,57 @@ export function ProfileEditor({ jobRoleGroups, member }: ProfileEditorProps) {
               name={field.name}
               touched={fieldState.isTouched}
             >
-              <Field.Label className={styles.label}>닉네임</Field.Label>
-              <div className={styles.nicknameInputGroup}>
-                <Field.Control
-                  className={styles.nicknameInput}
-                  onBlur={field.onBlur}
-                  onValueChange={(nextValue) => {
-                    field.onChange(nextValue);
-                    clearErrors("nickname");
-                    clearErrors("root.serverError");
-                  }}
-                  required
-                  value={field.value}
-                />
-                <Button
-                  className={styles.suggestionButton}
-                  disabled={isNicknameSuggestionFetching}
-                  onClick={() => void suggestNickname()}
-                  size="sm"
-                  type="button"
-                  variant="ghost"
-                >
-                  <RotateCcw aria-hidden="true" size={14} strokeWidth={2} />
-                  {isNicknameSuggestionFetching ? "만드는 중..." : "새로 만들기"}
-                </Button>
-              </div>
-              <Field.Error
-                className={`${styles.fieldMessage} ${styles.errorMessage}`}
-                match={Boolean(fieldState.error)}
-              >
-                {fieldState.error?.message}
-              </Field.Error>
+              <Field.Label className={styles.label}>자기소개</Field.Label>
+              <Field.Control
+                className={styles.bioInput}
+                maxLength={500}
+                onBlur={field.onBlur}
+                onValueChange={(nextValue) => {
+                  field.onChange(nextValue);
+                  clearErrors("root.serverError");
+                }}
+                render={<textarea rows={2} />}
+                value={field.value}
+              />
             </Field.Root>
           )}
         />
 
         <Controller
           control={control}
-          name="interestJobRoleIds"
-          render={({ field, fieldState }) => {
-            const selectedJobRoles = jobRoleGroups
-              .flatMap((group) => group.roles)
-              .filter((role) => field.value.includes(role.jobRoleId));
-            const handleValueChange = (nextValue: number[]) => {
-              field.onChange(nextValue);
-              clearErrors("root.serverError");
-            };
-
-            return (
-              <Fragment>
-                <Field.Root
-                  className={styles.field}
-                  dirty={fieldState.isDirty}
-                  invalid={fieldState.invalid}
-                  name={field.name}
-                  touched={fieldState.isTouched}
-                >
-                  <Field.Label className={styles.label}>관심 직무</Field.Label>
-                  <div className={jobRoleStyles.fieldFrame}>
-                    <Field.Control
-                      className={jobRoleStyles.fieldTrigger}
-                      onBlur={field.onBlur}
-                      ref={field.ref}
-                      render={<Dialog.Trigger handle={jobRoleDialog} />}
-                      type="button"
-                      value={field.value.join(",")}
-                    />
-                    <div className={jobRoleStyles.fieldContent}>
-                      {selectedJobRoles.length > 0 ? (
-                        selectedJobRoles.map((role) => (
-                          <JobRolePill
-                            key={role.jobRoleId}
-                            onRemove={() =>
-                              handleValueChange(field.value.filter((id) => id !== role.jobRoleId))
-                            }
-                            role={role}
-                            variant="field"
-                          />
-                        ))
-                      ) : (
-                        <span className={pillFieldStyles.placeholder}>
-                          관심 직무를 선택해 주세요.
-                        </span>
-                      )}
-                      <ChevronDown
-                        aria-hidden="true"
-                        className={jobRoleStyles.fieldChevron}
-                        size={16}
-                      />
-                    </div>
-                  </div>
-                </Field.Root>
-                <JobRoleDialog
-                  groups={jobRoleGroups}
-                  mode="multiple"
-                  onValueChange={handleValueChange}
-                  value={field.value}
-                />
-              </Fragment>
-            );
-          }}
-        />
-      </div>
-
-      <Controller
-        control={control}
-        name="bio"
-        render={({ field, fieldState }) => (
-          <Field.Root
-            className={styles.field}
-            dirty={fieldState.isDirty}
-            invalid={fieldState.invalid}
-            name={field.name}
-            touched={fieldState.isTouched}
-          >
-            <Field.Label className={styles.label}>자기소개</Field.Label>
-            <Field.Control
-              className={styles.bioInput}
-              maxLength={500}
-              onBlur={field.onBlur}
-              onValueChange={(nextValue) => {
-                field.onChange(nextValue);
-                clearErrors("root.serverError");
-              }}
-              render={<textarea rows={2} />}
-              value={field.value}
-            />
-          </Field.Root>
-        )}
-      />
-
-      <Controller
-        control={control}
-        name="interestCompanies"
-        render={({ field, fieldState }) => (
-          <Field.Root
-            className={styles.field}
-            dirty={fieldState.isDirty}
-            invalid={fieldState.invalid}
-            name={field.name}
-            touched={fieldState.isTouched}
-          >
-            <Field.Label className={styles.label}>관심 회사</Field.Label>
-            <CompanyCombobox
+          name="interestCompanies"
+          render={({ field, fieldState }) => (
+            <Field.Root
+              className={styles.field}
+              dirty={fieldState.isDirty}
+              invalid={fieldState.invalid}
               name={field.name}
-              onBlur={field.onBlur}
-              onChange={(nextValue) => {
-                field.onChange(nextValue);
-                clearErrors("root.serverError");
-              }}
-              value={field.value}
-            />
-          </Field.Root>
-        )}
-      />
+              touched={fieldState.isTouched}
+            >
+              <Field.Label className={styles.label}>관심 회사</Field.Label>
+              <CompanyCombobox
+                name={field.name}
+                onBlur={field.onBlur}
+                onChange={(nextValue) => {
+                  field.onChange(nextValue);
+                  clearErrors("root.serverError");
+                }}
+                value={field.value}
+              />
+            </Field.Root>
+          )}
+        />
 
-      <div className={panelStyles.footer}>
-        {submitError && (
-          <p className={styles.submitError} role="alert">
-            {submitError}
-          </p>
-        )}
-        <Button className={panelStyles.action} type="submit">
-          저장하기
-        </Button>
+        <div className={panelStyles.footer}>
+          {submitError && (
+            <p className={styles.submitError} role="alert">
+              {submitError}
+            </p>
+          )}
+          <Button className={panelStyles.action} type="submit">
+            저장하기
+          </Button>
+        </div>
       </div>
     </Form>
   );

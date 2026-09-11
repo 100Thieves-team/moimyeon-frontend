@@ -304,22 +304,6 @@ export const tab = style({
   },
 });
 
-export const editorCard = style({
-  ...card,
-  display: "flex",
-  width: "100%",
-  minWidth: 0,
-  minHeight: "47.1rem",
-  flexDirection: "column",
-  gap: vars.spacing.xl,
-  padding: vars.spacing["2xl"],
-  "@media": {
-    "screen and (max-width: 599px)": {
-      padding: vars.spacing.lg,
-    },
-  },
-});
-
 export const errorPage = style({
   display: "grid",
   minHeight: "calc(100dvh - 6.4rem)",
