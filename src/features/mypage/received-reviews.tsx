@@ -1,15 +1,15 @@
 "use client";
 
-import { useSuspenseInfiniteQuery, type InfiniteData } from "@tanstack/react-query";
-import type { GetReceivedReviewsData, GetReceivedReviewsResponse } from "@/api/generated";
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import type { GetReceivedReviewsData } from "@/api/generated";
 import { getReceivedReviews } from "@/api/generated/sdk.gen";
 import { getReceivedReviewsQueryKey } from "@/api/generated/@tanstack/react-query.gen";
 import { Button } from "@/components/button";
+import * as panelStyles from "./mypage-panel.css";
 import * as styles from "./received-reviews.css";
+import * as shellStyles from "./mypage-shell.css";
 
 const PAGE_SIZE = 5;
-
-type ReceivedReviewsPage = NonNullable<GetReceivedReviewsResponse["data"]>;
 
 /* 서버는 lastReviewId 를 생략 가능한 커서로 처리하지만, 스펙에는 필수로 표기돼 있어 캐스팅으로 우회한다 */
 function pageOptions(lastReviewId?: number) {
@@ -25,7 +25,7 @@ export function ReceivedReviewsFallback() {
   return (
     <section aria-label="받은 후기 불러오는 중" className={styles.container}>
       <div className={styles.header}>
-        <h3 className={styles.title}>받은 후기</h3>
+        <h2 className={panelStyles.title}>받은 후기</h2>
       </div>
       <ul className={styles.list}>
         {[0, 1, 2].map((index) => (
@@ -44,17 +44,8 @@ export function ReceivedReviewsFallback() {
 }
 
 export function ReceivedReviews() {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery<
-    ReceivedReviewsPage,
-    Error,
-    InfiniteData<ReceivedReviewsPage>,
-    ReturnType<typeof getReceivedReviewsQueryKey>,
-    number | undefined
-  >({
-    getNextPageParam: (lastPage) =>
-      lastPage.hasNext ? lastPage.reviews.at(-1)?.reviewId : undefined,
-    initialPageParam: undefined,
-    queryFn: async ({ pageParam }): Promise<ReceivedReviewsPage> => {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery({
+    queryFn: async ({ pageParam }: { pageParam: number | undefined }) => {
       const { data: response } = await getReceivedReviews(pageOptions(pageParam));
       const page = response.data;
 
@@ -64,16 +55,18 @@ export function ReceivedReviews() {
 
       return page;
     },
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) =>
+      lastPage.hasNext ? lastPage.reviews.at(-1)?.reviewId : undefined,
     queryKey: getReceivedReviewsQueryKey(pageOptions()),
   });
   const reviews = data.pages.flatMap((page) => page.reviews);
   const totalCount = data.pages[0]?.totalCount ?? 0;
-  const remainingCount = totalCount - reviews.length;
 
   return (
     <section aria-label="받은 후기" className={styles.container}>
       <div className={styles.header}>
-        <h3 className={styles.title}>받은 후기</h3>
+        <h2 className={panelStyles.title}>받은 후기</h2>
         <span className={styles.count}>{totalCount}개</span>
       </div>
       {reviews.length === 0 ? (
@@ -87,7 +80,7 @@ export function ReceivedReviews() {
               {review.tags.length > 0 && (
                 <ul aria-label="평가 태그" className={styles.tagRow}>
                   {review.tags.map((tag) => (
-                    <li className={styles.tag} key={String(tag)}>
+                    <li className={shellStyles.tag} key={String(tag)}>
                       {String(tag)}
                     </li>
                   ))}
@@ -102,15 +95,16 @@ export function ReceivedReviews() {
         </ul>
       )}
       {hasNextPage && (
-        <div className={styles.moreRow}>
+        <div className={panelStyles.footer}>
           <Button
+            className={styles.moreButton}
             disabled={isFetchingNextPage}
             onClick={() => fetchNextPage()}
             size="md"
             type="button"
             variant="ghost"
           >
-            후기 {remainingCount}개 더 보기
+            {isFetchingNextPage ? "불러오는 중…" : "더 보기"}
           </Button>
         </div>
       )}

@@ -31,6 +31,7 @@ import * as jobRoleStyles from "./job-role-field.css";
 import { JobRolePill } from "./job-role-pill";
 import type { MyPageData, ProfileCompany } from "./mypage-model";
 import * as pillFieldStyles from "./profile-pill-field.css";
+import * as panelStyles from "./mypage-panel.css";
 import * as styles from "./profile-editor.css";
 
 type ProfileFormValues = {
@@ -532,13 +533,13 @@ export function ProfileEditor({ jobRoleGroups, member }: ProfileEditorProps) {
         )}
       />
 
-      <div className={styles.footer}>
+      <div className={panelStyles.footer}>
         {submitError && (
           <p className={styles.submitError} role="alert">
             {submitError}
           </p>
         )}
-        <Button className={styles.submitButton} type="submit">
+        <Button className={panelStyles.action} type="submit">
           저장하기
         </Button>
       </div>

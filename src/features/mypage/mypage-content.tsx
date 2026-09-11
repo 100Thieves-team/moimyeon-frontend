@@ -35,15 +35,14 @@ function MyPageDetails({ member }: MyPageDetailsProps) {
 
   return (
     <MyPageShell
-      activity={
+      reviews={
         <Suspense fallback={<ReceivedReviewsFallback />}>
           <ReceivedReviews />
         </Suspense>
       }
+      profile={<ProfileEditor jobRoleGroups={jobRoles.groups} member={member} />}
       publicProfile={publicProfile}
-    >
-      <ProfileEditor jobRoleGroups={jobRoles.groups} member={member} />
-    </MyPageShell>
+    />
   );
 }
 

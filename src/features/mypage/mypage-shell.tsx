@@ -3,11 +3,12 @@ import { Tabs } from "@base-ui/react/tabs";
 import { CalendarCheck, Sprout } from "lucide-react";
 import type { MyPageData, ProfileTrust } from "./mypage-model";
 import { LogoutButton } from "./logout-button";
+import * as panelStyles from "./mypage-panel.css";
 import * as styles from "./mypage-shell.css";
 
 type MyPageShellProps = {
-  activity?: ReactNode;
-  children: ReactNode;
+  reviews?: ReactNode;
+  profile: ReactNode;
   publicProfile: MyPageData["publicProfile"];
 };
 
@@ -77,7 +78,7 @@ function TrustStats({ trust }: TrustStatsProps) {
   );
 }
 
-export function MyPageShell({ activity, children, publicProfile }: MyPageShellProps) {
+export function MyPageShell({ reviews, profile, publicProfile }: MyPageShellProps) {
   const jobTitle = publicProfile.interestJobRoles.map((jobRole) => jobRole.displayName).join(" · ");
   const avatarLabel = Array.from(publicProfile.nickname.trim())[0] ?? "?";
 
@@ -113,19 +114,18 @@ export function MyPageShell({ activity, children, publicProfile }: MyPageShellPr
             <Tabs.Tab className={styles.tab} disabled value="resume">
               이력서 관리
             </Tabs.Tab>
-            <Tabs.Tab className={styles.tab} value="activity">
-              활동과 후기
+            <Tabs.Tab className={styles.tab} value="received-reviews">
+              받은 후기
             </Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel className={styles.editorCard} value="profile">
-            <h2 className={styles.editorTitle}>프로필 수정</h2>
-            {children}
+            <h2 className={panelStyles.title}>프로필 수정</h2>
+            {profile}
           </Tabs.Panel>
 
-          <Tabs.Panel className={styles.editorCard} value="activity">
-            <h2 className={styles.editorTitle}>활동과 후기</h2>
-            {activity}
+          <Tabs.Panel className={styles.editorCard} value="received-reviews">
+            {reviews}
           </Tabs.Panel>
         </Tabs.Root>
       </div>
