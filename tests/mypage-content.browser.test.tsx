@@ -21,8 +21,13 @@ const mocks = vi.hoisted(() => ({
   updateProfile: vi.fn(),
 }));
 
+vi.mock("@/api/generated/sdk.gen", () => ({
+  getReceivedReviews: vi.fn(),
+}));
+
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
   authLogoutMutation: () => ({ mutationFn: mocks.authLogout }),
+  getReceivedReviewsQueryKey: (options: Record<string, unknown>) => ["getReceivedReviews", options],
   jobRolesOptions: () => ({
     queryFn: mocks.jobRoles,
     queryKey: ["jobRoles"],

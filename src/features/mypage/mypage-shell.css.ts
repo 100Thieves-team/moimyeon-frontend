@@ -1,4 +1,4 @@
-import { style, styleVariants } from "@vanilla-extract/css";
+import { globalStyle, style, styleVariants } from "@vanilla-extract/css";
 import { media } from "@/styles/tokens";
 import { vars } from "@/styles/theme.css";
 
@@ -6,7 +6,6 @@ const card = {
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.media,
   backgroundColor: vars.color.background,
-  boxShadow: vars.shadow.cardRaise,
 } as const;
 
 export const content = style({
@@ -21,6 +20,11 @@ export const content = style({
       paddingInline: "6.4rem",
     },
   },
+});
+
+// Avoid a body scroll container so the sidebar sticks to the viewport.
+globalStyle(`body:has(${content})`, {
+  overflowX: "clip",
 });
 
 export const columns = style({
@@ -42,6 +46,12 @@ export const leftColumn = style({
   minWidth: 0,
   flexDirection: "column",
   gap: vars.spacing.base,
+  "@media": {
+    [media.lg]: {
+      position: "sticky",
+      top: vars.spacing.xl,
+    },
+  },
 });
 
 export const trustCard = style({
@@ -310,14 +320,6 @@ export const editorCard = style({
   },
 });
 
-export const editorTitle = style({
-  color: vars.color.primary,
-  fontSize: "1.7rem",
-  fontWeight: 500,
-  lineHeight: "2.2rem",
-  letterSpacing: "-0.01em",
-});
-
 export const errorPage = style({
   display: "grid",
   minHeight: "calc(100dvh - 6.4rem)",
@@ -328,6 +330,7 @@ export const errorPage = style({
 
 export const errorCard = style({
   ...card,
+  boxShadow: vars.shadow.cardRaise,
   display: "flex",
   width: "min(100%, 42rem)",
   flexDirection: "column",

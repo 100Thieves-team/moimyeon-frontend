@@ -225,23 +225,8 @@ export const errorMessage = style({
   color: vars.color.red,
 });
 
-export const footer = style({
-  display: "flex",
-  minHeight: "6.9rem",
-  alignItems: "flex-end",
-  justifyContent: "space-between",
-  gap: vars.spacing.base,
-  paddingTop: vars.spacing.lg,
-  borderTop: `1px solid ${vars.color.strokeLight}`,
-});
-
 export const submitError = style({
   color: vars.color.red,
   fontSize: "1.3rem",
   lineHeight: "1.8rem",
-});
-
-export const submitButton = style({
-  minWidth: "10.4rem",
-  marginLeft: "auto",
 });

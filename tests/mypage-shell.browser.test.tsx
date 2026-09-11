@@ -77,9 +77,11 @@ async function renderMyPageShell() {
   });
   const screen = await render(
     <QueryClientProvider client={queryClient}>
-      <MyPageShell publicProfile={myPageData.publicProfile}>
-        <p>프로필 편집 폼</p>
-      </MyPageShell>
+      <MyPageShell
+        reviews={<p>받은 후기 목록</p>}
+        profile={<p>프로필 편집 폼</p>}
+        publicProfile={myPageData.publicProfile}
+      />
     </QueryClientProvider>,
   );
 
@@ -100,7 +102,7 @@ describe("MyPageShell", () => {
       .element(screen.getByRole("tab", { name: "프로필 수정" }))
       .toHaveAttribute("aria-selected", "true");
     await expect.element(screen.getByRole("tab", { name: "이력서 관리" })).toBeDisabled();
-    await expect.element(screen.getByRole("tab", { name: "활동과 후기" })).toBeDisabled();
+    await expect.element(screen.getByRole("tab", { name: "받은 후기" })).toBeEnabled();
     await expect.element(screen.getByRole("heading", { name: "프로필 수정" })).toBeVisible();
     await expect.element(screen.getByText("회원 탈퇴")).not.toBeInTheDocument();
     await expect.element(screen.getByText("3", { exact: true })).not.toBeInTheDocument();
