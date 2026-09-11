@@ -88,12 +88,22 @@ export const textarea = style({
   },
 });
 
-export const anonymousRow = style({
+const anonymousRowBase = {
   display: "flex",
   alignItems: "center",
   gap: "0.8rem",
-  cursor: "pointer",
   width: "fit-content",
+} as const;
+
+export const anonymousRow = style({
+  ...anonymousRowBase,
+  cursor: "pointer",
+});
+
+export const anonymousRowLocked = style({
+  ...anonymousRowBase,
+  cursor: "default",
+  opacity: 0.75,
 });
 
 export const checkbox = style({
@@ -110,6 +120,9 @@ export const checkbox = style({
   cursor: "pointer",
   transition: `background-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, border-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
   selectors: {
+    "&[data-disabled]": {
+      cursor: "default",
+    },
     "&[data-checked]": {
       borderColor: vars.color.fillPrimary,
       backgroundColor: vars.color.fillPrimary,
