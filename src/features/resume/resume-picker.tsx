@@ -105,9 +105,19 @@ export function ResumePicker({
 }: ResumePickerProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [draftResumeId, setDraftResumeId] = useState(value);
-  const { control, isUploading, resetUploadError, uploadError, uploadResume } = useResumeUpload(
-    (uploadedResume) => setDraftResumeId(uploadedResume.resumeId),
-  );
+  const { control, createResume, handleSubmit, resetUploadError, uploadError } = useResumeUpload();
+  const uploadResume = handleSubmit(({ file }) => {
+    if (!file) return;
+
+    createResume.mutate(
+      { body: { file } },
+      {
+        onSuccess: (response) => {
+          if (response.data) setDraftResumeId(response.data.resumeId);
+        },
+      },
+    );
+  });
 
   return (
     <Dialog.Root
@@ -225,13 +235,13 @@ export function ResumePicker({
             />
             <Button
               className={styles.resumeUploadButton}
-              disabled={isUploading}
+              disabled={createResume.isPending}
               onClick={() => fileInputRef.current?.click()}
               size="sm"
               type="button"
               variant="secondary"
             >
-              {isUploading ? "업로드 중..." : "이력서 업로드"}
+              {createResume.isPending ? "업로드 중..." : "이력서 업로드"}
             </Button>
             {uploadError ? (
               <p className={styles.resumeUploadError} role="alert">

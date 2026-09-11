@@ -3,7 +3,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { createResumeMutation, resumesQueryKey } from "@/api/generated/@tanstack/react-query.gen";
-import { type ResumeDetail } from "./resume-model";
 
 function getErrorMessage(error: unknown, fallback: string) {
   if (typeof error !== "object" || error === null || !("error" in error)) {
@@ -19,7 +18,7 @@ function getErrorMessage(error: unknown, fallback: string) {
   return typeof detail.message === "string" ? detail.message : fallback;
 }
 
-export function useResumeUpload(onUploaded?: (resume: ResumeDetail) => void) {
+export function useResumeUpload() {
   const queryClient = useQueryClient();
   const {
     control,
@@ -40,7 +39,6 @@ export function useResumeUpload(onUploaded?: (resume: ResumeDetail) => void) {
       }
 
       await queryClient.invalidateQueries({ queryKey: resumesQueryKey() });
-      onUploaded?.(uploadedResume);
     },
     onError: (error) => {
       setError("root.server", {
@@ -50,15 +48,11 @@ export function useResumeUpload(onUploaded?: (resume: ResumeDetail) => void) {
     },
   });
 
-  const submitUpload = handleSubmit(({ file }) => {
-    if (file) createResume.mutate({ body: { file } });
-  });
-
   return {
-    isUploading: createResume.isPending,
+    createResume,
+    handleSubmit,
     control,
     resetUploadError: () => clearErrors(),
     uploadError: errors.file?.message ?? errors.root?.server?.message,
-    uploadResume: submitUpload,
   };
 }

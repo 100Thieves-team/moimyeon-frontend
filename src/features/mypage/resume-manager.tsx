@@ -168,7 +168,10 @@ export function ResumeManager() {
   const [defaultError, setDefaultError] = useState<{ message: string; resumeId: string } | null>(
     null,
   );
-  const { control, isUploading, resetUploadError, uploadError, uploadResume } = useResumeUpload();
+  const { control, createResume, handleSubmit, resetUploadError, uploadError } = useResumeUpload();
+  const uploadResume = handleSubmit(({ file }) => {
+    if (file) createResume.mutate({ body: { file } });
+  });
   const makeDefault = useMutation({
     ...makeResumeDefaultMutation(),
     onSuccess: (_, { path: { resumeId } }) => {
@@ -327,11 +330,11 @@ export function ResumeManager() {
             )}
           />
           <Button
-            disabled={isUploading || isFull}
+            disabled={createResume.isPending || isFull}
             onClick={() => fileInputRef.current?.click()}
             type="button"
           >
-            {isUploading ? "업로드 중..." : "이력서 업로드"}
+            {createResume.isPending ? "업로드 중..." : "이력서 업로드"}
           </Button>
         </div>
       </div>
