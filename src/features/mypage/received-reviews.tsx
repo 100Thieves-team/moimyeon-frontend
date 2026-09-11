@@ -1,7 +1,6 @@
 "use client";
 
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
-import type { GetReceivedReviewsData } from "@/api/generated";
 import { getReceivedReviews } from "@/api/generated/sdk.gen";
 import { getReceivedReviewsQueryKey } from "@/api/generated/@tanstack/react-query.gen";
 import { Button } from "@/components/button";
@@ -11,13 +10,12 @@ import * as shellStyles from "./mypage-shell.css";
 
 const PAGE_SIZE = 5;
 
-/* 서버는 lastReviewId 를 생략 가능한 커서로 처리하지만, 스펙에는 필수로 표기돼 있어 캐스팅으로 우회한다 */
 function pageOptions(lastReviewId?: number) {
   return {
     query: {
       size: String(PAGE_SIZE),
       ...(lastReviewId === undefined ? {} : { lastReviewId: String(lastReviewId) }),
-    } as GetReceivedReviewsData["query"],
+    },
   };
 }
 

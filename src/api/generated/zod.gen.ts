@@ -77,22 +77,6 @@ export const zV1RoomsRoomIdComments1160873406 = z.object({
   content: z.string(),
 });
 
-export const zPost191457252 = z.object({
-  result: z.string(),
-  data: z
-    .object({
-      date: z.string(),
-      result: z.string(),
-      datetime: z.string(),
-      items: z.array(
-        z.object({
-          key: z.string(),
-        }),
-      ),
-    })
-    .nullish(),
-});
-
 export const zV1RoomsRoomIdComments1495367468 = z.object({
   result: z.string(),
   data: z
@@ -117,6 +101,22 @@ export const zV1RoomsRoomIdComments1495367468 = z.object({
         }),
       ),
       writable: z.boolean(),
+    })
+    .nullish(),
+});
+
+export const zPost191457252 = z.object({
+  result: z.string(),
+  data: z
+    .object({
+      date: z.string(),
+      result: z.string(),
+      datetime: z.string(),
+      items: z.array(
+        z.object({
+          key: z.string(),
+        }),
+      ),
     })
     .nullish(),
 });
@@ -761,38 +761,6 @@ export const zV1QuestionsQuestionId496267733 = z.object({
   roomId: z.string(),
 });
 
-export const zV1RoomsRoomIdApplicationsMe2061746466 = z.object({
-  result: z.string(),
-  data: z
-    .object({
-      resume: z
-        .object({
-          file: z
-            .object({
-              originalName: z.string(),
-              contentType: z.string(),
-              sizeBytes: z.number(),
-            })
-            .nullish(),
-          resumeId: z.string(),
-          aiSummary: z
-            .object({
-              text: z.string().nullish(),
-              status: z.string(),
-            })
-            .nullish(),
-        })
-        .nullish(),
-      note: z.string(),
-      applicationId: z.number(),
-      appliedAt: z.string(),
-      statusLabel: z.string(),
-      roomId: z.string(),
-      status: z.string(),
-    })
-    .nullish(),
-});
-
 export const zV1RoomsRoomId349770905 = z.object({
   result: z.string(),
   data: z
@@ -880,6 +848,38 @@ export const zV1RoomsRoomId349770905 = z.object({
           memberId: z.string(),
         }),
       ),
+      status: z.string(),
+    })
+    .nullish(),
+});
+
+export const zV1RoomsRoomIdApplicationsMe2061746466 = z.object({
+  result: z.string(),
+  data: z
+    .object({
+      resume: z
+        .object({
+          file: z
+            .object({
+              originalName: z.string(),
+              contentType: z.string(),
+              sizeBytes: z.number(),
+            })
+            .nullish(),
+          resumeId: z.string(),
+          aiSummary: z
+            .object({
+              text: z.string().nullish(),
+              status: z.string(),
+            })
+            .nullish(),
+        })
+        .nullish(),
+      note: z.string(),
+      applicationId: z.number(),
+      appliedAt: z.string(),
+      statusLabel: z.string(),
+      roomId: z.string(),
       status: z.string(),
     })
     .nullish(),
@@ -1148,6 +1148,25 @@ export const zV1MembersMeProfile934225230 = z.object({
     .nullish(),
 });
 
+export const zV1RoomsRoomIdApplicationsApplicationIdReject855969760 = z.object({
+  result: z.string(),
+  data: z
+    .object({
+      recruit: z
+        .object({
+          current: z.number(),
+          max: z.number(),
+          recruitStatus: z.string(),
+          recruitStatusLabel: z.string(),
+        })
+        .nullish(),
+      applicationId: z.number(),
+      statusLabel: z.string(),
+      status: z.string(),
+    })
+    .nullish(),
+});
+
 export const zV1MembersMeReceivedReviews2000779045 = z.object({
   result: z.string(),
   data: z
@@ -1164,25 +1183,6 @@ export const zV1MembersMeReceivedReviews2000779045 = z.object({
       ),
       hasNext: z.boolean(),
       totalCount: z.number(),
-    })
-    .nullish(),
-});
-
-export const zV1RoomsRoomIdApplicationsApplicationIdReject855969760 = z.object({
-  result: z.string(),
-  data: z
-    .object({
-      recruit: z
-        .object({
-          current: z.number(),
-          max: z.number(),
-          recruitStatus: z.string(),
-          recruitStatusLabel: z.string(),
-        })
-        .nullish(),
-      applicationId: z.number(),
-      statusLabel: z.string(),
-      status: z.string(),
     })
     .nullish(),
 });
@@ -1973,8 +1973,8 @@ export const zUpdateProfileBody = zV1MembersMeProfile466680720;
 export const zUpdateProfileResponse = zV1MembersMeProfile934225230;
 
 export const zGetReceivedReviewsQuery = z.object({
-  lastReviewId: z.string(),
-  size: z.string(),
+  lastReviewId: z.string().optional(),
+  size: z.string().optional(),
 });
 
 /**

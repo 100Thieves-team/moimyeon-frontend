@@ -1715,7 +1715,7 @@ export const updateProfileMutation = (
   return mutationOptions;
 };
 
-export const getReceivedReviewsQueryKey = (options: Options<GetReceivedReviewsData>) =>
+export const getReceivedReviewsQueryKey = (options?: Options<GetReceivedReviewsData>) =>
   createQueryKey("getReceivedReviews", options);
 
 /**
@@ -1723,7 +1723,7 @@ export const getReceivedReviewsQueryKey = (options: Options<GetReceivedReviewsDa
  *
  * 공개 기준 시각이 지난 받은 후기만 마지막 후기 id 기반으로 조회한다. 익명 후기는 익명의 참여자, 공개 후기는 작성자 닉네임을 표시하며 룸 이름과 일자는 응답하지 않는다. 양수가 아닌 마지막 후기 id E400, 미인증 E1102로 응답한다.
  */
-export const getReceivedReviewsOptions = (options: Options<GetReceivedReviewsData>) =>
+export const getReceivedReviewsOptions = (options?: Options<GetReceivedReviewsData>) =>
   queryOptions<
     GetReceivedReviewsResponse,
     GetReceivedReviewsError,
