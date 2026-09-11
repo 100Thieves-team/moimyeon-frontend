@@ -18,6 +18,7 @@ const mocks = vi.hoisted(() => ({
   memberMe: vi.fn(),
   nicknameSuggestion: vi.fn(),
   publicProfile: vi.fn(),
+  resumes: vi.fn(),
   updateProfile: vi.fn(),
 }));
 
@@ -28,6 +29,15 @@ vi.mock("@/api/generated/sdk.gen", () => ({
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
   authLogoutMutation: () => ({ mutationFn: mocks.authLogout }),
   getReceivedReviewsQueryKey: (options: Record<string, unknown>) => ["getReceivedReviews", options],
+  createResumeMutation: () => ({ mutationFn: vi.fn() }),
+  deleteResumeMutation: () => ({ mutationFn: vi.fn() }),
+  makeResumeDefaultMutation: () => ({ mutationFn: vi.fn() }),
+  resumesOptions: () => ({
+    queryFn: mocks.resumes,
+    queryKey: ["resumes"],
+  }),
+  resumesQueryKey: () => ["resumes"],
+  retryResumeSummaryMutation: () => ({ mutationFn: vi.fn() }),
   jobRolesOptions: () => ({
     queryFn: mocks.jobRoles,
     queryKey: ["jobRoles"],
@@ -161,6 +171,7 @@ beforeEach(async () => {
   mocks.memberMe.mockResolvedValue(memberResponse);
   mocks.publicProfile.mockResolvedValue(publicProfileResponse);
   mocks.jobRoles.mockResolvedValue(jobRolesResponse);
+  mocks.resumes.mockResolvedValue({ data: { maxCount: 10, resumes: [] }, result: "SUCCESS" });
   mocks.updateProfile.mockResolvedValue({ result: "SUCCESS" });
   await page.viewport(1000, 800);
 });

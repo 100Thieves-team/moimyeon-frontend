@@ -5,6 +5,7 @@ import {
   jobRolesOptions,
   memberMeOptions,
   publicProfileOptions,
+  resumesOptions,
 } from "@/api/generated/@tanstack/react-query.gen";
 import { getQueryClient } from "@/api/query-client";
 import { createServerClient } from "@/api/server-client";
@@ -35,6 +36,7 @@ export default async function MyPage() {
         path: { memberId: memberResponse.data.memberId },
       }),
     );
+    queryClient.prefetchQuery(resumesOptions(requestOptions));
   }
 
   return (
