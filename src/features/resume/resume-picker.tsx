@@ -98,7 +98,7 @@ export function ResumePicker({
 }: ResumePickerProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [draftResumeId, setDraftResumeId] = useState(value);
-  const { isUploading, resetUploadError, uploadError, uploadResume } = useResumeUpload(
+  const { fileField, isUploading, resetUploadError, uploadError, uploadResume } = useResumeUpload(
     (uploadedResume) => setDraftResumeId(uploadedResume.resumeId),
   );
 
@@ -190,8 +190,13 @@ export function ResumePicker({
               accept="application/pdf,.pdf"
               aria-label="새 이력서 파일"
               className={styles.visuallyHidden}
+              name={fileField.name}
+              onBlur={fileField.onBlur}
               onChange={uploadResume}
-              ref={fileInputRef}
+              ref={(element) => {
+                fileInputRef.current = element;
+                fileField.ref(element);
+              }}
               type="file"
             />
             <Button

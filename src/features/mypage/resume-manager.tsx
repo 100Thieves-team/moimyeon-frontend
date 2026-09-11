@@ -165,7 +165,7 @@ export function ResumeManager() {
   const [defaultError, setDefaultError] = useState<{ message: string; resumeId: string } | null>(
     null,
   );
-  const { isUploading, uploadError, uploadResume } = useResumeUpload();
+  const { fileField, isUploading, uploadError, uploadResume } = useResumeUpload();
   const makeDefault = useMutation({
     ...makeResumeDefaultMutation(),
     onSuccess: (_, { path: { resumeId } }) => {
@@ -297,8 +297,13 @@ export function ResumeManager() {
             accept="application/pdf,.pdf"
             aria-label="새 이력서 파일"
             className={styles.visuallyHidden}
+            name={fileField.name}
+            onBlur={fileField.onBlur}
             onChange={uploadResume}
-            ref={fileInputRef}
+            ref={(element) => {
+              fileInputRef.current = element;
+              fileField.ref(element);
+            }}
             type="file"
           />
           <Button
