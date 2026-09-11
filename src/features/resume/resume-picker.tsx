@@ -1,5 +1,7 @@
 "use client";
 
+import { Controller } from "react-hook-form";
+
 import { Dialog } from "@base-ui/react/dialog";
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
@@ -8,7 +10,12 @@ import { Check, X } from "lucide-react";
 import { type Ref, useRef, useState } from "react";
 import { resumesOptions } from "@/api/generated/@tanstack/react-query.gen";
 import { Button } from "@/components/button";
-import { formatFileSize, getResumesData, type ResumeItem } from "./resume-model";
+import {
+  formatFileSize,
+  getResumesData,
+  validateResumeFile,
+  type ResumeItem,
+} from "./resume-model";
 import { useResumeUpload } from "./use-resume-upload";
 import * as styles from "./resume-picker.css";
 
@@ -98,7 +105,7 @@ export function ResumePicker({
 }: ResumePickerProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [draftResumeId, setDraftResumeId] = useState(value);
-  const { fileField, isUploading, resetUploadError, uploadError, uploadResume } = useResumeUpload(
+  const { control, isUploading, resetUploadError, uploadError, uploadResume } = useResumeUpload(
     (uploadedResume) => setDraftResumeId(uploadedResume.resumeId),
   );
 
@@ -186,18 +193,35 @@ export function ResumePicker({
               <p className={styles.resumeDialogEmpty}>저장된 이력서가 아직 없어요.</p>
             )}
 
-            <input
-              accept="application/pdf,.pdf"
-              aria-label="새 이력서 파일"
-              className={styles.visuallyHidden}
-              name={fileField.name}
-              onBlur={fileField.onBlur}
-              onChange={uploadResume}
-              ref={(element) => {
-                fileInputRef.current = element;
-                fileField.ref(element);
+            <Controller
+              control={control}
+              name="file"
+              rules={{
+                validate: (file) =>
+                  file ? (validateResumeFile(file) ?? true) : "이력서 파일을 선택해 주세요.",
               }}
-              type="file"
+              render={({ field }) => (
+                <input
+                  accept="application/pdf,.pdf"
+                  aria-label="새 이력서 파일"
+                  className={styles.visuallyHidden}
+                  name={field.name}
+                  onBlur={field.onBlur}
+                  onChange={(event) => {
+                    const file = event.currentTarget.files?.[0];
+                    event.currentTarget.value = "";
+                    if (!file) return;
+                    resetUploadError();
+                    field.onChange(file);
+                    void uploadResume();
+                  }}
+                  ref={(element) => {
+                    fileInputRef.current = element;
+                    field.ref(element);
+                  }}
+                  type="file"
+                />
+              )}
             />
             <Button
               className={styles.resumeUploadButton}

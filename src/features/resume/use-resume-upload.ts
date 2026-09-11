@@ -1,10 +1,9 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { type ChangeEvent } from "react";
-import { useController, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { createResumeMutation, resumesQueryKey } from "@/api/generated/@tanstack/react-query.gen";
-import { type ResumeDetail, validateResumeFile } from "./resume-model";
+import { type ResumeDetail } from "./resume-model";
 
 function getErrorMessage(error: unknown, fallback: string) {
   if (typeof error !== "object" || error === null || !("error" in error)) {
@@ -31,14 +30,6 @@ export function useResumeUpload(onUploaded?: (resume: ResumeDetail) => void) {
   } = useForm<{ file: File | null }>({
     defaultValues: { file: null },
   });
-  const { field } = useController({
-    control,
-    name: "file",
-    rules: {
-      validate: (file) =>
-        file ? (validateResumeFile(file) ?? true) : "이력서 파일을 선택해 주세요.",
-    },
-  });
   const createResume = useMutation({
     ...createResumeMutation(),
     onSuccess: async (response) => {
@@ -63,22 +54,11 @@ export function useResumeUpload(onUploaded?: (resume: ResumeDetail) => void) {
     if (file) createResume.mutate({ body: { file } });
   });
 
-  const uploadResume = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.currentTarget.files?.[0];
-    event.currentTarget.value = "";
-
-    if (!file) return;
-
-    clearErrors();
-    field.onChange(file);
-    void submitUpload();
-  };
-
   return {
     isUploading: createResume.isPending,
-    fileField: { name: field.name, onBlur: field.onBlur, ref: field.ref },
+    control,
     resetUploadError: () => clearErrors(),
     uploadError: errors.file?.message ?? errors.root?.server?.message,
-    uploadResume,
+    uploadResume: submitUpload,
   };
 }

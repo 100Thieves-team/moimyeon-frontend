@@ -1,5 +1,7 @@
 "use client";
 
+import { Controller } from "react-hook-form";
+
 import { AlertDialog } from "@base-ui/react/alert-dialog";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
@@ -16,6 +18,7 @@ import {
   applyDefaultResume,
   formatRegisteredMeta,
   getResumesData,
+  validateResumeFile,
   type ResumeItem,
   upsertResume,
 } from "@/features/resume/resume-model";
@@ -165,7 +168,7 @@ export function ResumeManager() {
   const [defaultError, setDefaultError] = useState<{ message: string; resumeId: string } | null>(
     null,
   );
-  const { fileField, isUploading, uploadError, uploadResume } = useResumeUpload();
+  const { control, isUploading, resetUploadError, uploadError, uploadResume } = useResumeUpload();
   const makeDefault = useMutation({
     ...makeResumeDefaultMutation(),
     onSuccess: (_, { path: { resumeId } }) => {
@@ -293,18 +296,35 @@ export function ResumeManager() {
               이력서는 최대 {maxCount}개까지 보관할 수 있어요. 새로 올리려면 먼저 삭제해 주세요.
             </p>
           )}
-          <input
-            accept="application/pdf,.pdf"
-            aria-label="새 이력서 파일"
-            className={styles.visuallyHidden}
-            name={fileField.name}
-            onBlur={fileField.onBlur}
-            onChange={uploadResume}
-            ref={(element) => {
-              fileInputRef.current = element;
-              fileField.ref(element);
+          <Controller
+            control={control}
+            name="file"
+            rules={{
+              validate: (file) =>
+                file ? (validateResumeFile(file) ?? true) : "이력서 파일을 선택해 주세요.",
             }}
-            type="file"
+            render={({ field }) => (
+              <input
+                accept="application/pdf,.pdf"
+                aria-label="새 이력서 파일"
+                className={styles.visuallyHidden}
+                name={field.name}
+                onBlur={field.onBlur}
+                onChange={(event) => {
+                  const file = event.currentTarget.files?.[0];
+                  event.currentTarget.value = "";
+                  if (!file) return;
+                  resetUploadError();
+                  field.onChange(file);
+                  void uploadResume();
+                }}
+                ref={(element) => {
+                  fileInputRef.current = element;
+                  field.ref(element);
+                }}
+                type="file"
+              />
+            )}
           />
           <Button
             disabled={isUploading || isFull}
