@@ -4,7 +4,6 @@ export type Resumes = NonNullable<ResumesResponse["data"]>;
 export type ResumeItem = Resumes["resumes"][number];
 export type ResumeDetail = NonNullable<ResumeResponse["data"]>;
 
-const JUST_UPLOADED_THRESHOLD_MS = 60 * 60 * 1000;
 const MAX_RESUME_SIZE_BYTES = 10 * 1024 * 1024;
 
 export function validateResumeFile(file: File) {
@@ -54,21 +53,15 @@ export function formatFileSize(sizeBytes?: number) {
   return `${(sizeBytes / (1024 * 1024)).toFixed(1).replace(/\.0$/, "")}MB`;
 }
 
-export function formatRegisteredMeta(resume: ResumeItem, now = Date.now()) {
+export function formatRegisteredMeta(resume: ResumeItem) {
   const fileSize = formatFileSize(resume.file?.sizeBytes);
-  const registeredTime = new Date(resume.registeredAt).getTime();
-
-  if (Number.isFinite(registeredTime) && now - registeredTime < JUST_UPLOADED_THRESHOLD_MS) {
-    return `방금 올림 · ${fileSize}`;
-  }
-
   const match = resume.registeredAt.match(/^\d{4}-(\d{2})-(\d{2})/);
 
   if (!match) {
     return fileSize;
   }
 
-  return `${Number(match[1])}월 ${Number(match[2])}일 업데이트 · ${fileSize}`;
+  return `${Number(match[1])}월 ${Number(match[2])}일 업로드 · ${fileSize}`;
 }
 
 export function upsertResume(current: ResumesResponse | undefined, nextResume: ResumeDetail) {

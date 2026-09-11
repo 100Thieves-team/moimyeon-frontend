@@ -6,7 +6,7 @@ export const manager = style({
   display: "flex",
   flex: "1 1 auto",
   flexDirection: "column",
-  gap: vars.spacing.lg,
+  gap: vars.spacing.base,
 });
 
 export const list = style({
@@ -210,7 +210,7 @@ export const retryButton = style({
   flex: "0 0 auto",
   border: 0,
   backgroundColor: "transparent",
-  color: vars.color.blue,
+  color: vars.color.secondary,
   cursor: "pointer",
   fontFamily: vars.font.sans,
   fontSize: "1.3rem",
@@ -242,14 +242,6 @@ export const empty = style({
   fontSize: "1.35rem",
   lineHeight: "1.9rem",
   textAlign: "center",
-});
-
-export const footer = style({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-end",
-  gap: vars.spacing.sm,
-  marginTop: "auto",
 });
 
 export const footerMessage = style({

@@ -21,7 +21,7 @@ function pageOptions(lastReviewId?: number) {
 
 export function ReceivedReviewsFallback() {
   return (
-    <section aria-label="받은 후기 불러오는 중" className={styles.container}>
+    <section aria-label="받은 후기 불러오는 중" className={panelStyles.card}>
       <div className={styles.header}>
         <h2 className={panelStyles.title}>받은 후기</h2>
       </div>
@@ -63,49 +63,50 @@ export function ReceivedReviews() {
 
   return (
     <section aria-label="받은 후기" className={styles.container}>
-      <div className={styles.header}>
-        <h2 className={panelStyles.title}>받은 후기</h2>
-        <span className={styles.count}>{totalCount}개</span>
-      </div>
-      {reviews.length === 0 ? (
-        <p className={styles.empty}>
-          아직 받은 후기가 없어요. 면접을 완료하면 함께한 분들의 후기가 여기에 쌓여요.
-        </p>
-      ) : (
-        <ul className={styles.list}>
-          {reviews.map((review) => (
-            <li className={styles.item} key={review.reviewId}>
-              {review.tags.length > 0 && (
-                <ul aria-label="평가 태그" className={styles.tagRow}>
-                  {review.tags.map((tag) => (
-                    <li className={shellStyles.tag} key={String(tag)}>
-                      {String(tag)}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {typeof review.content === "string" && review.content !== "" && (
-                <p className={styles.content}>{review.content}</p>
-              )}
-              <p className={styles.author}>{review.authorNickname}</p>
-            </li>
-          ))}
-        </ul>
-      )}
-      {hasNextPage && (
-        <div className={panelStyles.footer}>
-          <Button
-            className={styles.moreButton}
-            disabled={isFetchingNextPage}
-            onClick={() => fetchNextPage()}
-            size="md"
-            type="button"
-            variant="ghost"
-          >
-            {isFetchingNextPage ? "불러오는 중…" : "더 보기"}
-          </Button>
+      <div className={panelStyles.card}>
+        <div className={styles.header}>
+          <h2 className={panelStyles.title}>받은 후기</h2>
+          <span className={styles.count}>{totalCount}개</span>
         </div>
-      )}
+        {reviews.length === 0 ? (
+          <p className={styles.empty}>
+            아직 받은 후기가 없어요. 면접을 완료하면 함께한 분들의 후기가 여기에 쌓여요.
+          </p>
+        ) : (
+          <ul className={styles.list}>
+            {reviews.map((review) => (
+              <li className={styles.item} key={review.reviewId}>
+                {review.tags.length > 0 && (
+                  <ul aria-label="평가 태그" className={styles.tagRow}>
+                    {review.tags.map((tag) => (
+                      <li className={shellStyles.tag} key={String(tag)}>
+                        {String(tag)}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {typeof review.content === "string" && review.content !== "" && (
+                  <p className={styles.content}>{review.content}</p>
+                )}
+                <p className={styles.author}>{review.authorNickname}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+        {hasNextPage && (
+          <div className={panelStyles.centeredFooter}>
+            <Button
+              disabled={isFetchingNextPage}
+              onClick={() => fetchNextPage()}
+              size="md"
+              type="button"
+              variant="ghost"
+            >
+              {isFetchingNextPage ? "불러오는 중…" : "더 보기"}
+            </Button>
+          </div>
+        )}
+      </div>
     </section>
   );
 }

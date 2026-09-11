@@ -78,9 +78,19 @@ async function renderMyPageShell() {
   const screen = await render(
     <QueryClientProvider client={queryClient}>
       <MyPageShell
-        reviews={<p>받은 후기 목록</p>}
-        profile={<p>프로필 편집 폼</p>}
-        resumePanel={<p>이력서 관리 패널</p>}
+        reviewsPanel={<p>받은 후기 목록</p>}
+        profilePanel={
+          <>
+            <h2>프로필 수정</h2>
+            <p>프로필 편집 폼</p>
+          </>
+        }
+        resumePanel={
+          <>
+            <h2>이력서 관리</h2>
+            <p>이력서 관리 패널</p>
+          </>
+        }
         publicProfile={myPageData.publicProfile}
       />
     </QueryClientProvider>,

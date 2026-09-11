@@ -9,15 +9,38 @@ export const title = style({
   letterSpacing: "-0.01em",
 });
 
+export const panel = style({
+  width: "100%",
+  minWidth: 0,
+});
+
+export const card = style({
+  border: `1px solid ${vars.color.strokeLight}`,
+  borderRadius: vars.radius.media,
+  backgroundColor: vars.color.background,
+  display: "flex",
+  width: "100%",
+  minWidth: 0,
+  flexDirection: "column",
+  gap: vars.spacing.xl,
+  padding: vars.spacing["2xl"],
+  "@media": {
+    "screen and (max-width: 599px)": {
+      padding: vars.spacing.lg,
+    },
+  },
+});
+
 export const footer = style({
   display: "flex",
-  minHeight: "6.9rem",
+  flexDirection: "column",
   alignItems: "flex-end",
-  justifyContent: "space-between",
-  gap: vars.spacing.base,
+  gap: vars.spacing.sm,
   paddingTop: vars.spacing.lg,
   borderTop: `1px solid ${vars.color.strokeLight}`,
 });
+
+export const centeredFooter = style([footer, { alignItems: "center" }]);
 
 export const action = style({
   minWidth: "10.4rem",

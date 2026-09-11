@@ -6,7 +6,7 @@ export const form = style({
   display: "flex",
   width: "100%",
   flexDirection: "column",
-  gap: vars.spacing.xl,
+  gap: vars.spacing.base,
 });
 
 export const firstRow = style({

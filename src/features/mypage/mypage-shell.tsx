@@ -7,8 +7,8 @@ import * as panelStyles from "./mypage-panel.css";
 import * as styles from "./mypage-shell.css";
 
 type MyPageShellProps = {
-  reviews?: ReactNode;
-  profile: ReactNode;
+  reviewsPanel?: ReactNode;
+  profilePanel: ReactNode;
   publicProfile: MyPageData["publicProfile"];
   resumePanel: ReactNode;
 };
@@ -79,7 +79,12 @@ function TrustStats({ trust }: TrustStatsProps) {
   );
 }
 
-export function MyPageShell({ reviews, profile, publicProfile, resumePanel }: MyPageShellProps) {
+export function MyPageShell({
+  reviewsPanel,
+  profilePanel,
+  publicProfile,
+  resumePanel,
+}: MyPageShellProps) {
   const jobTitle = publicProfile.interestJobRoles.map((jobRole) => jobRole.displayName).join(" · ");
   const avatarLabel = Array.from(publicProfile.nickname.trim())[0] ?? "?";
 
@@ -120,17 +125,15 @@ export function MyPageShell({ reviews, profile, publicProfile, resumePanel }: My
             </Tabs.Tab>
           </Tabs.List>
 
-          <Tabs.Panel className={styles.editorCard} value="profile">
-            <h2 className={panelStyles.title}>프로필 수정</h2>
-            {profile}
+          <Tabs.Panel className={panelStyles.panel} value="profile">
+            {profilePanel}
           </Tabs.Panel>
 
-          <Tabs.Panel className={styles.editorCard} value="received-reviews">
-            {reviews}
+          <Tabs.Panel className={panelStyles.panel} value="received-reviews">
+            {reviewsPanel}
           </Tabs.Panel>
 
-          <Tabs.Panel className={styles.editorCard} value="resume">
-            <h2 className={panelStyles.title}>이력서 관리</h2>
+          <Tabs.Panel className={panelStyles.panel} value="resume">
             {resumePanel}
           </Tabs.Panel>
         </Tabs.Root>
