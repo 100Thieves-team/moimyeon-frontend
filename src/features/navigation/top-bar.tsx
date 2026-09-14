@@ -24,11 +24,13 @@ export async function TopBar() {
           </Link>
           <ul className={styles.navList}>
             <li>
-              <TopBarNavLink href="/" segment={null}>
-                면접
-              </TopBarNavLink>
+              <TopBarNavLink href="/">면접</TopBarNavLink>
             </li>
-            <li className={styles.navItem}>내 면접</li>
+            {currentMemberState.status === "authenticated" && (
+              <li>
+                <TopBarNavLink href="/interviews/me">내 면접</TopBarNavLink>
+              </li>
+            )}
           </ul>
         </div>
 

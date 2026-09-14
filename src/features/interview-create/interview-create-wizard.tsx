@@ -18,6 +18,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { Button } from "@/components/button";
 import {
+  getInterviewOverviewQueryKey,
   createRoomMutation,
   participationSlotsQueryKey,
   resumesOptions,
@@ -174,6 +175,7 @@ export function InterviewCreateWizard({
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: roomsQueryKey() }),
+        queryClient.invalidateQueries({ queryKey: getInterviewOverviewQueryKey() }),
         queryClient.invalidateQueries({ queryKey: participationSlotsQueryKey() }),
         queryClient.invalidateQueries({ queryKey: resumesQueryKey() }),
         queryClient.invalidateQueries({

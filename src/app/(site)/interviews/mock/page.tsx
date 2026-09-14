@@ -40,6 +40,12 @@ export default function InterviewDetailMockPage() {
       </header>
 
       <div className={styles.sections}>
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>내 면접</h2>
+          <Link className={styles.card} href="/interviews/me">
+            신청 중·예정·완료와 신청 취소 확인
+          </Link>
+        </section>
         {categories.map((category) => (
           <section className={styles.section} key={category}>
             <h2 className={styles.sectionTitle}>{category}</h2>

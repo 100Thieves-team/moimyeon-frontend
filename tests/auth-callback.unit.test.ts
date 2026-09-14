@@ -54,6 +54,12 @@ afterEach(() => {
 });
 
 describe("OAuth callback", () => {
+  it("내 면접에서 시작한 로그인은 내 면접으로 복귀한다", async () => {
+    const response = await GET(createCallbackRequest("/interviews/me"));
+    expect(response.status).toBe(303);
+    expect(response.headers.get("Location")).toBe("https://moimyeon.plady.io/interviews/me");
+    expectLoginIntentCleared(response);
+  });
   it("인증된 회원을 로그인 전에 의도한 경로로 돌려보낸다", async () => {
     const response = await GET(createCallbackRequest("/interviews/new"));
 

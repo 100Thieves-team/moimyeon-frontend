@@ -46,7 +46,7 @@ vi.mock("next/navigation", () => ({
     replace: navigation.routerReplace,
   }),
   useSearchParams: () => navigation.searchParams,
-  useSelectedLayoutSegment: () => navigation.segment,
+  usePathname: () => (navigation.segment === null ? "/" : `/${navigation.segment}`),
 }));
 
 type TriggerName = "로그인" | "면접 만들기";
@@ -97,6 +97,26 @@ async function openLoginDialog(triggerName: TriggerName, showDevLogin = false) {
 }
 
 describe("LoginDialog", () => {
+  it("비로그인 사용자에게는 내 면접 메뉴를 표시하지 않는다", async () => {
+    const screen = await renderWithQueryClient(await TopBar());
+    await expect.element(screen.getByRole("link", { name: "내 면접" })).not.toBeInTheDocument();
+    await expect.element(screen.getByRole("button", { name: "내 면접" })).not.toBeInTheDocument();
+  });
+
+  it("로그인 사용자는 내 면접 링크와 현재 메뉴를 확인한다", async () => {
+    navigation.getCurrentMemberState.mockResolvedValue({
+      status: "authenticated",
+      member: { nickname: "든든한 곰" },
+    });
+    navigation.segment = "interviews/me";
+    const screen = await renderWithQueryClient(await TopBar());
+    await expect
+      .element(screen.getByRole("link", { name: "내 면접" }))
+      .toHaveAttribute("href", "/interviews/me");
+    await expect
+      .element(screen.getByRole("link", { name: "내 면접" }))
+      .toHaveAttribute("aria-current", "page");
+  });
   it("로그인 클릭 시 함께 면접을 준비하는 문구와 홈 OAuth 의도를 표시한다", async () => {
     const { dialog, screen } = await openLoginDialog("로그인");
     const googleAction = screen.getByRole("link", {
