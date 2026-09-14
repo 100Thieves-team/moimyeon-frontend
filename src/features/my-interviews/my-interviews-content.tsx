@@ -65,8 +65,7 @@ function PendingCard({
         toast.add({ title: "신청 상태가 변경됐어요. 최신 목록을 확인해 주세요." });
       }
     },
-    onSettled: async (_data, error) => {
-      if (error !== null && !isApplicationStateChangedError(error)) return;
+    onSettled: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: getInterviewOverviewQueryKey() }),
         queryClient.invalidateQueries({

@@ -186,7 +186,7 @@ describe("내 면접", () => {
     await expect.element(screen.getByText("신청 중인 면접이 없어요.")).toBeVisible();
   });
 
-  it("취소 요청이 실패하면 카드를 유지하고 다시 시도할 수 있다", async () => {
+  it("취소 요청이 실패해도 목록을 다시 조회하고 신청이 남아 있으면 재시도할 수 있다", async () => {
     mocks.withdraw.mockRejectedValueOnce(new Error("offline"));
     const screen = await renderList();
     await screen.getByRole("tab", { name: "신청 중 1" }).click();
@@ -195,7 +195,7 @@ describe("내 면접", () => {
     await expect
       .element(screen.getByRole("button", { name: "신청 취소", exact: true }))
       .toBeEnabled();
-    expect(mocks.overview).toHaveBeenCalledTimes(1);
+    expect(mocks.overview).toHaveBeenCalledTimes(2);
     await screen.getByRole("button", { name: "신청 취소", exact: true }).click();
     await expect.element(screen.getByText("신청 중인 면접이 없어요.")).toBeVisible();
   });
