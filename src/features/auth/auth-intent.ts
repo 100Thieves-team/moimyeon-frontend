@@ -1,4 +1,4 @@
-export const LOGIN_RETURN_PATHS = ["/", "/interviews/new"] as const;
+export const LOGIN_RETURN_PATHS = ["/", "/interviews/new", "/interviews/me"] as const;
 
 export type InterviewDetailReturnTo = `/interviews/${string}`;
 

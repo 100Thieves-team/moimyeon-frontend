@@ -3,6 +3,7 @@
 import { Toast } from "@base-ui/react/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+  getInterviewOverviewQueryKey,
   myRoomApplicationQueryKey,
   roomDetailQueryKey,
   roomsQueryKey,
@@ -34,6 +35,7 @@ function WithdrawAction({ roomId }: { roomId: string }) {
           queryKey: myRoomApplicationQueryKey({ path: { roomId } }),
         }),
         queryClient.invalidateQueries({ queryKey: roomsQueryKey() }),
+        queryClient.invalidateQueries({ queryKey: getInterviewOverviewQueryKey() }),
       ]);
     },
   });

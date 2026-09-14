@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import {
+  getInterviewOverviewQueryKey,
   myRoomApplicationQueryKey,
   resumesOptions,
   resumesQueryKey,
@@ -76,6 +77,7 @@ function InterviewApplicationForm({
           queryKey: myRoomApplicationQueryKey({ path: { roomId } }),
         }),
         queryClient.invalidateQueries({ queryKey: roomsQueryKey() }),
+        queryClient.invalidateQueries({ queryKey: getInterviewOverviewQueryKey() }),
         queryClient.invalidateQueries({ queryKey: resumesQueryKey() }),
       ]);
       router.replace(`/interviews/${roomId}`);

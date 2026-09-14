@@ -17,6 +17,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
+  getInterviewOverviewQueryKey: () => ["getInterviewOverview"],
   deleteReviewMutation: () => ({ mutationFn: (options: unknown) => mocks.deleteReview(options) }),
   getReviewOverviewOptions: ({ path }: { path: { roomId: string } }) => ({
     queryFn: () => mocks.getReviewOverview(path.roomId),

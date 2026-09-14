@@ -2,18 +2,17 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { useSelectedLayoutSegment } from "next/navigation";
+import { usePathname } from "next/navigation";
 import * as styles from "./top-bar.css";
 
 type TopBarNavLinkProps = {
   children: ReactNode;
   href: string;
-  segment: string | null;
 };
 
-export function TopBarNavLink({ children, href, segment }: TopBarNavLinkProps) {
-  const selectedSegment = useSelectedLayoutSegment();
-  const isActive = selectedSegment === segment;
+export function TopBarNavLink({ children, href }: TopBarNavLinkProps) {
+  const pathname = usePathname();
+  const isActive = pathname === href;
 
   return (
     <Link

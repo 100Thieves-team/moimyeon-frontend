@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
+  getInterviewOverviewQueryKey: () => ["getInterviewOverview"],
   issueDevSessionMutation: () => ({ mutationFn: vi.fn() }),
   myRoomApplicationQueryKey: ({ path }: { path: { roomId: string } }) => [
     "myRoomApplication",

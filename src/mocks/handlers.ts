@@ -1,3 +1,7 @@
+import {
+  getMockMyInterviews,
+  withdrawMockMyInterview,
+} from "@/features/my-interviews/my-interviews-mock";
 import { http, HttpResponse, passthrough } from "msw";
 import { getMockInterviewRooms } from "@/features/interview-discovery/interview-discovery-mock";
 import {
@@ -23,6 +27,12 @@ function mockError(message: string, status: number) {
 }
 
 export const handlers = [
+  http.get("*/v1/members/me/rooms", () => HttpResponse.json(getMockMyInterviews())),
+  http.delete("*/v1/rooms/:roomId/applications/me", ({ params }) => {
+    return withdrawMockMyInterview(String(params.roomId))
+      ? HttpResponse.json({ result: "SUCCESS", data: null, error: null })
+      : passthrough();
+  }),
   http.get("*/v1/rooms", ({ request }) => {
     const { searchParams } = new URL(request.url);
 

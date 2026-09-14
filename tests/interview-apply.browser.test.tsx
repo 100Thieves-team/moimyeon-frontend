@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
+  getInterviewOverviewQueryKey: () => ["getInterviewOverview"],
   createResumeMutation: () => ({
     mutationFn: async (options: { body: { file: File } }) => {
       const result = await mocks.createResume({ ...options, throwOnError: true });

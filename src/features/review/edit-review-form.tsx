@@ -9,6 +9,7 @@ import { useState } from "react";
 import { Check } from "lucide-react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import {
+  getInterviewOverviewQueryKey,
   deleteReviewMutation,
   getReviewOverviewOptions,
   getReviewOverviewQueryKey,
@@ -98,9 +99,10 @@ export function EditReviewForm({ onCompleted, roomId, target }: EditReviewFormPr
       return;
     }
 
-    await queryClient.invalidateQueries({
-      queryKey: getReviewOverviewQueryKey({ path: { roomId } }),
-    });
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: getReviewOverviewQueryKey({ path: { roomId } }) }),
+      queryClient.invalidateQueries({ queryKey: getInterviewOverviewQueryKey() }),
+    ]);
     toastManager.add({ title: "후기를 삭제했어요. 다시 작성할 수 있어요" });
     onCompleted();
   };

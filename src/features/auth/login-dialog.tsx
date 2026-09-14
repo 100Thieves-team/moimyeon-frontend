@@ -25,6 +25,7 @@ type LoginDialogProps = {
 const loginDialogTitleLines = {
   "/": ["로그인하고 함께", "면접을 준비하세요"],
   "/interviews/new": ["로그인하고", "면접을 만드세요"],
+  "/interviews/me": ["로그인하고", "내 면접을 확인하세요"],
 } as const;
 
 function getLoginDialogTitleLines(returnTo: LoginReturnTo): readonly [string, string] {
