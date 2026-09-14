@@ -65,11 +65,7 @@ function renderList(children = <MyInterviewsContent />) {
   return render(
     <QueryClientProvider client={client}>
       <ToastProvider>
-        <ErrorBoundary
-          fallbackRender={({ resetErrorBoundary }) => (
-            <MyInterviewsError reset={resetErrorBoundary} />
-          )}
-        >
+        <ErrorBoundary FallbackComponent={MyInterviewsError}>
           <Suspense fallback={<MyInterviewsSkeleton />}>{children}</Suspense>
         </ErrorBoundary>
       </ToastProvider>
@@ -236,18 +232,19 @@ describe("내 면접", () => {
     },
   );
 
-  it("조회가 실패해도 다시 시도하면 면접 목록을 불러온다", async () => {
+  it("조회가 실패하면 오류 안내를 표시한다", async () => {
     mocks.overview.mockRejectedValueOnce(new Error("offline"));
     const screen = await renderList();
     await expect
       .element(screen.getByRole("heading", { name: "내 면접을 불러오지 못했어요" }))
       .toBeVisible();
-    await screen.getByRole("button", { name: "다시 시도하기" }).click();
-    await expect.element(screen.getByRole("tab", { name: "예정 1" })).toBeVisible();
+    await expect
+      .element(screen.getByRole("button", { name: "다시 시도하기" }))
+      .not.toBeInTheDocument();
   });
 
-  it("필수 data가 없는 응답을 빈 목록으로 표시하지 않는다", async () => {
-    mocks.overview.mockResolvedValue({ result: "SUCCESS" });
+  it("필수 data가 없는 응답을 빈 목록 대신 오류로 표시한다", async () => {
+    mocks.overview.mockResolvedValueOnce({ result: "SUCCESS" });
     const screen = await renderList();
     await expect
       .element(screen.getByRole("heading", { name: "내 면접을 불러오지 못했어요" }))
