@@ -100,7 +100,7 @@ export function LeaveRoomDialog({
                 돌아가기
               </AlertDialog.Close>
               <Button disabled={disabled} onClick={() => void leave()}>
-                {isPending ? "취소 중..." : "참여 취소 확정"}
+                {isPending ? "취소 중..." : "취소하기"}
               </Button>
             </footer>
           </AlertDialog.Popup>

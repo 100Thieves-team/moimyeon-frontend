@@ -267,7 +267,7 @@ describe("참여 취소", () => {
         await expect
           .element(screen.getByText("위임할 사람이 없으면 면접이 취소돼요.", { exact: false }))
           .toBeVisible();
-      await screen.getByRole("button", { name: "참여 취소 확정", exact: true }).click();
+      await screen.getByRole("button", { name: "취소하기", exact: true }).click();
       await expect.poll(() => routerReplaceMock.mock.calls.length).toBe(1);
       expect(routerReplaceMock).toHaveBeenCalledWith("/interviews/me");
       expect(routerRefreshMock).toHaveBeenCalledOnce();
@@ -290,7 +290,7 @@ describe("참여 취소", () => {
     );
     const { screen } = await setup();
     await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
-    const submit = screen.getByRole("button", { name: "참여 취소 확정", exact: true });
+    const submit = screen.getByRole("button", { name: "취소하기", exact: true });
     await submit.click();
     await expect
       .element(screen.getByRole("button", { name: "취소 중...", exact: true }))
@@ -336,7 +336,7 @@ describe("참여 취소", () => {
     await expect
       .element(screen.getByText("진행 확정 후 참여를 취소한 기록이 남아요."))
       .toBeVisible();
-    await screen.getByRole("button", { name: "참여 취소 확정", exact: true }).click();
+    await screen.getByRole("button", { name: "취소하기", exact: true }).click();
     await expect.poll(() => routerReplaceMock.mock.calls.length).toBe(1);
   });
 
@@ -350,11 +350,11 @@ describe("참여 취소", () => {
       });
       const { screen } = await setup();
       await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
-      await screen.getByRole("button", { name: "참여 취소 확정", exact: true }).click();
+      await screen.getByRole("button", { name: "취소하기", exact: true }).click();
       await expect.element(screen.getByRole("alert")).toBeVisible();
       await expect.poll(() => mocks.room.mock.calls.length).toBe(2);
       await expect
-        .element(screen.getByRole("button", { name: "참여 취소 확정", exact: true }))
+        .element(screen.getByRole("button", { name: "취소하기", exact: true }))
         .toBeDisabled();
       expect(routerReplaceMock).not.toHaveBeenCalled();
     },
@@ -364,13 +364,13 @@ describe("참여 취소", () => {
     mocks.leave.mockRejectedValueOnce(new Error("offline"));
     const { screen } = await setup();
     await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
-    await screen.getByRole("button", { name: "참여 취소 확정", exact: true }).click();
+    await screen.getByRole("button", { name: "취소하기", exact: true }).click();
     await expect.element(screen.getByRole("alert")).toBeVisible();
     await expect
-      .element(screen.getByRole("button", { name: "참여 취소 확정", exact: true }))
+      .element(screen.getByRole("button", { name: "취소하기", exact: true }))
       .toBeEnabled();
     expect(routerReplaceMock).not.toHaveBeenCalled();
-    await screen.getByRole("button", { name: "참여 취소 확정", exact: true }).click();
+    await screen.getByRole("button", { name: "취소하기", exact: true }).click();
     await expect.poll(() => routerReplaceMock.mock.calls.length).toBe(1);
   });
 
@@ -378,10 +378,10 @@ describe("참여 취소", () => {
     mocks.leave.mockResolvedValue({ result: "ERROR", data: null });
     const { screen } = await setup();
     await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
-    await screen.getByRole("button", { name: "참여 취소 확정", exact: true }).click();
+    await screen.getByRole("button", { name: "취소하기", exact: true }).click();
     await expect.element(screen.getByRole("alert")).toBeVisible();
     await expect
-      .element(screen.getByRole("button", { name: "참여 취소 확정", exact: true }))
+      .element(screen.getByRole("button", { name: "취소하기", exact: true }))
       .toBeEnabled();
     expect(routerReplaceMock).not.toHaveBeenCalled();
   });
@@ -390,7 +390,7 @@ describe("참여 취소", () => {
     mocks.leave.mockRejectedValue(error("E1419", "이미 나간 참여자"));
     const { screen } = await setup();
     await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
-    await screen.getByRole("button", { name: "참여 취소 확정", exact: true }).click();
+    await screen.getByRole("button", { name: "취소하기", exact: true }).click();
     await expect.element(screen.getByRole("alert")).toHaveTextContent("이미 나간 참여자");
     await expect
       .element(screen.getByRole("button", { name: "돌아가기", exact: true }))
