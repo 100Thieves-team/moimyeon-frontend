@@ -343,3 +343,111 @@ export const visuallyHidden = style({
   whiteSpace: "nowrap",
   border: 0,
 });
+
+export const joinedBadge = style({
+  borderRadius: vars.radius.pill,
+  padding: "0.5rem 1.2rem",
+  backgroundColor: `color-mix(in srgb, ${vars.color.blue} 10%, transparent)`,
+  color: vars.color.blue,
+  fontSize: "1.2rem",
+  fontWeight: 700,
+});
+export const roster = style({
+  ...surface,
+  listStyle: "none",
+  padding: 0,
+  margin: 0,
+  overflow: "hidden",
+  border: `1px solid ${vars.color.strokeLight}`,
+  borderRadius: vars.radius.media,
+});
+export const participantRow = style({
+  display: "flex",
+  alignItems: "center",
+  gap: "1.4rem",
+  padding: "1.8rem 2.6rem",
+  selectors: {
+    "& + &": { borderTop: `1px solid ${vars.color.strokeLight}` },
+  },
+  "@media": { [mobile]: { flexWrap: "wrap", padding: "1.6rem" } },
+});
+export const participantProfile = style({
+  flexShrink: 0,
+  width: "29.6rem",
+  minWidth: 0,
+  "@media": { [mobile]: { width: "100%" } },
+});
+export const participantAvatar = style([
+  avatar,
+  {
+    width: "4.2rem",
+    height: "4.2rem",
+    selectors: {
+      [`${participantRow}[data-me] &`]: {
+        color: vars.color.blue,
+        backgroundColor: `color-mix(in srgb, ${vars.color.blue} 10%, transparent)`,
+      },
+    },
+  },
+]);
+export const participantIdentity = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.2rem",
+  minWidth: 0,
+});
+export const participantName = style({
+  display: "flex",
+  alignItems: "center",
+  flexWrap: "wrap",
+  gap: "0.7rem",
+});
+export const hostBadge = style({
+  borderRadius: vars.radius.pill,
+  padding: "0.2rem 0.8rem",
+  fontSize: "1.05rem",
+  lineHeight: "1.4rem",
+  backgroundColor: vars.color.fillSecondary,
+  color: vars.color.secondary,
+});
+export const meBadge = style([
+  hostBadge,
+  {
+    color: vars.color.blue,
+    backgroundColor: `color-mix(in srgb, ${vars.color.blue} 10%, transparent)`,
+  },
+]);
+export const participantSummary = style({
+  flex: "1 1 0",
+  minWidth: 0,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  textWrap: "nowrap",
+  color: vars.color.secondary,
+  fontSize: "1.4rem",
+  lineHeight: "1.9rem",
+  "@media": { [mobile]: { flexBasis: "100%" } },
+});
+export const participantsFooter = style({
+  display: "flex",
+  justifyContent: "flex-end",
+  alignItems: "flex-start",
+  gap: "2rem",
+  paddingTop: "2rem",
+  "@media": { [mobile]: { flexDirection: "column" } },
+});
+export const leaveAction = style({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-end",
+  flexShrink: 0,
+  gap: "0.8rem",
+  maxWidth: "32rem",
+  "@media": { [mobile]: { alignItems: "flex-start", maxWidth: "100%" } },
+});
+export const leaveReason = style({
+  color: vars.color.secondary,
+  fontSize: "1.3rem",
+  lineHeight: "1.8rem",
+});

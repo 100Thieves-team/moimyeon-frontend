@@ -68,7 +68,7 @@ export function ApplicationRow({
           if (data?.status === "SLOT_EXCEEDED")
             setNotice("신청자의 참여 슬롯이 가득 차 수락되지 않았어요.");
           else if (data?.status === "ACCEPTED")
-            toastManager.add({ title: "참가 신청을 수락했어요." });
+            toastManager.add({ title: "참여 신청을 수락했어요." });
         },
         onError: (actionError) => setError(getApplicationActionError(actionError).message),
       },
@@ -160,7 +160,7 @@ export function ApplicationRow({
               { path, body: { reason } },
               {
                 onSuccess: () => {
-                  toastManager.add({ title: "참가 신청을 반려했어요." });
+                  toastManager.add({ title: "참여 신청을 반려했어요." });
                   callbacks.onSuccess();
                 },
                 onError: callbacks.onError,
