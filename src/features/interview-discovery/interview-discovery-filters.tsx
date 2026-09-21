@@ -12,6 +12,7 @@ import {
   searchJobPostingsOptions,
   searchJobPostingsQueryKey,
 } from "@/api/generated/@tanstack/react-query.gen";
+import { DialogCloseButton } from "@/components/dialog-close-button";
 import { Button } from "@/components/button";
 import { JobRoleDialog } from "@/features/mypage/job-role-dialog";
 import type { JobRoleGroup } from "@/features/mypage/mypage-model";
@@ -527,9 +528,7 @@ export function InterviewDiscoveryFilters({
           <Dialog.Popup className={styles.mobileFilterPopup}>
             <header className={styles.mobileFilterHeader}>
               <Dialog.Title className={styles.mobileFilterTitle}>필터</Dialog.Title>
-              <Dialog.Close aria-label="필터 닫기" className={styles.closeButton} type="button">
-                <X aria-hidden="true" size={22} />
-              </Dialog.Close>
+              <Dialog.Close aria-label="필터 닫기" render={<DialogCloseButton />} />
             </header>
             <div className={styles.mobileFilterBody}>
               <FilterFields

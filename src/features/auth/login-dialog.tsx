@@ -1,7 +1,7 @@
 "use client";
 
 import { Dialog } from "@base-ui/react/dialog";
-import { X } from "lucide-react";
+import { DialogCloseButton } from "@/components/dialog-close-button";
 import type { ReactNode } from "react";
 import { Button, type ButtonProps } from "@/components/button";
 import { isInterviewDetailReturnTo, type LoginReturnTo } from "./auth-intent";
@@ -65,9 +65,7 @@ export function LoginDialog({
           <Dialog.Portal>
             <Dialog.Backdrop className={styles.backdrop} />
             <Dialog.Popup className={styles.popup}>
-              <Dialog.Close aria-label="로그인 창 닫기" className={styles.close} type="button">
-                <X aria-hidden="true" size={16} strokeWidth={1.5} />
-              </Dialog.Close>
+              <Dialog.Close aria-label="로그인 창 닫기" render={<DialogCloseButton />} />
 
               <Dialog.Title className={styles.title}>
                 <span className={styles.titleLine}>{titleFirstLine}</span>{" "}

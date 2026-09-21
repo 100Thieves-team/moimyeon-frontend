@@ -10,6 +10,7 @@ import {
   roomParticipantsQueryKey,
   getInterviewOverviewQueryKey,
 } from "@/api/generated/@tanstack/react-query.gen";
+import { DialogCloseButton } from "@/components/dialog-close-button";
 import { Button } from "@/components/button";
 import {
   getLeaveDisabledReason,
@@ -73,6 +74,11 @@ export function LeaveRoomDialog({
         <AlertDialog.Portal>
           <AlertDialog.Backdrop className={styles.backdrop} />
           <AlertDialog.Popup className={styles.dialog}>
+            <AlertDialog.Close
+              aria-label="참여 취소 닫기"
+              disabled={isPending}
+              render={<DialogCloseButton />}
+            />
             <header className={styles.dialogHeader}>
               <AlertDialog.Title className={styles.dialogTitle}>
                 면접 참여를 취소할까요?

@@ -6,11 +6,11 @@ import { Form } from "@base-ui/react/form";
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { QueryErrorResetBoundary, useSuspenseQuery } from "@tanstack/react-query";
-import { X } from "lucide-react";
 import { Suspense, useId, type ReactNode } from "react";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 import { Controller, useForm } from "react-hook-form";
 import { rejectReasonsOptions } from "@/api/generated/@tanstack/react-query.gen";
+import { DialogCloseButton } from "@/components/dialog-close-button";
 import { Button } from "@/components/button";
 import { getApplicationActionError } from "./interview-room-model";
 import * as styles from "./interview-room.css";
@@ -47,11 +47,9 @@ export function RejectApplicationDialog({
             <Dialog.Title className={styles.dialogTitle}>신청을 반려할게요</Dialog.Title>
             <Dialog.Close
               aria-label="반려 사유 닫기"
-              className={styles.iconButton}
               disabled={pending}
-            >
-              <X aria-hidden="true" size={18} />
-            </Dialog.Close>
+              render={<DialogCloseButton />}
+            />
           </header>
           <QueryErrorResetBoundary>
             {({ reset }) => (

@@ -272,6 +272,7 @@ export const dialogHeader = style({
   gap: "1rem",
   justifyContent: "space-between",
   padding: "2.8rem 2.8rem 0",
+  paddingRight: "6.4rem",
 });
 export const dialogTitle = style({ fontSize: "1.9rem", fontWeight: 500, lineHeight: "2.5rem" });
 export const description = style({

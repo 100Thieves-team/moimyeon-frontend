@@ -162,6 +162,7 @@ export const resumeDialogHeader = style({
   justifyContent: "space-between",
   gap: vars.spacing.base,
   padding: "2.2rem 2.4rem 0",
+  paddingRight: "6.4rem",
 });
 
 export const resumeDialogTitle = style({
@@ -170,25 +171,6 @@ export const resumeDialogTitle = style({
   fontWeight: 500,
   lineHeight: "2.3rem",
   letterSpacing: "-0.01em",
-});
-
-export const resumeDialogClose = style({
-  display: "inline-flex",
-  width: "2.8rem",
-  height: "2.8rem",
-  alignItems: "center",
-  justifyContent: "center",
-  border: 0,
-  borderRadius: vars.radius.control,
-  backgroundColor: "transparent",
-  color: vars.color.tertiary,
-  cursor: "pointer",
-  selectors: {
-    "&:focus-visible": { outline: `2px solid ${vars.color.primary}`, outlineOffset: "2px" },
-  },
-  "@media": {
-    [media.hover]: { selectors: { "&:hover": { backgroundColor: vars.color.fillTertiary } } },
-  },
 });
 
 export const resumeDialogBody = style({

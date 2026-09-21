@@ -15,6 +15,7 @@ import {
   getReviewOverviewQueryKey,
   updateReviewMutation,
 } from "@/api/generated/@tanstack/react-query.gen";
+import { DialogCloseButton } from "@/components/dialog-close-button";
 import { Button } from "@/components/button";
 import { ReviewFormFields, type ReviewFormValues } from "./review-form-fields";
 import * as styles from "./review-form.css";
@@ -150,6 +151,11 @@ export function EditReviewForm({ onCompleted, roomId, target }: EditReviewFormPr
             <AlertDialog.Portal>
               <AlertDialog.Backdrop className={styles.dialogBackdrop} />
               <AlertDialog.Popup className={styles.dialogPopup}>
+                <AlertDialog.Close
+                  aria-label="후기 삭제 닫기"
+                  disabled={isBusy}
+                  render={<DialogCloseButton />}
+                />
                 <AlertDialog.Title className={styles.dialogTitle}>
                   후기를 삭제할까요?
                 </AlertDialog.Title>

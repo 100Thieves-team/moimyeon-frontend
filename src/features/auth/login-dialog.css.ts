@@ -239,36 +239,3 @@ export const devSubmit = style({
   width: "100%",
   marginTop: "0.4rem",
 });
-
-export const close = style({
-  position: "absolute",
-  top: "1.8rem",
-  right: "1.8rem",
-  display: "grid",
-  width: "3.2rem",
-  height: "3.2rem",
-  padding: 0,
-  border: 0,
-  borderRadius: vars.radius.pill,
-  background: "transparent",
-  color: vars.color.secondary,
-  cursor: "pointer",
-  placeItems: "center",
-  transition: `color ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
-  selectors: {
-    "&:focus-visible": {
-      outline: `2px solid ${vars.color.primary}`,
-      outlineOffset: "3px",
-    },
-  },
-  "@media": {
-    [media.hover]: {
-      ":hover": {
-        color: vars.color.primary,
-      },
-    },
-    [media.reducedMotion]: {
-      transition: "none",
-    },
-  },
-});

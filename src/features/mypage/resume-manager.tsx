@@ -13,6 +13,7 @@ import {
   resumesQueryKey,
   retryResumeSummaryMutation,
 } from "@/api/generated/@tanstack/react-query.gen";
+import { DialogCloseButton } from "@/components/dialog-close-button";
 import { Button } from "@/components/button";
 import {
   applyDefaultResume,
@@ -129,6 +130,11 @@ function DeleteResumeDialog({ resumeId, resumeName }: DeleteResumeDialogProps) {
       <AlertDialog.Portal>
         <AlertDialog.Backdrop className={styles.dialogBackdrop} />
         <AlertDialog.Popup className={styles.dialogPopup}>
+          <AlertDialog.Close
+            aria-label="이력서 삭제 닫기"
+            disabled={deleteResume.isPending}
+            render={<DialogCloseButton />}
+          />
           <AlertDialog.Title className={styles.dialogTitle}>이력서 삭제</AlertDialog.Title>
           <AlertDialog.Description className={styles.dialogDescription}>
             {resumeName} 이력서를 삭제할까요? 삭제한 이력서는 되돌릴 수 없지만, 이미 제출한 면접의
