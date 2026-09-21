@@ -4,8 +4,9 @@ import { Dialog } from "@base-ui/react/dialog";
 import { Tabs } from "@base-ui/react/tabs";
 import { Toggle } from "@base-ui/react/toggle";
 import { ToggleGroup } from "@base-ui/react/toggle-group";
-import { ArrowLeft, RotateCcw, X } from "lucide-react";
+import { RotateCcw, X } from "lucide-react";
 import { useState } from "react";
+import { DialogCloseButton } from "@/components/dialog-close-button";
 import { Button } from "@/components/button";
 import * as styles from "./region-dialog.css";
 
@@ -69,9 +70,7 @@ export function RegionDialog({ handle, onValueChange, regions, value }: RegionDi
         <Dialog.Backdrop className={styles.backdrop} />
         <Dialog.Popup className={styles.popup}>
           <header className={styles.header}>
-            <Dialog.Close aria-label="지역 선택 닫기" className={styles.backButton} type="button">
-              <ArrowLeft aria-hidden="true" size={24} strokeWidth={1.75} />
-            </Dialog.Close>
+            <Dialog.Close aria-label="지역 선택 닫기" render={<DialogCloseButton />} />
             <Dialog.Title className={styles.title}>지역 선택</Dialog.Title>
           </header>
 

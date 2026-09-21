@@ -19,6 +19,7 @@ import "@/styles/global.css";
 const mocks = vi.hoisted(() => ({
   room: vi.fn(),
   applications: vi.fn(),
+  participants: vi.fn(),
   profile: vi.fn(),
   reasons: vi.fn(),
   accept: vi.fn(),
@@ -49,6 +50,14 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
   ],
   roomsQueryKey: () => ["rooms"],
   getInterviewOverviewQueryKey: () => ["overview"],
+  roomParticipantsOptions: () => ({
+    queryKey: ["participants", "room-1"],
+    queryFn: mocks.participants,
+  }),
+  roomLeaveMutation: () => ({ mutationFn: vi.fn() }),
+  participationSlotsQueryKey: () => ["slots"],
+  myRoomApplicationQueryKey: () => ["my-application"],
+  memberMeQueryKey: () => ["me"],
   acceptApplicationMutation: () => ({ mutationFn: mocks.accept }),
   rejectApplicationMutation: () => ({ mutationFn: mocks.reject }),
 }));
@@ -93,8 +102,8 @@ function renderRoom() {
             <InterviewRoomError reset={resetErrorBoundary} />
           )}
         >
-          <Suspense fallback={<p>참가 신청을 불러오는 중이에요.</p>}>
-            <InterviewRoomContent roomId={roomId} />
+          <Suspense fallback={<p>참여 신청을 불러오는 중이에요.</p>}>
+            <InterviewRoomContent roomId={roomId} currentMemberId={MOCK_INTERVIEW_HOST_ID} />
           </Suspense>
         </ErrorBoundary>
       </ToastProvider>
@@ -138,6 +147,18 @@ beforeEach(async () => {
     result: "SUCCESS",
     data: { applications: structuredClone(applications) },
   }));
+  mocks.participants.mockImplementation(async () => ({
+    result: "SUCCESS",
+    data: {
+      participants: applications
+        .filter((application) => application.status === "ACCEPTED")
+        .map((application) => ({
+          ...application.applicant!,
+          isHost: false,
+          aiSummary: application.aiSummary,
+        })),
+    },
+  }));
   mocks.profile.mockResolvedValue(getMockInterviewHostProfile(MOCK_INTERVIEW_HOST_ID));
   mocks.reasons.mockResolvedValue({ result: "SUCCESS", data: { reasons: reasonList } });
   mocks.accept.mockImplementation(async () => settle("ACCEPTED", "수락"));
@@ -145,7 +166,37 @@ beforeEach(async () => {
   await page.viewport(1440, 900);
 });
 
-describe("방장 참가 신청 관리", () => {
+describe("방장 참여 신청 관리", () => {
+  it("두 탭을 미리 조회하고 왕복해도 신청 내용의 펼침 상태를 유지한다", async () => {
+    const screen = await renderRoom();
+    await expect
+      .element(screen.getByRole("tab", { name: "참여 신청 1" }))
+      .toHaveAttribute("aria-selected", "true");
+    await expect.poll(() => mocks.participants.mock.calls.length).toBe(1);
+    await screen.getByRole("button", { name: "성실한 사슴 03 신청 내용" }).click();
+    await expect.element(screen.getByRole("heading", { name: "전할 말" })).toBeVisible();
+    await screen.getByRole("tab", { name: "참여자 4" }).click();
+    await expect.element(screen.getByText("참여자가 없어요.")).toBeVisible();
+    expect(mocks.participants).toHaveBeenCalledOnce();
+    await expect.element(screen.getByText("전할 말", { exact: true })).not.toBeVisible();
+    await screen.getByRole("tab", { name: "참여 신청 1" }).click();
+    await expect.element(screen.getByRole("heading", { name: "전할 말" })).toBeVisible();
+  });
+
+  it("참여자 탭을 방문한 뒤 신청을 수락하면 다시 연 명단에 반영된다", async () => {
+    const screen = await renderRoom();
+    await screen.getByRole("tab", { name: "참여자 4" }).click();
+    await expect.element(screen.getByText("참여자가 없어요.")).toBeVisible();
+    await screen.getByRole("tab", { name: "참여 신청 1" }).click();
+    await screen.getByRole("button", { name: "수락", exact: true }).click();
+    await expect.element(screen.getByRole("tab", { name: "참여 신청 0" })).toBeVisible();
+    await screen.getByRole("tab", { name: "참여자 5" }).click();
+    await expect
+      .element(screen.getByRole("list", { name: "참여자 목록" }).getByText("성실한 사슴 03"))
+      .toBeVisible();
+    expect(mocks.participants.mock.calls.length).toBeGreaterThan(1);
+  });
+
   it.each(["성", "성실한 사슴 03", "백엔드 개발"])(
     "프로필의 %s 부분을 클릭해 공개 신뢰 카드를 확인한다",
     async (target) => {
@@ -177,7 +228,7 @@ describe("방장 참가 신청 관리", () => {
     await screen.getByRole("button", { name: "수락", exact: true }).click();
     await expect
       .element(
-        page.getByRole("region", { name: "Notifications" }).getByText("참가 신청을 수락했어요."),
+        page.getByRole("region", { name: "Notifications" }).getByText("참여 신청을 수락했어요."),
       )
       .toBeVisible();
     resolveProfile(getMockInterviewHostProfile(MOCK_INTERVIEW_HOST_ID));
@@ -202,7 +253,7 @@ describe("방장 참가 신청 관리", () => {
       await screen.getByRole("button", { name: "수락", exact: true }).click();
       await expect
         .element(
-          page.getByRole("region", { name: "Notifications" }).getByText("참가 신청을 수락했어요."),
+          page.getByRole("region", { name: "Notifications" }).getByText("참여 신청을 수락했어요."),
         )
         .toBeVisible();
     },
@@ -226,8 +277,8 @@ describe("방장 참가 신청 관리", () => {
     await expect
       .element(screen.getByText("Kotlin과 Spring으로 결제 정산 배치를 개발했어요."))
       .toBeVisible();
-    await expect.element(screen.getByRole("tab", { name: "참여자 4" })).toBeDisabled();
-    await expect.element(screen.getByRole("tab", { name: "댓글" })).toBeDisabled();
+    await expect.element(screen.getByRole("tab", { name: "참여자 4" })).toBeEnabled();
+    await expect.element(screen.getByRole("tab", { name: "댓글" })).not.toBeInTheDocument();
     await expect
       .element(screen.getByRole("link", { name: "면접 정보" }))
       .toHaveAttribute("href", `/interviews/${roomId}`);
@@ -259,7 +310,7 @@ describe("방장 참가 신청 관리", () => {
     await expect.element(screen.getByText("모집 마감")).toBeVisible();
     await expect
       .element(
-        page.getByRole("region", { name: "Notifications" }).getByText("참가 신청을 수락했어요."),
+        page.getByRole("region", { name: "Notifications" }).getByText("참여 신청을 수락했어요."),
       )
       .toBeVisible();
     expect(mocks.accept).toHaveBeenCalledOnce();
@@ -281,7 +332,7 @@ describe("방장 참가 신청 관리", () => {
     await expect.element(screen.getByText("4 / 5명 · 신청 0건 대기")).toBeVisible();
     await expect
       .element(
-        page.getByRole("region", { name: "Notifications" }).getByText("참가 신청을 수락했어요."),
+        page.getByRole("region", { name: "Notifications" }).getByText("참여 신청을 수락했어요."),
       )
       .not.toBeInTheDocument();
   });
@@ -301,7 +352,7 @@ describe("방장 참가 신청 관리", () => {
         .not.toBeInTheDocument();
       await expect
         .element(
-          page.getByRole("region", { name: "Notifications" }).getByText("참가 신청을 반려했어요."),
+          page.getByRole("region", { name: "Notifications" }).getByText("참여 신청을 반려했어요."),
         )
         .toBeVisible();
       expect(mocks.reject).toHaveBeenCalledOnce();
@@ -365,7 +416,7 @@ describe("방장 참가 신청 관리", () => {
     finish();
     await expect
       .element(
-        page.getByRole("region", { name: "Notifications" }).getByText("참가 신청을 수락했어요."),
+        page.getByRole("region", { name: "Notifications" }).getByText("참여 신청을 수락했어요."),
       )
       .toBeVisible();
   });
@@ -385,9 +436,9 @@ describe("방장 참가 신청 관리", () => {
     await expect.poll(() => mocks.applications.mock.calls.length).toBe(2);
     await expect.element(screen.getByRole("button", { name: "반려 중..." })).toBeDisabled();
     await expect.element(screen.getByRole("button", { name: "반려 사유 닫기" })).toBeDisabled();
-    await expect.element(page.getByText("참가 신청을 반려했어요.")).not.toBeInTheDocument();
+    await expect.element(page.getByText("참여 신청을 반려했어요.")).not.toBeInTheDocument();
     finishRefresh();
-    await expect.element(page.getByText("참가 신청을 반려했어요.")).toBeVisible();
+    await expect.element(page.getByText("참여 신청을 반려했어요.")).toBeVisible();
     await expect
       .element(screen.getByRole("dialog", { name: "신청을 반려할게요" }))
       .not.toBeInTheDocument();
@@ -429,7 +480,7 @@ describe("방장 참가 신청 관리", () => {
         .not.toBeInTheDocument();
       await expect
         .element(
-          page.getByRole("region", { name: "Notifications" }).getByText("참가 신청을 수락했어요."),
+          page.getByRole("region", { name: "Notifications" }).getByText("참여 신청을 수락했어요."),
         )
         .not.toBeInTheDocument();
       expect(mocks.applications).toHaveBeenCalledTimes(2);
@@ -446,7 +497,7 @@ describe("방장 참가 신청 관리", () => {
     await screen.getByRole("button", { name: "수락", exact: true }).click();
     await expect
       .element(
-        page.getByRole("region", { name: "Notifications" }).getByText("참가 신청을 수락했어요."),
+        page.getByRole("region", { name: "Notifications" }).getByText("참여 신청을 수락했어요."),
       )
       .toBeVisible();
     await expect.element(screen.getByRole("button", { name: "목록 다시 불러오기" })).toBeVisible();
@@ -493,7 +544,7 @@ describe("방장 참가 신청 관리", () => {
   it("목록이 비어 있으면 빈 상태를 보여준다", async () => {
     applications = [];
     const screen = await renderRoom();
-    await expect.element(screen.getByText("아직 참가 신청이 없어요.")).toBeVisible();
+    await expect.element(screen.getByText("아직 참여 신청이 없어요.")).toBeVisible();
     expect(mocks.profile).not.toHaveBeenCalled();
   });
 
@@ -523,7 +574,7 @@ describe("방장 참가 신청 관리", () => {
     await expect.element(screen.getByRole("alert")).not.toBeInTheDocument();
     await expect
       .element(
-        page.getByRole("region", { name: "Notifications" }).getByText("참가 신청을 수락했어요."),
+        page.getByRole("region", { name: "Notifications" }).getByText("참여 신청을 수락했어요."),
       )
       .not.toBeInTheDocument();
     expect(mocks.applications).toHaveBeenCalledTimes(2);
@@ -538,7 +589,7 @@ describe("방장 참가 신청 관리", () => {
         }),
     );
     const screen = await renderRoom();
-    await expect.element(screen.getByText("참가 신청을 불러오는 중이에요.")).toBeVisible();
+    await expect.element(screen.getByText("참여 신청을 불러오는 중이에요.")).toBeVisible();
     finish();
     await expect
       .element(screen.getByRole("button", { name: "성실한 사슴 03 공개 신뢰 카드 열기" }))
@@ -549,8 +600,8 @@ describe("방장 참가 신청 관리", () => {
     mocks.applications.mockRejectedValue(new Error("offline"));
     const screen = await renderRoom();
     await expect
-      .element(screen.getByRole("heading", { name: "참가 신청을 불러오지 못했어요" }))
+      .element(screen.getByRole("heading", { name: "참여 신청을 불러오지 못했어요" }))
       .toBeVisible();
-    await expect.element(screen.getByRole("button", { name: "다시 시도하기" })).toBeVisible();
+    await expect.element(screen.getByRole("button", { name: "다시 불러오기" })).toBeVisible();
   });
 });

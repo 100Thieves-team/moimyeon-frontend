@@ -197,6 +197,7 @@ export const dialogPopup = style({
 });
 
 export const dialogTitle = style({
+  paddingRight: "4rem",
   fontSize: "1.7rem",
   fontWeight: 700,
   color: vars.color.primary,

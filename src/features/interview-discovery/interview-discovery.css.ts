@@ -369,22 +369,11 @@ export const mobileFilterHeader = style({
   alignItems: "center",
   justifyContent: "space-between",
   padding: "1.2rem 1.6rem",
+  paddingRight: "6.4rem",
   borderBottom: `1px solid ${vars.color.strokeLight}`,
 });
 export const mobileFilterTitle = style({ fontSize: "2rem", fontWeight: 700 });
-export const closeButton = style({
-  display: "grid",
-  width: "4rem",
-  height: "4rem",
-  padding: 0,
-  border: 0,
-  borderRadius: vars.radius.pill,
-  backgroundColor: "transparent",
-  color: vars.color.primary,
-  cursor: "pointer",
-  placeItems: "center",
-  selectors: { "&:focus-visible": focusRing },
-});
+
 export const mobileFilterBody = style({ padding: "2.4rem 1.6rem", overflowY: "auto" });
 export const mobileFilterFooter = style({
   display: "grid",

@@ -6,13 +6,15 @@ import {
   rejectReasonsOptions,
   roomApplicationsOptions,
   roomDetailOptions,
+  roomParticipantsOptions,
 } from "@/api/generated/@tanstack/react-query.gen";
 import { getQueryClient } from "@/api/query-client";
 import { createServerClient } from "@/api/server-client";
+import { getCurrentMemberState } from "@/features/auth/current-member-server";
 import { InterviewRoomContent } from "@/features/interview-room/interview-room-content";
 import * as styles from "@/features/interview-room/interview-room.css";
 
-export const metadata: Metadata = { title: "참가 신청 관리" };
+export const metadata: Metadata = { title: "면접" };
 
 export default async function InterviewRoomPage({
   params,
@@ -28,15 +30,27 @@ export default async function InterviewRoomPage({
   );
 
   if (!response.data) throw new Error("Failed to load interview detail");
-  if (response.data.viewer?.isHost !== true) redirect(`/interviews/${roomId}`);
+  const isHost = response.data.viewer?.isHost === true;
+  if (!isHost && response.data.viewer?.isParticipating !== true) redirect(`/interviews/${roomId}`);
+  const memberState = await getCurrentMemberState();
+  if (memberState.status !== "authenticated") redirect(`/interviews/${roomId}`);
 
-  void queryClient.prefetchQuery(roomApplicationsOptions({ ...requestOptions, path: { roomId } }));
-  void queryClient.prefetchQuery(rejectReasonsOptions(requestOptions));
+  if (isHost) {
+    void queryClient.prefetchQuery(
+      roomApplicationsOptions({ ...requestOptions, path: { roomId } }),
+    );
+    void queryClient.prefetchQuery(rejectReasonsOptions(requestOptions));
+  }
+  void queryClient.prefetchQuery(roomParticipantsOptions({ ...requestOptions, path: { roomId } }));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<p className={styles.empty}>참가 신청을 불러오는 중이에요.</p>}>
-        <InterviewRoomContent roomId={roomId} />
+      <Suspense fallback={<p className={styles.empty}>면접을 불러오는 중이에요.</p>}>
+        <InterviewRoomContent
+          key={roomId}
+          roomId={roomId}
+          currentMemberId={memberState.member.memberId}
+        />
       </Suspense>
     </HydrationBoundary>
   );

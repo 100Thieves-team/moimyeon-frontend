@@ -6,9 +6,10 @@ import { Dialog } from "@base-ui/react/dialog";
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Check, X } from "lucide-react";
+import { Check } from "lucide-react";
 import { type Ref, useRef, useState } from "react";
 import { resumesOptions } from "@/api/generated/@tanstack/react-query.gen";
+import { DialogCloseButton } from "@/components/dialog-close-button";
 import { Button } from "@/components/button";
 import {
   formatFileSize,
@@ -152,13 +153,7 @@ export function ResumePicker({
         <Dialog.Popup className={styles.resumeDialogPopup}>
           <header className={styles.resumeDialogHeader}>
             <Dialog.Title className={styles.resumeDialogTitle}>이력서 선택</Dialog.Title>
-            <Dialog.Close
-              aria-label="이력서 선택 닫기"
-              className={styles.resumeDialogClose}
-              type="button"
-            >
-              <X aria-hidden="true" size={18} strokeWidth={1.75} />
-            </Dialog.Close>
+            <Dialog.Close aria-label="이력서 선택 닫기" render={<DialogCloseButton />} />
           </header>
 
           <div className={styles.resumeDialogBody}>

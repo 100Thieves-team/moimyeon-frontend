@@ -3,11 +3,31 @@ name: frontend-pattern
 description: 모이면의 React, Next.js App Router, Base UI, React Hook Form, TanStack Query, Vanilla Extract 및 Hey API 생성 코드 규칙을 적용한다. src/app, src/features, src/components, src/api의 프론트엔드 컴포넌트, 폼, 서버 상태 흐름, API 연동을 구현·리팩터링·리뷰할 때 사용한다.
 ---
 
+## 구현 범위와 상태 관리
+
+아래 원칙을 기본 선택 기준으로 삼되, 명시된 요구사항과 확인된 회귀를 처리하는 데 필요한 로직은 유지한다.
+
+- 핵심 사용자 흐름과 명시된 요구사항에 집중한다. 가정한 드문 상황만을 위해 상태·Effect·전용 컴포넌트를 추가하지 않는다.
+- 라이브러리가 제공하는 상태와 기존 데이터에서 계산할 수 있는 값을 별도 상태로 복제하지 않는다.
+- 사용자 동작에 따른 후속 처리는 해당 이벤트나 요청 성공·실패 처리에 모은다. 부수 효과를 실행하기 위한 컴포넌트와 마운트 Effect를 만들지 않는다.
+- 서버가 담당하는 검증을 드문 상황에 대비한다는 이유만으로 클라이언트에서 중복 구현하지 않는다. 기존 서버 검증은 유지한다.
+
 ## 컴포넌트와 UI 경계
 
 - React 상태, effect, 이벤트 핸들러, 브라우저 API, 클라이언트 Query hook이 필요하지 않으면 Server Component로 유지한다.
 - 새로운 UI를 구현하기 전에 기존 디자인 시스템 컴포넌트, Base UI 컴포넌트, 디자인 토큰을 확인하고 재사용한다.
 - UI 동작과 접근성은 Base UI가 담당하고, 스타일은 Vanilla Extract로 작성하되 기존 디자인 토큰을 우선 사용한다.
+
+## 버튼 문구
+
+- 버튼은 클릭했을 때 실행되는 동작을 짧고 명확하게 표현한다.
+- 실행 버튼과 닫기·돌아가기 버튼의 의미가 혼동되지 않도록 구분한다.
+
+## 탭과 Activity
+
+- 탭 선택은 가능하면 Base UI의 비제어 방식에 맡긴다.
+- 탭 전환 시 내부 상태를 유지해야 하면 React Activity를 검토한다.
+- 사전 조회가 허용되면 처음부터 렌더링한다.
 
 ## 폼
 
@@ -31,12 +51,16 @@ description: 모이면의 React, Next.js App Router, Base UI, React Hook Form, T
 - 클라이언트 소비자를 `HydrationBoundary state={dehydrate(queryClient)}`와 적절한 `Suspense` boundary로 감싼다. 클라이언트 컴포넌트에서는 같은 생성 options와 query key로 `useSuspenseQuery` 또는 `useSuspenseQueries`를 호출한다.
 - 쿼리가 성공해도 생성된 응답 타입의 내부 `data`는 optional일 수 있으므로 API envelope를 검증한다.
 - Server Component에서만 사용하는 데이터는 SDK로 직접 조회한다. 클라이언트 컴포넌트가 React Query 캐시를 사용할 때만 prefetch와 hydration을 적용한다. 같은 데이터를 React Query 캐시와 prop으로 중복 전달하지 않는다.
+- `useSuspenseQuery`의 기본 오류 처리와 ErrorBoundary를 우선 사용한다.
+- 재조회 상태만으로 버튼을 잠그거나 재시도 UI와 관련 props를 추가하지 않는다. 필요한 요청 처리 중 상태와 서버 오류 안내에 집중한다.
 
 ## 생성 API와 Mutation
 
 - `src/api/generated`는 직접 수정하지 않는다. OpenAPI 스키마 또는 generator 설정을 변경한 뒤 pnpm generate:api로 SDK를 다시 생성한다. 생성 후 전체 diff를 확인하고, 원격 OpenAPI의 다른 변경으로 생긴 예상하지 못한 결과는 현재 작업에 포함할지 확인한다.
 - SDK는 기본적으로 API 실패를 throw한다. 이 경우 성공 결과만 반환되므로 오류는 catch 또는 error boundary에서 처리한다. 특정 상태 코드나 API 오류 코드를 반환값으로 분기해야 할 때만 throwOnError: false를 사용하고 result.error와 result.response를 직접 확인한다.
-- Mutation 성공 후 변경된 데이터를 사용하는 생성 query key를 invalidate한다.
+- 요청 처리 중 UI는 mutation의 `isPending`으로 판단한다. 별도 처리 상태나 ref 기반 잠금은 명시된 요구나 재현된 문제가 있을 때만 추가한다. `isPending`을 동일 시점의 중복 호출까지 보장하는 잠금으로 설명하지 않는다.
+- Mutation 성공 후 변경된 데이터를 사용하는 생성 query key를 invalidate한다. 별도의 캐시 취소·삭제 흐름은 구체적인 필요가 있을 때만 추가한다.
+- 후속 동작이 완료 결과에 의존할 때만 `await`한다. 완료를 기다릴 필요가 없으면 `void`를 사용하며, 특히 `refetchType: "none"`에 불필요한 대기를 추가하지 않는다.
 
 ## 개발 모킹
 

@@ -72,38 +72,18 @@ export const popup = style({
 export const header = style({
   display: "grid",
   minHeight: "8rem",
-  gridTemplateColumns: "4.4rem minmax(0, 1fr)",
+  gridTemplateColumns: "minmax(0, 1fr)",
   alignItems: "center",
   gap: vars.spacing.base,
   padding: "1.6rem 2.4rem",
+  paddingRight: "6.4rem",
   borderBottom: `1px solid ${vars.color.strokeLight}`,
   "@media": {
     [mobile]: {
       minHeight: "6.8rem",
-      gridTemplateColumns: "4rem minmax(0, 1fr)",
+      gridTemplateColumns: "minmax(0, 1fr)",
       padding: "1.2rem 1.6rem",
-    },
-  },
-});
-
-export const backButton = style({
-  display: "grid",
-  width: "4.4rem",
-  height: "4.4rem",
-  padding: 0,
-  border: 0,
-  borderRadius: vars.radius.pill,
-  backgroundColor: "transparent",
-  color: vars.color.primary,
-  cursor: "pointer",
-  placeItems: "center",
-  selectors: {
-    "&:active": { backgroundColor: vars.color.fillSecondary },
-    "&:focus-visible": focusRing,
-  },
-  "@media": {
-    [media.hover]: {
-      selectors: { "&:hover": { backgroundColor: vars.color.fillTertiary } },
+      paddingRight: "6.4rem",
     },
   },
 });

@@ -4,8 +4,9 @@ import { Dialog } from "@base-ui/react/dialog";
 import { Tabs } from "@base-ui/react/tabs";
 import { Toggle } from "@base-ui/react/toggle";
 import { ToggleGroup } from "@base-ui/react/toggle-group";
-import { ArrowLeft, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
+import { DialogCloseButton } from "@/components/dialog-close-button";
 import { Button } from "@/components/button";
 import { jobRoleDialog } from "./job-role-dialog-handle";
 import * as styles from "./job-role-field.css";
@@ -122,9 +123,7 @@ export function JobRoleDialog(props: JobRoleDialogProps) {
         <Dialog.Backdrop className={styles.backdrop} />
         <Dialog.Popup className={styles.popup}>
           <header className={styles.header}>
-            <Dialog.Close aria-label="직무 선택 닫기" className={styles.backButton} type="button">
-              <ArrowLeft aria-hidden="true" size={24} strokeWidth={1.75} />
-            </Dialog.Close>
+            <Dialog.Close aria-label="직무 선택 닫기" render={<DialogCloseButton />} />
             <Dialog.Title className={styles.title}>직무 선택</Dialog.Title>
           </header>
 
