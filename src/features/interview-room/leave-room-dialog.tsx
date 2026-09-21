@@ -79,9 +79,6 @@ export function LeaveRoomDialog({
               </AlertDialog.Title>
             </header>
             <div className={styles.dialogBody}>
-              <AlertDialog.Description className={styles.description}>
-                참여를 취소하면 명부에서 빠지고, 참여자의 AI 요약을 더 이상 볼 수 없어요.
-              </AlertDialog.Description>
               {room.status === "CONFIRMED" && (
                 <p className={styles.description}>진행 확정 후 참여를 취소한 기록이 남아요.</p>
               )}
