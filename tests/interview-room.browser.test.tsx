@@ -461,6 +461,25 @@ describe("방장 참가 신청 관리", () => {
     expect(mocks.accept).toHaveBeenCalledOnce();
   });
 
+  it("반려 사유 로딩 중 제목과 취소 버튼을 유지하고 조회 후 제출을 허용한다", async () => {
+    let finish!: () => void;
+    mocks.reasons.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = () => resolve({ result: "SUCCESS", data: { reasons: reasonList } });
+        }),
+    );
+    const screen = await renderRoom();
+    await screen.getByRole("button", { name: "반려", exact: true }).click();
+    await expect.element(screen.getByRole("heading", { name: "신청을 반려할게요" })).toBeVisible();
+    await expect.element(screen.getByText("반려 사유를 불러오는 중이에요.")).toBeVisible();
+    await expect.element(screen.getByRole("button", { name: "취소", exact: true })).toBeEnabled();
+    await expect.element(screen.getByRole("button", { name: "반려하기" })).toBeDisabled();
+    finish();
+    await expect.element(screen.getByRole("radio", { name: "사유 없이 반려할게요" })).toBeChecked();
+    await expect.element(screen.getByRole("button", { name: "반려하기" })).toBeEnabled();
+  });
+
   it("반려 사유 조회 실패 후 재시도할 수 있다", async () => {
     mocks.reasons.mockRejectedValueOnce(new Error("offline"));
     const screen = await renderRoom();
