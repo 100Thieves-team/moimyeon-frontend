@@ -1,10 +1,12 @@
 "use client";
 
+import { Popover } from "@base-ui/react/popover";
 import type { RoomLeaveResponse } from "@/api/generated";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { roomParticipantsOptions } from "@/api/generated/@tanstack/react-query.gen";
 import { TrustCardPopover } from "@/features/trust-card/trust-card-popover";
+import * as trustCardStyles from "@/features/trust-card/trust-card.css";
 import { getParticipantSummary, type InterviewRoom } from "./participant-model";
 import { LeaveRoomDialog } from "./leave-room-dialog";
 import * as styles from "./interview-room.css";
@@ -45,9 +47,14 @@ export function ParticipantsPanel({
                   <TrustCardPopover
                     memberId={participant.memberId}
                     isHost={participant.isHost}
-                    triggerLabel={participant.nickname}
                     trigger={
-                      <>
+                      <Popover.Trigger
+                        aria-label={`${participant.nickname} 공개 신뢰 카드 열기`}
+                        className={trustCardStyles.trigger}
+                        openOnHover
+                        delay={300}
+                        closeDelay={150}
+                      >
                         <span className={styles.participantAvatar} aria-hidden="true">
                           {Array.from(participant.nickname.trim())[0] ?? "?"}
                         </span>
@@ -66,7 +73,7 @@ export function ParticipantsPanel({
                             <span className={styles.meta}>{participant.activitySummary}</span>
                           )}
                         </span>
-                      </>
+                      </Popover.Trigger>
                     }
                   />
                 </div>

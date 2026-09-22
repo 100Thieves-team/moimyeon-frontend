@@ -1,4 +1,6 @@
+import { Popover } from "@base-ui/react/popover";
 import { TrustCardPopover } from "@/features/trust-card/trust-card-popover";
+import * as trustCardStyles from "@/features/trust-card/trust-card.css";
 import { Avatar } from "@base-ui/react/avatar";
 import type { InterviewDetail } from "./interview-detail-model";
 import * as styles from "./interview-detail.css";
@@ -65,24 +67,30 @@ export function ParticipantAvatarStack({
             <TrustCardPopover
               memberId={participant.memberId}
               isHost={isHost}
-              triggerLabel={accessibleName}
-              triggerClassName={styles.participantAvatarTrigger}
               trigger={
-                <Avatar.Root
-                  aria-hidden
-                  className={isHost ? styles.hostParticipantAvatar : styles.participantAvatar}
+                <Popover.Trigger
+                  aria-label={`${accessibleName} 공개 신뢰 카드 열기`}
+                  className={`${trustCardStyles.trigger} ${styles.participantAvatarTrigger}`}
+                  openOnHover
+                  delay={300}
+                  closeDelay={150}
                 >
-                  {participant.imageUrl && (
-                    <Avatar.Image
-                      alt=""
-                      className={styles.participantAvatarImage}
-                      src={participant.imageUrl}
-                    />
-                  )}
-                  <Avatar.Fallback className={styles.participantAvatarFallback}>
-                    {Array.from(participant.nickname)[0]}
-                  </Avatar.Fallback>
-                </Avatar.Root>
+                  <Avatar.Root
+                    aria-hidden
+                    className={isHost ? styles.hostParticipantAvatar : styles.participantAvatar}
+                  >
+                    {participant.imageUrl && (
+                      <Avatar.Image
+                        alt=""
+                        className={styles.participantAvatarImage}
+                        src={participant.imageUrl}
+                      />
+                    )}
+                    <Avatar.Fallback className={styles.participantAvatarFallback}>
+                      {Array.from(participant.nickname)[0]}
+                    </Avatar.Fallback>
+                  </Avatar.Root>
+                </Popover.Trigger>
               }
             />
           </li>

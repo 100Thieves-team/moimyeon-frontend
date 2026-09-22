@@ -1,11 +1,13 @@
 "use client";
 
+import { Popover } from "@base-ui/react/popover";
 import { Collapsible } from "@base-ui/react/collapsible";
 import { Toast } from "@base-ui/react/toast";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/button";
 import { TrustCardPopover } from "@/features/trust-card/trust-card-popover";
+import * as trustCardStyles from "@/features/trust-card/trust-card.css";
 import {
   formatAppliedAt,
   getApplicationActionError,
@@ -83,8 +85,17 @@ export function ApplicationRow({
             {application.applicant ? (
               <TrustCardPopover
                 memberId={application.applicant.memberId}
-                trigger={profile}
-                triggerLabel={nickname}
+                trigger={
+                  <Popover.Trigger
+                    aria-label={`${nickname} 공개 신뢰 카드 열기`}
+                    className={trustCardStyles.trigger}
+                    openOnHover
+                    delay={300}
+                    closeDelay={150}
+                  >
+                    {profile}
+                  </Popover.Trigger>
+                }
               />
             ) : (
               profile
