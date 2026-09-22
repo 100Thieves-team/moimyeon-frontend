@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars } from "@/styles";
+import { media, vars, textStyle } from "@/styles";
 
 export const page = style({
   display: "flex",
@@ -110,15 +110,15 @@ export const field = style({
   gap: vars.spacing.sm,
 });
 
-export const fieldLabel = style({
-  display: "flex",
-  alignItems: "baseline",
-  gap: vars.spacing.sm,
-  color: vars.color.primary,
-  fontSize: "1.4rem",
-  fontWeight: 700,
-  lineHeight: "2rem",
-});
+export const fieldLabel = style([
+  textStyle.fieldLabel,
+  {
+    display: "flex",
+    alignItems: "baseline",
+    gap: vars.spacing.sm,
+    color: vars.color.primary,
+  },
+]);
 
 export const fieldRequirement = style({
   color: vars.color.tertiary,

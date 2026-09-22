@@ -44,6 +44,7 @@ export function ParticipantsPanel({
                 <div className={styles.participantProfile}>
                   <TrustCardPopover
                     memberId={participant.memberId}
+                    isHost={participant.isHost}
                     triggerLabel={participant.nickname}
                     trigger={
                       <>

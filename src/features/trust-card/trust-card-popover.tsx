@@ -10,6 +10,8 @@ import * as styles from "./trust-card.css";
 
 type TrustCardPopoverProps = {
   memberId: string;
+  isHost?: boolean;
+  triggerClassName?: string;
   trigger: ReactNode;
   triggerLabel: string;
 };
@@ -25,23 +27,33 @@ function TrustCardError({ resetErrorBoundary }: FallbackProps) {
   );
 }
 
-export function TrustCardPopover({ memberId, trigger, triggerLabel }: TrustCardPopoverProps) {
+export function TrustCardPopover({
+  memberId,
+  isHost = false,
+  trigger,
+  triggerLabel,
+  triggerClassName,
+}: TrustCardPopoverProps) {
   return (
     <Popover.Root>
       <Popover.Trigger
         aria-label={`${triggerLabel} 공개 신뢰 카드 열기`}
-        className={styles.trigger}
+        className={[styles.trigger, triggerClassName].filter(Boolean).join(" ")}
+        openOnHover
+        delay={300}
+        closeDelay={150}
       >
         {trigger}
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Positioner align="start" side="bottom" sideOffset={8}>
+        <Popover.Positioner align="start" side="bottom" sideOffset={12} collisionPadding={16}>
+          <Popover.Arrow className={styles.arrow} render={<span />} />
           <Popover.Popup className={styles.popup}>
             <QueryErrorResetBoundary>
               {({ reset }) => (
                 <ErrorBoundary FallbackComponent={TrustCardError} onReset={reset}>
                   <Suspense fallback={<p className={styles.loading}>불러오는 중…</p>}>
-                    <TrustCard memberId={memberId} />
+                    <TrustCard memberId={memberId} isHost={isHost} />
                   </Suspense>
                 </ErrorBoundary>
               )}

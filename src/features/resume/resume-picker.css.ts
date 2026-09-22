@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars } from "@/styles";
+import { media, vars, textStyle } from "@/styles";
 
 export const resumeFileRow = style({
   display: "flex",
@@ -33,24 +33,26 @@ export const resumeFileInfo = style({
   gap: "0.2rem",
 });
 
-export const resumeFileName = style({
-  overflow: "hidden",
-  color: vars.color.primary,
-  fontSize: "1.6rem",
-  fontWeight: 500,
-  lineHeight: "2.1rem",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
-});
+export const resumeFileName = style([
+  textStyle.p2,
+  {
+    fontWeight: 500,
+    overflow: "hidden",
+    color: vars.color.primary,
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+]);
 
-export const resumeFileMeta = style({
-  overflow: "hidden",
-  color: vars.color.tertiary,
-  fontSize: "1.4rem",
-  lineHeight: "1.9rem",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
-});
+export const resumeFileMeta = style([
+  textStyle.metadata,
+  {
+    overflow: "hidden",
+    color: vars.color.tertiary,
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+]);
 
 export const resumeChangeButton = style({
   display: "inline-flex",
@@ -114,11 +116,12 @@ export const resumeSummaryLabel = style({
   letterSpacing: "0.1em",
 });
 
-export const resumeSummaryText = style({
-  color: vars.color.primary,
-  fontSize: "1.6rem",
-  lineHeight: "2.4rem",
-});
+export const resumeSummaryText = style([
+  textStyle.p2Body,
+  {
+    color: vars.color.primary,
+  },
+]);
 
 export const resumeDialogBackdrop = style({
   position: "fixed",
@@ -225,15 +228,16 @@ export const resumeOptionHeading = style({
   gap: vars.spacing.sm,
 });
 
-export const resumeOptionName = style({
-  minWidth: 0,
-  overflow: "hidden",
-  fontSize: "1.6rem",
-  fontWeight: 500,
-  lineHeight: "2.1rem",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
-});
+export const resumeOptionName = style([
+  textStyle.p2,
+  {
+    fontWeight: 500,
+    minWidth: 0,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+]);
 
 export const resumeRecentBadge = style({
   flex: "0 0 auto",
@@ -244,16 +248,20 @@ export const resumeRecentBadge = style({
   fontSize: "1.2rem",
   fontWeight: 500,
   lineHeight: "1.6rem",
+  "@media": {
+    [media.dark]: { backgroundColor: vars.color.fillSecondary },
+  },
 });
 
-export const resumeOptionMeta = style({
-  overflow: "hidden",
-  color: vars.color.tertiary,
-  fontSize: "1.4rem",
-  lineHeight: "1.9rem",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
-});
+export const resumeOptionMeta = style([
+  textStyle.metadata,
+  {
+    overflow: "hidden",
+    color: vars.color.tertiary,
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+]);
 
 export const resumeOptionCheck = style({
   flex: "0 0 auto",

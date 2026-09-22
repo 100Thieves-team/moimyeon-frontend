@@ -27,6 +27,7 @@ function TargetIdentity({ isHost, target }: Pick<TargetRowProps, "isHost" | "tar
   return (
     <TrustCardPopover
       memberId={target.memberId}
+      isHost={isHost}
       trigger={
         <>
           <span aria-hidden="true" className={styles.avatar}>

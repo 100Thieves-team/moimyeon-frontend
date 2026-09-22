@@ -1,3 +1,4 @@
+import { TrustCardPopover } from "@/features/trust-card/trust-card-popover";
 import { Avatar } from "@base-ui/react/avatar";
 import type { InterviewDetail } from "./interview-detail-model";
 import * as styles from "./interview-detail.css";
@@ -61,22 +62,29 @@ export function ParticipantAvatarStack({
             className={styles.participantAvatarItem}
             key={participant.memberId}
           >
-            <Avatar.Root
-              aria-hidden
-              className={isHost ? styles.hostParticipantAvatar : styles.participantAvatar}
-              title={accessibleName}
-            >
-              {participant.imageUrl && (
-                <Avatar.Image
-                  alt=""
-                  className={styles.participantAvatarImage}
-                  src={participant.imageUrl}
-                />
-              )}
-              <Avatar.Fallback className={styles.participantAvatarFallback}>
-                {Array.from(participant.nickname)[0]}
-              </Avatar.Fallback>
-            </Avatar.Root>
+            <TrustCardPopover
+              memberId={participant.memberId}
+              isHost={isHost}
+              triggerLabel={accessibleName}
+              triggerClassName={styles.participantAvatarTrigger}
+              trigger={
+                <Avatar.Root
+                  aria-hidden
+                  className={isHost ? styles.hostParticipantAvatar : styles.participantAvatar}
+                >
+                  {participant.imageUrl && (
+                    <Avatar.Image
+                      alt=""
+                      className={styles.participantAvatarImage}
+                      src={participant.imageUrl}
+                    />
+                  )}
+                  <Avatar.Fallback className={styles.participantAvatarFallback}>
+                    {Array.from(participant.nickname)[0]}
+                  </Avatar.Fallback>
+                </Avatar.Root>
+              }
+            />
           </li>
         );
       })}

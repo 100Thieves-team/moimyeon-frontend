@@ -2,7 +2,6 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { roomDetailOptions } from "@/api/generated/@tanstack/react-query.gen";
-import { HostProfileCard } from "./host-profile-card";
 import { InterviewActionCard } from "./interview-action-card";
 import {
   formatInterviewSchedule,
@@ -89,7 +88,6 @@ export function InterviewDetailContent({ roomId }: { roomId: string }) {
 
           <div className={styles.rightRail}>
             <InterviewActionCard room={room} />
-            <HostProfileCard memberId={room.hostMemberId} />
           </div>
         </div>
       </div>

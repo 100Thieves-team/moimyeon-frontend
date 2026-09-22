@@ -145,6 +145,18 @@ export const textStyle = styleVariants({
     fontWeight: 400,
     lineHeight: 1.5,
   },
+  fieldLabel: {
+    fontFamily: sans,
+    fontSize: "1.4rem",
+    fontWeight: 700,
+    lineHeight: "2rem",
+  },
+  metadata: {
+    fontFamily: sans,
+    fontSize: "1.3rem",
+    fontWeight: 400,
+    lineHeight: "1.7rem",
+  },
   testimonial: {
     fontFamily: sans,
     fontSize: "2rem",

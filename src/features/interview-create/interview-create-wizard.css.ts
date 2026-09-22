@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars } from "@/styles";
+import { media, vars, textStyle } from "@/styles";
 
 const controlFrame = {
   width: "100%",
@@ -219,15 +219,15 @@ export const field = style({
   gap: vars.spacing.sm,
 });
 
-export const fieldLabel = style({
-  display: "flex",
-  alignItems: "baseline",
-  gap: vars.spacing.sm,
-  color: vars.color.primary,
-  fontSize: "1.3rem",
-  fontWeight: 700,
-  lineHeight: "1.7rem",
-});
+export const fieldLabel = style([
+  textStyle.fieldLabel,
+  {
+    display: "flex",
+    alignItems: "baseline",
+    gap: vars.spacing.sm,
+    color: vars.color.primary,
+  },
+]);
 
 export const fieldRequirement = style({
   color: vars.color.tertiary,
@@ -718,23 +718,23 @@ export const scheduleField = style({
   gap: vars.spacing.sm,
 });
 
-export const scheduleFieldLabel = style({
-  color: vars.color.primary,
-  fontSize: "1.3rem",
-  fontWeight: 700,
-  lineHeight: "1.7rem",
-  "@media": {
-    [media.md]: {
-      position: "absolute",
-      width: "1px",
-      height: "1px",
-      padding: 0,
-      overflow: "hidden",
-      clipPath: "inset(50%)",
-      whiteSpace: "nowrap",
+export const scheduleFieldLabel = style([
+  textStyle.fieldLabel,
+  {
+    color: vars.color.primary,
+    "@media": {
+      [media.md]: {
+        position: "absolute",
+        width: "1px",
+        height: "1px",
+        padding: 0,
+        overflow: "hidden",
+        clipPath: "inset(50%)",
+        whiteSpace: "nowrap",
+      },
     },
   },
-});
+]);
 
 export const scheduleControl = style({
   height: "4.6rem",
@@ -992,11 +992,12 @@ export const reviewSummaryLabel = style({
   letterSpacing: "0.08em",
 });
 
-export const reviewSummaryText = style({
-  color: vars.color.primary,
-  fontSize: "1.45rem",
-  lineHeight: "2.1rem",
-});
+export const reviewSummaryText = style([
+  textStyle.p2Body,
+  {
+    color: vars.color.primary,
+  },
+]);
 
 export const submitError = style({
   color: vars.color.red,

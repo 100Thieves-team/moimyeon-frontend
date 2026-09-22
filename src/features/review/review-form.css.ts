@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars } from "@/styles";
+import { media, vars, textStyle } from "@/styles";
 
 export const form = style({
   display: "flex",
@@ -21,11 +21,12 @@ export const fieldLabelRow = style({
   gap: vars.spacing.sm,
 });
 
-export const fieldLabel = style({
-  fontSize: "1.3rem",
-  fontWeight: 700,
-  color: vars.color.primary,
-});
+export const fieldLabel = style([
+  textStyle.fieldLabel,
+  {
+    color: vars.color.primary,
+  },
+]);
 
 export const fieldOptional = style({
   fontFamily: vars.font.mono,

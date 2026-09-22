@@ -1,5 +1,5 @@
 import { globalStyle, style, styleVariants } from "@vanilla-extract/css";
-import { vars } from "@/styles";
+import { media, vars } from "@/styles";
 
 const mobile = "screen and (max-width: 799px)";
 
@@ -9,11 +9,11 @@ export const page = style({
   minHeight: "calc(100dvh - 6.4rem)",
   flex: "1 1 auto",
   flexDirection: "column",
-  padding: "1.6rem 3.2rem 1.9rem",
+  padding: "0 3.2rem 2.4rem",
   backgroundColor: vars.color.background,
   "@media": {
     [mobile]: {
-      padding: "1.6rem 1.6rem 1.2rem",
+      padding: "0 1.6rem 1.2rem",
     },
   },
 });
@@ -94,13 +94,13 @@ export const infoStrip = style({
   display: "grid",
   width: "100%",
   gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-  marginTop: "4.4rem",
+  marginTop: "1.8rem",
   paddingBlock: "1.8rem",
-  borderBlock: `1px solid ${vars.color.strokeMedium}`,
+  borderBlock: `1px solid ${vars.color.strokeLight}`,
   "@media": {
     [mobile]: {
       gridTemplateColumns: "1fr",
-      marginTop: "3.2rem",
+      marginTop: "1.8rem",
       paddingBlock: 0,
     },
   },
@@ -231,163 +231,6 @@ export const policyList = style({
   lineHeight: 1.6,
 });
 
-export const hostCard = style({
-  display: "flex",
-  width: "100%",
-  minWidth: 0,
-  flexDirection: "column",
-  gap: "1.4rem",
-  padding: "2.6rem",
-  overflow: "hidden",
-  border: `1px solid ${vars.color.strokeLight}`,
-  borderRadius: vars.radius.media,
-  backgroundColor: vars.color.background,
-  boxShadow: vars.shadow.cardRaise,
-});
-
-export const profileState = style({
-  display: "flex",
-  minHeight: "12rem",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  justifyContent: "center",
-  gap: vars.spacing.base,
-  color: vars.color.secondary,
-  fontSize: "1.4rem",
-  lineHeight: 1.5,
-});
-
-export const hostIdentity = style({
-  display: "flex",
-  alignItems: "center",
-  gap: vars.spacing.md,
-});
-
-export const hostAvatar = style({
-  display: "flex",
-  width: "4.4rem",
-  height: "4.4rem",
-  flex: "0 0 auto",
-  alignItems: "center",
-  justifyContent: "center",
-  borderRadius: vars.radius.pill,
-  backgroundColor: vars.color.yellow10,
-  color: vars.color.brown,
-  fontSize: "1.7rem",
-  fontWeight: 500,
-  lineHeight: "1.7rem",
-});
-
-export const hostIdentityCopy = style({
-  display: "flex",
-  minWidth: 0,
-  flexDirection: "column",
-  gap: "0.2rem",
-});
-
-export const hostNameRow = style({
-  display: "flex",
-  minWidth: 0,
-  alignItems: "center",
-  gap: vars.spacing.sm,
-});
-
-export const hostName = style({
-  overflow: "hidden",
-  color: vars.color.primary,
-  fontSize: "1.6rem",
-  fontWeight: 500,
-  lineHeight: 1.4,
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
-});
-
-export const hostBadge = style({
-  flex: "0 0 auto",
-  padding: "0.3rem 0.9rem",
-  borderRadius: vars.radius.pill,
-  backgroundColor: vars.color.yellow10,
-  color: vars.color.brown,
-  fontSize: "1.1rem",
-  fontWeight: 700,
-  lineHeight: "1.5rem",
-});
-
-export const hostJobRoles = style({
-  overflow: "hidden",
-  color: vars.color.tertiary,
-  fontSize: "1.4rem",
-  lineHeight: 1.4,
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
-});
-
-export const hostTrustSummary = style({
-  color: vars.color.secondary,
-  fontSize: "1.4rem",
-  lineHeight: 1.5,
-  overflowWrap: "anywhere",
-});
-
-export const hostBio = style({
-  display: "flex",
-  flexDirection: "column",
-  gap: "0.5rem",
-  padding: "1.2rem 1.4rem",
-  borderRadius: "1.2rem",
-  backgroundColor: vars.color.blue10,
-  color: vars.color.primary,
-  fontSize: "1.4rem",
-  lineHeight: 1.5,
-  overflowWrap: "anywhere",
-});
-
-export const hostBioLabel = style({
-  color: vars.color.blue,
-  fontFamily: vars.font.mono,
-  fontSize: "1.05rem",
-  lineHeight: "1.4rem",
-  letterSpacing: "0.1em",
-});
-
-export const hostTagsBlock = style({
-  display: "flex",
-  flexDirection: "column",
-  gap: "0.7rem",
-});
-
-export const hostTagsLabel = style({
-  color: vars.color.tertiary,
-  fontSize: "1.3rem",
-  lineHeight: 1.4,
-});
-
-export const hostTags = style({
-  display: "flex",
-  flexWrap: "wrap",
-  gap: "0.6rem",
-  listStyle: "none",
-});
-
-export const hostTag = style({
-  display: "inline-flex",
-  alignItems: "baseline",
-  gap: "0.5rem",
-  padding: "0.5rem 1rem",
-  borderRadius: vars.radius.pill,
-  backgroundColor: vars.color.fillSecondary,
-  color: vars.color.secondary,
-  fontSize: "1.3rem",
-  fontWeight: 500,
-  lineHeight: 1.4,
-});
-
-export const hostTagCount = style({
-  color: vars.color.tertiary,
-  fontFamily: vars.font.mono,
-  fontSize: "1rem",
-});
-
 export const actionCard = style({
   display: "flex",
   width: "100%",
@@ -398,7 +241,8 @@ export const actionCard = style({
   overflow: "hidden",
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.media,
-  backgroundColor: vars.color.background,
+  backgroundColor: vars.color.trueWhite,
+  "@media": { [media.dark]: { backgroundColor: vars.color.background } },
   boxShadow: vars.shadow.cardRaise,
 });
 
@@ -408,7 +252,7 @@ export const quotaStats = style({
   minWidth: 0,
   flexDirection: "column",
   alignItems: "stretch",
-  gap: "1rem",
+  gap: "1.6rem",
 });
 
 export const quotaLabels = style({
@@ -423,16 +267,15 @@ export const quotaLabels = style({
 export const quotaValue = style({
   display: "flex",
   minWidth: 0,
-  alignItems: "baseline",
-  gap: vars.spacing.sm,
+  flexDirection: "column",
+  gap: "0.6rem",
 });
 
 export const quotaNumber = style({
-  color: vars.color.primary,
-  fontSize: "2.8rem",
-  fontWeight: 300,
-  lineHeight: "3.2rem",
-  letterSpacing: "-0.02em",
+  color: vars.color.secondary,
+  fontSize: "1.4rem",
+  fontWeight: 400,
+  lineHeight: "2rem",
   whiteSpace: "nowrap",
 });
 
@@ -460,15 +303,21 @@ export const participantAvatarList = style({
 export const participantAvatarItem = style({
   position: "relative",
   display: "grid",
-  width: "3.4rem",
-  height: "3.4rem",
-  flex: "0 0 3.4rem",
+  width: "4rem",
+  height: "4rem",
+  flex: "0 0 4rem",
   placeItems: "center",
   selectors: {
     "&:not(:first-child)": {
-      marginInlineStart: "-0.8rem",
+      marginInlineStart: "-1.2rem",
     },
   },
+});
+
+export const participantAvatarTrigger = style({
+  width: "4rem",
+  height: "4rem",
+  borderRadius: vars.radius.pill,
 });
 
 const participantAvatarBase = style({
@@ -497,6 +346,7 @@ export const hostParticipantAvatar = style([
   {
     backgroundColor: vars.color.yellow10,
     color: vars.color.brown,
+    "@media": { [media.dark]: { color: vars.color.yellow } },
   },
 ]);
 
