@@ -207,7 +207,9 @@ describe("방장 참여 신청 관리", () => {
         .click();
       const card = screen.getByRole("article", { name: "꼼꼼한 여우 12 공개 신뢰 카드" });
       await expect.element(card).toBeVisible();
-      await expect.element(card.getByText("2 / 3회 출석")).toBeVisible();
+      await expect
+        .element(card.getByText("활동률 상위 10% · 최근 출석 2/3회 · 누적 불참 0회"))
+        .toBeVisible();
       await expect.element(card.getByText("피드백이 구체적이에요")).toBeVisible();
     },
   );

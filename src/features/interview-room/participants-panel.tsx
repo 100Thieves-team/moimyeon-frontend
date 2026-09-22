@@ -1,10 +1,12 @@
 "use client";
 
-import type { RoomLeaveResponse } from "@/api/generated";
-
+import { Popover } from "@base-ui/react/popover";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import type { RoomLeaveResponse } from "@/api/generated";
 import { roomParticipantsOptions } from "@/api/generated/@tanstack/react-query.gen";
-import { TrustCardPopover } from "@/features/trust-card/trust-card-popover";
+import { TrustCardPopover, type TrustCardPayload } from "@/features/trust-card/trust-card-popover";
+import * as trustCardStyles from "@/features/trust-card/trust-card.css";
 import { getParticipantSummary, type InterviewRoom } from "./participant-model";
 import { LeaveRoomDialog } from "./leave-room-dialog";
 import * as styles from "./interview-room.css";
@@ -20,6 +22,7 @@ export function ParticipantsPanel({
   onLeave: () => Promise<RoomLeaveResponse>;
   isPending: boolean;
 }) {
+  const [profileHandle] = useState(() => Popover.createHandle<TrustCardPayload>());
   const query = useSuspenseQuery({
     ...roomParticipantsOptions({ path: { roomId: room.roomId } }),
     retry: false,
@@ -42,32 +45,34 @@ export function ParticipantsPanel({
                 data-me={isMe || undefined}
               >
                 <div className={styles.participantProfile}>
-                  <TrustCardPopover
-                    memberId={participant.memberId}
-                    triggerLabel={participant.nickname}
-                    trigger={
-                      <>
-                        <span className={styles.participantAvatar} aria-hidden="true">
-                          {Array.from(participant.nickname.trim())[0] ?? "?"}
+                  <Popover.Trigger
+                    handle={profileHandle}
+                    payload={{ memberId: participant.memberId, isHost: participant.isHost }}
+                    aria-label={`${participant.nickname} 공개 신뢰 카드 열기`}
+                    className={trustCardStyles.trigger}
+                    openOnHover
+                    delay={300}
+                    closeDelay={150}
+                  >
+                    <span className={styles.participantAvatar} aria-hidden="true">
+                      {Array.from(participant.nickname.trim())[0] ?? "?"}
+                    </span>
+                    <span className={styles.participantIdentity}>
+                      <span className={styles.participantName}>
+                        <span className={styles.nickname}>{participant.nickname}</span>
+                        {participant.isHost && <span className={styles.hostBadge}>방장</span>}
+                        {isMe && <span className={styles.meBadge}>나</span>}
+                      </span>
+                      {participant.jobRoles.length > 0 && (
+                        <span className={styles.meta}>
+                          {participant.jobRoles.map((role) => role.name).join(" · ")}
                         </span>
-                        <span className={styles.participantIdentity}>
-                          <span className={styles.participantName}>
-                            <span className={styles.nickname}>{participant.nickname}</span>
-                            {participant.isHost && <span className={styles.hostBadge}>방장</span>}
-                            {isMe && <span className={styles.meBadge}>나</span>}
-                          </span>
-                          {participant.jobRoles.length > 0 && (
-                            <span className={styles.meta}>
-                              {participant.jobRoles.map((role) => role.name).join(" · ")}
-                            </span>
-                          )}
-                          {participant.activitySummary && (
-                            <span className={styles.meta}>{participant.activitySummary}</span>
-                          )}
-                        </span>
-                      </>
-                    }
-                  />
+                      )}
+                      {participant.activitySummary && (
+                        <span className={styles.meta}>{participant.activitySummary}</span>
+                      )}
+                    </span>
+                  </Popover.Trigger>
                 </div>
                 <p className={styles.participantSummary}>{getParticipantSummary(participant)}</p>
               </li>
@@ -75,6 +80,7 @@ export function ParticipantsPanel({
           })}
         </ul>
       )}
+      <TrustCardPopover handle={profileHandle} />
       <footer className={styles.participantsFooter}>
         <LeaveRoomDialog room={room} onLeave={onLeave} isPending={isPending} />
       </footer>

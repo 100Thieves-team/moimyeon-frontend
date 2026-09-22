@@ -1,3 +1,4 @@
+import { textStyle } from "@/styles/typography.css";
 import { style } from "@vanilla-extract/css";
 import { media } from "@/styles/tokens";
 import { vars } from "@/styles/theme.css";
@@ -27,12 +28,12 @@ export const field = style({
   gap: vars.spacing.sm,
 });
 
-export const label = style({
-  color: vars.color.secondary,
-  fontSize: "1.3rem",
-  fontWeight: 700,
-  lineHeight: "1.7rem",
-});
+export const label = style([
+  textStyle.fieldLabel,
+  {
+    color: vars.color.secondary,
+  },
+]);
 
 const inputFrame = {
   width: "100%",

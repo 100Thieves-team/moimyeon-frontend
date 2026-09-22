@@ -1,3 +1,4 @@
+import { textStyle } from "@/styles/typography.css";
 import { style } from "@vanilla-extract/css";
 import { media } from "@/styles/tokens";
 import { vars } from "@/styles/theme.css";
@@ -77,15 +78,16 @@ export const fileHeading = style({
   gap: vars.spacing.sm,
 });
 
-export const fileName = style({
-  overflow: "hidden",
-  color: vars.color.primary,
-  fontSize: "1.45rem",
-  fontWeight: 500,
-  lineHeight: "1.9rem",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
-});
+export const fileName = style([
+  textStyle.p2,
+  {
+    fontWeight: 500,
+    overflow: "hidden",
+    color: vars.color.primary,
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+]);
 
 export const defaultBadge = style({
   flex: "0 0 auto",
@@ -98,14 +100,15 @@ export const defaultBadge = style({
   lineHeight: "1.5rem",
 });
 
-export const fileMeta = style({
-  overflow: "hidden",
-  color: vars.color.tertiary,
-  fontSize: "1.25rem",
-  lineHeight: "1.6rem",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
-});
+export const fileMeta = style([
+  textStyle.metadata,
+  {
+    overflow: "hidden",
+    color: vars.color.tertiary,
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+]);
 
 export const summaryCell = style({
   display: "flex",
@@ -115,11 +118,12 @@ export const summaryCell = style({
   gap: vars.spacing.sm,
 });
 
-export const summaryText = style({
-  color: vars.color.secondary,
-  fontSize: "1.35rem",
-  lineHeight: "2rem",
-});
+export const summaryText = style([
+  textStyle.p2Body,
+  {
+    color: vars.color.secondary,
+  },
+]);
 
 export const summaryPending = style({
   color: vars.color.tertiary,

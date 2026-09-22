@@ -477,7 +477,7 @@ const statusBadgeBase = style({
   padding: "0.4rem 0.8rem",
   borderRadius: vars.radius.pill,
   fontSize: "1.2rem",
-  fontWeight: 700,
+  fontWeight: 500,
 });
 export const recruitingBadge = style([
   statusBadgeBase,

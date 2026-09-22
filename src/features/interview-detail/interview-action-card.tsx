@@ -102,10 +102,15 @@ export function InterviewActionCard({ room }: { room: InterviewDetail }) {
           <div className={styles.quotaLabels}>
             <span>모집 현황</span>
           </div>
+          <ParticipantAvatarStack
+            currentCount={current}
+            hostMemberId={room.hostMemberId}
+            participants={room.participants}
+          />
           <div className={styles.quotaValue}>
-            <strong className={styles.quotaNumber}>
+            <span className={styles.quotaNumber}>
               {current} / {max}명
-            </strong>
+            </span>
             {isApplyState && remaining > 0 && (
               <span className={styles.remainingQuota}>{remaining}자리 남았어요</span>
             )}
@@ -115,11 +120,6 @@ export function InterviewActionCard({ room }: { room: InterviewDetail }) {
             className={styles.actionProgress}
             max={Math.max(max, 1)}
             value={Math.min(current, Math.max(max, 1))}
-          />
-          <ParticipantAvatarStack
-            currentCount={current}
-            hostMemberId={room.hostMemberId}
-            participants={room.participants}
           />
         </div>
       )}
