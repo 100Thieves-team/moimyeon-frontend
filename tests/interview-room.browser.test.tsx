@@ -224,7 +224,7 @@ describe("방장 참여 신청 관리", () => {
     );
     const screen = await renderRoom();
     await screen.getByRole("button", { name: "성실한 사슴 03 공개 신뢰 카드 열기" }).click();
-    await expect.element(screen.getByText("불러오는 중…")).toBeVisible();
+    await expect.element(screen.getByRole("region", { name: "프로필 불러오는 중" })).toBeVisible();
     await screen.getByRole("button", { name: "성실한 사슴 03 신청 내용" }).click();
     await expect.element(screen.getByRole("heading", { name: "전할 말" })).toBeVisible();
     await screen.getByRole("button", { name: "수락", exact: true }).click();
@@ -525,7 +525,9 @@ describe("방장 참여 신청 관리", () => {
     const screen = await renderRoom();
     await screen.getByRole("button", { name: "반려", exact: true }).click();
     await expect.element(screen.getByRole("heading", { name: "신청을 반려할게요" })).toBeVisible();
-    await expect.element(screen.getByText("반려 사유를 불러오는 중이에요.")).toBeVisible();
+    await expect
+      .element(screen.getByRole("region", { name: "반려 사유 불러오는 중" }))
+      .toBeVisible();
     await expect.element(screen.getByRole("button", { name: "취소", exact: true })).toBeEnabled();
     await expect.element(screen.getByRole("button", { name: "반려하기" })).toBeDisabled();
     finish();
@@ -591,7 +593,9 @@ describe("방장 참여 신청 관리", () => {
         }),
     );
     const screen = await renderRoom();
-    await expect.element(screen.getByText("참여 신청을 불러오는 중이에요.")).toBeVisible();
+    await expect
+      .element(screen.getByRole("region", { name: "참여 신청 불러오는 중" }))
+      .toBeVisible();
     finish();
     await expect
       .element(screen.getByRole("button", { name: "성실한 사슴 03 공개 신뢰 카드 열기" }))

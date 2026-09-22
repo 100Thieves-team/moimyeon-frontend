@@ -172,12 +172,6 @@ export const rootError = style({
 
 export const submitButton = style({ width: "100%", minHeight: "5rem" });
 
-export const loading = style({
-  margin: "auto",
-  color: vars.color.secondary,
-  fontSize: "1.4rem",
-});
-
 export const errorPage = style({
   display: "grid",
   minHeight: "calc(100dvh - 6.4rem)",

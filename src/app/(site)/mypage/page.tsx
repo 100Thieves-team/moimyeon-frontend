@@ -1,3 +1,4 @@
+import { MyPageSkeleton } from "@/features/mypage/mypage-skeleton";
 import type { Metadata } from "next";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
@@ -41,7 +42,7 @@ export default async function MyPage() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={null}>
+      <Suspense fallback={<MyPageSkeleton />}>
         <MyPageContent />
       </Suspense>
     </HydrationBoundary>

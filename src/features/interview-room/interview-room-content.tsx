@@ -23,6 +23,7 @@ import { getInterviewRelationLabel } from "@/features/interview-detail/interview
 import { ApplicationRow } from "./application-row";
 import { ParticipantsPanel } from "./participants-panel";
 import { RoomPanelBoundary } from "./room-query-state";
+import { ApplicationsSkeleton, ParticipantsSkeleton } from "./interview-room-skeleton";
 import * as styles from "./interview-room.css";
 
 type RoomTab = "applications" | "participants";
@@ -114,13 +115,13 @@ export function InterviewRoomContent({
           </div>
           {isHost && (
             <RoomTabPanel value="applications">
-              <RoomPanelBoundary label="참여 신청">
+              <RoomPanelBoundary label="참여 신청" fallback={<ApplicationsSkeleton />}>
                 <ApplicationsPanel roomId={roomId} />
               </RoomPanelBoundary>
             </RoomTabPanel>
           )}
           <RoomTabPanel value="participants">
-            <RoomPanelBoundary label="참여자 목록">
+            <RoomPanelBoundary label="참여자 목록" fallback={<ParticipantsSkeleton />}>
               <ParticipantsPanel
                 room={room}
                 currentMemberId={currentMemberId}

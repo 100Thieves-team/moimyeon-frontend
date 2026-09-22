@@ -187,7 +187,9 @@ describe("참여자 명부", () => {
         }),
     );
     const { screen } = await setup();
-    await expect.element(screen.getByText("참여자 목록을 불러오는 중이에요.")).toBeVisible();
+    await expect
+      .element(screen.getByRole("region", { name: "참여자 목록 불러오는 중" }))
+      .toBeVisible();
     await expect.element(screen.getByText("결제 정산 경험")).not.toBeInTheDocument();
     finish({ result: "SUCCESS", data: { participants } });
     await expect.element(screen.getByText("결제 정산 경험")).toBeVisible();

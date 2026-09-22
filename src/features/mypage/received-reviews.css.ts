@@ -66,7 +66,6 @@ export const author = style({
 const skeletonBase = {
   display: "block",
   borderRadius: vars.radius.pill,
-  backgroundColor: vars.color.fillTertiary,
 } as const;
 
 export const skeletonTagRow = style({

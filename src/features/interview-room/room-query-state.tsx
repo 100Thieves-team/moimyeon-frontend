@@ -6,7 +6,15 @@ import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 import { Button } from "@/components/button";
 import * as styles from "./interview-room.css";
 
-export function RoomPanelBoundary({ label, children }: { label: string; children: ReactNode }) {
+export function RoomPanelBoundary({
+  label,
+  children,
+  fallback,
+}: {
+  label: string;
+  children: ReactNode;
+  fallback: ReactNode;
+}) {
   const renderFallback = useCallback(
     ({ resetErrorBoundary }: FallbackProps) => (
       <RoomPanelError label={label} resetErrorBoundary={resetErrorBoundary} />
@@ -17,9 +25,7 @@ export function RoomPanelBoundary({ label, children }: { label: string; children
     <QueryErrorResetBoundary>
       {({ reset }) => (
         <ErrorBoundary onReset={reset} fallbackRender={renderFallback}>
-          <Suspense fallback={<p className={styles.empty}>{label}을 불러오는 중이에요.</p>}>
-            {children}
-          </Suspense>
+          <Suspense fallback={fallback}>{children}</Suspense>
         </ErrorBoundary>
       )}
     </QueryErrorResetBoundary>
