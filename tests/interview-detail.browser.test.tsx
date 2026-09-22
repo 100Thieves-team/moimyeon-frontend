@@ -234,27 +234,48 @@ describe("InterviewDetailContent", () => {
       .toHaveAttribute("href", `/interviews/${roomId}/apply`);
   });
 
-  it("일반 참여자 아바타에서 해당 회원의 프로필을 열고 방장 배지를 표시하지 않는다", async () => {
-    const participant = createParticipants(3)[1];
-    mocks.publicProfile.mockResolvedValue({
-      ...publicProfileResponse,
-      data: {
-        ...publicProfileResponse.data,
-        memberId: participant.memberId,
-        nickname: participant.nickname,
-      },
-    });
-    const { screen } = await renderDetail();
-    await screen
-      .getByRole("button", { name: `${participant.nickname} 공개 신뢰 카드 열기` })
-      .hover();
-    const card = screen.getByRole("article", { name: `${participant.nickname} 공개 신뢰 카드` });
-    await expect.element(card).toBeVisible();
-    expect(mocks.publicProfile).toHaveBeenCalledWith(participant.memberId);
-    await expect.element(card.getByText("방장", { exact: true })).not.toBeInTheDocument();
-    await screen.getByRole("heading", { name: "면접 소개" }).hover();
-    await expect.element(card).not.toBeInTheDocument();
-  });
+  it.each(["성공", "실패"])(
+    "방장 프로필 조회 %s 후 다른 참여자로 hover하면 해당 회원의 카드로 전환한다",
+    async (hostResult) => {
+      const participant = createParticipants(3)[1];
+      mocks.publicProfile.mockResolvedValue({
+        ...publicProfileResponse,
+        data: {
+          ...publicProfileResponse.data,
+          memberId: participant.memberId,
+          nickname: participant.nickname,
+        },
+      });
+      if (hostResult === "성공") mocks.publicProfile.mockResolvedValueOnce(publicProfileResponse);
+      else mocks.publicProfile.mockRejectedValueOnce(new Error("host profile failed"));
+      const { screen } = await renderDetail();
+      await screen
+        .getByRole("button", { name: "꼼꼼한 여우 12 (방장) 공개 신뢰 카드 열기" })
+        .hover();
+      if (hostResult === "성공") {
+        await expect
+          .element(screen.getByRole("article", { name: "꼼꼼한 여우 12 공개 신뢰 카드" }))
+          .toBeVisible();
+      } else {
+        await expect
+          .element(screen.getByRole("alert"))
+          .toHaveTextContent("공개 신뢰 카드를 불러오지 못했어요.");
+      }
+      await screen
+        .getByRole("button", { name: `${participant.nickname} 공개 신뢰 카드 열기` })
+        .hover();
+      const card = screen.getByRole("article", { name: `${participant.nickname} 공개 신뢰 카드` });
+      await expect.element(card).toBeVisible();
+      expect(mocks.publicProfile).toHaveBeenCalledWith(participant.memberId);
+      await expect
+        .element(screen.getByRole("article", { name: "꼼꼼한 여우 12 공개 신뢰 카드" }))
+        .not.toBeInTheDocument();
+      await expect.element(screen.getByRole("alert")).not.toBeInTheDocument();
+      await expect.element(card.getByText("방장", { exact: true })).not.toBeInTheDocument();
+      await screen.getByRole("heading", { name: "면접 소개" }).hover();
+      await expect.element(card).not.toBeInTheDocument();
+    },
+  );
 
   it("참여자 1명이면 방장을 첫 번째 아바타로 표시한다", async () => {
     mocks.roomDetail.mockResolvedValue(

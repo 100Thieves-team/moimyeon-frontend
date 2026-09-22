@@ -2,16 +2,19 @@
 
 import { Popover } from "@base-ui/react/popover";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
-import { Suspense, type ReactNode } from "react";
+import { Suspense } from "react";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 import { Button } from "@/components/button";
 import { TrustCard } from "./trust-card";
 import * as styles from "./trust-card.css";
 
-type TrustCardPopoverProps = {
+export type TrustCardPayload = {
   memberId: string;
   isHost?: boolean;
-  trigger: ReactNode;
+};
+
+type TrustCardPopoverProps = {
+  handle: Popover.Handle<TrustCardPayload>;
 };
 
 function TrustCardError({ resetErrorBoundary }: FallbackProps) {
@@ -25,26 +28,29 @@ function TrustCardError({ resetErrorBoundary }: FallbackProps) {
   );
 }
 
-export function TrustCardPopover({ memberId, isHost = false, trigger }: TrustCardPopoverProps) {
+export function TrustCardPopover({ handle }: TrustCardPopoverProps) {
   return (
-    <Popover.Root>
-      {trigger}
-      <Popover.Portal>
-        <Popover.Positioner align="start" side="bottom" sideOffset={12} collisionPadding={16}>
-          <Popover.Arrow className={styles.arrow} render={<span />} />
-          <Popover.Popup className={styles.popup}>
-            <QueryErrorResetBoundary>
-              {({ reset }) => (
-                <ErrorBoundary FallbackComponent={TrustCardError} onReset={reset}>
-                  <Suspense fallback={<p className={styles.loading}>불러오는 중…</p>}>
-                    <TrustCard memberId={memberId} isHost={isHost} />
-                  </Suspense>
-                </ErrorBoundary>
+    <Popover.Root handle={handle}>
+      {({ payload }) => (
+        <Popover.Portal>
+          <Popover.Positioner align="start" side="bottom" sideOffset={12} collisionPadding={16}>
+            <Popover.Arrow className={styles.arrow} render={<span />} />
+            <Popover.Popup className={styles.popup}>
+              {payload && (
+                <QueryErrorResetBoundary key={payload.memberId}>
+                  {({ reset }) => (
+                    <ErrorBoundary FallbackComponent={TrustCardError} onReset={reset}>
+                      <Suspense fallback={<p className={styles.loading}>불러오는 중…</p>}>
+                        <TrustCard memberId={payload.memberId} isHost={payload.isHost} />
+                      </Suspense>
+                    </ErrorBoundary>
+                  )}
+                </QueryErrorResetBoundary>
               )}
-            </QueryErrorResetBoundary>
-          </Popover.Popup>
-        </Popover.Positioner>
-      </Popover.Portal>
+            </Popover.Popup>
+          </Popover.Positioner>
+        </Popover.Portal>
+      )}
     </Popover.Root>
   );
 }

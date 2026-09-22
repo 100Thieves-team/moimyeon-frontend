@@ -3,8 +3,8 @@
 import { Popover } from "@base-ui/react/popover";
 import { Collapsible } from "@base-ui/react/collapsible";
 import { Check, ChevronDown } from "lucide-react";
-import type { ReactNode } from "react";
-import { TrustCardPopover } from "@/features/trust-card/trust-card-popover";
+import { useState, type ReactNode } from "react";
+import { TrustCardPopover, type TrustCardPayload } from "@/features/trust-card/trust-card-popover";
 import * as trustCardStyles from "@/features/trust-card/trust-card.css";
 import { CreateReviewForm } from "./create-review-form";
 import { EditReviewForm } from "./edit-review-form";
@@ -26,30 +26,30 @@ type TargetRowFrameProps = Omit<TargetRowProps, "onCompleted" | "roomId"> & {
 };
 
 function TargetIdentity({ isHost, target }: Pick<TargetRowProps, "isHost" | "target">) {
+  const [profileHandle] = useState(() => Popover.createHandle<TrustCardPayload>());
   return (
-    <TrustCardPopover
-      memberId={target.memberId}
-      isHost={isHost}
-      trigger={
-        <Popover.Trigger
-          aria-label={`${target.nickname} 공개 신뢰 카드 열기`}
-          className={trustCardStyles.trigger}
-          openOnHover
-          delay={300}
-          closeDelay={150}
-        >
-          <span aria-hidden="true" className={styles.avatar}>
-            {target.nickname.charAt(0)}
+    <>
+      <Popover.Trigger
+        handle={profileHandle}
+        payload={{ memberId: target.memberId, isHost }}
+        aria-label={`${target.nickname} 공개 신뢰 카드 열기`}
+        className={trustCardStyles.trigger}
+        openOnHover
+        delay={300}
+        closeDelay={150}
+      >
+        <span aria-hidden="true" className={styles.avatar}>
+          {target.nickname.charAt(0)}
+        </span>
+        <span className={styles.nameColumn}>
+          <span className={styles.nameRow}>
+            <span className={styles.nickname}>{target.nickname}</span>
+            {isHost && <span className={styles.hostBadge}>방장</span>}
           </span>
-          <span className={styles.nameColumn}>
-            <span className={styles.nameRow}>
-              <span className={styles.nickname}>{target.nickname}</span>
-              {isHost && <span className={styles.hostBadge}>방장</span>}
-            </span>
-          </span>
-        </Popover.Trigger>
-      }
-    />
+        </span>
+      </Popover.Trigger>
+      <TrustCardPopover handle={profileHandle} />
+    </>
   );
 }
 

@@ -1,7 +1,10 @@
-import { Popover } from "@base-ui/react/popover";
-import { TrustCardPopover } from "@/features/trust-card/trust-card-popover";
-import * as trustCardStyles from "@/features/trust-card/trust-card.css";
+"use client";
+
 import { Avatar } from "@base-ui/react/avatar";
+import { useState } from "react";
+import { Popover } from "@base-ui/react/popover";
+import { TrustCardPopover, type TrustCardPayload } from "@/features/trust-card/trust-card-popover";
+import * as trustCardStyles from "@/features/trust-card/trust-card.css";
 import type { InterviewDetail } from "./interview-detail-model";
 import * as styles from "./interview-detail.css";
 
@@ -22,6 +25,7 @@ export function ParticipantAvatarStack({
   hostMemberId,
   participants,
 }: ParticipantAvatarStackProps) {
+  const [profileHandle] = useState(() => Popover.createHandle<TrustCardPayload>());
   if (!participants?.length || participants.length !== currentCount) return null;
 
   const normalizedParticipants = participants.map((participant) => ({
@@ -50,61 +54,60 @@ export function ParticipantAvatarStack({
   const overflowCount = orderedParticipants.length - visibleParticipants.length;
 
   return (
-    <ul
-      aria-label={`현재 참여자 ${orderedParticipants.length}명`}
-      className={styles.participantAvatarList}
-    >
-      {visibleParticipants.map((participant) => {
-        const isHost = participant.memberId === hostMemberId;
-        const accessibleName = isHost ? `${participant.nickname} (방장)` : participant.nickname;
+    <>
+      <ul
+        aria-label={`현재 참여자 ${orderedParticipants.length}명`}
+        className={styles.participantAvatarList}
+      >
+        {visibleParticipants.map((participant) => {
+          const isHost = participant.memberId === hostMemberId;
+          const accessibleName = isHost ? `${participant.nickname} (방장)` : participant.nickname;
 
-        return (
-          <li
-            aria-label={accessibleName}
-            className={styles.participantAvatarItem}
-            key={participant.memberId}
-          >
-            <TrustCardPopover
-              memberId={participant.memberId}
-              isHost={isHost}
-              trigger={
-                <Popover.Trigger
-                  aria-label={`${accessibleName} 공개 신뢰 카드 열기`}
-                  className={`${trustCardStyles.trigger} ${styles.participantAvatarTrigger}`}
-                  openOnHover
-                  delay={300}
-                  closeDelay={150}
+          return (
+            <li
+              aria-label={accessibleName}
+              className={styles.participantAvatarItem}
+              key={participant.memberId}
+            >
+              <Popover.Trigger
+                handle={profileHandle}
+                payload={{ memberId: participant.memberId, isHost }}
+                aria-label={`${accessibleName} 공개 신뢰 카드 열기`}
+                className={`${trustCardStyles.trigger} ${styles.participantAvatarTrigger}`}
+                openOnHover
+                delay={300}
+                closeDelay={150}
+              >
+                <Avatar.Root
+                  aria-hidden
+                  className={isHost ? styles.hostParticipantAvatar : styles.participantAvatar}
                 >
-                  <Avatar.Root
-                    aria-hidden
-                    className={isHost ? styles.hostParticipantAvatar : styles.participantAvatar}
-                  >
-                    {participant.imageUrl && (
-                      <Avatar.Image
-                        alt=""
-                        className={styles.participantAvatarImage}
-                        src={participant.imageUrl}
-                      />
-                    )}
-                    <Avatar.Fallback className={styles.participantAvatarFallback}>
-                      {Array.from(participant.nickname)[0]}
-                    </Avatar.Fallback>
-                  </Avatar.Root>
-                </Popover.Trigger>
-              }
-            />
+                  {participant.imageUrl && (
+                    <Avatar.Image
+                      alt=""
+                      className={styles.participantAvatarImage}
+                      src={participant.imageUrl}
+                    />
+                  )}
+                  <Avatar.Fallback className={styles.participantAvatarFallback}>
+                    {Array.from(participant.nickname)[0]}
+                  </Avatar.Fallback>
+                </Avatar.Root>
+              </Popover.Trigger>
+            </li>
+          );
+        })}
+        {overflowCount > 0 && (
+          <li
+            aria-label={`그 외 ${overflowCount}명`}
+            className={`${styles.participantAvatarItem} ${styles.participantAvatarOverflow}`}
+            title={`그 외 ${overflowCount}명`}
+          >
+            +{overflowCount}
           </li>
-        );
-      })}
-      {overflowCount > 0 && (
-        <li
-          aria-label={`그 외 ${overflowCount}명`}
-          className={`${styles.participantAvatarItem} ${styles.participantAvatarOverflow}`}
-          title={`그 외 ${overflowCount}명`}
-        >
-          +{overflowCount}
-        </li>
-      )}
-    </ul>
+        )}
+      </ul>
+      <TrustCardPopover handle={profileHandle} />
+    </>
   );
 }
