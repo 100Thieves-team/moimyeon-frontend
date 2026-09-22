@@ -1,5 +1,7 @@
 "use client";
 
+import { Skeleton } from "@/components/skeleton";
+
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { getReceivedReviews } from "@/api/generated/sdk.gen";
 import { getReceivedReviewsQueryKey } from "@/api/generated/@tanstack/react-query.gen";
@@ -21,7 +23,7 @@ function pageOptions(lastReviewId?: number) {
 
 export function ReceivedReviewsFallback() {
   return (
-    <section aria-label="받은 후기 불러오는 중" className={panelStyles.card}>
+    <section aria-label="받은 후기 불러오는 중" aria-busy="true" className={panelStyles.card}>
       <div className={styles.header}>
         <h2 className={panelStyles.title}>받은 후기</h2>
       </div>
@@ -29,11 +31,11 @@ export function ReceivedReviewsFallback() {
         {[0, 1, 2].map((index) => (
           <li aria-hidden="true" className={styles.item} key={index}>
             <div className={styles.skeletonTagRow}>
-              <span className={styles.skeletonChip} />
-              <span className={styles.skeletonChip} />
+              <Skeleton className={styles.skeletonChip} />
+              <Skeleton className={styles.skeletonChip} />
             </div>
-            <span className={styles.skeletonLine} />
-            <span className={styles.skeletonLineShort} />
+            <Skeleton className={styles.skeletonLine} />
+            <Skeleton className={styles.skeletonLineShort} />
           </li>
         ))}
       </ul>

@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 import { Button } from "@/components/button";
 import { TrustCard } from "./trust-card";
+import { TrustCardSkeleton } from "./trust-card-skeleton";
 import * as styles from "./trust-card.css";
 
 export type TrustCardPayload = {
@@ -40,7 +41,7 @@ export function TrustCardPopover({ handle }: TrustCardPopoverProps) {
                 <QueryErrorResetBoundary key={payload.memberId}>
                   {({ reset }) => (
                     <ErrorBoundary FallbackComponent={TrustCardError} onReset={reset}>
-                      <Suspense fallback={<p className={styles.loading}>불러오는 중…</p>}>
+                      <Suspense fallback={<TrustCardSkeleton />}>
                         <TrustCard memberId={payload.memberId} isHost={payload.isHost} />
                       </Suspense>
                     </ErrorBoundary>

@@ -1,3 +1,4 @@
+import { InterviewApplySkeleton } from "@/features/interview-apply/interview-apply-skeleton";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -6,7 +7,6 @@ import { resumesOptions, roomDetailOptions } from "@/api/generated/@tanstack/rea
 import { getQueryClient } from "@/api/query-client";
 import { createServerClient } from "@/api/server-client";
 import { InterviewApplyContent } from "@/features/interview-apply/interview-apply-content";
-import * as styles from "@/features/interview-apply/interview-apply.css";
 import { getInterviewViewerState } from "@/features/interview-detail/interview-detail-model";
 
 export const metadata: Metadata = { title: "참가 신청" };
@@ -37,7 +37,7 @@ export default async function InterviewApplyPage({ params }: InterviewApplyPageP
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<p className={styles.loading}>신청 정보를 불러오는 중이에요.</p>}>
+      <Suspense fallback={<InterviewApplySkeleton />}>
         <InterviewApplyContent roomId={roomId} />
       </Suspense>
     </HydrationBoundary>

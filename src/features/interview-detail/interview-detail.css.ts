@@ -403,14 +403,6 @@ export const actionError = style({
   lineHeight: "1.6rem",
 });
 
-export const loading = style({
-  display: "grid",
-  minHeight: "calc(100dvh - 6.4rem)",
-  placeItems: "center",
-  color: vars.color.tertiary,
-  fontSize: "1.4rem",
-});
-
 export const errorPage = style({
   display: "grid",
   minHeight: "calc(100dvh - 6.4rem)",

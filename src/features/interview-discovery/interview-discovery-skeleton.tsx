@@ -1,0 +1,73 @@
+import { Skeleton } from "@/components/skeleton";
+import * as skeletonStyles from "./interview-discovery-skeleton.css";
+import * as styles from "./interview-discovery.css";
+
+const filterSections = ["company", "job-role", "round", "method", "region"] as const;
+const cards = Array.from({ length: 6 }, (_, index) => index);
+
+export function InterviewDiscoverySkeleton() {
+  return (
+    <section className={styles.shell} aria-label="면접 탐색 불러오는 중" aria-busy="true">
+      <div className={styles.discoveryLayout}>
+        <aside aria-hidden="true" className={styles.desktopFilters}>
+          <div className={styles.filterHeadingRow}>
+            <Skeleton className={skeletonStyles.filterHeading} />
+          </div>
+          <div className={styles.filterFields}>
+            {filterSections.map((section) => (
+              <div className={styles.filterSection} key={section}>
+                <Skeleton className={skeletonStyles.filterLabel} />
+                {section === "round" || section === "method" ? (
+                  <div className={skeletonStyles.filterToggleRow}>
+                    <Skeleton className={skeletonStyles.filterToggle} />
+                    <Skeleton className={skeletonStyles.filterToggle} />
+                  </div>
+                ) : (
+                  <Skeleton className={skeletonStyles.filterControl} />
+                )}
+              </div>
+            ))}
+          </div>
+        </aside>
+
+        <Skeleton className={skeletonStyles.mobileFilter} />
+
+        <section
+          aria-busy="true"
+          aria-labelledby="interview-discovery-skeleton-title"
+          className={styles.results}
+        >
+          <div className={styles.resultsHeader}>
+            <div className={styles.titleRow}>
+              <h1 className={styles.title} id="interview-discovery-skeleton-title">
+                면접
+              </h1>
+              <Skeleton className={skeletonStyles.count} />
+            </div>
+            <Skeleton className={skeletonStyles.sort} />
+          </div>
+
+          <div aria-hidden="true" className={styles.cardGrid}>
+            {cards.map((card) => (
+              <div className={skeletonStyles.card} key={card}>
+                <div className={skeletonStyles.cardHeader}>
+                  <Skeleton className={skeletonStyles.cardMeta} />
+                  <Skeleton className={skeletonStyles.cardBadge} />
+                </div>
+                <div className={skeletonStyles.cardMain}>
+                  <Skeleton className={skeletonStyles.cardTitle} />
+                  <Skeleton className={skeletonStyles.cardTitleShort} />
+                  <Skeleton className={skeletonStyles.cardDescription} />
+                </div>
+                <div className={skeletonStyles.cardFooter}>
+                  <Skeleton className={skeletonStyles.cardSchedule} />
+                  <Skeleton className={skeletonStyles.cardParticipants} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </section>
+  );
+}

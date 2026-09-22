@@ -1,3 +1,4 @@
+import { InterviewRoomSkeleton } from "@/features/interview-room/interview-room-skeleton";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -12,7 +13,6 @@ import { getQueryClient } from "@/api/query-client";
 import { createServerClient } from "@/api/server-client";
 import { getCurrentMemberState } from "@/features/auth/current-member-server";
 import { InterviewRoomContent } from "@/features/interview-room/interview-room-content";
-import * as styles from "@/features/interview-room/interview-room.css";
 
 export const metadata: Metadata = { title: "면접" };
 
@@ -45,7 +45,7 @@ export default async function InterviewRoomPage({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<p className={styles.empty}>면접을 불러오는 중이에요.</p>}>
+      <Suspense fallback={<InterviewRoomSkeleton />}>
         <InterviewRoomContent
           key={roomId}
           roomId={roomId}

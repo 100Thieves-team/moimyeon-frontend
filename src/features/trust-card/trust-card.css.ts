@@ -32,11 +32,6 @@ export const popup = style({
   boxShadow: vars.shadow.cardRaise,
 });
 
-export const loading = style({
-  fontSize: "1.3rem",
-  color: vars.color.tertiary,
-});
-
 export const queryState = style({
   display: "flex",
   flexDirection: "column",

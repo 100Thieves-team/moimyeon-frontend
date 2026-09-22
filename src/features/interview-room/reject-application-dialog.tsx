@@ -13,6 +13,7 @@ import { rejectReasonsOptions } from "@/api/generated/@tanstack/react-query.gen"
 import { DialogCloseButton } from "@/components/dialog-close-button";
 import { Button } from "@/components/button";
 import { getApplicationActionError } from "./interview-room-model";
+import { RejectReasonsSkeleton } from "./interview-room-skeleton";
 import * as styles from "./interview-room.css";
 
 type RejectApplicationDialogProps = {
@@ -57,7 +58,7 @@ export function RejectApplicationDialog({
                 <Suspense
                   fallback={
                     <RejectReasonsState>
-                      <p className={styles.description}>반려 사유를 불러오는 중이에요.</p>
+                      <RejectReasonsSkeleton />
                     </RejectReasonsState>
                   }
                 >
