@@ -30,7 +30,7 @@ export function LeaveRoomDialog({ room }: { room: InterviewRoom }) {
   const client = useQueryClient();
   const { replace, refresh } = useRouter();
   const toast = Toast.useToastManager();
-  const leaveMutation = useMutation({ ...roomLeaveMutation(), retry: false });
+  const leaveMutation = useMutation(roomLeaveMutation());
   const isPending = leaveMutation.isPending;
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,8 +41,7 @@ export function LeaveRoomDialog({ room }: { room: InterviewRoom }) {
     if (disabled) return;
     setError(null);
     try {
-      const response = await leaveMutation.mutateAsync({ path: { roomId: room.roomId } });
-      if (response.result !== "SUCCESS") throw new Error("Unexpected leave result");
+      await leaveMutation.mutateAsync({ path: { roomId: room.roomId } });
       void Promise.allSettled(
         [
           roomDetailQueryKey({ path: { roomId: room.roomId } }),

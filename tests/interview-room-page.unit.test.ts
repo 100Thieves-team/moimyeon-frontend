@@ -7,12 +7,19 @@ const mocks = vi.hoisted(() => ({
   applications: vi.fn(),
   reasons: vi.fn(),
   participants: vi.fn(),
+  comments: vi.fn(),
   member: vi.fn(),
 }));
 vi.mock("@/features/auth/current-member-server", () => ({ getCurrentMemberState: mocks.member }));
 vi.mock("@/api/query-client", () => ({ getQueryClient: mocks.getQueryClient }));
 vi.mock("@/api/server-client", () => ({ createServerClient: vi.fn(() => ({})) }));
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
+  getRoomCommentsInfiniteOptions: ({ path }: { path: { roomId: string } }) => ({
+    queryKey: ["comments", path.roomId],
+    queryFn: mocks.comments,
+  }),
+  createRoomCommentMutation: () => ({ mutationFn: vi.fn() }),
+  deleteRoomCommentMutation: () => ({ mutationFn: vi.fn() }),
   roomDetailOptions: () => ({ queryKey: ["room"], queryFn: mocks.room }),
   roomApplicationsOptions: () => ({ queryKey: ["applications"], queryFn: mocks.applications }),
   roomParticipantsOptions: () => ({ queryKey: ["participants"], queryFn: mocks.participants }),
@@ -25,6 +32,10 @@ beforeEach(() => {
     new QueryClient({ defaultOptions: { queries: { retry: false } } }),
   );
   mocks.member.mockResolvedValue({ status: "authenticated", member: { memberId: "me" } });
+  mocks.comments.mockResolvedValue({
+    result: "SUCCESS",
+    data: { comments: [], writable: true, nextCursor: null },
+  });
   mocks.participants.mockResolvedValue({ data: { participants: [] } });
   mocks.room.mockResolvedValue({ data: { viewer: { isHost: true } } });
   mocks.applications.mockResolvedValue({ data: { applications: [] } });
@@ -44,6 +55,7 @@ describe("통합 면접 상세 서버 라우트", () => {
       expect(mocks.applications).not.toHaveBeenCalled();
       expect(mocks.reasons).not.toHaveBeenCalled();
       expect(mocks.participants).not.toHaveBeenCalled();
+      expect(mocks.comments).not.toHaveBeenCalled();
     },
   );
 
@@ -66,6 +78,7 @@ describe("통합 면접 상세 서버 라우트", () => {
     await expect.poll(() => mocks.applications.mock.calls.length).toBe(1);
     expect(mocks.reasons).toHaveBeenCalledOnce();
     expect(mocks.participants).toHaveBeenCalledOnce();
+    expect(mocks.comments).toHaveBeenCalledOnce();
   });
 
   it("룸 조회 실패는 오류 경계로 전달하고 신청 목록을 조회하지 않는다", async () => {
@@ -85,6 +98,7 @@ describe("통합 면접 상세 서버 라우트", () => {
       searchParams: Promise.resolve({}),
     });
     await expect.poll(() => mocks.participants.mock.calls.length).toBe(1);
+    expect(mocks.comments).toHaveBeenCalledOnce();
     expect(mocks.applications).not.toHaveBeenCalled();
     expect(mocks.reasons).not.toHaveBeenCalled();
   });
@@ -96,6 +110,7 @@ describe("통합 면접 상세 서버 라우트", () => {
       searchParams: Promise.resolve({}),
     });
     expect(mocks.participants).not.toHaveBeenCalled();
+    expect(mocks.comments).not.toHaveBeenCalled();
     expect(mocks.applications).not.toHaveBeenCalled();
   });
 });
