@@ -15,7 +15,7 @@ export const filterHeading = style({
 export const filterLabel = style({
   ...placeholder,
   width: "5.6rem",
-  height: "1.4rem",
+  height: "2rem",
 });
 
 export const filterControl = style({
@@ -61,27 +61,6 @@ export const sort = style({
   borderRadius: vars.radius.control,
 });
 
-export const card = style({
-  display: "flex",
-  minWidth: 0,
-  minHeight: "19rem",
-  flexDirection: "column",
-  justifyContent: "space-between",
-  gap: vars.spacing.base,
-  padding: "2.2rem",
-  border: `1px solid ${vars.color.strokeLight}`,
-  borderRadius: "2rem",
-  backgroundColor: vars.color.background,
-  boxShadow: vars.shadow.cardRaise,
-});
-
-export const cardHeader = style({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: vars.spacing.sm,
-});
-
 export const cardMeta = style({
   ...placeholder,
   width: "8.8rem",
@@ -93,49 +72,4 @@ export const cardBadge = style({
   width: "5.2rem",
   height: "2.6rem",
   borderRadius: vars.radius.pill,
-});
-
-export const cardMain = style({
-  display: "flex",
-  flexDirection: "column",
-  gap: "0.8rem",
-});
-
-export const cardTitle = style({
-  ...placeholder,
-  width: "82%",
-  height: "1.8rem",
-});
-
-export const cardTitleShort = style({
-  ...placeholder,
-  width: "58%",
-  height: "1.8rem",
-});
-
-export const cardDescription = style({
-  ...placeholder,
-  width: "44%",
-  height: "1.4rem",
-});
-
-export const cardFooter = style({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: vars.spacing.sm,
-  paddingTop: vars.spacing.md,
-  borderTop: `1px solid ${vars.color.strokeLight}`,
-});
-
-export const cardSchedule = style({
-  ...placeholder,
-  width: "12rem",
-  height: "1.4rem",
-});
-
-export const cardParticipants = style({
-  ...placeholder,
-  width: "5.6rem",
-  height: "1.4rem",
 });

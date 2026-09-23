@@ -108,6 +108,8 @@ export const bioInput = style({
 });
 
 export const companyPillFrame = style({
+  minHeight: "5rem",
+  "@media": { "screen and (max-width: 799px)": { minHeight: "8.8rem" } },
   padding: "0.9rem 1.2rem",
 });
 

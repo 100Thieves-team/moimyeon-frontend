@@ -489,6 +489,7 @@ export const closedBadge = style([
 ]);
 export const cardMain = style({ minWidth: 0 });
 export const cardTitle = style({
+  minHeight: "2lh",
   display: "-webkit-box",
   overflow: "hidden",
   fontSize: "1.9rem",

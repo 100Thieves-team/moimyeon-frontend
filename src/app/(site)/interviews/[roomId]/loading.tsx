@@ -1,1 +1,1 @@
-export { InterviewDetailSkeleton as default } from "@/features/interview-detail/interview-detail-skeleton";
+export { InterviewRoomSkeleton as default } from "@/features/interview-room/interview-room-skeleton";

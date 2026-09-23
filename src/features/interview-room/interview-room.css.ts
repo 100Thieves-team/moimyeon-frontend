@@ -29,6 +29,8 @@ export const heading = style({
   paddingBottom: "2rem",
 });
 export const roomMeta = style({
+  minHeight: "1.8rem",
+  "@media": { [mobile]: { minHeight: "3.6rem" } },
   display: "flex",
   flexWrap: "wrap",
   alignItems: "center",
@@ -42,7 +44,7 @@ export const title = style({
   fontWeight: 300,
   lineHeight: 1.3,
   overflowWrap: "anywhere",
-  "@media": { [mobile]: { fontSize: "2.4rem" } },
+  "@media": { [mobile]: { fontSize: "2.4rem", minHeight: "2lh" } },
 });
 export const navigation = style({
   display: "flex",
@@ -65,6 +67,7 @@ export const tab = style({
   color: vars.color.tertiary,
   whiteSpace: "nowrap",
   fontSize: "1.45rem",
+  lineHeight: "1.8rem",
   fontWeight: 500,
   cursor: "pointer",
   selectors: {

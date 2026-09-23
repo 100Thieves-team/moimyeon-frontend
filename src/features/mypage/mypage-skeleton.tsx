@@ -16,34 +16,36 @@ export function MyPageSkeleton() {
                 <Skeleton width="8rem" height="1.8rem" />
               </div>
             </div>
-            <Skeleton width="100%" height="6rem" />
-            <div className={styles.stats}>
-              <Skeleton width="85%" height="4.4rem" />
-              <Skeleton width="70%" height="4.4rem" />
-            </div>
-            <Skeleton width="100%" height="2.8rem" />
+            <Skeleton className={styles.bio} width="85%" height="1lh" />
           </div>
-          <Skeleton width="8rem" height="2rem" />
+          <div className={styles.accountActions}>
+            <Skeleton width="8rem" height="4.4rem" />
+          </div>
         </div>
         <div className={styles.editorColumn}>
-          <Skeleton width="30rem" height="4.7rem" />
+          <div className={styles.tabList} aria-hidden="true">
+            {["프로필 수정", "이력서 관리", "받은 후기"].map((label) => (
+              <span className={styles.tab} key={label}>
+                {label}
+              </span>
+            ))}
+          </div>
           <div className={panelStyles.card}>
-            <Skeleton width="10rem" height="2.2rem" />
-            <div className={formStyles.form}>
-              <div className={formStyles.firstRow}>
-                {[0, 1].map((field) => (
-                  <ProfileFieldSkeleton key={field} />
-                ))}
-              </div>
+            <h2 className={panelStyles.title}>프로필 수정</h2>
+            <div className={formStyles.firstRow}>
               <ProfileFieldSkeleton />
               <ProfileFieldSkeleton />
-              <div className={formStyles.field}>
-                <Skeleton width="6rem" height="2rem" />
-                <Skeleton width="100%" height="10rem" />
-              </div>
+            </div>
+            <div className={formStyles.field}>
+              <Skeleton width="6rem" height="2rem" />
+              <Skeleton width="100%" height="7.2rem" />
+            </div>
+            <div className={formStyles.field}>
+              <Skeleton width="6rem" height="2rem" />
+              <Skeleton className={formStyles.companyPillFrame} width="100%" />
             </div>
             <div className={panelStyles.footer}>
-              <Skeleton width="10.4rem" height="4.4rem" />
+              <Skeleton width="10.4rem" height="4.8rem" />
             </div>
           </div>
         </div>
@@ -56,7 +58,7 @@ function ProfileFieldSkeleton() {
   return (
     <div className={formStyles.field}>
       <Skeleton width="6rem" height="2rem" />
-      <Skeleton width="100%" height="4.4rem" />
+      <Skeleton width="100%" height="4.6rem" />
     </div>
   );
 }
