@@ -162,7 +162,7 @@ export function MyInterviewsContent() {
                   <div className={styles.actions}>
                     <span className={styles.upcomingChip}>참여 확정</span>
                     <LinkButton size="sm" href={`/interviews/${room.roomId}`}>
-                      면접 보기
+                      면접 정보
                     </LinkButton>
                   </div>
                 </li>

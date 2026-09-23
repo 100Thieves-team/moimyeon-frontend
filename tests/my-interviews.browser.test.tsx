@@ -101,7 +101,7 @@ describe("내 면접", () => {
     await expect.element(screen.getByRole("tab", { name: "전체" })).not.toBeInTheDocument();
     await expect.element(screen.getByRole("heading", { name: upcoming.title })).toBeVisible();
     await expect
-      .element(screen.getByRole("link", { name: "면접 보기" }))
+      .element(screen.getByRole("link", { name: "면접 정보" }))
       .toHaveAttribute("href", `/interviews/${upcoming.roomId}`);
     await screen.getByRole("tab", { name: "신청 중 1" }).click();
     await expect.element(screen.getByText("방장 확인 중")).toBeVisible();
