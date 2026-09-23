@@ -15,11 +15,7 @@ import { InterviewRoomContent } from "@/features/interview-room/interview-room-c
 
 export const metadata: Metadata = { title: "면접 상세" };
 
-export default async function InterviewDetailPage({
-  params,
-}: {
-  params: Promise<{ roomId: string }>;
-}) {
+export default async function InterviewDetailPage({ params }: PageProps<"/interviews/[roomId]">) {
   const { roomId } = await params;
   const queryClient = getQueryClient();
   const client = await createServerClient();

@@ -37,7 +37,10 @@ describe("통합 면접 상세 서버 라우트", () => {
     async (viewer) => {
       mocks.room.mockResolvedValue({ data: { viewer } });
       const { default: Page } = await import("@/app/(site)/interviews/[roomId]/page");
-      await Page({ params: Promise.resolve({ roomId: "room-1" }) });
+      await Page({
+        params: Promise.resolve({ roomId: "room-1" }),
+        searchParams: Promise.resolve({}),
+      });
       expect(mocks.applications).not.toHaveBeenCalled();
       expect(mocks.reasons).not.toHaveBeenCalled();
       expect(mocks.participants).not.toHaveBeenCalled();
@@ -52,7 +55,10 @@ describe("통합 면접 상세 서버 라우트", () => {
       }),
     );
     const { default: Page } = await import("@/app/(site)/interviews/[roomId]/page");
-    const rendering = Page({ params: Promise.resolve({ roomId: "room-1" }) });
+    const rendering = Page({
+      params: Promise.resolve({ roomId: "room-1" }),
+      searchParams: Promise.resolve({}),
+    });
     await expect.poll(() => mocks.room.mock.calls.length).toBe(1);
     expect(mocks.applications).not.toHaveBeenCalled();
     allow({ data: { viewer: { isHost: true } } });
@@ -65,16 +71,19 @@ describe("통합 면접 상세 서버 라우트", () => {
   it("룸 조회 실패는 오류 경계로 전달하고 신청 목록을 조회하지 않는다", async () => {
     mocks.room.mockRejectedValue(new Error("room unavailable"));
     const { default: Page } = await import("@/app/(site)/interviews/[roomId]/page");
-    await expect(Page({ params: Promise.resolve({ roomId: "room-1" }) })).rejects.toThrow(
-      "room unavailable",
-    );
+    await expect(
+      Page({ params: Promise.resolve({ roomId: "room-1" }), searchParams: Promise.resolve({}) }),
+    ).rejects.toThrow("room unavailable");
     expect(mocks.applications).not.toHaveBeenCalled();
   });
 
   it("일반 참여자는 명부를 조회하고 방장 전용 신청 목록을 조회하지 않는다", async () => {
     mocks.room.mockResolvedValue({ data: { viewer: { isHost: false, isParticipating: true } } });
     const { default: Page } = await import("@/app/(site)/interviews/[roomId]/page");
-    await Page({ params: Promise.resolve({ roomId: "room-1" }) });
+    await Page({
+      params: Promise.resolve({ roomId: "room-1" }),
+      searchParams: Promise.resolve({}),
+    });
     await expect.poll(() => mocks.participants.mock.calls.length).toBe(1);
     expect(mocks.applications).not.toHaveBeenCalled();
     expect(mocks.reasons).not.toHaveBeenCalled();
@@ -82,7 +91,10 @@ describe("통합 면접 상세 서버 라우트", () => {
   it("회원 인증이 만료되면 공개 정보만 조회한다", async () => {
     mocks.member.mockResolvedValue({ status: "anonymous" });
     const { default: Page } = await import("@/app/(site)/interviews/[roomId]/page");
-    await Page({ params: Promise.resolve({ roomId: "room-1" }) });
+    await Page({
+      params: Promise.resolve({ roomId: "room-1" }),
+      searchParams: Promise.resolve({}),
+    });
     expect(mocks.participants).not.toHaveBeenCalled();
     expect(mocks.applications).not.toHaveBeenCalled();
   });
