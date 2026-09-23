@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-react";
 import { page } from "vitest/browser";
 import type { RoomDetailResponse } from "@/api/generated";
-import InterviewRoomError from "@/app/(site)/interviews/[roomId]/room/error";
+import InterviewDetailError from "@/app/(site)/interviews/[roomId]/error";
 import { ToastProvider } from "@/components/toast";
 import { InterviewRoomContent } from "@/features/interview-room/interview-room-content";
 import type { RoomApplication } from "@/features/interview-room/interview-room-model";
@@ -21,11 +21,14 @@ const mocks = vi.hoisted(() => ({
   applications: vi.fn(),
   participants: vi.fn(),
   profile: vi.fn(),
+  hostProfile: vi.fn(),
   reasons: vi.fn(),
   accept: vi.fn(),
   reject: vi.fn(),
 }));
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
+  issueDevSessionMutation: () => ({ mutationFn: vi.fn() }),
+  withdrawRoomApplicationMutation: () => ({ mutationFn: vi.fn() }),
   roomDetailOptions: ({ path }: { path: { roomId: string } }) => ({
     queryKey: ["room", path.roomId],
     queryFn: mocks.room,
@@ -42,7 +45,7 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
   rejectReasonsOptions: () => ({ queryKey: ["reasons"], queryFn: mocks.reasons }),
   publicProfileOptions: ({ path }: { path: { memberId: string } }) => ({
     queryKey: ["profile", path.memberId],
-    queryFn: mocks.profile,
+    queryFn: path.memberId === MOCK_INTERVIEW_HOST_ID ? mocks.hostProfile : mocks.profile,
   }),
   roomParticipantsQueryKey: ({ path }: { path: { roomId: string } }) => [
     "participants",
@@ -77,29 +80,32 @@ function error(code: string, message: string) {
 function settle(status: string, statusLabel: string) {
   applications[0] = { ...applications[0], status, statusLabel };
   room.recruit = { ...room.recruit!, pendingApplicationCount: 0 };
-  if (status === "ACCEPTED")
+  if (status === "ACCEPTED") {
     room.recruit = {
       ...room.recruit,
       current: 5,
       recruitStatus: "CLOSED",
       recruitStatusLabel: "모집 마감",
     };
+    const { memberId, nickname } = applications[0].applicant!;
+    room.participants.push({ memberId, nickname });
+  }
   return {
     result: "SUCCESS",
     data: { applicationId: 3001, status, statusLabel, recruit: room.recruit },
   };
 }
 
-function renderRoom() {
+async function renderRoom(openApplications = true) {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false, staleTime: Infinity } },
   });
-  return render(
+  const screen = await render(
     <QueryClientProvider client={client}>
       <ToastProvider>
         <ErrorBoundary
           fallbackRender={({ resetErrorBoundary }) => (
-            <InterviewRoomError reset={resetErrorBoundary} />
+            <InterviewDetailError reset={resetErrorBoundary} />
           )}
         >
           <Suspense fallback={<p>참여 신청을 불러오는 중이에요.</p>}>
@@ -109,6 +115,8 @@ function renderRoom() {
       </ToastProvider>
     </QueryClientProvider>,
   );
+  if (openApplications) await screen.getByRole("tab", { name: /참여 신청/ }).click();
+  return screen;
 }
 
 beforeEach(async () => {
@@ -135,7 +143,7 @@ beforeEach(async () => {
       note: "실전처럼 연습하고 싶어요.\n잘 부탁드려요!",
       aiSummary: { status: "DONE", text: "Kotlin과 Spring으로 결제 정산 배치를 개발했어요." },
       applicant: {
-        memberId: MOCK_INTERVIEW_HOST_ID,
+        memberId: "new-participant",
         nickname: "성실한 사슴 03",
         jobRoles: [{ jobRoleId: 10, name: "백엔드 개발" }],
         activitySummary: null,
@@ -160,6 +168,7 @@ beforeEach(async () => {
     },
   }));
   mocks.profile.mockResolvedValue(getMockInterviewHostProfile(MOCK_INTERVIEW_HOST_ID));
+  mocks.hostProfile.mockResolvedValue(getMockInterviewHostProfile(MOCK_INTERVIEW_HOST_ID));
   mocks.reasons.mockResolvedValue({ result: "SUCCESS", data: { reasons: reasonList } });
   mocks.accept.mockImplementation(async () => settle("ACCEPTED", "수락"));
   mocks.reject.mockImplementation(async () => settle("REJECTED", "반려"));
@@ -167,20 +176,80 @@ beforeEach(async () => {
 });
 
 describe("방장 참여 신청 관리", () => {
-  it("두 탭을 미리 조회하고 왕복해도 신청 내용의 펼침 상태를 유지한다", async () => {
-    const screen = await renderRoom();
+  it("모집 현황 카드의 관리 버튼으로 URL 변경 없이 참여 신청 탭을 연다", async () => {
+    const screen = await renderRoom(false);
+    const url = window.location.href;
+    await screen.getByRole("button", { name: "참여 신청 확인하기" }).click();
+    await expect
+      .element(screen.getByRole("tab", { name: "참여 신청 1" }))
+      .toHaveAttribute("aria-selected", "true");
+    expect(window.location.href).toBe(url);
+    await expect
+      .element(screen.getByRole("button", { name: "성실한 사슴 03 신청 내용" }))
+      .toBeVisible();
+  });
+
+  it("면접 정보와 참여자 탭을 왕복해도 신청 내용의 펼침 상태를 유지한다", async () => {
+    const screen = await renderRoom(false);
+    await expect
+      .element(screen.getByRole("tab", { name: "면접 정보" }))
+      .toHaveAttribute("aria-selected", "true");
+    expect(screen.getByRole("heading", { name: room.title }).elements()).toHaveLength(1);
+    const header = screen.getByRole("heading", { name: room.title }).element().parentElement!;
+    expect(header.textContent).not.toContain("모집 중");
+    expect(header.textContent).not.toContain("내가 만든 면접");
+    expect(header.textContent).not.toContain("4 / 5명");
+    await screen.getByRole("tab", { name: /참여 신청/ }).click();
     await expect
       .element(screen.getByRole("tab", { name: "참여 신청 1" }))
       .toHaveAttribute("aria-selected", "true");
     await expect.poll(() => mocks.participants.mock.calls.length).toBe(1);
     await screen.getByRole("button", { name: "성실한 사슴 03 신청 내용" }).click();
     await expect.element(screen.getByRole("heading", { name: "전할 말" })).toBeVisible();
+    expect(
+      screen
+        .getByRole("tab")
+        .elements()
+        .map((tab) => tab.textContent),
+    ).toEqual(["면접 정보", "참여 신청 1", "참여자 4"]);
+    const url = window.location.href;
+    await screen.getByRole("tab", { name: "면접 정보" }).click();
+    const info = screen.getByRole("tabpanel", { name: "면접 정보" });
+    await expect.element(screen.getByRole("heading", { name: room.title })).toBeVisible();
+    await expect.element(info.getByRole("heading", { name: "면접 소개" })).toBeVisible();
+    expect(window.location.href).toBe(url);
     await screen.getByRole("tab", { name: "참여자 4" }).click();
     await expect.element(screen.getByText("참여자가 없어요.")).toBeVisible();
     expect(mocks.participants).toHaveBeenCalledOnce();
     await expect.element(screen.getByText("전할 말", { exact: true })).not.toBeVisible();
     await screen.getByRole("tab", { name: "참여 신청 1" }).click();
     await expect.element(screen.getByRole("heading", { name: "전할 말" })).toBeVisible();
+  });
+
+  it("면접 정보를 방문한 뒤 신청을 수락하면 모집 현황과 참여자 아바타가 갱신된다", async () => {
+    room.participants = [
+      { memberId: room.hostMemberId, nickname: "꼼꼼한 여우 12" },
+      { memberId: "participant-1", nickname: "성실한 수달" },
+      { memberId: "participant-2", nickname: "차분한 라쿤" },
+      { memberId: "participant-3", nickname: "든든한 곰" },
+    ];
+    const screen = await renderRoom();
+    await screen.getByRole("tab", { name: "면접 정보" }).click();
+    const info = screen.getByRole("tabpanel", { name: "면접 정보" });
+    await expect.element(info.getByRole("progressbar", { name: "모집 현황 4/5명" })).toBeVisible();
+    await expect.element(info.getByRole("list", { name: "현재 참여자 4명" })).toBeVisible();
+    await screen.getByRole("tab", { name: "참여 신청 1" }).click();
+    await screen.getByRole("button", { name: "수락", exact: true }).click();
+    await expect.element(screen.getByRole("tab", { name: "참여 신청 0" })).toBeVisible();
+    await screen.getByRole("tab", { name: "면접 정보" }).click();
+    await expect.element(info.getByRole("progressbar", { name: "모집 현황 5/5명" })).toBeVisible();
+    await expect
+      .element(
+        info
+          .getByRole("list", { name: "현재 참여자 5명" })
+          .getByRole("listitem", { name: "성실한 사슴 03" }),
+      )
+      .toBeVisible();
   });
 
   it("참여자 탭을 방문한 뒤 신청을 수락하면 다시 연 명단에 반영된다", async () => {
@@ -235,7 +304,11 @@ describe("방장 참여 신청 관리", () => {
       .toBeVisible();
     resolveProfile(getMockInterviewHostProfile(MOCK_INTERVIEW_HOST_ID));
     await expect
-      .element(screen.getByText("활동률 상위 10% · 최근 출석 2/3회 · 누적 불참 0회"))
+      .element(
+        screen
+          .getByRole("tabpanel", { name: /참여 신청/ })
+          .getByText("활동률 상위 10% · 최근 출석 2/3회 · 누적 불참 0회"),
+      )
       .not.toBeInTheDocument();
   });
 
@@ -264,7 +337,11 @@ describe("방장 참여 신청 관리", () => {
   it("신청 행에는 활동 요약 없이 이력서 요약을 표시하고 펼치면 전달 사항을 확인한다", async () => {
     const screen = await renderRoom();
     await expect
-      .element(screen.getByText("활동률 상위 10% · 최근 출석 2/3회 · 누적 불참 0회"))
+      .element(
+        screen
+          .getByRole("tabpanel", { name: /참여 신청/ })
+          .getByText("활동률 상위 10% · 최근 출석 2/3회 · 누적 불참 0회"),
+      )
       .not.toBeInTheDocument();
     await expect
       .element(screen.getByText("실전처럼 연습하고 싶어요.", { exact: false }))
@@ -281,9 +358,7 @@ describe("방장 참여 신청 관리", () => {
       .toBeVisible();
     await expect.element(screen.getByRole("tab", { name: "참여자 4" })).toBeEnabled();
     await expect.element(screen.getByRole("tab", { name: "댓글" })).not.toBeInTheDocument();
-    await expect
-      .element(screen.getByRole("link", { name: "면접 정보" }))
-      .toHaveAttribute("href", `/interviews/${roomId}`);
+    await expect.element(screen.getByRole("tab", { name: "면접 정보" })).toBeEnabled();
     await expect.element(screen.getByText(/완료 \d+회|출석 \d+%/)).not.toBeInTheDocument();
   });
 
@@ -308,8 +383,14 @@ describe("방장 참여 신청 관리", () => {
   it("수락하면 대기 건수와 참여 인원 및 모집 상태를 갱신한다", async () => {
     const screen = await renderRoom();
     await screen.getByRole("button", { name: "수락", exact: true }).click();
-    await expect.element(screen.getByText("5 / 5명 · 신청 0건 대기")).toBeVisible();
-    await expect.element(screen.getByText("모집 마감")).toBeVisible();
+    await expect.element(screen.getByRole("tab", { name: "참여 신청 0" })).toBeVisible();
+    await expect.element(screen.getByRole("tab", { name: "참여자 5" })).toBeVisible();
+    await screen.getByRole("tab", { name: "면접 정보" }).click();
+    const card = screen.getByRole("complementary", { name: "면접 참가 신청" });
+    await expect.element(card.getByText("5 / 5명")).toBeVisible();
+    await expect.element(card.getByText("방장", { exact: true })).toBeVisible();
+    await expect.element(card.getByText(/신청 .*건 대기/)).not.toBeInTheDocument();
+    await expect.element(screen.getByText("모집 마감", { exact: true })).toBeVisible();
     await expect
       .element(
         page.getByRole("region", { name: "Notifications" }).getByText("참여 신청을 수락했어요."),
@@ -319,6 +400,7 @@ describe("방장 참여 신청 관리", () => {
     expect(mocks.accept.mock.calls[0][0]).toEqual({
       path: { roomId, applicationId: "3001" },
     });
+    await screen.getByRole("tab", { name: "참여 신청 0" }).click();
     await expect
       .element(screen.getByRole("button", { name: "수락", exact: true }))
       .not.toBeInTheDocument();
@@ -331,7 +413,8 @@ describe("방장 참여 신청 관리", () => {
     await expect
       .element(screen.getByText("신청자의 참여 슬롯이 가득 차 수락되지 않았어요."))
       .toBeVisible();
-    await expect.element(screen.getByText("4 / 5명 · 신청 0건 대기")).toBeVisible();
+    await expect.element(screen.getByRole("tab", { name: "참여자 4" })).toBeVisible();
+    await expect.element(screen.getByRole("tab", { name: "참여 신청 0" })).toBeVisible();
     await expect
       .element(
         page.getByRole("region", { name: "Notifications" }).getByText("참여 신청을 수락했어요."),
@@ -362,7 +445,8 @@ describe("방장 참여 신청 관리", () => {
         path: { roomId, applicationId: "3001" },
         body: { reason },
       });
-      await expect.element(screen.getByText("4 / 5명 · 신청 0건 대기")).toBeVisible();
+      await expect.element(screen.getByRole("tab", { name: "참여자 4" })).toBeVisible();
+      await expect.element(screen.getByRole("tab", { name: "참여 신청 0" })).toBeVisible();
       await expect
         .element(screen.getByRole("button", { name: "반려", exact: true }))
         .not.toBeInTheDocument();

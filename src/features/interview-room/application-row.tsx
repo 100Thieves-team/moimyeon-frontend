@@ -62,7 +62,7 @@ export function ApplicationRow({
 
   const path = { roomId, applicationId: String(application.applicationId) };
 
-  function accept() {
+  const accept = () => {
     setError(null);
     acceptMutation.mutate(
       { path },
@@ -76,7 +76,7 @@ export function ApplicationRow({
         onError: (actionError) => setError(getApplicationActionError(actionError).message),
       },
     );
-  }
+  };
 
   return (
     <li>

@@ -11,8 +11,9 @@ import {
 } from "@/api/generated/@tanstack/react-query.gen";
 import { Button, LinkButton } from "@/components/button";
 import { LoginTrigger } from "@/features/auth/login-dialog";
+import { LeaveRoomTrigger } from "@/features/interview-room/leave-room-trigger";
 import {
-  getInterviewViewerState,
+  getInterviewRelationLabel,
   type InterviewDetail,
   type InterviewViewerState,
 } from "./interview-detail-model";
@@ -58,7 +59,16 @@ function WithdrawAction({ roomId }: { roomId: string }) {
   );
 }
 
-function ActionControl({ roomId, state }: { roomId: string; state: InterviewViewerState }) {
+function ActionControl({
+  room,
+  state,
+  onViewApplications,
+}: {
+  room: InterviewDetail;
+  state: InterviewViewerState;
+  onViewApplications: () => void;
+}) {
+  const roomId = room.roomId;
   const returnTo = `/interviews/${roomId}` as const;
 
   switch (state.kind) {
@@ -77,19 +87,30 @@ function ActionControl({ roomId, state }: { roomId: string; state: InterviewView
     case "PENDING_APPLICATION":
       return <WithdrawAction roomId={roomId} />;
     case "VIEW_INTERVIEW":
-      return <LinkButton href={`/interviews/${roomId}/room`}>내 면접 보기</LinkButton>;
+      return <LeaveRoomTrigger room={room} variant="card" />;
     case "MANAGE_INTERVIEW":
-      return <LinkButton href={`/interviews/${roomId}/room`}>면접 관리하기</LinkButton>;
+      return <Button onClick={onViewApplications}>참여 신청 확인하기</Button>;
     case "BLOCKED":
+    case "UNAVAILABLE":
       return <Button disabled>{state.message}</Button>;
     default:
       return null;
   }
 }
 
-export function InterviewActionCard({ room }: { room: InterviewDetail }) {
-  const state = getInterviewViewerState(room);
+export function InterviewActionCard({
+  room,
+  state,
+  onViewApplications,
+}: {
+  room: InterviewDetail;
+  state: InterviewViewerState;
+  onViewApplications: () => void;
+}) {
   const recruit = room.recruit;
+  const isHost = room.viewer?.isHost === true;
+  const isParticipant = !isHost && room.viewer?.isParticipating === true;
+  const relation = isHost ? "방장" : getInterviewRelationLabel(room);
   const current = recruit?.current ?? 0;
   const max = recruit?.max ?? 0;
   const remaining = Math.max(max - current, 0);
@@ -97,24 +118,49 @@ export function InterviewActionCard({ room }: { room: InterviewDetail }) {
 
   return (
     <aside aria-label="면접 참가 신청" className={styles.actionCard}>
+      {(recruit || relation) && (
+        <div className={styles.quotaStatusRow}>
+          {recruit && !isParticipant && (
+            <span
+              className={
+                recruit.recruitStatus === "RECRUITING"
+                  ? styles.statusBadge.recruiting
+                  : styles.statusBadge.closed
+              }
+            >
+              {recruit.recruitStatusLabel}
+            </span>
+          )}
+          {relation && (
+            <span
+              className={
+                isHost
+                  ? styles.hostBadge
+                  : isParticipant
+                    ? styles.statusBadge.recruiting
+                    : styles.relationBadge
+              }
+            >
+              {relation}
+            </span>
+          )}
+          {recruit && (
+            <span className={styles.quotaNumber}>
+              {current} / {max}명
+            </span>
+          )}
+        </div>
+      )}
       {recruit && (
         <div className={styles.quotaStats}>
-          <div className={styles.quotaLabels}>
-            <span>모집 현황</span>
-          </div>
           <ParticipantAvatarStack
             currentCount={current}
             hostMemberId={room.hostMemberId}
             participants={room.participants}
           />
-          <div className={styles.quotaValue}>
-            <span className={styles.quotaNumber}>
-              {current} / {max}명
-            </span>
-            {isApplyState && remaining > 0 && (
-              <span className={styles.remainingQuota}>{remaining}자리 남았어요</span>
-            )}
-          </div>
+          {isApplyState && remaining > 0 && (
+            <span className={styles.remainingQuota}>{remaining}자리 남았어요</span>
+          )}
           <progress
             aria-label={`모집 현황 ${current}/${max}명`}
             className={styles.actionProgress}
@@ -125,11 +171,10 @@ export function InterviewActionCard({ room }: { room: InterviewDetail }) {
       )}
 
       <div className={styles.actionControls}>
-        <ActionControl roomId={room.roomId} state={state} />
+        <ActionControl room={room} state={state} onViewApplications={onViewApplications} />
         {state.kind === "PENDING_APPLICATION" && (
           <p className={styles.actionMessage}>방장의 수락을 기다리고 있어요</p>
         )}
-        {state.kind === "UNAVAILABLE" && <p className={styles.actionMessage}>{state.message}</p>}
       </div>
     </aside>
   );

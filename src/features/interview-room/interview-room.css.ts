@@ -37,14 +37,6 @@ export const roomMeta = style({
   fontSize: "1.3rem",
   lineHeight: "1.8rem",
 });
-export const recruitStatus = style({
-  borderRadius: vars.radius.pill,
-  padding: "0.5rem 1.2rem",
-  backgroundColor: vars.color.fillPrimary,
-  color: vars.color.background,
-  fontSize: "1.2rem",
-  fontWeight: 500,
-});
 export const title = style({
   fontSize: "3rem",
   fontWeight: 300,
@@ -83,15 +75,6 @@ export const tab = style({
     },
     "&[data-disabled]": { cursor: "not-allowed", color: vars.color.quaternary },
   },
-});
-export const infoLink = style({
-  display: "flex",
-  alignItems: "center",
-  paddingBlock: "1.2rem",
-  textDecoration: "none",
-  color: vars.color.tertiary,
-  whiteSpace: "nowrap",
-  fontSize: "1.45rem",
 });
 export const panel = style({ paddingTop: "2.8rem" });
 export const list = style({
@@ -345,14 +328,6 @@ export const visuallyHidden = style({
   border: 0,
 });
 
-export const joinedBadge = style({
-  borderRadius: vars.radius.pill,
-  padding: "0.5rem 1.2rem",
-  backgroundColor: `color-mix(in srgb, ${vars.color.blue} 10%, transparent)`,
-  color: vars.color.blue,
-  fontSize: "1.2rem",
-  fontWeight: 700,
-});
 export const roster = style({
   ...surface,
   listStyle: "none",
@@ -451,4 +426,16 @@ export const leaveReason = style({
   color: vars.color.secondary,
   fontSize: "1.3rem",
   lineHeight: "1.8rem",
+});
+
+export const cardLeaveAction = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.8rem",
+  width: "100%",
+});
+
+export const cardLeaveButton = style({
+  width: "100%",
+  minHeight: "5rem",
 });

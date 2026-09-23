@@ -139,7 +139,7 @@ export function InterviewDiscoveryContent({ filters }: InterviewDiscoveryContent
       : null,
   ].filter((item): item is NonNullable<typeof item> => item !== null);
 
-  function replaceFilters(nextFilters: InterviewDiscoveryFilters) {
+  const replaceFilters = (nextFilters: InterviewDiscoveryFilters) => {
     const nextSearchParams = writeInterviewDiscoveryFilters(
       new URLSearchParams(searchParams.toString()),
       nextFilters,
@@ -147,7 +147,7 @@ export function InterviewDiscoveryContent({ filters }: InterviewDiscoveryContent
     const queryString = nextSearchParams.toString();
 
     router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
-  }
+  };
 
   useEffect(() => {
     const targetElement = loadMoreRef.current;
