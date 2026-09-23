@@ -188,7 +188,7 @@ export const dialogPopup = style({
   transform: "translate(-50%, -50%)",
   display: "flex",
   flexDirection: "column",
-  gap: vars.spacing.md,
+  gap: vars.spacing.sm,
   width: "min(36rem, calc(100vw - 4.8rem))",
   padding: vars.spacing.xl,
   borderRadius: vars.radius.media,
@@ -199,14 +199,15 @@ export const dialogPopup = style({
 
 export const dialogTitle = style({
   paddingRight: "4rem",
-  fontSize: "1.7rem",
-  fontWeight: 700,
+  fontSize: "2.2rem",
+  fontWeight: 600,
   color: vars.color.primary,
+  lineHeight: "3rem",
 });
 
 export const dialogDescription = style({
-  fontSize: "1.35rem",
-  lineHeight: 1.55,
+  fontSize: "1.6rem",
+  lineHeight: "2.4rem",
   color: vars.color.secondary,
 });
 

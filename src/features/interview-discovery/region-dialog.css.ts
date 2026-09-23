@@ -243,7 +243,6 @@ export const footer = style({
   alignItems: "center",
   gap: vars.spacing.lg,
   padding: "1.6rem 2.4rem",
-  borderTop: `1px solid ${vars.color.strokeLight}`,
   "@media": {
     [mobile]: {
       gridTemplateColumns: "minmax(0, 1fr)",

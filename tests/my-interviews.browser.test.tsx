@@ -27,6 +27,10 @@ const mocks = vi.hoisted(() => ({
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
   getInterviewOverviewOptions: () => ({ queryKey: ["overview"], queryFn: () => mocks.overview() }),
   getInterviewOverviewQueryKey: () => ["overview"],
+  roomDetailOptions: ({ path }: { path: { roomId: string } }) => ({
+    queryKey: ["room", path.roomId],
+    queryFn: vi.fn(),
+  }),
   roomDetailQueryKey: ({ path }: { path: { roomId: string } }) => ["room", path.roomId],
   myRoomApplicationQueryKey: ({ path }: { path: { roomId: string } }) => [
     "application",
@@ -156,12 +160,28 @@ describe("내 면접", () => {
     await expect.element(screen.getByText("예정된 면접이 없어요.")).toBeVisible();
     await screen.getByRole("tab", { name: "신청 중 1" }).click();
     await screen.getByRole("button", { name: "신청 취소", exact: true }).click();
+    await screen.getByRole("button", { name: "취소하기", exact: true }).click();
     await expect.element(screen.getByText("신청 중인 면접이 없어요.")).toBeVisible();
     await expect
       .element(screen.getByRole("tab", { name: "신청 중 0" }))
       .toHaveAttribute("aria-selected", "true");
     await screen.getByRole("tab", { name: "완료 0" }).click();
     await expect.element(screen.getByText("완료된 면접이 없어요.")).toBeVisible();
+  });
+
+  it("내 면접의 신청 취소 확인을 닫으면 요청하지 않는다", async () => {
+    const screen = await renderList();
+    await screen.getByRole("tab", { name: "신청 중 1" }).click();
+    await screen.getByRole("button", { name: "신청 취소", exact: true }).click();
+    await expect
+      .element(screen.getByRole("alertdialog", { name: "참가 신청을 취소할까요?" }))
+      .toBeVisible();
+    expect(mocks.withdraw).not.toHaveBeenCalled();
+    await screen.getByRole("button", { name: "돌아가기" }).click();
+    expect(mocks.withdraw).not.toHaveBeenCalled();
+    await expect
+      .element(screen.getByRole("button", { name: "신청 취소", exact: true }))
+      .toBeVisible();
   });
 
   it("신청 취소가 진행 중이면 중복 요청을 막고 성공하면 카드와 개수를 갱신한다", async () => {
@@ -179,10 +199,9 @@ describe("내 면접", () => {
     const screen = await renderList();
     await screen.getByRole("tab", { name: "신청 중 1" }).click();
     await screen.getByRole("button", { name: "신청 취소", exact: true }).click();
+    await screen.getByRole("button", { name: "취소하기", exact: true }).click();
     await expect.element(screen.getByRole("button", { name: "취소 중..." })).toBeDisabled();
-    await screen.getByRole("tab", { name: "예정 1" }).click();
-    await screen.getByRole("tab", { name: "신청 중 1" }).click();
-    await expect.element(screen.getByRole("button", { name: "취소 중..." })).toBeDisabled();
+    await expect.element(screen.getByRole("button", { name: "돌아가기" })).toBeDisabled();
     expect(mocks.withdraw).toHaveBeenCalledTimes(1);
     expect(mocks.withdraw.mock.calls[0][0]).toEqual({ path: { roomId } });
     finish();
@@ -195,12 +214,13 @@ describe("내 면접", () => {
     const screen = await renderList();
     await screen.getByRole("tab", { name: "신청 중 1" }).click();
     await screen.getByRole("button", { name: "신청 취소", exact: true }).click();
+    await screen.getByRole("button", { name: "취소하기", exact: true }).click();
     await expect.element(screen.getByRole("alert")).toHaveTextContent("신청을 취소하지 못했어요.");
     await expect
-      .element(screen.getByRole("button", { name: "신청 취소", exact: true }))
+      .element(screen.getByRole("button", { name: "취소하기", exact: true }))
       .toBeEnabled();
     expect(mocks.overview).toHaveBeenCalledTimes(2);
-    await screen.getByRole("button", { name: "신청 취소", exact: true }).click();
+    await screen.getByRole("button", { name: "취소하기", exact: true }).click();
     await expect.element(screen.getByText("신청 중인 면접이 없어요.")).toBeVisible();
   });
 
@@ -214,6 +234,7 @@ describe("내 면접", () => {
       const screen = await renderList();
       await screen.getByRole("tab", { name: "신청 중 1" }).click();
       await screen.getByRole("button", { name: "신청 취소", exact: true }).click();
+      await screen.getByRole("button", { name: "취소하기", exact: true }).click();
       await expect
         .element(screen.getByText("신청 상태가 변경됐어요. 최신 목록을 확인해 주세요."))
         .toBeVisible();

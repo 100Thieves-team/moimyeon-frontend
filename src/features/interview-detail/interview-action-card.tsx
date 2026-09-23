@@ -1,14 +1,7 @@
 "use client";
 
-import { Toast } from "@base-ui/react/toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  getInterviewOverviewQueryKey,
-  myRoomApplicationQueryKey,
-  roomDetailQueryKey,
-  roomsQueryKey,
-  withdrawRoomApplicationMutation,
-} from "@/api/generated/@tanstack/react-query.gen";
+import { AlertDialog } from "@base-ui/react/alert-dialog";
+import { useWithdrawApplicationDialog } from "./withdraw-application-dialog";
 import { Button, LinkButton } from "@/components/button";
 import { LoginTrigger } from "@/features/auth/login-dialog";
 import { LeaveRoomTrigger } from "@/features/interview-room/leave-room-trigger";
@@ -20,42 +13,16 @@ import {
 import * as styles from "./interview-detail.css";
 import { ParticipantAvatarStack } from "./participant-avatar-stack";
 
-function WithdrawAction({ roomId }: { roomId: string }) {
-  const queryClient = useQueryClient();
-  const toastManager = Toast.useToastManager();
-  const withdrawApplication = useMutation({
-    ...withdrawRoomApplicationMutation(),
-    onSuccess: async () => {
-      toastManager.add({ title: "참가 신청을 취소했어요." });
-
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: roomDetailQueryKey({ path: { roomId } }),
-        }),
-        queryClient.invalidateQueries({
-          queryKey: myRoomApplicationQueryKey({ path: { roomId } }),
-        }),
-        queryClient.invalidateQueries({ queryKey: roomsQueryKey() }),
-        queryClient.invalidateQueries({ queryKey: getInterviewOverviewQueryKey() }),
-      ]);
-    },
-  });
-
+function WithdrawAction({ room }: { room: InterviewDetail }) {
+  const handle = useWithdrawApplicationDialog();
   return (
-    <>
-      <Button
-        disabled={withdrawApplication.isPending}
-        onClick={() => withdrawApplication.mutate({ path: { roomId } })}
-        variant="secondary"
-      >
-        {withdrawApplication.isPending ? "취소 중..." : "신청 취소하기"}
-      </Button>
-      {withdrawApplication.isError && (
-        <p className={styles.actionError} role="alert">
-          신청을 취소하지 못했어요. 잠시 후 다시 시도해 주세요.
-        </p>
-      )}
-    </>
+    <AlertDialog.Trigger
+      handle={handle}
+      payload={{ roomId: room.roomId, title: room.title }}
+      render={<Button variant="secondary" />}
+    >
+      신청 취소하기
+    </AlertDialog.Trigger>
   );
 }
 
@@ -85,7 +52,7 @@ function ActionControl({
         </LinkButton>
       );
     case "PENDING_APPLICATION":
-      return <WithdrawAction roomId={roomId} />;
+      return <WithdrawAction room={room} />;
     case "VIEW_INTERVIEW":
       return <LeaveRoomTrigger room={room} variant="card" />;
     case "MANAGE_INTERVIEW":

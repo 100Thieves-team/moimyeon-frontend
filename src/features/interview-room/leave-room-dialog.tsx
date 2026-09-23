@@ -101,6 +101,9 @@ export function LeaveRoomDialog({ room }: { room: InterviewRoom }) {
             </AlertDialog.Title>
           </header>
           <div className={styles.dialogBody}>
+            <AlertDialog.Description className={styles.description}>
+              참여 중인 면접에서 나가게 돼요.
+            </AlertDialog.Description>
             {room.status === "CONFIRMED" && (
               <p className={styles.description}>진행 확정 후 참여를 취소한 기록이 남아요.</p>
             )}

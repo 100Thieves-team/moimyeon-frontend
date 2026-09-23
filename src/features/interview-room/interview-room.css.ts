@@ -260,18 +260,17 @@ export const dialogHeader = style({
   padding: "2.8rem 2.8rem 0",
   paddingRight: "6.4rem",
 });
-export const dialogTitle = style({ fontSize: "1.9rem", fontWeight: 500, lineHeight: "2.5rem" });
+export const dialogTitle = style({ fontSize: "2.2rem", fontWeight: 600, lineHeight: "3rem" });
 export const description = style({
   color: vars.color.secondary,
-  marginTop: "0.6rem",
-  fontSize: "1.35rem",
-  lineHeight: "1.9rem",
+  fontSize: "1.6rem",
+  lineHeight: "2.4rem",
 });
 export const dialogBody = style({
   display: "flex",
   flexDirection: "column",
-  gap: vars.spacing.md,
-  padding: "2rem 2.8rem",
+  gap: vars.spacing.sm,
+  padding: "0.8rem 2.8rem 0",
 });
 export const reasons = style({ display: "flex", flexDirection: "column", gap: vars.spacing.sm });
 export const reason = style({
@@ -316,8 +315,7 @@ export const dialogFooter = style({
   display: "flex",
   justifyContent: "flex-end",
   gap: vars.spacing.sm,
-  padding: "1.4rem 2.8rem",
-  borderTop: `1px solid ${vars.color.strokeLight}`,
+  padding: "1.6rem 2.8rem 1.4rem",
 });
 export const visuallyHidden = style({
   position: "absolute",
