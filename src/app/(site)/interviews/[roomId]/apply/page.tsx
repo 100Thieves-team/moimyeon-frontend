@@ -1,8 +1,6 @@
-import { InterviewApplySkeleton } from "@/features/interview-apply/interview-apply-skeleton";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { Suspense } from "react";
 import { resumesOptions, roomDetailOptions } from "@/api/generated/@tanstack/react-query.gen";
 import { getQueryClient } from "@/api/query-client";
 import { createServerClient } from "@/api/server-client";
@@ -36,9 +34,7 @@ export default async function InterviewApplyPage({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<InterviewApplySkeleton />}>
-        <InterviewApplyContent roomId={roomId} />
-      </Suspense>
+      <InterviewApplyContent roomId={roomId} />
     </HydrationBoundary>
   );
 }

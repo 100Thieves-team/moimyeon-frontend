@@ -1,7 +1,5 @@
-import { InterviewCreateSkeleton } from "@/features/interview-create/interview-create-skeleton";
 import type { Metadata } from "next";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { Suspense } from "react";
 import {
   jobRolesOptions,
   participationSlotsOptions,
@@ -33,9 +31,7 @@ export default async function NewInterviewPage() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<InterviewCreateSkeleton />}>
-        <InterviewCreateContent />
-      </Suspense>
+      <InterviewCreateContent />
     </HydrationBoundary>
   );
 }

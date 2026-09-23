@@ -1,8 +1,6 @@
-import { InterviewDiscoverySkeleton } from "@/features/interview-discovery/interview-discovery-skeleton";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { Suspense } from "react";
 import {
   jobRolesOptions,
   regionsOptions,
@@ -54,9 +52,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   return (
     <main className={styles.page}>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <Suspense fallback={<InterviewDiscoverySkeleton />}>
-          <InterviewDiscoveryContent filters={filters} />
-        </Suspense>
+        <InterviewDiscoveryContent filters={filters} />
       </HydrationBoundary>
     </main>
   );
