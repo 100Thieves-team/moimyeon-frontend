@@ -65,9 +65,17 @@ export const statusBadge = styleVariants({
 
 export const relationBadge = style({
   ...statusBadgeBase,
+  backgroundColor: vars.color.blue10,
+  color: vars.color.blue,
+  fontWeight: 700,
+});
+
+export const hostBadge = style({
+  ...statusBadgeBase,
   backgroundColor: vars.color.yellow10,
   color: vars.color.brown,
   fontWeight: 700,
+  "@media": { [media.dark]: { color: vars.color.yellow } },
 });
 
 export const title = style({
@@ -105,6 +113,15 @@ export const infoStrip = style({
     },
   },
 });
+
+export const panelInfoStrip = style([
+  infoStrip,
+  {
+    marginTop: 0,
+    borderBlockStart: 0,
+    "@media": { [mobile]: { marginTop: 0 } },
+  },
+]);
 
 export const infoColumn = style({
   display: "flex",
@@ -255,27 +272,18 @@ export const quotaStats = style({
   gap: "1.6rem",
 });
 
-export const quotaLabels = style({
+export const quotaStatusRow = style({
   display: "flex",
-  alignItems: "baseline",
-  justifyContent: "space-between",
-  color: vars.color.tertiary,
-  fontSize: "1.4rem",
-  lineHeight: 1.4,
-});
-
-export const quotaValue = style({
-  display: "flex",
-  minWidth: 0,
-  flexDirection: "column",
-  gap: "0.6rem",
+  flexWrap: "wrap",
+  alignItems: "center",
+  gap: "0.8rem",
 });
 
 export const quotaNumber = style({
-  color: vars.color.secondary,
-  fontSize: "1.4rem",
+  color: vars.color.tertiary,
+  fontSize: "1.3rem",
   fontWeight: 400,
-  lineHeight: "2rem",
+  lineHeight: "1.8rem",
   whiteSpace: "nowrap",
 });
 

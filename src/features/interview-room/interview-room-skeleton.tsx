@@ -11,7 +11,7 @@ export function InterviewRoomSkeleton() {
         </div>
         <div className={styles.navigation}>
           {[0, 1, 2].map((tab) => (
-            <div className={styles.infoLink} key={tab}>
+            <div className={styles.tab} key={tab}>
               <Skeleton width="7rem" height="2rem" />
             </div>
           ))}

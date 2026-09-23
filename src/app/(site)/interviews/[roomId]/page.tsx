@@ -2,39 +2,56 @@ import { InterviewDetailSkeleton } from "@/features/interview-detail/interview-d
 import type { Metadata } from "next";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
-import { roomDetailOptions } from "@/api/generated/@tanstack/react-query.gen";
+import {
+  rejectReasonsOptions,
+  roomApplicationsOptions,
+  roomDetailOptions,
+  roomParticipantsOptions,
+} from "@/api/generated/@tanstack/react-query.gen";
 import { getQueryClient } from "@/api/query-client";
 import { createServerClient } from "@/api/server-client";
-import { InterviewDetailContent } from "@/features/interview-detail/interview-detail-content";
+import { getCurrentMemberState } from "@/features/auth/current-member-server";
+import { InterviewRoomContent } from "@/features/interview-room/interview-room-content";
 
-export const metadata: Metadata = {
-  title: "면접 상세",
-};
+export const metadata: Metadata = { title: "면접 상세" };
 
-type InterviewDetailPageProps = {
+export default async function InterviewDetailPage({
+  params,
+}: {
   params: Promise<{ roomId: string }>;
-};
-
-export default async function InterviewDetailPage({ params }: InterviewDetailPageProps) {
+}) {
   const { roomId } = await params;
   const queryClient = getQueryClient();
-  const serverClient = await createServerClient();
-  const requestOptions = {
-    cache: "no-store" as const,
-    client: serverClient,
-  };
-
-  void queryClient.prefetchQuery(
-    roomDetailOptions({
-      ...requestOptions,
-      path: { roomId },
-    }),
+  const client = await createServerClient();
+  const requestOptions = { cache: "no-store" as const, client };
+  const response = await queryClient.fetchQuery(
+    roomDetailOptions({ ...requestOptions, path: { roomId } }),
   );
+
+  if (!response.data) throw new Error("Failed to load interview detail");
+  const memberState = await getCurrentMemberState();
+  const currentMemberId =
+    memberState.status === "authenticated" ? memberState.member.memberId : null;
+  const isHost = currentMemberId !== null && response.data.viewer?.isHost === true;
+  const canViewParticipants =
+    currentMemberId !== null && (isHost || response.data.viewer?.isParticipating === true);
+
+  if (isHost) {
+    void queryClient.prefetchQuery(
+      roomApplicationsOptions({ ...requestOptions, path: { roomId } }),
+    );
+    void queryClient.prefetchQuery(rejectReasonsOptions(requestOptions));
+  }
+  if (canViewParticipants) {
+    void queryClient.prefetchQuery(
+      roomParticipantsOptions({ ...requestOptions, path: { roomId } }),
+    );
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<InterviewDetailSkeleton />}>
-        <InterviewDetailContent roomId={roomId} />
+        <InterviewRoomContent key={roomId} roomId={roomId} currentMemberId={currentMemberId} />
       </Suspense>
     </HydrationBoundary>
   );

@@ -161,11 +161,8 @@ export function MyInterviewsContent() {
                   <RoomInfo room={room} />
                   <div className={styles.actions}>
                     <span className={styles.upcomingChip}>참여 확정</span>
-                    <LinkButton size="sm" variant="secondary" href={`/interviews/${room.roomId}`}>
-                      면접 정보
-                    </LinkButton>
-                    <LinkButton size="sm" href={`/interviews/${room.roomId}/room`}>
-                      댓글 열기
+                    <LinkButton size="sm" href={`/interviews/${room.roomId}`}>
+                      면접 보기
                     </LinkButton>
                   </div>
                 </li>

@@ -6,7 +6,11 @@ import { render } from "vitest-browser-react";
 import { ToastProvider } from "@/components/toast";
 import { InterviewRoomContent } from "@/features/interview-room/interview-room-content";
 import type { InterviewRoom, RoomParticipant } from "@/features/interview-room/participant-model";
-import { MOCK_INTERVIEW_DETAIL_SCENARIOS } from "@/features/interview-detail/interview-detail-mock";
+import {
+  MOCK_INTERVIEW_DETAIL_SCENARIOS,
+  MOCK_INTERVIEW_HOST_ID,
+  getMockInterviewHostProfile,
+} from "@/features/interview-detail/interview-detail-mock";
 import { routerRefreshMock, routerReplaceMock } from "./mocks/next-navigation";
 import "@/styles/global.css";
 
@@ -15,8 +19,11 @@ const mocks = vi.hoisted(() => ({
   participants: vi.fn(),
   applications: vi.fn(),
   leave: vi.fn(),
+  profile: vi.fn(),
 }));
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
+  issueDevSessionMutation: () => ({ mutationFn: vi.fn() }),
+  withdrawRoomApplicationMutation: () => ({ mutationFn: vi.fn() }),
   roomDetailOptions: ({ path }: { path: { roomId: string } }) => ({
     queryKey: ["room", path.roomId],
     queryFn: mocks.room,
@@ -43,7 +50,7 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
   participationSlotsQueryKey: () => ["slots"],
   myRoomApplicationQueryKey: () => ["my-application"],
   memberMeQueryKey: () => ["me"],
-  publicProfileOptions: () => ({ queryKey: ["profile"], queryFn: vi.fn() }),
+  publicProfileOptions: () => ({ queryKey: ["profile"], queryFn: mocks.profile }),
   rejectReasonsOptions: () => ({ queryKey: ["reasons"], queryFn: vi.fn() }),
   acceptApplicationMutation: () => ({ mutationFn: vi.fn() }),
   rejectApplicationMutation: () => ({ mutationFn: vi.fn() }),
@@ -55,7 +62,7 @@ let participants: RoomParticipant[];
 const roomId = "participant-room";
 const error = (code: string, message: string) => ({ result: "ERROR", error: { code, message } });
 
-async function setup() {
+async function setup(openPrivateTab = true, currentMemberId: string | null = "me") {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false, staleTime: Infinity } },
   });
@@ -63,11 +70,13 @@ async function setup() {
     <QueryClientProvider client={client}>
       <ToastProvider>
         <Suspense fallback={<p>불러오는 중</p>}>
-          <InterviewRoomContent roomId={roomId} currentMemberId="me" />
+          <InterviewRoomContent roomId={roomId} currentMemberId={currentMemberId} />
         </Suspense>
       </ToastProvider>
     </QueryClientProvider>,
   );
+  if (openPrivateTab)
+    await screen.getByRole("tab", { name: room.viewer?.isHost ? /참여 신청/ : /참여자/ }).click();
   return { client, screen };
 }
 
@@ -126,10 +135,56 @@ beforeEach(async () => {
   }));
   mocks.applications.mockResolvedValue({ result: "SUCCESS", data: { applications: [] } });
   mocks.leave.mockResolvedValue({ result: "SUCCESS", data: null });
+  mocks.profile.mockResolvedValue(getMockInterviewHostProfile(MOCK_INTERVIEW_HOST_ID));
   await page.viewport(1440, 900);
 });
 
 describe("참여자 명부", () => {
+  it.each(["anonymous", "nonparticipant", "pending"])(
+    "%s 사용자는 정보만 보고 비공개 목록을 조회하지 않는다",
+    async (kind) => {
+      room.viewer =
+        kind === "anonymous"
+          ? null
+          : {
+              isHost: false,
+              isParticipating: false,
+              latestApplicationStatus: kind === "pending" ? "PENDING" : null,
+            };
+      const { screen } = await setup(false, kind === "anonymous" ? null : "me");
+      await expect
+        .element(screen.getByRole("tab", { name: "면접 정보" }))
+        .toHaveAttribute("aria-selected", "true");
+      await expect.element(screen.getByRole("heading", { name: "면접 소개" })).toBeVisible();
+      await expect.element(screen.getByRole("tab", { name: "참여자 3" })).toBeDisabled();
+      await expect.element(screen.getByRole("tab", { name: /참여 신청/ })).not.toBeInTheDocument();
+      expect(mocks.participants).not.toHaveBeenCalled();
+      expect(mocks.applications).not.toHaveBeenCalled();
+    },
+  );
+
+  it("면접 정보로 시작하고 URL 이동 없이 참여자 명부를 확인한다", async () => {
+    const { screen } = await setup(false);
+    await expect
+      .element(screen.getByRole("tab", { name: "면접 정보" }))
+      .toHaveAttribute("aria-selected", "true");
+    expect(
+      screen
+        .getByRole("tab")
+        .elements()
+        .map((tab) => tab.textContent),
+    ).toEqual(["면접 정보", "참여자 3"]);
+    const url = window.location.href;
+    await screen.getByRole("tab", { name: "면접 정보" }).click();
+    const info = screen.getByRole("tabpanel", { name: "면접 정보" });
+    await expect.element(screen.getByRole("heading", { name: room.title })).toBeVisible();
+    await expect.element(info.getByRole("heading", { name: "면접 소개" })).toBeVisible();
+    await expect.element(info.getByRole("progressbar", { name: "모집 현황 3/5명" })).toBeVisible();
+    expect(window.location.href).toBe(url);
+    await screen.getByRole("tab", { name: "참여자 3" }).click();
+    await expect.element(screen.getByRole("list", { name: "참여자 목록" })).toBeVisible();
+  });
+
   it("참여자는 명부에서 방장과 본인, 공개 정보와 AI 요약 상태를 확인한다", async () => {
     const { screen } = await setup();
     const roster = screen.getByRole("list", { name: "참여자 목록" });
@@ -164,17 +219,18 @@ describe("참여자 명부", () => {
     await expect.element(profile.getByText("나", { exact: true })).toBeVisible();
   });
 
-  it("방장이 일반 참여자로 바뀌면 참여자 탭으로 전환하고 신청 패널을 제거한다", async () => {
+  it("방장이 일반 참여자로 바뀌면 정보 탭으로 전환하고 신청 패널을 제거한다", async () => {
     room.viewer = { isHost: true, isParticipating: true };
     const { screen, client } = await setup();
     await expect.element(screen.getByText("아직 참여 신청이 없어요.")).toBeVisible();
     room.viewer = { isHost: false, isParticipating: true };
     await client.invalidateQueries({ queryKey: ["room", roomId] });
     await expect
-      .element(screen.getByRole("tab", { name: "참여자 3" }))
+      .element(screen.getByRole("tab", { name: "면접 정보" }))
       .toHaveAttribute("aria-selected", "true");
     await expect.element(screen.getByRole("tab", { name: /참여 신청/ })).not.toBeInTheDocument();
     await expect.element(screen.getByText("아직 참여 신청이 없어요.")).not.toBeInTheDocument();
+    await screen.getByRole("tab", { name: "참여자 3" }).click();
     await expect.element(screen.getByText("결제 정산 경험")).toBeVisible();
   });
 
@@ -195,17 +251,24 @@ describe("참여자 명부", () => {
     await expect.element(screen.getByText("결제 정산 경험")).toBeVisible();
   });
 
-  it.each([false, true])("상세 재조회만으로 화면을 이동하지 않는다: 방장=%s", async (isHost) => {
-    room.viewer = { isHost, isParticipating: true };
-    const { screen, client } = await setup();
-    if (isHost) await screen.getByRole("tab", { name: "참여자 3" }).click();
-    await expect.element(screen.getByText("결제 정산 경험")).toBeVisible();
-    room.viewer = { isHost: false, isParticipating: false };
-    await client.invalidateQueries({ queryKey: ["room", roomId] });
-    expect(routerReplaceMock).not.toHaveBeenCalled();
-    await expect.element(screen.getByText("결제 정산 경험")).toBeVisible();
-    await expect.element(screen.getByText("아직 참여 신청이 없어요.")).not.toBeInTheDocument();
-  });
+  it.each([false, true])(
+    "참여 권한을 잃으면 URL 이동 없이 정보 탭으로 돌아간다: 방장=%s",
+    async (isHost) => {
+      room.viewer = { isHost, isParticipating: true };
+      const { screen, client } = await setup();
+      if (isHost) await screen.getByRole("tab", { name: "참여자 3" }).click();
+      await expect.element(screen.getByText("결제 정산 경험")).toBeVisible();
+      room.viewer = { isHost: false, isParticipating: false };
+      await client.invalidateQueries({ queryKey: ["room", roomId] });
+      expect(routerReplaceMock).not.toHaveBeenCalled();
+      await expect.element(screen.getByText("결제 정산 경험")).not.toBeInTheDocument();
+      await expect
+        .element(screen.getByRole("tab", { name: "면접 정보" }))
+        .toHaveAttribute("aria-selected", "true");
+      await expect.element(screen.getByRole("tab", { name: "참여자 3" })).toBeDisabled();
+      await expect.element(screen.getByText("아직 참여 신청이 없어요.")).not.toBeInTheDocument();
+    },
+  );
 
   it("원본 공개 룸에서도 공개 안내 문구와 원본 접근을 표시하지 않는다", async () => {
     room.resumePublic = true;
@@ -248,19 +311,28 @@ describe("참여자 명부", () => {
 });
 
 describe("참여 취소", () => {
-  it("확인 모달에서 돌아가면 참여를 취소하지 않는다", async () => {
-    const { screen } = await setup();
-    await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
-    await screen.getByRole("button", { name: "돌아가기", exact: true }).click();
-    expect(mocks.leave).not.toHaveBeenCalled();
-    await expect.element(screen.getByText("결제 정산 경험")).toBeVisible();
-  });
-
   it.each([false, true])(
-    "취소 성공 후 관련 쿼리를 무효화하고 내 면접으로 이동한다: 방장=%s",
-    async (isHost) => {
+    "확인 모달에서 돌아가면 참여를 취소하지 않는다: 참여자 탭=%s",
+    async (openPrivateTab) => {
+      const { screen } = await setup(openPrivateTab);
+      await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
+      await screen.getByRole("button", { name: "돌아가기", exact: true }).click();
+      expect(mocks.leave).not.toHaveBeenCalled();
+      await expect
+        .element(screen.getByRole("button", { name: "참여 취소하기", exact: true }))
+        .toBeVisible();
+    },
+  );
+
+  it.each([
+    [false, false],
+    [false, true],
+    [true, true],
+  ])(
+    "취소 성공 후 관련 쿼리를 무효화하고 내 면접으로 이동한다: 방장=%s 참여자 탭=%s",
+    async (isHost, openPrivateTab) => {
       room.viewer = { isHost, isParticipating: true };
-      const { screen, client } = await setup();
+      const { screen, client } = await setup(openPrivateTab);
       if (isHost) await screen.getByRole("tab", { name: "참여자 3" }).click();
       for (const key of [["overview"], ["rooms"], ["slots"], ["my-application"], ["me"]])
         client.setQueryData(key, {});
@@ -321,15 +393,26 @@ describe("참여 취소", () => {
     },
   );
 
-  it("확정된 면접의 최소 인원에서는 취소를 차단하고 사유를 보여준다", async () => {
-    room.status = "CONFIRMED";
-    room.recruit!.current = room.recruit!.min;
-    const { screen } = await setup();
-    await expect
-      .element(screen.getByRole("button", { name: "참여 취소하기", exact: true }))
-      .toBeDisabled();
-    await expect.element(screen.getByText("최소 진행 인원이라", { exact: false })).toBeVisible();
-  });
+  it.each([false, true])(
+    "확정된 면접의 최소 인원에서는 취소를 차단하고 사유를 보여준다: 참여자 탭=%s",
+    async (openPrivateTab) => {
+      room.status = "CONFIRMED";
+      room.recruit!.current = room.recruit!.min;
+      const { screen } = await setup(openPrivateTab);
+      await expect
+        .element(screen.getByRole("button", { name: "참여 취소하기", exact: true }))
+        .toBeDisabled();
+      await expect
+        .element(
+          screen
+            .getByRole("tabpanel", {
+              name: openPrivateTab ? `참여자 ${room.recruit!.current}` : "면접 정보",
+            })
+            .getByText("최소 진행 인원이라", { exact: false }),
+        )
+        .toBeVisible();
+    },
+  );
 
   it("확정 후 최소 인원보다 많으면 이탈 기록 안내 후 취소할 수 있다", async () => {
     room.status = "CONFIRMED";
@@ -362,19 +445,22 @@ describe("참여 취소", () => {
     },
   );
 
-  it("일시적 취소 실패는 오류를 안내하고 다시 시도할 수 있다", async () => {
-    mocks.leave.mockRejectedValueOnce(new Error("offline"));
-    const { screen } = await setup();
-    await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
-    await screen.getByRole("button", { name: "취소하기", exact: true }).click();
-    await expect.element(screen.getByRole("alert")).toBeVisible();
-    await expect
-      .element(screen.getByRole("button", { name: "취소하기", exact: true }))
-      .toBeEnabled();
-    expect(routerReplaceMock).not.toHaveBeenCalled();
-    await screen.getByRole("button", { name: "취소하기", exact: true }).click();
-    await expect.poll(() => routerReplaceMock.mock.calls.length).toBe(1);
-  });
+  it.each([false, true])(
+    "일시적 취소 실패는 오류를 안내하고 다시 시도할 수 있다: 참여자 탭=%s",
+    async (openPrivateTab) => {
+      mocks.leave.mockRejectedValueOnce(new Error("offline"));
+      const { screen } = await setup(openPrivateTab);
+      await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
+      await screen.getByRole("button", { name: "취소하기", exact: true }).click();
+      await expect.element(screen.getByRole("alert")).toBeVisible();
+      await expect
+        .element(screen.getByRole("button", { name: "취소하기", exact: true }))
+        .toBeEnabled();
+      expect(routerReplaceMock).not.toHaveBeenCalled();
+      await screen.getByRole("button", { name: "취소하기", exact: true }).click();
+      await expect.poll(() => routerReplaceMock.mock.calls.length).toBe(1);
+    },
+  );
 
   it("성공하지 않은 응답은 내 면접 이동이나 성공 알림으로 처리하지 않는다", async () => {
     mocks.leave.mockResolvedValue({ result: "ERROR", data: null });

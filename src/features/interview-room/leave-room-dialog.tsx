@@ -23,10 +23,12 @@ export function LeaveRoomDialog({
   room,
   onLeave,
   isPending,
+  variant = "compact",
 }: {
   room: InterviewRoom;
   onLeave: () => Promise<RoomLeaveResponse>;
   isPending: boolean;
+  variant?: "compact" | "card";
 }) {
   const client = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -59,7 +61,7 @@ export function LeaveRoomDialog({
   }
 
   return (
-    <div className={styles.leaveAction}>
+    <div className={variant === "card" ? styles.cardLeaveAction : styles.leaveAction}>
       <AlertDialog.Root
         open={open}
         onOpenChange={(next) => {
@@ -68,7 +70,16 @@ export function LeaveRoomDialog({
           if (next) setError(null);
         }}
       >
-        <AlertDialog.Trigger render={<Button variant="secondary" size="sm" disabled={disabled} />}>
+        <AlertDialog.Trigger
+          render={
+            <Button
+              variant="secondary"
+              size="sm"
+              className={variant === "card" ? styles.cardLeaveButton : undefined}
+              disabled={disabled}
+            />
+          }
+        >
           참여 취소하기
         </AlertDialog.Trigger>
         <AlertDialog.Portal>

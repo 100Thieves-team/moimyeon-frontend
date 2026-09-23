@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-react";
 import { page } from "vitest/browser";
@@ -168,7 +168,7 @@ function roomResponse(room: ReturnType<typeof createRoom>) {
   return { data: room, result: "SUCCESS" };
 }
 
-async function renderDetail() {
+async function renderDetail(memberAction: ReactNode = null) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false, staleTime: Number.POSITIVE_INFINITY },
@@ -180,7 +180,7 @@ async function renderDetail() {
       <ToastProvider>
         <LoginDialog />
         <Suspense fallback={<p>불러오는 중</p>}>
-          <InterviewDetailContent roomId={roomId} />
+          <InterviewDetailContent roomId={roomId} memberAction={memberAction} />
         </Suspense>
       </ToastProvider>
     </QueryClientProvider>,
@@ -199,15 +199,53 @@ beforeEach(async () => {
 });
 
 describe("InterviewDetailContent", () => {
-  it("직접 진입해 공개 상세를 보고 방장 아바타 hover로 프로필을 확인한다", async () => {
+  it.each([
+    [null, null],
+    [{ ...eligibleViewer, isParticipating: true }, "참여 중"],
+    [{ ...eligibleViewer, isHost: true }, "방장"],
+    [{ ...eligibleViewer, isHost: true, isParticipating: true }, "방장"],
+    [{ ...eligibleViewer, latestApplicationStatus: "PENDING" }, "수락 대기"],
+  ] as const)("모집 현황 카드에 모집 상태와 내 상태를 표시한다: %j", async (viewer, relation) => {
+    mocks.roomDetail.mockResolvedValue(roomResponse(createRoom({ viewer })));
+    const { screen } = await renderDetail();
+    const card = screen.getByRole("complementary", { name: "면접 참가 신청" });
+    if (viewer?.isParticipating && !viewer.isHost) {
+      await expect.element(card.getByText("모집 중", { exact: true })).not.toBeInTheDocument();
+    } else {
+      await expect.element(card.getByText("모집 중", { exact: true })).toBeVisible();
+    }
+    if (relation) await expect.element(card.getByText(relation, { exact: true })).toBeVisible();
+    else await expect.element(card.getByText("참여 중", { exact: true })).not.toBeInTheDocument();
+    await expect.element(card.getByText("3 / 5명")).toBeVisible();
+    await expect.element(card.getByText(/신청 .*건 대기/)).not.toBeInTheDocument();
+    if (viewer?.isHost) {
+      await expect.element(card.getByText("참여 중", { exact: true })).not.toBeInTheDocument();
+      await expect
+        .element(card.getByText("내가 만든 면접", { exact: true }))
+        .not.toBeInTheDocument();
+    }
+  });
+
+  it("모집이 마감되어도 참여자에게는 참여 중 배지만 표시한다", async () => {
+    mocks.roomDetail.mockResolvedValue(
+      roomResponse(
+        createRoom({
+          recruit: { current: 5, recruitStatus: "CLOSED", recruitStatusLabel: "모집 마감" },
+          viewer: { ...eligibleViewer, isParticipating: true },
+        }),
+      ),
+    );
+    const { screen } = await renderDetail();
+    const card = screen.getByRole("complementary", { name: "면접 참가 신청" });
+    await expect.element(card.getByText("참여 중", { exact: true })).toBeVisible();
+    await expect.element(card.getByText("모집 마감", { exact: true })).not.toBeInTheDocument();
+    await expect.element(card.getByText("5 / 5명")).toBeVisible();
+  });
+
+  it("면접 정보 본문을 보고 방장 아바타 hover로 프로필을 확인한다", async () => {
     const { screen } = await renderDetail();
 
-    await expect
-      .element(screen.getByRole("heading", { name: "한빛커머스 백엔드 2차 같이 준비해요" }))
-      .toBeVisible();
-    await expect
-      .element(screen.getByText("한빛커머스 · 백엔드 개발자 · 서버·백엔드 · 2차 면접 · 직무 면접"))
-      .toBeVisible();
+    await expect.element(screen.getByRole("heading", { name: "면접 소개" })).toBeVisible();
     await expect.element(screen.getByText("오프라인 · 서울 강남구")).toBeVisible();
     await expect.element(screen.getByText("최소 3 · 최대 5명")).toBeVisible();
     await expect.element(screen.getByText("3 / 5명")).toBeVisible();
@@ -340,9 +378,7 @@ describe("InterviewDetailContent", () => {
     mocks.publicProfile.mockRejectedValueOnce(new Error("profile failed"));
     const { screen } = await renderDetail();
 
-    await expect
-      .element(screen.getByRole("heading", { name: "한빛커머스 백엔드 2차 같이 준비해요" }))
-      .toBeVisible();
+    await expect.element(screen.getByRole("heading", { name: "면접 소개" })).toBeVisible();
     await screen.getByRole("button", { name: "꼼꼼한 여우 12 (방장) 공개 신뢰 카드 열기" }).hover();
     await expect
       .element(screen.getByRole("alert"))
@@ -425,16 +461,14 @@ describe("InterviewDetailContent", () => {
     [
       "참여자",
       { ...eligibleViewer, isParticipating: true, latestApplicationStatus: "ACCEPTED" },
-      "내 면접 보기",
+      "참여 취소하기",
     ],
-    ["방장", { ...eligibleViewer, isHost: true, isParticipating: true }, "면접 관리하기"],
-  ])("%s에게 알맞은 면접 진입 링크를 표시한다", async (_name, viewer, label) => {
+    ["방장", { ...eligibleViewer, isHost: true, isParticipating: true }, "참여 신청 확인하기"],
+  ])("%s에게 카드의 회원용 버튼을 표시한다", async (_name, viewer, label) => {
     mocks.roomDetail.mockResolvedValue(roomResponse(createRoom({ viewer })));
-    const { screen } = await renderDetail();
+    const { screen } = await renderDetail(<button type="button">{label}</button>);
 
-    await expect
-      .element(screen.getByRole("link", { name: label }))
-      .toHaveAttribute("href", `/interviews/${roomId}/room`);
+    await expect.element(screen.getByRole("button", { name: label })).toBeVisible();
   });
 
   it("일정이 지났어도 서버 상태가 모집 중이면 참가 신청 링크를 표시한다", async () => {
@@ -507,6 +541,17 @@ describe("InterviewDetailContent", () => {
     const { screen } = await renderDetail();
 
     await expect.element(screen.getByRole("button", { name: message })).toBeDisabled();
+  });
+
+  it("모집 정보를 확인할 수 없어도 비활성 버튼을 표시한다", async () => {
+    mocks.roomDetail.mockResolvedValue({
+      data: { ...createRoom(), recruit: null },
+      result: "SUCCESS",
+    });
+    const { screen } = await renderDetail();
+    await expect
+      .element(screen.getByRole("button", { name: "모집 정보를 확인할 수 없어요." }))
+      .toBeDisabled();
   });
 
   it("조회자 정보가 없으면 비활성 버튼으로 안내한다", async () => {
