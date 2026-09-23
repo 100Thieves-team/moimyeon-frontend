@@ -1,23 +1,24 @@
 import { Skeleton } from "@/components/skeleton";
+import { InterviewDetailSkeleton } from "@/features/interview-detail/interview-detail-skeleton";
 import * as styles from "./interview-room.css";
 
 export function InterviewRoomSkeleton() {
   return (
-    <main className={styles.page} aria-label="면접 관리 불러오는 중" aria-busy="true">
+    <main className={styles.page} aria-label="면접 상세 불러오는 중" aria-busy="true">
       <div className={styles.content}>
         <div className={styles.heading}>
-          <Skeleton width="16rem" height="2.6rem" />
           <Skeleton width="65%" height="3.9rem" />
+          <Skeleton width="16rem" height="1.8rem" />
         </div>
         <div className={styles.navigation}>
-          {[0, 1, 2].map((tab) => (
+          {[0, 1].map((tab) => (
             <div className={styles.tab} key={tab}>
               <Skeleton width="7rem" height="2rem" />
             </div>
           ))}
         </div>
         <div className={styles.panel}>
-          <ParticipantsSkeleton />
+          <InterviewDetailSkeleton presentation="panel" />
         </div>
       </div>
     </main>
