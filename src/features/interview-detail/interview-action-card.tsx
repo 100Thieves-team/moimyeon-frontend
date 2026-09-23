@@ -85,57 +85,59 @@ export function InterviewActionCard({
 
   return (
     <aside aria-label="면접 참가 신청" className={styles.actionCard}>
-      {(recruit || relation) && (
-        <div className={styles.quotaStatusRow}>
-          {recruit && !isParticipant && (
-            <span
-              className={
-                recruit.recruitStatus === "RECRUITING"
-                  ? styles.statusBadge.recruiting
-                  : styles.statusBadge.closed
-              }
-            >
-              {recruit.recruitStatusLabel}
-            </span>
-          )}
-          {relation && (
-            <span
-              className={
-                isHost
-                  ? styles.hostBadge
-                  : isParticipant
+      <div className={styles.quotaStats}>
+        {(recruit || relation) && (
+          <div className={styles.quotaStatusRow}>
+            {recruit && !isParticipant && (
+              <span
+                className={
+                  recruit.recruitStatus === "RECRUITING"
                     ? styles.statusBadge.recruiting
-                    : styles.relationBadge
-              }
-            >
-              {relation}
-            </span>
-          )}
-          {recruit && (
-            <span className={styles.quotaNumber}>
-              {current} / {max}명
-            </span>
-          )}
-        </div>
-      )}
-      {recruit && (
-        <div className={styles.quotaStats}>
-          <ParticipantAvatarStack
-            currentCount={current}
-            hostMemberId={room.hostMemberId}
-            participants={room.participants}
-          />
-          {isApplyState && remaining > 0 && (
-            <span className={styles.remainingQuota}>{remaining}자리 남았어요</span>
-          )}
-          <progress
-            aria-label={`모집 현황 ${current}/${max}명`}
-            className={styles.actionProgress}
-            max={Math.max(max, 1)}
-            value={Math.min(current, Math.max(max, 1))}
-          />
-        </div>
-      )}
+                    : styles.statusBadge.closed
+                }
+              >
+                {recruit.recruitStatusLabel}
+              </span>
+            )}
+            {relation && (
+              <span
+                className={
+                  isHost
+                    ? styles.hostBadge
+                    : isParticipant
+                      ? styles.statusBadge.recruiting
+                      : styles.relationBadge
+                }
+              >
+                {relation}
+              </span>
+            )}
+          </div>
+        )}
+        {recruit && (
+          <>
+            <ParticipantAvatarStack
+              currentCount={current}
+              hostMemberId={room.hostMemberId}
+              participants={room.participants}
+            />
+            <div className={styles.progressMeta}>
+              {isApplyState && remaining > 0 && (
+                <span className={styles.remainingQuota}>{remaining}자리 남았어요</span>
+              )}
+              <span className={styles.quotaNumber}>
+                {current} / {max}명
+              </span>
+            </div>
+            <progress
+              aria-label={`모집 현황 ${current}/${max}명`}
+              className={styles.actionProgress}
+              max={Math.max(max, 1)}
+              value={Math.min(current, Math.max(max, 1))}
+            />
+          </>
+        )}
+      </div>
 
       <div className={styles.actionControls}>
         <ActionControl room={room} state={state} onViewApplications={onViewApplications} />
