@@ -13,17 +13,11 @@ const terms = {
   },
 } as const;
 
-type TermsRouteProps = {
-  params: Promise<{
-    type: string;
-  }>;
-};
-
 function isTermsRoute(type: string): type is keyof typeof terms {
   return type in terms;
 }
 
-export async function generateMetadata({ params }: TermsRouteProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/terms/[type]">): Promise<Metadata> {
   const { type } = await params;
 
   return {
@@ -31,7 +25,7 @@ export async function generateMetadata({ params }: TermsRouteProps): Promise<Met
   };
 }
 
-export default async function TermsRoute({ params }: TermsRouteProps) {
+export default async function TermsRoute({ params }: PageProps<"/terms/[type]">) {
   const { type } = await params;
 
   if (!isTermsRoute(type)) {
