@@ -45,6 +45,7 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
     "applications",
     path.roomId,
   ],
+  getInterviewOverviewOptions: () => ({ queryKey: ["overview"], queryFn: vi.fn() }),
   getInterviewOverviewQueryKey: () => ["overview"],
   roomsQueryKey: () => ["rooms"],
   participationSlotsQueryKey: () => ["slots"],

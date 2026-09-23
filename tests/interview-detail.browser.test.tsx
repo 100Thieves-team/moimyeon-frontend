@@ -1,3 +1,4 @@
+import { WithdrawApplicationProvider } from "@/features/interview-detail/withdraw-application-dialog";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -15,6 +16,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
+  getInterviewOverviewOptions: () => ({ queryKey: ["getInterviewOverview"], queryFn: vi.fn() }),
   getInterviewOverviewQueryKey: () => ["getInterviewOverview"],
   issueDevSessionMutation: () => ({ mutationFn: vi.fn() }),
   myRoomApplicationQueryKey: ({ path }: { path: { roomId: string } }) => [
@@ -180,11 +182,13 @@ async function renderDetail(onViewApplications = vi.fn()) {
       <ToastProvider>
         <LoginDialog />
         <Suspense fallback={<p>불러오는 중</p>}>
-          <InterviewDetailContent
-            roomId={roomId}
-            currentMemberId={hostMemberId}
-            onViewApplications={onViewApplications}
-          />
+          <WithdrawApplicationProvider>
+            <InterviewDetailContent
+              roomId={roomId}
+              currentMemberId={hostMemberId}
+              onViewApplications={onViewApplications}
+            />
+          </WithdrawApplicationProvider>
         </Suspense>
       </ToastProvider>
     </QueryClientProvider>,
@@ -583,6 +587,23 @@ describe("InterviewDetailContent", () => {
       .toBeDisabled();
   });
 
+  it("신청 취소 확인을 닫으면 신청과 요청 상태를 유지한다", async () => {
+    mocks.roomDetail.mockResolvedValue(
+      roomResponse(
+        createRoom({ viewer: { ...eligibleViewer, latestApplicationStatus: "PENDING" } }),
+      ),
+    );
+    const { screen } = await renderDetail();
+    await screen.getByRole("button", { name: "신청 취소하기" }).click();
+    await expect
+      .element(screen.getByRole("alertdialog", { name: "참가 신청을 취소할까요?" }))
+      .toBeVisible();
+    expect(mocks.withdrawRoomApplication).not.toHaveBeenCalled();
+    await screen.getByRole("button", { name: "돌아가기" }).click();
+    expect(mocks.withdrawRoomApplication).not.toHaveBeenCalled();
+    await expect.element(screen.getByRole("button", { name: "신청 취소하기" })).toBeVisible();
+  });
+
   it("수락 대기 신청을 취소하면 상세를 갱신해 재신청 행동을 표시한다", async () => {
     let currentRoom = createRoom({
       viewer: { ...eligibleViewer, latestApplicationStatus: "PENDING" },
@@ -599,6 +620,7 @@ describe("InterviewDetailContent", () => {
       .element(screen.getByText("수락되면 알림을 보내고 채팅방에 들어가요"))
       .not.toBeInTheDocument();
     await screen.getByRole("button", { name: "신청 취소하기" }).click();
+    await screen.getByRole("button", { name: "취소하기", exact: true }).click();
 
     await expect
       .element(screen.getByRole("dialog", { name: "참가 신청을 취소했어요." }))
@@ -617,6 +639,7 @@ describe("InterviewDetailContent", () => {
     const { screen } = await renderDetail();
 
     await screen.getByRole("button", { name: "신청 취소하기" }).click();
+    await screen.getByRole("button", { name: "취소하기", exact: true }).click();
 
     await expect
       .element(screen.getByRole("alert"))

@@ -380,7 +380,6 @@ export const mobileFilterFooter = style({
   gridTemplateColumns: "1fr 2fr",
   gap: vars.spacing.md,
   padding: "1.2rem 1.6rem max(1.2rem, env(safe-area-inset-bottom))",
-  borderTop: `1px solid ${vars.color.strokeLight}`,
   backgroundColor: vars.color.background,
 });
 

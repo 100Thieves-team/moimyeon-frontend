@@ -305,5 +305,4 @@ export const resumeDialogFooter = style({
   justifyContent: "flex-end",
   gap: vars.spacing.sm,
   padding: "1.4rem 2.4rem",
-  borderTop: `1px solid ${vars.color.strokeLight}`,
 });

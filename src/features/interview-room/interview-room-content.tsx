@@ -14,6 +14,7 @@ import { InterviewDetailContent } from "@/features/interview-detail/interview-de
 import { getInterviewMetaLabels } from "@/features/interview-detail/interview-detail-model";
 import { ApplicationRow } from "./application-row";
 import { ParticipantsPanel } from "./participants-panel";
+import { WithdrawApplicationProvider } from "@/features/interview-detail/withdraw-application-dialog";
 import { RoomPanelBoundary } from "./room-query-state";
 import { ApplicationsSkeleton, ParticipantsSkeleton } from "./interview-room-skeleton";
 import * as styles from "./interview-room.css";
@@ -35,22 +36,24 @@ export function InterviewRoomContent({
   if (!room) throw new Error("Failed to load interview room");
 
   return (
-    <main className={styles.page}>
-      <div className={styles.content}>
-        <header className={styles.heading}>
-          <h1 className={styles.title}>{room.title}</h1>
-          <p className={styles.roomMeta}>{getInterviewMetaLabels(room).join(" · ")}</p>
-        </header>
-        <RoomTabs
-          key={isHost ? "host" : canViewParticipants ? "participant" : "visitor"}
-          room={room}
-          currentMemberId={currentMemberId}
-          isHost={isHost}
-          canViewParticipants={canViewParticipants}
-        />
-        {canViewParticipants && <LeaveRoomDialog room={room} />}
-      </div>
-    </main>
+    <WithdrawApplicationProvider>
+      <main className={styles.page}>
+        <div className={styles.content}>
+          <header className={styles.heading}>
+            <h1 className={styles.title}>{room.title}</h1>
+            <p className={styles.roomMeta}>{getInterviewMetaLabels(room).join(" · ")}</p>
+          </header>
+          <RoomTabs
+            key={isHost ? "host" : canViewParticipants ? "participant" : "visitor"}
+            room={room}
+            currentMemberId={currentMemberId}
+            isHost={isHost}
+            canViewParticipants={canViewParticipants}
+          />
+          {canViewParticipants && <LeaveRoomDialog room={room} />}
+        </div>
+      </main>
+    </WithdrawApplicationProvider>
   );
 }
 
