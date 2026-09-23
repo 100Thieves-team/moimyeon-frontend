@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-react";
 import { page } from "vitest/browser";
 import type { RoomDetailResponse } from "@/api/generated";
-import InterviewRoomError from "@/app/(site)/interviews/[roomId]/room/error";
+import InterviewDetailError from "@/app/(site)/interviews/[roomId]/error";
 import { ToastProvider } from "@/components/toast";
 import { InterviewRoomContent } from "@/features/interview-room/interview-room-content";
 import type { RoomApplication } from "@/features/interview-room/interview-room-model";
@@ -105,7 +105,7 @@ async function renderRoom(openApplications = true) {
       <ToastProvider>
         <ErrorBoundary
           fallbackRender={({ resetErrorBoundary }) => (
-            <InterviewRoomError reset={resetErrorBoundary} />
+            <InterviewDetailError reset={resetErrorBoundary} />
           )}
         >
           <Suspense fallback={<p>참여 신청을 불러오는 중이에요.</p>}>

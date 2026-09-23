@@ -8,11 +8,7 @@ const mocks = vi.hoisted(() => ({
   reasons: vi.fn(),
   participants: vi.fn(),
   member: vi.fn(),
-  redirect: vi.fn((href: string) => {
-    throw new Error(`REDIRECT:${href}`);
-  }),
 }));
-vi.mock("next/navigation", () => ({ redirect: mocks.redirect }));
 vi.mock("@/features/auth/current-member-server", () => ({ getCurrentMemberState: mocks.member }));
 vi.mock("@/api/query-client", () => ({ getQueryClient: mocks.getQueryClient }));
 vi.mock("@/api/server-client", () => ({ createServerClient: vi.fn(() => ({})) }));
@@ -33,9 +29,6 @@ beforeEach(() => {
   mocks.room.mockResolvedValue({ data: { viewer: { isHost: true } } });
   mocks.applications.mockResolvedValue({ data: { applications: [] } });
   mocks.reasons.mockResolvedValue({ data: { reasons: [] } });
-  mocks.redirect.mockImplementation((href: string) => {
-    throw new Error(`REDIRECT:${href}`);
-  });
 });
 
 describe("통합 면접 상세 서버 라우트", () => {
@@ -93,15 +86,4 @@ describe("통합 면접 상세 서버 라우트", () => {
     expect(mocks.participants).not.toHaveBeenCalled();
     expect(mocks.applications).not.toHaveBeenCalled();
   });
-});
-
-it("이전 룸 URL은 데이터 조회 없이 통합 주소로 이동한다", async () => {
-  const { default: Page } = await import("@/app/(site)/interviews/[roomId]/room/page");
-  await expect(Page({ params: Promise.resolve({ roomId: "room-1" }) })).rejects.toThrow(
-    "REDIRECT:/interviews/room-1",
-  );
-  expect(mocks.room).not.toHaveBeenCalled();
-  expect(mocks.member).not.toHaveBeenCalled();
-  expect(mocks.applications).not.toHaveBeenCalled();
-  expect(mocks.participants).not.toHaveBeenCalled();
 });
