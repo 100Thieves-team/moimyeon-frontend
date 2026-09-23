@@ -122,7 +122,7 @@ export function MyInterviewsContent() {
 
   return (
     <main aria-label="내 면접" className={styles.page}>
-      <Tabs.Root className={styles.column} defaultValue="upcoming">
+      <Tabs.Root className={styles.column} defaultValue="pending">
         <Tabs.List aria-label="내 면접 상태" className={styles.tabs}>
           <Tabs.Tab className={styles.tab} value="pending">
             신청 중 <span>{pendingApplications.length}</span>

@@ -89,15 +89,17 @@ beforeEach(async () => {
 });
 
 describe("내 면접", () => {
-  it("예정 탭으로 시작하고 탭을 바꿔도 추가 조회 없이 개수와 목록을 보여준다", async () => {
+  it("신청 중 탭으로 시작하고 탭을 바꿔도 추가 조회 없이 개수와 목록을 보여준다", async () => {
     const upcoming = overview.participatingRooms[0].room;
     // 현재 시각과 룸 상태로 예정 목록을 재분류하지 않는다.
     upcoming.roomStatus = "IN_PROGRESS";
     upcoming.startAt = "2020-01-01T19:00:00+09:00";
     const screen = await renderList();
     await expect
-      .element(screen.getByRole("tab", { name: "예정 1" }))
+      .element(screen.getByRole("tab", { name: "신청 중 1" }))
       .toHaveAttribute("aria-selected", "true");
+    await expect.element(screen.getByText("방장 확인 중")).toBeVisible();
+    await screen.getByRole("tab", { name: "예정 1" }).click();
     await expect.element(screen.getByRole("tab", { name: "전체" })).not.toBeInTheDocument();
     await expect.element(screen.getByRole("heading", { name: upcoming.title })).toBeVisible();
     await expect
@@ -131,6 +133,7 @@ describe("내 면접", () => {
       },
     });
     const screen = await renderList();
+    await screen.getByRole("tab", { name: "예정 2" }).click();
     await expect.element(screen.getByRole("heading").nth(0)).toHaveTextContent(first.title);
     await expect.element(screen.getByRole("heading").nth(1)).toHaveTextContent("서버 두 번째 면접");
     await expect.element(screen.getByText(/오프라인 · 서울 강남구/).first()).toBeVisible();
@@ -142,10 +145,11 @@ describe("내 면접", () => {
       .toBeVisible();
   });
 
-  it("예정이 비어 있어도 다른 탭으로 바꾸지 않고 각 빈 상태를 보여준다", async () => {
+  it("각 빈 상태를 보여주고 신청 목록이 비어도 선택한 탭을 유지한다", async () => {
     overview.participatingRooms = [];
     overview.completedRooms = [];
     const screen = await renderList();
+    await screen.getByRole("tab", { name: "예정 0" }).click();
     await expect
       .element(screen.getByRole("tab", { name: "예정 0" }))
       .toHaveAttribute("aria-selected", "true");
