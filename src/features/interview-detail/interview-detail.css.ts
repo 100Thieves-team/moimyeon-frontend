@@ -250,13 +250,12 @@ export const policyList = style({
 });
 
 export const actionCard = style({
-  minHeight: "26rem",
   display: "flex",
   width: "100%",
   minWidth: 0,
   flexDirection: "column",
-  gap: "1.6rem",
-  padding: "2.6rem",
+  gap: vars.spacing.lg,
+  padding: vars.spacing.xl,
   overflow: "hidden",
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.media,
@@ -271,7 +270,15 @@ export const quotaStats = style({
   minWidth: 0,
   flexDirection: "column",
   alignItems: "stretch",
-  gap: "1.6rem",
+  gap: vars.spacing.sm,
+});
+
+export const progressMeta = style({
+  display: "flex",
+  alignItems: "center",
+  flexWrap: "wrap",
+  gap: vars.spacing.sm,
+  marginTop: vars.spacing.sm,
 });
 
 export const quotaStatusRow = style({
@@ -287,6 +294,8 @@ export const quotaNumber = style({
   fontWeight: 400,
   lineHeight: "1.8rem",
   whiteSpace: "nowrap",
+  marginInlineStart: "auto",
+  textAlign: "right",
 });
 
 export const remainingQuota = style({
