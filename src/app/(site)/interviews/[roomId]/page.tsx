@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import type { GetRoomCommentsResponse } from "@/api/generated";
 import {
+  getRoomCommentsInfiniteOptions,
   rejectReasonsOptions,
   roomApplicationsOptions,
   roomDetailOptions,
@@ -37,6 +39,16 @@ export default async function InterviewDetailPage({ params }: PageProps<"/interv
     void queryClient.prefetchQuery(rejectReasonsOptions(requestOptions));
   }
   if (canViewParticipants) {
+    void queryClient.prefetchInfiniteQuery({
+      ...getRoomCommentsInfiniteOptions({
+        ...requestOptions,
+        path: { roomId },
+        query: { size: "20" },
+      }),
+      initialPageParam: { path: { roomId }, query: {} },
+      getNextPageParam: (lastPage: GetRoomCommentsResponse) =>
+        lastPage.data?.nextCursor ?? undefined,
+    });
     void queryClient.prefetchQuery(
       roomParticipantsOptions({ ...requestOptions, path: { roomId } }),
     );
