@@ -21,11 +21,7 @@ export const metadata: Metadata = {
   title: "면접",
 };
 
-type HomePageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-};
-
-export default async function Home({ searchParams }: HomePageProps) {
+export default async function Home({ searchParams }: PageProps<"/">) {
   const rawSearchParams = await searchParams;
   const filters = interviewDiscoveryFiltersSchema.parse(rawSearchParams);
   const urlSearchParams = new URLSearchParams();

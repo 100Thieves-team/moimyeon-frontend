@@ -14,13 +14,7 @@ export const metadata: Metadata = {
   title: "후기 남기기",
 };
 
-type RoomReviewRouteProps = {
-  params: Promise<{
-    roomId: string;
-  }>;
-};
-
-export default async function RoomReviewPage({ params }: RoomReviewRouteProps) {
+export default async function RoomReviewPage({ params }: PageProps<"/interviews/[roomId]/review">) {
   const { roomId } = await params;
   const queryClient = getQueryClient();
   const serverClient = await createServerClient();

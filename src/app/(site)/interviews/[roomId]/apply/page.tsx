@@ -11,11 +11,9 @@ import { getInterviewViewerState } from "@/features/interview-detail/interview-d
 
 export const metadata: Metadata = { title: "참가 신청" };
 
-type InterviewApplyPageProps = {
-  params: Promise<{ roomId: string }>;
-};
-
-export default async function InterviewApplyPage({ params }: InterviewApplyPageProps) {
+export default async function InterviewApplyPage({
+  params,
+}: PageProps<"/interviews/[roomId]/apply">) {
   const { roomId } = await params;
   const queryClient = getQueryClient();
   const serverClient = await createServerClient();

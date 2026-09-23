@@ -73,9 +73,12 @@ describe("참가 신청 서버 라우트", () => {
     const { default: InterviewApplyPage } =
       await import("@/app/(site)/interviews/[roomId]/apply/page");
 
-    await expect(InterviewApplyPage({ params: Promise.resolve({ roomId }) })).rejects.toThrow(
-      `REDIRECT:/interviews/${roomId}`,
-    );
+    await expect(
+      InterviewApplyPage({
+        params: Promise.resolve({ roomId }),
+        searchParams: Promise.resolve({}),
+      }),
+    ).rejects.toThrow(`REDIRECT:/interviews/${roomId}`);
     expect(mocks.resumes).not.toHaveBeenCalled();
   });
 
@@ -90,9 +93,12 @@ describe("참가 신청 서버 라우트", () => {
     const { default: InterviewApplyPage } =
       await import("@/app/(site)/interviews/[roomId]/apply/page");
 
-    await expect(InterviewApplyPage({ params: Promise.resolve({ roomId }) })).rejects.toThrow(
-      `REDIRECT:/interviews/${roomId}`,
-    );
+    await expect(
+      InterviewApplyPage({
+        params: Promise.resolve({ roomId }),
+        searchParams: Promise.resolve({}),
+      }),
+    ).rejects.toThrow(`REDIRECT:/interviews/${roomId}`);
     expect(mocks.resumes).not.toHaveBeenCalled();
   });
 
@@ -100,7 +106,10 @@ describe("참가 신청 서버 라우트", () => {
     const { default: InterviewApplyPage } =
       await import("@/app/(site)/interviews/[roomId]/apply/page");
 
-    await InterviewApplyPage({ params: Promise.resolve({ roomId }) });
+    await InterviewApplyPage({
+      params: Promise.resolve({ roomId }),
+      searchParams: Promise.resolve({}),
+    });
 
     expect(mocks.roomDetail).toHaveBeenCalledWith(roomId);
     await expect.poll(() => mocks.resumes.mock.calls.length).toBe(1);
