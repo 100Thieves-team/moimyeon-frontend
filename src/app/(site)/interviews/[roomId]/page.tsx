@@ -1,7 +1,5 @@
-import { InterviewDetailSkeleton } from "@/features/interview-detail/interview-detail-skeleton";
 import type { Metadata } from "next";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { Suspense } from "react";
 import {
   rejectReasonsOptions,
   roomApplicationsOptions,
@@ -46,9 +44,7 @@ export default async function InterviewDetailPage({ params }: PageProps<"/interv
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<InterviewDetailSkeleton />}>
-        <InterviewRoomContent key={roomId} roomId={roomId} currentMemberId={currentMemberId} />
-      </Suspense>
+      <InterviewRoomContent key={roomId} roomId={roomId} currentMemberId={currentMemberId} />
     </HydrationBoundary>
   );
 }

@@ -1,7 +1,5 @@
-import { ReviewSkeleton } from "@/features/review/review-skeleton";
 import type { Metadata } from "next";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { Suspense } from "react";
 import {
   getReviewOverviewOptions,
   roomDetailOptions,
@@ -29,9 +27,7 @@ export default async function RoomReviewPage({ params }: PageProps<"/interviews/
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<ReviewSkeleton />}>
-        <ReviewContent roomId={roomId} />
-      </Suspense>
+      <ReviewContent roomId={roomId} />
     </HydrationBoundary>
   );
 }
