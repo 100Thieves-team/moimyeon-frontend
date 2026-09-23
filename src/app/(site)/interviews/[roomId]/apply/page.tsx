@@ -29,7 +29,8 @@ export default async function InterviewApplyPage({ params }: InterviewApplyPageP
     throw new Error("Failed to load interview detail");
   }
 
-  if (getInterviewViewerState(room).kind !== "APPLY") {
+  const isAuthenticated = room.viewer !== null && room.viewer !== undefined;
+  if (getInterviewViewerState(room, isAuthenticated).kind !== "APPLY") {
     redirect(`/interviews/${roomId}`);
   }
 

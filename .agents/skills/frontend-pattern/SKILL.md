@@ -23,6 +23,12 @@ description: 모이면의 React, Next.js App Router, Base UI, React Hook Form, T
 - 버튼은 클릭했을 때 실행되는 동작을 짧고 명확하게 표현한다.
 - 실행 버튼과 닫기·돌아가기 버튼의 의미가 혼동되지 않도록 구분한다.
 
+## 다이얼로그와 트리거 분리
+
+- 트리거와 본문의 배치가 다르거나 여러 트리거가 하나의 다이얼로그를 열면 Base UI `Dialog.createHandle` 또는 `AlertDialog.createHandle`로 연결한다. 버튼 JSX 슬롯이나 열기 콜백을 여러 단계 전달하기보다 전용 Trigger 컴포넌트를 직접 렌더링한다.
+- 화면에서 공유하는 handle은 별도 모듈에 선언하고, 같은 handle을 사용하는 Root는 공통 상위에 하나만 배치한다. 여러 탭에서 여는 다이얼로그는 탭 패널과 `Activity` 바깥에 둔다. 독립적으로 열려야 하는 다이얼로그 인스턴스는 handle을 분리한다.
+- API 근거: [Dialog detached triggers](https://base-ui.com/react/components/dialog#detached-triggers), [Alert Dialog detached triggers](https://base-ui.com/react/components/alert-dialog#detached-triggers).
+
 ## 탭과 Activity
 
 - 탭 선택은 가능하면 Base UI의 비제어 방식에 맡긴다.

@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Suspense, type ReactNode } from "react";
+import { Suspense } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-react";
 import { page } from "vitest/browser";
@@ -168,7 +168,7 @@ function roomResponse(room: ReturnType<typeof createRoom>) {
   return { data: room, result: "SUCCESS" };
 }
 
-async function renderDetail(memberAction: ReactNode = null) {
+async function renderDetail(onViewApplications = vi.fn()) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false, staleTime: Number.POSITIVE_INFINITY },
@@ -180,7 +180,11 @@ async function renderDetail(memberAction: ReactNode = null) {
       <ToastProvider>
         <LoginDialog />
         <Suspense fallback={<p>불러오는 중</p>}>
-          <InterviewDetailContent roomId={roomId} memberAction={memberAction} />
+          <InterviewDetailContent
+            roomId={roomId}
+            currentMemberId={hostMemberId}
+            onViewApplications={onViewApplications}
+          />
         </Suspense>
       </ToastProvider>
     </QueryClientProvider>,
@@ -466,7 +470,7 @@ describe("InterviewDetailContent", () => {
     ["방장", { ...eligibleViewer, isHost: true, isParticipating: true }, "참여 신청 확인하기"],
   ])("%s에게 카드의 회원용 버튼을 표시한다", async (_name, viewer, label) => {
     mocks.roomDetail.mockResolvedValue(roomResponse(createRoom({ viewer })));
-    const { screen } = await renderDetail(<button type="button">{label}</button>);
+    const { screen } = await renderDetail();
 
     await expect.element(screen.getByRole("button", { name: label })).toBeVisible();
   });

@@ -55,8 +55,12 @@ describe("면접 상세 조회자 상태", () => {
       { ...eligibleViewer, latestApplicationStatus: "PENDING" },
       "PENDING_APPLICATION",
     ],
-  ])("%s 상태를 다음 행동으로 우선 판정한다", (_name, viewer, expectedKind) => {
-    expect(getInterviewViewerState(createRoom({ viewer })).kind).toBe(expectedKind);
+  ])("%s의 인증 여부를 반영해 다음 행동을 판정한다", (_name, viewer, expectedKind) => {
+    expect(getInterviewViewerState(createRoom({ viewer }), true).kind).toBe(expectedKind);
+    expect(getInterviewViewerState(createRoom({ viewer }), false)).toEqual({
+      applicationMode: "REGULAR",
+      kind: "LOGIN_REQUIRED",
+    });
   });
 
   it("비로그인이고 정원이 찼으면 로그인 후 대기 신청하도록 안내한다", () => {
@@ -72,7 +76,7 @@ describe("면접 상세 조회자 상태", () => {
       viewer: null,
     });
 
-    expect(getInterviewViewerState(room)).toEqual({
+    expect(getInterviewViewerState(room, false)).toEqual({
       applicationMode: "WAITLIST",
       kind: "LOGIN_REQUIRED",
     });
@@ -90,7 +94,7 @@ describe("면접 상세 조회자 상태", () => {
       },
     });
 
-    expect(getInterviewViewerState(room)).toEqual({
+    expect(getInterviewViewerState(room, true)).toEqual({
       applicationMode: "WAITLIST",
       kind: "APPLY",
     });
@@ -103,7 +107,7 @@ describe("면접 상세 조회자 상태", () => {
     ["IN_PROGRESS", "진행 중인 면접이에요"],
     ["UNKNOWN", "신청할 수 없는 면접이에요"],
   ])("비로그인이어도 %s 면접이면 로그인보다 신청 불가를 먼저 안내한다", (status, message) => {
-    expect(getInterviewViewerState(createRoom({ status, viewer: null }))).toEqual({
+    expect(getInterviewViewerState(createRoom({ status, viewer: null }), false)).toEqual({
       kind: "BLOCKED",
       message,
     });
@@ -115,6 +119,7 @@ describe("면접 상세 조회자 상태", () => {
         createRoom({
           schedule: { durationMinutes: 90, startAt: "2020-09-01T19:00:00+09:00" },
         }),
+        true,
       ),
     ).toEqual({
       applicationMode: "REGULAR",
@@ -130,7 +135,7 @@ describe("면접 상세 조회자 상태", () => {
       "신청 상태를 확인할 수 없어요",
     ],
   ])("%s를 비활성 버튼 상태로 판정한다", (_name, viewer, message) => {
-    expect(getInterviewViewerState(createRoom({ viewer }))).toEqual({
+    expect(getInterviewViewerState(createRoom({ viewer }), true)).toEqual({
       kind: "BLOCKED",
       message,
     });
@@ -171,7 +176,7 @@ describe("면접 상세 조회자 상태", () => {
       "대기 신청 한도에 도달했어요",
     ],
   ])("%s를 상세에서 선제 안내한다", (_name, viewer, message) => {
-    expect(getInterviewViewerState(createRoom({ viewer }))).toEqual({
+    expect(getInterviewViewerState(createRoom({ viewer }), true)).toEqual({
       kind: "BLOCKED",
       message,
     });
@@ -183,6 +188,7 @@ describe("면접 상세 조회자 상태", () => {
       expect(
         getInterviewViewerState(
           createRoom({ viewer: { ...eligibleViewer, latestApplicationStatus } }),
+          true,
         ).kind,
       ).toBe("APPLY");
     },

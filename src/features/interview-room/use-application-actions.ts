@@ -13,17 +13,7 @@ import {
 
 export function useApplicationActions(roomId: string) {
   const queryClient = useQueryClient();
-  const accept = useMutation({
-    ...acceptApplicationMutation(),
-    onSettled: refresh,
-  });
-  const reject = useMutation({
-    ...rejectApplicationMutation(),
-    onSettled: refresh,
-  });
-  const processing = accept.isPending ? "accept" : reject.isPending ? "reject" : null;
-
-  async function refresh() {
+  const refresh = async () => {
     // 조회 실패는 query 상태로 표시하고, 성공한 mutation을 실패로 바꾸지 않는다.
     await Promise.all(
       [
@@ -34,7 +24,17 @@ export function useApplicationActions(roomId: string) {
         getInterviewOverviewQueryKey(),
       ].map((queryKey) => queryClient.invalidateQueries({ queryKey })),
     );
-  }
+  };
+
+  const accept = useMutation({
+    ...acceptApplicationMutation(),
+    onSettled: refresh,
+  });
+  const reject = useMutation({
+    ...rejectApplicationMutation(),
+    onSettled: refresh,
+  });
+  const processing = accept.isPending ? "accept" : reject.isPending ? "reject" : null;
 
   return { processing, accept, reject, refresh };
 }

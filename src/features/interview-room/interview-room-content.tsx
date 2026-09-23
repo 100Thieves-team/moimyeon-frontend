@@ -1,26 +1,13 @@
 "use client";
 
-import { Toast } from "@base-ui/react/toast";
-import { useRouter } from "next/navigation";
 import { Tabs } from "@base-ui/react/tabs";
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Activity, useState, type ReactNode } from "react";
-import type { RoomLeaveResponse } from "@/api/generated";
-import { Button } from "@/components/button";
 import { LeaveRoomDialog } from "./leave-room-dialog";
 import type { InterviewRoom } from "./participant-model";
 import {
   roomApplicationsOptions,
-  roomApplicationsQueryKey,
-  roomParticipantsQueryKey,
   roomDetailOptions,
-  roomLeaveMutation,
-  roomDetailQueryKey,
-  getInterviewOverviewQueryKey,
-  roomsQueryKey,
-  participationSlotsQueryKey,
-  myRoomApplicationQueryKey,
-  memberMeQueryKey,
 } from "@/api/generated/@tanstack/react-query.gen";
 import { InterviewDetailSkeleton } from "@/features/interview-detail/interview-detail-skeleton";
 import { InterviewDetailContent } from "@/features/interview-detail/interview-detail-content";
@@ -41,39 +28,11 @@ export function InterviewRoomContent({
   currentMemberId: string | null;
 }) {
   const roomQuery = useSuspenseQuery(roomDetailOptions({ path: { roomId } }));
-  const client = useQueryClient();
-  const { replace, refresh } = useRouter();
-  const toast = Toast.useToastManager();
-  const leaveMutation = useMutation({ ...roomLeaveMutation(), retry: false });
-
-  async function leave() {
-    const response = await leaveMutation.mutateAsync({ path: { roomId } });
-    if (response.result === "SUCCESS") {
-      void Promise.allSettled(
-        [
-          roomDetailQueryKey({ path: { roomId } }),
-          roomApplicationsQueryKey({ path: { roomId } }),
-          roomParticipantsQueryKey({ path: { roomId } }),
-          getInterviewOverviewQueryKey(),
-          roomsQueryKey(),
-          participationSlotsQueryKey(),
-          myRoomApplicationQueryKey({ path: { roomId } }),
-          memberMeQueryKey(),
-        ].map((queryKey) => client.invalidateQueries({ queryKey, refetchType: "none" })),
-      );
-      toast.add({ title: "참여를 취소했어요." });
-      replace("/interviews/me");
-      refresh();
-    }
-    return response;
-  }
   const room = roomQuery.data.data;
   const isHost = currentMemberId !== null && room?.viewer?.isHost === true;
   const canViewParticipants =
     currentMemberId !== null && (isHost || room?.viewer?.isParticipating === true);
   if (!room) throw new Error("Failed to load interview room");
-  if (leaveMutation.isSuccess && leaveMutation.data.result === "SUCCESS")
-    return <p className={styles.empty}>참여를 취소했어요. 내 면접으로 이동하고 있어요.</p>;
 
   return (
     <main className={styles.page}>
@@ -88,9 +47,8 @@ export function InterviewRoomContent({
           currentMemberId={currentMemberId}
           isHost={isHost}
           canViewParticipants={canViewParticipants}
-          onLeave={leave}
-          isPending={leaveMutation.isPending}
         />
+        {canViewParticipants && <LeaveRoomDialog room={room} />}
       </div>
     </main>
   );
@@ -101,15 +59,11 @@ function RoomTabs({
   currentMemberId,
   isHost,
   canViewParticipants,
-  onLeave,
-  isPending,
 }: {
   room: InterviewRoom;
   currentMemberId: string | null;
   isHost: boolean;
   canViewParticipants: boolean;
-  onLeave: () => Promise<RoomLeaveResponse>;
-  isPending: boolean;
 }) {
   const [tab, setTab] = useState<RoomTab>("info");
   const roomId = room.roomId;
@@ -137,18 +91,8 @@ function RoomTabs({
         >
           <InterviewDetailContent
             roomId={roomId}
-            memberAction={
-              isHost ? (
-                <Button onClick={() => setTab("applications")}>참여 신청 확인하기</Button>
-              ) : canViewParticipants ? (
-                <LeaveRoomDialog
-                  room={room}
-                  onLeave={onLeave}
-                  isPending={isPending}
-                  variant="card"
-                />
-              ) : null
-            }
+            currentMemberId={currentMemberId}
+            onViewApplications={() => setTab("applications")}
           />
         </RoomPanelBoundary>
       </RoomTabPanel>
@@ -162,12 +106,7 @@ function RoomTabs({
       {canViewParticipants && currentMemberId !== null && (
         <RoomTabPanel value="participants">
           <RoomPanelBoundary label="참여자 목록" fallback={<ParticipantsSkeleton />}>
-            <ParticipantsPanel
-              room={room}
-              currentMemberId={currentMemberId}
-              onLeave={onLeave}
-              isPending={isPending}
-            />
+            <ParticipantsPanel room={room} currentMemberId={currentMemberId} />
           </RoomPanelBoundary>
         </RoomTabPanel>
       )}

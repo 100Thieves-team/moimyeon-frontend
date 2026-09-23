@@ -3,24 +3,19 @@
 import { Popover } from "@base-ui/react/popover";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import type { RoomLeaveResponse } from "@/api/generated";
 import { roomParticipantsOptions } from "@/api/generated/@tanstack/react-query.gen";
 import { TrustCardPopover, type TrustCardPayload } from "@/features/trust-card/trust-card-popover";
 import * as trustCardStyles from "@/features/trust-card/trust-card.css";
 import { getParticipantSummary, type InterviewRoom } from "./participant-model";
-import { LeaveRoomDialog } from "./leave-room-dialog";
+import { LeaveRoomTrigger } from "./leave-room-trigger";
 import * as styles from "./interview-room.css";
 
 export function ParticipantsPanel({
   room,
   currentMemberId,
-  onLeave,
-  isPending,
 }: {
   room: InterviewRoom;
   currentMemberId: string;
-  onLeave: () => Promise<RoomLeaveResponse>;
-  isPending: boolean;
 }) {
   const [profileHandle] = useState(() => Popover.createHandle<TrustCardPayload>());
   const query = useSuspenseQuery({
@@ -82,7 +77,7 @@ export function ParticipantsPanel({
       )}
       <TrustCardPopover handle={profileHandle} />
       <footer className={styles.participantsFooter}>
-        <LeaveRoomDialog room={room} onLeave={onLeave} isPending={isPending} />
+        <LeaveRoomTrigger room={room} />
       </footer>
     </>
   );

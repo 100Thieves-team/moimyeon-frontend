@@ -2,7 +2,6 @@
 
 import { Toast } from "@base-ui/react/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { ReactNode } from "react";
 import {
   getInterviewOverviewQueryKey,
   myRoomApplicationQueryKey,
@@ -12,8 +11,8 @@ import {
 } from "@/api/generated/@tanstack/react-query.gen";
 import { Button, LinkButton } from "@/components/button";
 import { LoginTrigger } from "@/features/auth/login-dialog";
+import { LeaveRoomTrigger } from "@/features/interview-room/leave-room-trigger";
 import {
-  getInterviewViewerState,
   getInterviewRelationLabel,
   type InterviewDetail,
   type InterviewViewerState,
@@ -61,14 +60,15 @@ function WithdrawAction({ roomId }: { roomId: string }) {
 }
 
 function ActionControl({
-  roomId,
+  room,
   state,
-  memberAction,
+  onViewApplications,
 }: {
-  roomId: string;
+  room: InterviewDetail;
   state: InterviewViewerState;
-  memberAction: ReactNode;
+  onViewApplications: () => void;
 }) {
+  const roomId = room.roomId;
   const returnTo = `/interviews/${roomId}` as const;
 
   switch (state.kind) {
@@ -87,8 +87,9 @@ function ActionControl({
     case "PENDING_APPLICATION":
       return <WithdrawAction roomId={roomId} />;
     case "VIEW_INTERVIEW":
+      return <LeaveRoomTrigger room={room} variant="card" />;
     case "MANAGE_INTERVIEW":
-      return memberAction;
+      return <Button onClick={onViewApplications}>참여 신청 확인하기</Button>;
     case "BLOCKED":
     case "UNAVAILABLE":
       return <Button disabled>{state.message}</Button>;
@@ -99,12 +100,13 @@ function ActionControl({
 
 export function InterviewActionCard({
   room,
-  memberAction,
+  state,
+  onViewApplications,
 }: {
   room: InterviewDetail;
-  memberAction: ReactNode;
+  state: InterviewViewerState;
+  onViewApplications: () => void;
 }) {
-  const state = getInterviewViewerState(room);
   const recruit = room.recruit;
   const isHost = room.viewer?.isHost === true;
   const isParticipant = !isHost && room.viewer?.isParticipating === true;
@@ -169,7 +171,7 @@ export function InterviewActionCard({
       )}
 
       <div className={styles.actionControls}>
-        <ActionControl roomId={room.roomId} state={state} memberAction={memberAction} />
+        <ActionControl room={room} state={state} onViewApplications={onViewApplications} />
         {state.kind === "PENDING_APPLICATION" && (
           <p className={styles.actionMessage}>방장의 수락을 기다리고 있어요</p>
         )}

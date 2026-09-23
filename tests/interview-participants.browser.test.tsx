@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Suspense } from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { render } from "vitest-browser-react";
 import { ToastProvider } from "@/components/toast";
@@ -139,6 +139,14 @@ beforeEach(async () => {
   await page.viewport(1440, 900);
 });
 
+afterEach(async () => {
+  const dialog = page.getByRole("alertdialog", { name: "면접 참여를 취소할까요?" });
+  if (dialog.elements().length > 0) {
+    await dialog.getByRole("button", { name: "돌아가기", exact: true }).click();
+    await expect.element(dialog).not.toBeInTheDocument();
+  }
+});
+
 describe("참여자 명부", () => {
   it.each(["anonymous", "nonparticipant", "pending"])(
     "%s 사용자는 정보만 보고 비공개 목록을 조회하지 않는다",
@@ -158,6 +166,27 @@ describe("참여자 명부", () => {
       await expect.element(screen.getByRole("heading", { name: "면접 소개" })).toBeVisible();
       await expect.element(screen.getByRole("tab", { name: "참여자 3" })).toBeDisabled();
       await expect.element(screen.getByRole("tab", { name: /참여 신청/ })).not.toBeInTheDocument();
+      expect(mocks.participants).not.toHaveBeenCalled();
+      expect(mocks.applications).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([false, true])(
+    "인증이 만료되면 기존 회원 역할 대신 로그인 신청 버튼을 표시한다: 방장=%s",
+    async (isHost) => {
+      room.viewer = { isHost, isParticipating: true };
+      const { screen } = await setup(false, null);
+
+      await expect.element(screen.getByRole("tab", { name: "참여자 3" })).toBeDisabled();
+      await expect
+        .element(screen.getByRole("button", { name: "참여 취소하기", exact: true }))
+        .not.toBeInTheDocument();
+      await expect
+        .element(screen.getByRole("button", { name: "참여 신청 확인하기", exact: true }))
+        .not.toBeInTheDocument();
+      await expect
+        .element(screen.getByRole("button", { name: "참가 신청하기", exact: true }))
+        .toBeVisible();
       expect(mocks.participants).not.toHaveBeenCalled();
       expect(mocks.applications).not.toHaveBeenCalled();
     },
@@ -312,7 +341,7 @@ describe("참여자 명부", () => {
 
 describe("참여 취소", () => {
   it.each([false, true])(
-    "확인 모달에서 돌아가면 참여를 취소하지 않는다: 참여자 탭=%s",
+    "두 탭에서 확인 모달을 열고 돌아가면 참여를 취소하지 않는다: 참여자 탭에서 시작=%s",
     async (openPrivateTab) => {
       const { screen } = await setup(openPrivateTab);
       await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
@@ -321,6 +350,17 @@ describe("참여 취소", () => {
       await expect
         .element(screen.getByRole("button", { name: "참여 취소하기", exact: true }))
         .toBeVisible();
+      await screen
+        .getByRole("tab", {
+          name: openPrivateTab ? "면접 정보" : `참여자 ${room.recruit!.current}`,
+        })
+        .click();
+      await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
+      await expect
+        .element(screen.getByRole("alertdialog", { name: "면접 참여를 취소할까요?" }))
+        .toBeVisible();
+      await screen.getByRole("button", { name: "돌아가기", exact: true }).click();
+      expect(mocks.leave).not.toHaveBeenCalled();
     },
   );
 
@@ -329,13 +369,12 @@ describe("참여 취소", () => {
     [false, true],
     [true, true],
   ])(
-    "취소 성공 후 관련 쿼리를 무효화하고 내 면접으로 이동한다: 방장=%s 참여자 탭=%s",
+    "취소 성공 후 관련 쿼리를 무효화하고 다이얼로그를 닫으며 내 면접으로 이동한다: 방장=%s 참여자 탭=%s",
     async (isHost, openPrivateTab) => {
       room.viewer = { isHost, isParticipating: true };
       const { screen, client } = await setup(openPrivateTab);
+      const invalidateQueries = vi.spyOn(client, "invalidateQueries");
       if (isHost) await screen.getByRole("tab", { name: "참여자 3" }).click();
-      for (const key of [["overview"], ["rooms"], ["slots"], ["my-application"], ["me"]])
-        client.setQueryData(key, {});
       await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
       if (isHost)
         await expect
@@ -346,11 +385,20 @@ describe("참여 취소", () => {
       expect(routerReplaceMock).toHaveBeenCalledWith("/interviews/me");
       expect(routerRefreshMock).toHaveBeenCalledOnce();
       expect(mocks.leave).toHaveBeenCalledOnce();
-      expect(client.getQueryState(["participants", roomId])?.isInvalidated).toBe(true);
-      if (isHost) expect(client.getQueryState(["applications", roomId])?.isInvalidated).toBe(true);
-      for (const key of [["overview"], ["rooms"], ["slots"], ["my-application"], ["me"]])
-        expect(client.getQueryState(key)?.isInvalidated).toBe(true);
-      await expect.element(screen.getByText("결제 정산 경험")).not.toBeInTheDocument();
+      for (const queryKey of [
+        ["room", roomId],
+        ["applications", roomId],
+        ["participants", roomId],
+        ["overview"],
+        ["rooms"],
+        ["slots"],
+        ["my-application"],
+        ["me"],
+      ])
+        expect(invalidateQueries).toHaveBeenCalledWith({ queryKey });
+      await expect
+        .element(screen.getByRole("alertdialog", { name: "면접 참여를 취소할까요?" }))
+        .not.toBeInTheDocument();
     },
   );
 

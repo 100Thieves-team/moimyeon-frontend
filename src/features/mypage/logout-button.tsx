@@ -13,7 +13,7 @@ export function LogoutButton() {
   const authLogout = useMutation(authLogoutMutation());
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  async function handleLogout() {
+  const handleLogout = async () => {
     setErrorMessage(undefined);
 
     try {
@@ -26,7 +26,7 @@ export function LogoutButton() {
     queryClient.removeQueries();
     router.replace("/");
     router.refresh();
-  }
+  };
 
   return (
     <div className={styles.logoutAction}>

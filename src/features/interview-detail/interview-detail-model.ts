@@ -46,8 +46,11 @@ function hasReachedLimit(
   return quota.occupied >= quota.limit;
 }
 
-export function getInterviewViewerState(room: InterviewDetail): InterviewViewerState {
-  const viewer = room.viewer;
+export function getInterviewViewerState(
+  room: InterviewDetail,
+  isAuthenticated: boolean,
+): InterviewViewerState {
+  const viewer = isAuthenticated ? room.viewer : null;
 
   if (viewer?.isHost === true) return { kind: "MANAGE_INTERVIEW" };
   if (viewer?.isParticipating === true) return { kind: "VIEW_INTERVIEW" };

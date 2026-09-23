@@ -1,18 +1,19 @@
 "use client";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
-import type { ReactNode } from "react";
 import { roomDetailOptions } from "@/api/generated/@tanstack/react-query.gen";
 import { InterviewActionCard } from "./interview-action-card";
-import { formatInterviewSchedule } from "./interview-detail-model";
+import { formatInterviewSchedule, getInterviewViewerState } from "./interview-detail-model";
 import * as styles from "./interview-detail.css";
 
 export function InterviewDetailContent({
   roomId,
-  memberAction,
+  currentMemberId,
+  onViewApplications,
 }: {
   roomId: string;
-  memberAction: ReactNode;
+  currentMemberId: string | null;
+  onViewApplications: () => void;
 }) {
   const { data: response } = useSuspenseQuery(roomDetailOptions({ path: { roomId } }));
   const room = response.data;
@@ -23,6 +24,7 @@ export function InterviewDetailContent({
 
   const methodAndRegion = [room.methodLabel, room.region?.label].filter(Boolean).join(" · ");
   const recruit = room.recruit;
+  const state = getInterviewViewerState(room, currentMemberId !== null);
   return (
     <div>
       <dl className={styles.panelInfoStrip}>
@@ -66,7 +68,7 @@ export function InterviewDetailContent({
         </div>
 
         <div className={styles.rightRail}>
-          <InterviewActionCard room={room} memberAction={memberAction} />
+          <InterviewActionCard room={room} state={state} onViewApplications={onViewApplications} />
         </div>
       </div>
     </div>
