@@ -1,8 +1,8 @@
 "use client";
 
 import { Tabs } from "@base-ui/react/tabs";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { Activity, useState, type ReactNode } from "react";
+import { QueryErrorResetBoundary, useSuspenseQuery } from "@tanstack/react-query";
+import { Activity, Suspense, useState, type ReactNode } from "react";
 import { LeaveRoomDialog } from "./leave-room-dialog";
 import type { InterviewRoom } from "./participant-model";
 import {
@@ -14,12 +14,16 @@ import { InterviewDetailContent } from "@/features/interview-detail/interview-de
 import { getInterviewMetaLabels } from "@/features/interview-detail/interview-detail-model";
 import { ApplicationRow } from "./application-row";
 import { ParticipantsPanel } from "./participants-panel";
-import { WithdrawApplicationProvider } from "@/features/interview-detail/withdraw-application-dialog";
-import { RoomPanelBoundary } from "./room-query-state";
+import { ErrorBoundary } from "react-error-boundary";
+import { Button } from "@/components/button";
 import { ApplicationsSkeleton, ParticipantsSkeleton } from "./interview-room-skeleton";
 import * as styles from "./interview-room.css";
+import { RoomCommentsPanel } from "./room-comments-panel";
 
-type RoomTab = "info" | "applications" | "participants";
+import { CommentDeleteProvider } from "./comment-delete-dialog";
+import { WithdrawApplicationProvider } from "@/features/interview-detail/withdraw-application-dialog";
+
+type RoomTab = "info" | "applications" | "participants" | "comments";
 
 export function InterviewRoomContent({
   roomId,
@@ -37,22 +41,24 @@ export function InterviewRoomContent({
 
   return (
     <WithdrawApplicationProvider>
-      <main className={styles.page}>
-        <div className={styles.content}>
-          <header className={styles.heading}>
-            <h1 className={styles.title}>{room.title}</h1>
-            <p className={styles.roomMeta}>{getInterviewMetaLabels(room).join(" · ")}</p>
-          </header>
-          <RoomTabs
-            key={isHost ? "host" : canViewParticipants ? "participant" : "visitor"}
-            room={room}
-            currentMemberId={currentMemberId}
-            isHost={isHost}
-            canViewParticipants={canViewParticipants}
-          />
-          {canViewParticipants && <LeaveRoomDialog room={room} />}
-        </div>
-      </main>
+      <CommentDeleteProvider roomId={roomId}>
+        <main className={styles.page}>
+          <div className={styles.content}>
+            <header className={styles.heading}>
+              <h1 className={styles.title}>{room.title}</h1>
+              <p className={styles.roomMeta}>{getInterviewMetaLabels(room).join(" · ")}</p>
+            </header>
+            <RoomTabs
+              key={isHost ? "host" : canViewParticipants ? "participant" : "visitor"}
+              room={room}
+              currentMemberId={currentMemberId}
+              isHost={isHost}
+              canViewParticipants={canViewParticipants}
+            />
+            {canViewParticipants && <LeaveRoomDialog room={room} />}
+          </div>
+        </main>
+      </CommentDeleteProvider>
     </WithdrawApplicationProvider>
   );
 }
@@ -85,32 +91,88 @@ function RoomTabs({
           <Tabs.Tab className={styles.tab} value="participants" disabled={!canViewParticipants}>
             참여자 {room.recruit?.current}
           </Tabs.Tab>
+          <Tabs.Tab className={styles.tab} value="comments" disabled={!canViewParticipants}>
+            댓글
+          </Tabs.Tab>
         </Tabs.List>
       </div>
       <RoomTabPanel value="info">
-        <RoomPanelBoundary
-          label="면접 정보"
-          fallback={<InterviewDetailSkeleton presentation="panel" />}
-        >
-          <InterviewDetailContent
-            roomId={roomId}
-            currentMemberId={currentMemberId}
-            onViewApplications={() => setTab("applications")}
-          />
-        </RoomPanelBoundary>
+        <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary
+              onReset={reset}
+              // oxlint-disable-next-line react/no-unstable-nested-components -- fallbackRender는 컴포넌트 타입이 아닌 렌더 콜백이다.
+              fallbackRender={({ resetErrorBoundary }) => (
+                <section className={styles.empty}>
+                  <h2 className={styles.dialogTitle}>면접 정보를 불러오지 못했어요</h2>
+                  <Button onClick={resetErrorBoundary} variant="secondary">
+                    다시 불러오기
+                  </Button>
+                </section>
+              )}
+            >
+              <Suspense fallback={<InterviewDetailSkeleton presentation="panel" />}>
+                <InterviewDetailContent
+                  roomId={roomId}
+                  currentMemberId={currentMemberId}
+                  onViewApplications={() => setTab("applications")}
+                />
+              </Suspense>
+            </ErrorBoundary>
+          )}
+        </QueryErrorResetBoundary>
       </RoomTabPanel>
       {isHost && (
         <RoomTabPanel value="applications">
-          <RoomPanelBoundary label="참여 신청" fallback={<ApplicationsSkeleton />}>
-            <ApplicationsPanel roomId={roomId} />
-          </RoomPanelBoundary>
+          <QueryErrorResetBoundary>
+            {({ reset }) => (
+              <ErrorBoundary
+                onReset={reset}
+                // oxlint-disable-next-line react/no-unstable-nested-components -- fallbackRender는 컴포넌트 타입이 아닌 렌더 콜백이다.
+                fallbackRender={({ resetErrorBoundary }) => (
+                  <section className={styles.empty}>
+                    <h2 className={styles.dialogTitle}>참여 신청을 불러오지 못했어요</h2>
+                    <Button onClick={resetErrorBoundary} variant="secondary">
+                      다시 불러오기
+                    </Button>
+                  </section>
+                )}
+              >
+                <Suspense fallback={<ApplicationsSkeleton />}>
+                  <ApplicationsPanel roomId={roomId} />
+                </Suspense>
+              </ErrorBoundary>
+            )}
+          </QueryErrorResetBoundary>
         </RoomTabPanel>
       )}
       {canViewParticipants && currentMemberId !== null && (
         <RoomTabPanel value="participants">
-          <RoomPanelBoundary label="참여자 목록" fallback={<ParticipantsSkeleton />}>
-            <ParticipantsPanel room={room} currentMemberId={currentMemberId} />
-          </RoomPanelBoundary>
+          <QueryErrorResetBoundary>
+            {({ reset }) => (
+              <ErrorBoundary
+                onReset={reset}
+                // oxlint-disable-next-line react/no-unstable-nested-components -- fallbackRender는 컴포넌트 타입이 아닌 렌더 콜백이다.
+                fallbackRender={({ resetErrorBoundary }) => (
+                  <section className={styles.empty}>
+                    <h2 className={styles.dialogTitle}>참여자 목록을 불러오지 못했어요</h2>
+                    <Button onClick={resetErrorBoundary} variant="secondary">
+                      다시 불러오기
+                    </Button>
+                  </section>
+                )}
+              >
+                <Suspense fallback={<ParticipantsSkeleton />}>
+                  <ParticipantsPanel room={room} currentMemberId={currentMemberId} />
+                </Suspense>
+              </ErrorBoundary>
+            )}
+          </QueryErrorResetBoundary>
+        </RoomTabPanel>
+      )}
+      {canViewParticipants && (
+        <RoomTabPanel value="comments">
+          <RoomCommentsPanel roomId={roomId} />
         </RoomTabPanel>
       )}
     </Tabs.Root>

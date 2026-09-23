@@ -18,10 +18,7 @@ export function ParticipantsPanel({
   currentMemberId: string;
 }) {
   const [profileHandle] = useState(() => Popover.createHandle<TrustCardPayload>());
-  const query = useSuspenseQuery({
-    ...roomParticipantsOptions({ path: { roomId: room.roomId } }),
-    retry: false,
-  });
+  const query = useSuspenseQuery(roomParticipantsOptions({ path: { roomId: room.roomId } }));
   const data = query.data.data;
   if (!data) throw new Error("Failed to load room participants");
 
