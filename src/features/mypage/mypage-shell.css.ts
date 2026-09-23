@@ -55,6 +55,7 @@ export const leftColumn = style({
 });
 
 export const trustCard = style({
+  minHeight: "16.2rem",
   ...card,
   display: "flex",
   flexDirection: "column",

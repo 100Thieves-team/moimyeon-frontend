@@ -233,6 +233,7 @@ export const sectionTitle = style({
 });
 
 export const description = style({
+  minHeight: "2lh",
   maxWidth: "64rem",
   color: vars.color.secondary,
   fontSize: "1.6rem",
@@ -249,6 +250,7 @@ export const policyList = style({
 });
 
 export const actionCard = style({
+  minHeight: "26rem",
   display: "flex",
   width: "100%",
   minWidth: 0,

@@ -49,19 +49,18 @@ export function InterviewDiscoverySkeleton() {
 
           <div aria-hidden="true" className={styles.cardGrid}>
             {cards.map((card) => (
-              <div className={skeletonStyles.card} key={card}>
-                <div className={skeletonStyles.cardHeader}>
+              <div className={styles.card} key={card}>
+                <div className={styles.cardBadgeRow}>
                   <Skeleton className={skeletonStyles.cardMeta} />
                   <Skeleton className={skeletonStyles.cardBadge} />
                 </div>
-                <div className={skeletonStyles.cardMain}>
-                  <Skeleton className={skeletonStyles.cardTitle} />
-                  <Skeleton className={skeletonStyles.cardTitleShort} />
-                  <Skeleton className={skeletonStyles.cardDescription} />
+                <div className={styles.cardMain}>
+                  <Skeleton className={styles.cardTitle} width="82%" height="2lh" />
+                  <Skeleton className={styles.cardDescription} width="70%" height="1lh" />
                 </div>
-                <div className={skeletonStyles.cardFooter}>
-                  <Skeleton className={skeletonStyles.cardSchedule} />
-                  <Skeleton className={skeletonStyles.cardParticipants} />
+                <div className={styles.cardFooter}>
+                  <Skeleton className={styles.cardFooterItem} width="12rem" height="1lh" />
+                  <Skeleton className={styles.cardFooterItem} width="5.6rem" height="1lh" />
                 </div>
               </div>
             ))}

@@ -119,6 +119,9 @@ export const resumeSummaryLabel = style({
 export const resumeSummaryText = style([
   textStyle.p2Body,
   {
+    // 요약 생성 중에도 본문 영역을 확보하고, 긴 요약은 잘라내지 않는다.
+    minHeight: "3lh",
+    "@media": { "screen and (max-width: 599px)": { minHeight: "7lh" } },
     color: vars.color.primary,
   },
 ]);

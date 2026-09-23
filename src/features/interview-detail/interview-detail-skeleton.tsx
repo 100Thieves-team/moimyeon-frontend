@@ -25,8 +25,8 @@ export function InterviewDetailSkeleton({
           <div className={isPanel ? styles.panelInfoStrip : styles.infoStrip}>
             {[0, 1, 2].map((item) => (
               <div className={styles.infoColumn} key={item}>
-                <Skeleton width="6rem" height="1.8rem" />
-                <Skeleton width="70%" height="2.2rem" />
+                <Skeleton className={styles.infoLabel} width="6rem" height="1lh" />
+                <Skeleton className={styles.infoValue} width="70%" height="1lh" />
               </div>
             ))}
           </div>
@@ -34,15 +34,19 @@ export function InterviewDetailSkeleton({
         <div className={styles.detailLayout}>
           <div className={styles.detailCopy}>
             <div className={styles.detailSection}>
-              <Skeleton width="8rem" height="2.2rem" />
-              <Skeleton width="95%" height="1.6rem" />
-              <Skeleton width="80%" height="1.6rem" />
-              <Skeleton width="60%" height="1.6rem" />
+              <h2 className={styles.sectionTitle}>면접 소개</h2>
+              <div className={styles.description}>
+                <Skeleton width="95%" height="1lh" />
+                <Skeleton width="65%" height="1lh" />
+              </div>
             </div>
             <div className={styles.policySection}>
-              <Skeleton width="10rem" height="2.2rem" />
-              <Skeleton width="75%" height="1.6rem" />
-              <Skeleton width="65%" height="1.6rem" />
+              <h2 className={styles.sectionTitle}>참여 전에 알아두세요</h2>
+              <div className={styles.policyList}>
+                <Skeleton width="85%" height="1lh" />
+                <Skeleton width="95%" height="1lh" />
+                <Skeleton width="75%" height="1lh" />
+              </div>
             </div>
           </div>
           <div className={styles.rightRail}>
@@ -56,7 +60,7 @@ export function InterviewDetailSkeleton({
                   <Skeleton key={item} circle width="4rem" height="4rem" />
                 ))}
               </div>
-              <Skeleton width="6rem" height="2rem" />
+              <Skeleton className={styles.remainingQuota} width="6rem" height="1lh" />
               <Skeleton width="100%" height="0.6rem" />
               <Skeleton width="100%" height="5rem" />
             </div>

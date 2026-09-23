@@ -7,13 +7,13 @@ export function InterviewRoomSkeleton() {
     <main className={styles.page} aria-label="면접 상세 불러오는 중" aria-busy="true">
       <div className={styles.content}>
         <div className={styles.heading}>
-          <Skeleton width="65%" height="3.9rem" />
-          <Skeleton width="16rem" height="1.8rem" />
+          <Skeleton className={styles.title} width="65%" height="1lh" />
+          <Skeleton className={styles.roomMeta} width="45%" height="1lh" />
         </div>
         <div className={styles.navigation}>
           {[0, 1].map((tab) => (
             <div className={styles.tab} key={tab}>
-              <Skeleton width="7rem" height="2rem" />
+              <Skeleton width="7rem" height="1.8rem" />
             </div>
           ))}
         </div>

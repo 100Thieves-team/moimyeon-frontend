@@ -6,6 +6,7 @@ globalStyle("html", {
   fontSize: "62.5%",
   height: "100%",
   colorScheme: "light dark",
+  scrollbarGutter: "stable",
 });
 
 globalStyle("*, *::before, *::after", {

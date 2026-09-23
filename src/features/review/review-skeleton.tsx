@@ -6,7 +6,7 @@ export function ReviewSkeleton() {
   return (
     <main className={styles.page} aria-label="후기 작성 불러오는 중" aria-busy="true">
       <div className={styles.column}>
-        <Skeleton width="80%" height="3.6rem" />
+        <h1 className={styles.title}>함께한 분들에게 후기를 남겨주세요</h1>
         <div className={styles.sessionCard}>
           <div className={styles.sessionInfo}>
             <Skeleton width="75%" height="2.1rem" />

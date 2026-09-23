@@ -26,7 +26,7 @@ export const tabs = style({
 });
 export const tab = style({
   display: "inline-flex",
-  alignItems: "baseline",
+  alignItems: "center",
   gap: "0.4rem",
   padding: "1.2rem 0.2rem",
   background: "transparent",
@@ -34,6 +34,7 @@ export const tab = style({
   borderBottom: "2px solid transparent",
   color: vars.color.tertiary,
   fontSize: "1.45rem",
+  lineHeight: "1.8rem",
   fontWeight: 500,
   cursor: "pointer",
   selectors: {
@@ -150,15 +151,4 @@ export const error = style({
   color: vars.color.red,
   fontSize: "1.3rem",
   lineHeight: "1.8rem",
-});
-export const skeletonTabs = style({
-  width: "24rem",
-  height: "4.4rem",
-  borderRadius: vars.radius.control,
-  backgroundColor: vars.color.fillSecondary,
-});
-export const skeletonCard = style({
-  height: "10rem",
-  borderRadius: "2rem",
-  backgroundColor: vars.color.fillSecondary,
 });

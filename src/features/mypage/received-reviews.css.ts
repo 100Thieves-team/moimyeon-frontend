@@ -82,13 +82,13 @@ export const skeletonChip = style({
 export const skeletonLine = style({
   ...skeletonBase,
   width: "70%",
-  height: "1.4rem",
+  height: "2rem",
   borderRadius: "0.4rem",
 });
 
 export const skeletonLineShort = style({
   ...skeletonBase,
   width: "24%",
-  height: "1.2rem",
+  height: "1.6rem",
   borderRadius: "0.4rem",
 });
