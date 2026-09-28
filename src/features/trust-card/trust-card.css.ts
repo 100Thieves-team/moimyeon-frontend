@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars, textMetrics } from "@/styles";
+import { vars, textMetrics } from "@/styles";
 
 export const trigger = style({
   display: "inline-flex",
@@ -28,7 +28,6 @@ export const popup = style({
   borderRadius: vars.radius.media,
   border: `1px solid ${vars.color.strokeLight}`,
   backgroundColor: vars.color.trueWhite,
-  "@media": { [media.dark]: { backgroundColor: vars.color.background } },
   boxShadow: vars.shadow.cardRaise,
 });
 
@@ -46,7 +45,6 @@ export const arrow = style({
   width: "1.4rem",
   height: "1.4rem",
   backgroundColor: vars.color.trueWhite,
-  "@media": { [media.dark]: { backgroundColor: vars.color.background } },
   borderTop: `1px solid ${vars.color.strokeLight}`,
   borderLeft: `1px solid ${vars.color.strokeLight}`,
   transform: "rotate(45deg)",
@@ -79,7 +77,6 @@ export const hostAvatar = style({
   borderRadius: vars.radius.pill,
   backgroundColor: vars.color.yellow10,
   color: vars.color.brown,
-  "@media": { [media.dark]: { color: vars.color.yellow } },
   fontSize: "1.7rem",
   fontWeight: 500,
   lineHeight: "1.7rem",
@@ -114,7 +111,6 @@ export const hostBadge = style({
   borderRadius: vars.radius.pill,
   backgroundColor: vars.color.yellow10,
   color: vars.color.brown,
-  "@media": { [media.dark]: { color: vars.color.yellow } },
   ...textMetrics.metadata,
   fontWeight: 700,
 });
@@ -196,6 +192,5 @@ export const avatar = style([
   {
     backgroundColor: vars.color.fillSecondary,
     color: vars.color.secondary,
-    "@media": { [media.dark]: { color: vars.color.secondary } },
   },
 ]);

@@ -49,20 +49,6 @@ colors:
   stroke-light: "rgba(0,0,0,0.06)"
   stroke-medium: "rgba(0,0,0,0.12)"
   background: "#F8F8F8"
-dark:
-  background: "#1B1B1B"
-  primary: "#FFFFFF"
-  secondary: "rgba(255,255,255,0.80)"
-  tertiary: "rgba(255,255,255,0.60)"
-  quaternary: "rgba(255,255,255,0.40)"
-  fill-primary: "#FFFFFF"
-  fill-secondary: "rgba(255,255,255,0.20)"
-  fill-secondary-hover: "rgba(255,255,255,0.25)"
-  fill-tertiary: "rgba(255,255,255,0.10)"
-  stroke-light: "rgba(255,255,255,0.10)"
-  stroke-medium: "rgba(255,255,255,0.20)"
-  primary-50: "rgba(255,255,255,0.50)"
-  primary-10: "rgba(255,255,255,0.10)"
 typography:
   nav-label:
     fontFamily: "Pretendard Variable, Helvetica, Arial, sans-serif"
@@ -344,7 +330,7 @@ the interface stays monochrome, while color appears in concentrated moments.
 Hierarchy should come from typography, surface contrast, and product imagery
 rather than decorative panels.
 
-This reference covers the light and dark token sets, a semantic type scale,
+This reference covers the light-only token set, a semantic type scale,
 elevation, and motion. It is the visual expression of the strategy described in
 Design Principles below: quiet, familiar core surfaces, with expressive styling
 reserved for concentrated brand and AI moments.
@@ -399,10 +385,8 @@ Surface roles:
 - Secondary copy: `rgba(0,0,0,0.60)`
 - Footer link text: `rgba(0,0,0,0.425)`
 
-Dark mode swaps the alpha-black semantic roles for alpha-white equivalents over
-a `#1B1B1B` background (see the `dark` token block). Apply the dark block
-wholesale — do not mix individual dark values into the light theme. Accent
-colors stay identical in both modes.
+All screens use the light token set regardless of operating-system or browser
+color-scheme preferences.
 
 Two smaller notes: inline links may shift to the dedicated `link-hover` indigo
 on hover, and the source site defines its header background twice
@@ -593,8 +577,7 @@ above are the curated subset this project uses.
 - Do use the semantic type scale (`h1`–`h4`, `p1`/`p2`, `caption`); display
   styles carry their font-substitution mapping.
 - Do keep large headings light (`300`) with tight tracking; don't bold them.
-- Do apply the dark block wholesale; don't mix single dark values into light
-  mode.
+- Do use the light token set consistently across all screens.
 - Do reserve hard-offset shadows for hover moments.
 - Do let product screenshots and UI details provide visual proof.
 - Don't mix pure white and off-white casually; each has a distinct surface role.

@@ -5,7 +5,7 @@ import { vars } from "./theme.css";
 globalStyle("html", {
   fontSize: "62.5%",
   height: "100%",
-  colorScheme: "light dark",
+  colorScheme: "only light",
   scrollbarGutter: "stable",
 });
 

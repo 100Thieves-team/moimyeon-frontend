@@ -1,10 +1,9 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars, textMetrics } from "@/styles";
+import { vars, textMetrics } from "@/styles";
 
 const mobile = "screen and (max-width: 799px)";
 const surface = {
   backgroundColor: vars.color.trueWhite,
-  "@media": { [media.dark]: { backgroundColor: vars.color.background } },
 };
 
 export const page = style({

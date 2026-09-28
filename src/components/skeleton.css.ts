@@ -25,13 +25,6 @@ export const skeleton = style({
     },
   },
   "@media": {
-    [media.dark]: {
-      selectors: {
-        "&::after": {
-          backgroundImage: `linear-gradient(90deg, transparent, ${vars.color.white10}, transparent)`,
-        },
-      },
-    },
     [media.reducedMotion]: {
       selectors: { "&::after": { display: "none", animation: "none" } },
     },

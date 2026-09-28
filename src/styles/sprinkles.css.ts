@@ -43,7 +43,7 @@ const responsiveProperties = defineProperties({
   },
 });
 
-// 컬러는 다크 모드에서 자동 전환됨
+// 모든 화면에서 사용하는 라이트모드 컬러
 const unconditionalProperties = defineProperties({
   properties: {
     color: vars.color,

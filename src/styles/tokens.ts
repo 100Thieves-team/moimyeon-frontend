@@ -35,7 +35,6 @@ export const media = {
   lg: minWidth(breakpoints.lg),
   xl: minWidth(breakpoints.xl),
   "2xl": minWidth(breakpoints["2xl"]),
-  dark: "(prefers-color-scheme: dark)",
   hover: "(hover: hover) and (pointer: fine)",
   reducedMotion: "(prefers-reduced-motion: reduce)",
 } as const;

@@ -4,7 +4,7 @@ import { vars } from "@/styles/theme.css";
 import { media } from "@/styles/tokens";
 
 const mobile = "screen and (max-width: 599px)";
-const surface = `light-dark(${vars.color.trueWhite}, ${vars.color.background})`;
+const surface = vars.color.trueWhite;
 
 export const page = style({
   padding: `${vars.layout.pageTop} ${vars.layout.sidePadding} max(${vars.spacing.section}, env(safe-area-inset-bottom))`,
@@ -120,14 +120,14 @@ export const pendingChip = style([
   chip,
   {
     backgroundColor: vars.color.yellow10,
-    color: `light-dark(${vars.color.brown}, ${vars.color.yellow})`,
+    color: vars.color.brown,
   },
 ]);
 export const upcomingChip = style([
   chip,
   {
     backgroundColor: vars.color.blue10,
-    color: `light-dark(${vars.color.blue}, ${vars.color.primary})`,
+    color: vars.color.blue,
   },
 ]);
 export const completedChip = style([

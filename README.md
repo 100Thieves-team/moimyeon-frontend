@@ -51,11 +51,13 @@ pnpm test:unit
 pnpm test:browser
 ```
 
-To debug the browser tests in the Vitest Browser Mode UI, run either color-scheme project:
+All feature tests run in a light browser environment. The focused light-mode regression
+tests also run with a dark system preference to verify that the UI stays light.
+To debug either suite in the Vitest Browser Mode UI:
 
 ```bash
 pnpm test:browser:ui
-pnpm test:browser:ui:dark
+pnpm test:browser:ui:light-regression
 ```
 
 CI environments should install Chromium and its operating-system dependencies with `pnpm exec playwright install --with-deps chromium` before running the tests.
