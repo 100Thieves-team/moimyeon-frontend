@@ -17,11 +17,22 @@ import "@/styles/global.css";
 const mocks = vi.hoisted(() => ({
   room: vi.fn(),
   participants: vi.fn(),
+  comments: vi.fn(),
   applications: vi.fn(),
   leave: vi.fn(),
   profile: vi.fn(),
 }));
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
+  getRoomCommentsInfiniteQueryKey: ({ path }: { path: { roomId: string } }) => [
+    "comments",
+    path.roomId,
+  ],
+  getRoomCommentsInfiniteOptions: ({ path }: { path: { roomId: string } }) => ({
+    queryKey: ["comments", path.roomId],
+    queryFn: mocks.comments,
+  }),
+  createRoomCommentMutation: () => ({ mutationFn: vi.fn() }),
+  deleteRoomCommentMutation: () => ({ mutationFn: vi.fn() }),
   issueDevSessionMutation: () => ({ mutationFn: vi.fn() }),
   withdrawRoomApplicationMutation: () => ({ mutationFn: vi.fn() }),
   roomDetailOptions: ({ path }: { path: { roomId: string } }) => ({
@@ -83,6 +94,10 @@ async function setup(openPrivateTab = true, currentMemberId: string | null = "me
 
 beforeEach(async () => {
   vi.resetAllMocks();
+  mocks.comments.mockResolvedValue({
+    result: "SUCCESS",
+    data: { comments: [], writable: true, nextCursor: null },
+  });
   routerReplaceMock.mockImplementation(() => {});
   room = structuredClone(MOCK_INTERVIEW_DETAIL_SCENARIOS[0].room);
   room.roomId = roomId;
@@ -149,6 +164,44 @@ afterEach(async () => {
 });
 
 describe("참여자 명부", () => {
+  it("댓글 탭을 왕복해도 작성 중인 초안을 유지한다", async () => {
+    mocks.comments.mockResolvedValue({
+      result: "SUCCESS",
+      data: {
+        comments: [
+          {
+            commentId: 2,
+            createdAt: "2026-07-21T14:31:00",
+            isDeleted: false,
+            isMine: false,
+            author: { nickname: "꼼꼼한 여우 12", isHost: true, hasLeft: false },
+            content:
+              "그럼 각자 이력서 기준으로 예상 질문 3개씩 준비해와요. 당일에 순서 정해서 진행할게요.",
+          },
+          {
+            commentId: 1,
+            createdAt: "2026-07-21T14:22:00",
+            isDeleted: false,
+            isMine: true,
+            author: { nickname: "든든한 곰 21", isHost: false, hasLeft: false },
+            content: "네 좋습니다. 이력서 기준 예상 질문도 각자 정리해오면 좋을 것 같아요.",
+          },
+        ],
+        writable: true,
+        nextCursor: null,
+        readOnlyAt: null,
+      },
+    });
+    const { screen } = await setup(false);
+    await screen.getByRole("tab", { name: "댓글", exact: true }).click();
+    await screen.getByRole("textbox", { name: "댓글 내용" }).fill("작성 중인 댓글");
+    await screen.getByRole("tab", { name: "면접 정보", exact: true }).click();
+    await screen.getByRole("tab", { name: "댓글", exact: true }).click();
+    await expect
+      .element(screen.getByRole("textbox", { name: "댓글 내용" }))
+      .toHaveValue("작성 중인 댓글");
+  });
+
   it.each(["anonymous", "nonparticipant", "pending"])(
     "%s 사용자는 정보만 보고 비공개 목록을 조회하지 않는다",
     async (kind) => {
@@ -168,6 +221,8 @@ describe("참여자 명부", () => {
       await expect.element(screen.getByRole("tab", { name: "참여자 3" })).toBeDisabled();
       await expect.element(screen.getByRole("tab", { name: /참여 신청/ })).not.toBeInTheDocument();
       expect(mocks.participants).not.toHaveBeenCalled();
+      expect(mocks.comments).not.toHaveBeenCalled();
+      await expect.element(screen.getByRole("tab", { name: "댓글", exact: true })).toBeDisabled();
       expect(mocks.applications).not.toHaveBeenCalled();
     },
   );
@@ -189,6 +244,8 @@ describe("참여자 명부", () => {
         .element(screen.getByRole("button", { name: "참가 신청하기", exact: true }))
         .toBeVisible();
       expect(mocks.participants).not.toHaveBeenCalled();
+      expect(mocks.comments).not.toHaveBeenCalled();
+      await expect.element(screen.getByRole("tab", { name: "댓글", exact: true })).toBeDisabled();
       expect(mocks.applications).not.toHaveBeenCalled();
     },
   );
@@ -203,7 +260,7 @@ describe("참여자 명부", () => {
         .getByRole("tab")
         .elements()
         .map((tab) => tab.textContent),
-    ).toEqual(["면접 정보", "참여자 3"]);
+    ).toEqual(["면접 정보", "참여자 3", "댓글"]);
     const url = window.location.href;
     await screen.getByRole("tab", { name: "면접 정보" }).click();
     const info = screen.getByRole("tabpanel", { name: "면접 정보" });
@@ -228,7 +285,7 @@ describe("참여자 명부", () => {
     await expect
       .element(screen.getByRole("tab", { name: "참여자 3" }))
       .toHaveAttribute("aria-selected", "true");
-    await expect.element(screen.getByRole("tab", { name: "댓글" })).not.toBeInTheDocument();
+    await expect.element(screen.getByRole("tab", { name: "댓글" })).toBeVisible();
     expect(mocks.applications).not.toHaveBeenCalled();
     await expect
       .element(screen.getByText("이력서 원본은 공개하지 않는 면접이에요.", { exact: false }))
@@ -512,7 +569,7 @@ describe("참여 취소", () => {
   );
 
   it("성공하지 않은 응답은 내 면접 이동이나 성공 알림으로 처리하지 않는다", async () => {
-    mocks.leave.mockResolvedValue({ result: "ERROR", data: null });
+    mocks.leave.mockRejectedValue(error("E500", "요청 처리 실패"));
     const { screen } = await setup();
     await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
     await screen.getByRole("button", { name: "취소하기", exact: true }).click();

@@ -27,6 +27,19 @@ const mocks = vi.hoisted(() => ({
   reject: vi.fn(),
 }));
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
+  getRoomCommentsInfiniteQueryKey: ({ path }: { path: { roomId: string } }) => [
+    "comments",
+    path.roomId,
+  ],
+  getRoomCommentsInfiniteOptions: ({ path }: { path: { roomId: string } }) => ({
+    queryKey: ["comments", path.roomId],
+    queryFn: async () => ({
+      result: "SUCCESS",
+      data: { comments: [], writable: true, nextCursor: null, readOnlyAt: null },
+    }),
+  }),
+  createRoomCommentMutation: () => ({ mutationFn: vi.fn() }),
+  deleteRoomCommentMutation: () => ({ mutationFn: vi.fn() }),
   issueDevSessionMutation: () => ({ mutationFn: vi.fn() }),
   withdrawRoomApplicationMutation: () => ({ mutationFn: vi.fn() }),
   roomDetailOptions: ({ path }: { path: { roomId: string } }) => ({
@@ -212,7 +225,7 @@ describe("방장 참여 신청 관리", () => {
         .getByRole("tab")
         .elements()
         .map((tab) => tab.textContent),
-    ).toEqual(["면접 정보", "참여 신청 1", "참여자 4"]);
+    ).toEqual(["면접 정보", "참여 신청 1", "참여자 4", "댓글"]);
     const url = window.location.href;
     await screen.getByRole("tab", { name: "면접 정보" }).click();
     const info = screen.getByRole("tabpanel", { name: "면접 정보" });
@@ -358,7 +371,7 @@ describe("방장 참여 신청 관리", () => {
       .element(screen.getByText("Kotlin과 Spring으로 결제 정산 배치를 개발했어요."))
       .toBeVisible();
     await expect.element(screen.getByRole("tab", { name: "참여자 4" })).toBeEnabled();
-    await expect.element(screen.getByRole("tab", { name: "댓글" })).not.toBeInTheDocument();
+    await expect.element(screen.getByRole("tab", { name: "댓글" })).toBeVisible();
     await expect.element(screen.getByRole("tab", { name: "면접 정보" })).toBeEnabled();
     await expect.element(screen.getByText(/완료 \d+회|출석 \d+%/)).not.toBeInTheDocument();
   });
