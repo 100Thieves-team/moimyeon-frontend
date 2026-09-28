@@ -1,3 +1,4 @@
+import { vars } from "@/styles/theme.css";
 import { Skeleton } from "@/components/skeleton";
 import { InterviewDetailSkeleton } from "@/features/interview-detail/interview-detail-skeleton";
 import * as styles from "./interview-room.css";
@@ -13,7 +14,7 @@ export function InterviewRoomSkeleton() {
         <div className={styles.navigation}>
           {[0, 1].map((tab) => (
             <div className={styles.tab} key={tab}>
-              <Skeleton width="7rem" height="1.8rem" />
+              <Skeleton width="7rem" height={vars.type.bodySm.lineHeight} />
             </div>
           ))}
         </div>
@@ -35,19 +36,19 @@ export function ApplicationsSkeleton() {
               <div className={styles.profile}>
                 <Skeleton circle width="4rem" height="4rem" />
                 <div className={styles.identity}>
-                  <Skeleton width="8rem" height="1.9rem" />
-                  <Skeleton width="12rem" height="1.7rem" />
+                  <Skeleton width="8rem" height={vars.type.body.lineHeight} />
+                  <Skeleton width="12rem" height={vars.type.metadata.lineHeight} />
                 </div>
               </div>
               <div className={styles.excerpt}>
-                <Skeleton width="80%" height="1.8rem" />
+                <Skeleton width="80%" height={vars.type.bodySm.lineHeight} />
               </div>
               <div className={styles.appliedAt}>
-                <Skeleton width="7rem" height="1.8rem" />
+                <Skeleton width="7rem" height={vars.type.bodySm.lineHeight} />
               </div>
               <div className={styles.actions}>
-                <Skeleton width="5rem" height="3.4rem" />
-                <Skeleton width="5rem" height="3.4rem" />
+                <Skeleton width="5rem" height={vars.size.controlSm} />
+                <Skeleton width="5rem" height={vars.size.controlSm} />
               </div>
             </div>
           </div>
@@ -67,13 +68,13 @@ export function ParticipantsSkeleton() {
               <div className={styles.profile}>
                 <Skeleton circle width="4.2rem" height="4.2rem" />
                 <div className={styles.participantIdentity}>
-                  <Skeleton width="8rem" height="1.9rem" />
-                  <Skeleton width="12rem" height="1.7rem" />
+                  <Skeleton width="8rem" height={vars.type.body.lineHeight} />
+                  <Skeleton width="12rem" height={vars.type.metadata.lineHeight} />
                 </div>
               </div>
             </div>
             <div className={styles.participantSummary}>
-              <Skeleton width="75%" height="1.9rem" />
+              <Skeleton width="75%" height={vars.type.body.lineHeight} />
             </div>
           </div>
         ))}

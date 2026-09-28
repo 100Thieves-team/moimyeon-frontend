@@ -4,7 +4,7 @@ import {
   createGlobalThemeContract,
   globalStyle,
 } from "@vanilla-extract/css";
-import { media, motionValues } from "./tokens";
+import { desktopTypeValues, media, motionValues, sizeValues, typeValues } from "./tokens";
 
 const toCubicBezier = ([x1, y1, x2, y2]: [number, number, number, number]) =>
   `cubic-bezier(${x1}, ${y1}, ${x2}, ${y2})`;
@@ -81,10 +81,35 @@ const staticContract = createGlobalThemeContract({
     sans: "font-sans",
     mono: "font-mono",
   },
+  type: {
+    pageTitle: { fontSize: "type-pageTitle-size", lineHeight: "type-pageTitle-line-height" },
+    sectionTitle: {
+      fontSize: "type-sectionTitle-size",
+      lineHeight: "type-sectionTitle-line-height",
+    },
+    cardTitle: { fontSize: "type-cardTitle-size", lineHeight: "type-cardTitle-line-height" },
+    body: { fontSize: "type-body-size", lineHeight: "type-body-line-height" },
+    bodySm: { fontSize: "type-bodySm-size", lineHeight: "type-bodySm-line-height" },
+    metadata: { fontSize: "type-metadata-size", lineHeight: "type-metadata-line-height" },
+  },
+  size: {
+    controlSm: "size-controlSm",
+    controlMd: "size-controlMd",
+    controlLg: "size-controlLg",
+    iconSm: "size-iconSm",
+    iconMd: "size-iconMd",
+    iconLg: "size-iconLg",
+    header: "size-header",
+  },
   layout: {
     maxWidth: "layout-max-width",
     columnGap: "layout-column-gap",
     sidePadding: "layout-side-padding",
+    pageTop: "layout-page-top",
+    sectionGap: "layout-section-gap",
+    cardPadding: "layout-card-padding",
+    formMaxWidth: "layout-form-max-width",
+    documentMaxWidth: "layout-document-max-width",
   },
   radius: {
     control: "radius-control",
@@ -168,10 +193,17 @@ createGlobalTheme(":root", staticContract, {
     sans: "var(--font-pretendard), Helvetica, Arial, sans-serif",
     mono: 'var(--font-noto-sans-mono-cjk-kr), "SF Mono", Menlo, Consolas, monospace',
   },
+  type: typeValues,
+  size: sizeValues,
   layout: {
-    maxWidth: "200rem",
+    maxWidth: "128rem",
     columnGap: "2rem",
-    sidePadding: "1rem",
+    sidePadding: "1.6rem",
+    pageTop: "2.4rem",
+    sectionGap: "3.2rem",
+    cardPadding: "2rem",
+    formMaxWidth: "64rem",
+    documentMaxWidth: "80rem",
   },
   radius: {
     control: "0.8rem",
@@ -201,6 +233,22 @@ createGlobalTheme(":root", staticContract, {
       fast: toMilliseconds(motionValues.duration.fast),
       base: toMilliseconds(motionValues.duration.base),
       slow: toMilliseconds(motionValues.duration.slow),
+    },
+  },
+});
+
+// 제품 화면의 치수는 공통 브레이크포인트에서 전환한다.
+globalStyle(":root", {
+  "@media": {
+    [media.sm]: { vars: { [staticContract.layout.sidePadding]: "2rem" } },
+    [media.md]: {
+      vars: {
+        [staticContract.layout.pageTop]: "4rem",
+        [staticContract.layout.sectionGap]: "4rem",
+        [staticContract.layout.cardPadding]: "2.4rem",
+        ...assignVars(staticContract.type.pageTitle, desktopTypeValues.pageTitle),
+        ...assignVars(staticContract.type.sectionTitle, desktopTypeValues.sectionTitle),
+      },
     },
   },
 });

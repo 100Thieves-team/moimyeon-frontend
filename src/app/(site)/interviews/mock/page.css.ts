@@ -1,12 +1,12 @@
 import { style } from "@vanilla-extract/css";
-import { vars } from "@/styles";
+import { vars, textMetrics } from "@/styles";
 
 export const page = style({
   width: "100%",
   maxWidth: vars.layout.maxWidth,
   marginInline: "auto",
   paddingInline: vars.layout.sidePadding,
-  paddingBlock: vars.spacing.section,
+  paddingBlock: vars.layout.pageTop,
 });
 
 export const header = style({
@@ -20,22 +20,20 @@ export const header = style({
 export const eyebrow = style({
   color: vars.color.tertiary,
   fontFamily: vars.font.mono,
-  fontSize: "1.2rem",
+  ...textMetrics.metadata,
   letterSpacing: "0.08em",
   textTransform: "uppercase",
 });
 
 export const title = style({
   color: vars.color.primary,
-  fontSize: "3.2rem",
+  ...textMetrics.pageTitle,
   fontWeight: 700,
-  lineHeight: 1.25,
 });
 
 export const description = style({
   color: vars.color.secondary,
-  fontSize: "1.6rem",
-  lineHeight: 1.65,
+  ...textMetrics.bodySm,
 });
 
 export const sections = style({
@@ -47,12 +45,12 @@ export const sections = style({
 export const section = style({
   display: "flex",
   flexDirection: "column",
-  gap: vars.spacing.md,
+  gap: vars.layout.sectionGap,
 });
 
 export const sectionTitle = style({
   color: vars.color.primary,
-  fontSize: "2rem",
+  ...textMetrics.sectionTitle,
   fontWeight: 700,
 });
 
@@ -69,7 +67,7 @@ export const card = style({
   height: "100%",
   flexDirection: "column",
   gap: vars.spacing.sm,
-  padding: vars.spacing.lg,
+  padding: vars.layout.cardPadding,
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.media,
   backgroundColor: vars.color.trueWhite,
@@ -87,19 +85,17 @@ export const card = style({
 
 export const cardTitle = style({
   color: vars.color.primary,
-  fontSize: "1.7rem",
-  lineHeight: 1.45,
+  ...textMetrics.cardTitle,
 });
 
 export const cardDescription = style({
   color: vars.color.secondary,
-  fontSize: "1.4rem",
-  lineHeight: 1.6,
+  ...textMetrics.bodySm,
 });
 
 export const cardAction = style({
   marginTop: "auto",
   color: vars.color.primary,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   fontWeight: 600,
 });

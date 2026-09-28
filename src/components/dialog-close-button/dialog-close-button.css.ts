@@ -8,7 +8,7 @@ export const closeButton = style({
   display: "grid",
   placeItems: "center",
   width: "4rem",
-  height: "4rem",
+  height: vars.size.controlSm,
   padding: 0,
   border: 0,
   borderRadius: vars.radius.pill,

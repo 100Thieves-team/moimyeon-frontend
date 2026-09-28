@@ -1,3 +1,4 @@
+import { vars } from "@/styles/theme.css";
 import { Skeleton } from "@/components/skeleton";
 import * as styles from "./review-content.css";
 import * as rowStyles from "./target-row.css";
@@ -9,10 +10,10 @@ export function ReviewSkeleton() {
         <h1 className={styles.title}>함께한 분들에게 후기를 남겨주세요</h1>
         <div className={styles.sessionCard}>
           <div className={styles.sessionInfo}>
-            <Skeleton width="75%" height="2.1rem" />
-            <Skeleton width="40%" height="1.9rem" />
+            <Skeleton width="75%" height={vars.type.cardTitle.lineHeight} />
+            <Skeleton width="40%" height={vars.type.bodySm.lineHeight} />
           </div>
-          <Skeleton width="5.6rem" height="1.9rem" />
+          <Skeleton width="5.6rem" height={vars.type.bodySm.lineHeight} />
         </div>
         <div className={styles.targetList}>
           {[0, 1, 2].map((target) => (

@@ -1,17 +1,17 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars, textStyle } from "@/styles";
+import { media, vars, textStyle, textMetrics } from "@/styles";
 
 const controlFrame = {
   width: "100%",
-  minHeight: "4.8rem",
+  minHeight: vars.size.controlMd,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.control,
   backgroundColor: "transparent",
   color: vars.color.primary,
   fontFamily: vars.font.sans,
-  fontSize: "1.6rem",
+  ...textMetrics.body,
   fontWeight: 500,
-  lineHeight: "2rem",
+
   transition: `border-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, box-shadow ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
   selectors: {
     "&:focus-within": {
@@ -27,11 +27,7 @@ const controlFrame = {
 export const page = style({
   width: "100%",
   flex: "1 1 auto",
-  padding: `5.2rem 1.6rem max(8.8rem, env(safe-area-inset-bottom))`,
-  "@media": {
-    [media.md]: { paddingInline: "3.2rem" },
-    [media.lg]: { paddingInline: "6.4rem" },
-  },
+  padding: `${vars.layout.pageTop} ${vars.layout.sidePadding} max(${vars.spacing.section}, env(safe-area-inset-bottom))`,
 });
 
 export const layout = style({
@@ -40,11 +36,10 @@ export const layout = style({
   maxWidth: "98rem",
   marginInline: "auto",
   alignItems: "start",
-  gap: vars.spacing.xl,
+  gap: vars.layout.sectionGap,
   "@media": {
     [media.lg]: {
       gridTemplateColumns: "minmax(18rem, 23rem) minmax(0, 64rem)",
-      gap: "clamp(3.2rem, 8vw, 11rem)",
     },
   },
 });
@@ -76,7 +71,7 @@ export const stepButton = style({
   gridTemplateColumns: "2rem minmax(0, 1fr)",
   alignItems: "start",
   gap: vars.spacing.md,
-  padding: "1rem 1.2rem",
+  padding: `${vars.spacing.md} ${vars.spacing.md}`,
   overflow: "hidden",
   border: 0,
   borderRadius: vars.radius.control,
@@ -130,20 +125,21 @@ export const stepNumber = style({
   alignItems: "center",
   paddingTop: "0.1rem",
   fontFamily: vars.font.mono,
-  fontSize: "1.2rem",
-  lineHeight: "1.6rem",
+  ...textMetrics.metadata,
 });
 
 export const stepLabel = style({
-  fontSize: "1.5rem",
+  ...textMetrics.bodySm,
   fontWeight: 400,
-  lineHeight: "2rem",
+
   selectors: {
     [`${stepButton}[aria-current="step"] &`]: { fontWeight: 700 },
   },
 });
 
 export const wizardMain = style({
+  maxWidth: vars.layout.formMaxWidth,
+  justifySelf: "center",
   display: "flex",
   width: "100%",
   minWidth: 0,
@@ -156,9 +152,9 @@ export const mobileProgress = style({
   alignItems: "center",
   gap: vars.spacing.sm,
   color: vars.color.secondary,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   fontWeight: 600,
-  lineHeight: "1.8rem",
+
   "@media": {
     [media.lg]: { display: "none" },
   },
@@ -174,27 +170,24 @@ export const mobileStepNumber = style({
 export const title = style({
   outline: 0,
   color: vars.color.primary,
-  fontSize: "2.6rem",
+  ...textMetrics.pageTitle,
   fontWeight: 300,
-  lineHeight: "3.2rem",
+
   letterSpacing: "-0.02em",
-  "@media": {
-    [media.md]: { fontSize: "3rem", lineHeight: "3.6rem" },
-  },
 });
 
 export const form = style({
   display: "flex",
   width: "100%",
   flexDirection: "column",
-  gap: vars.spacing.xl,
+  gap: vars.layout.sectionGap,
 });
 
 export const stepContent = style({
   display: "flex",
   width: "100%",
   flexDirection: "column",
-  gap: vars.spacing.xl,
+  gap: vars.layout.sectionGap,
 });
 
 export const formCard = style({
@@ -202,14 +195,11 @@ export const formCard = style({
   width: "100%",
   minWidth: 0,
   flexDirection: "column",
-  gap: vars.spacing.xl,
-  padding: "2.4rem",
+  gap: vars.spacing.lg,
+  padding: vars.layout.cardPadding,
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.media,
   backgroundColor: vars.color.background,
-  "@media": {
-    [media.md]: { padding: "3.2rem" },
-  },
 });
 
 export const field = style({
@@ -232,16 +222,15 @@ export const fieldLabel = style([
 export const fieldRequirement = style({
   color: vars.color.tertiary,
   fontFamily: vars.font.mono,
-  fontSize: "1.05rem",
+  ...textMetrics.bodySm,
   fontWeight: 400,
-  lineHeight: "1.4rem",
+
   letterSpacing: "0.06em",
 });
 
 export const fieldError = style({
   color: vars.color.red,
-  fontSize: "1.2rem",
-  lineHeight: "1.6rem",
+  ...textMetrics.bodySm,
 });
 
 export const comboboxInputGroup = style({
@@ -254,16 +243,16 @@ export const comboboxInputGroup = style({
 export const comboboxInput = style({
   width: "100%",
   minWidth: 0,
-  minHeight: "4.6rem",
-  padding: "1.3rem 1.6rem",
+  minHeight: `calc(${vars.size.controlMd} - 2px)`,
+  padding: `${vars.spacing.sm} ${vars.spacing.base}`,
   border: 0,
   outline: 0,
   backgroundColor: "transparent",
   color: vars.color.primary,
   fontFamily: vars.font.sans,
-  fontSize: "1.6rem",
+  ...textMetrics.body,
   fontWeight: 500,
-  lineHeight: "2rem",
+
   textOverflow: "ellipsis",
   selectors: {
     "&::placeholder": { color: vars.color.tertiary, fontWeight: 400, opacity: 1 },
@@ -298,23 +287,21 @@ export const comboboxPopup = style({
 });
 
 export const comboboxStatus = style({
-  padding: "0.8rem 1rem",
+  padding: `${vars.spacing.sm} ${vars.spacing.md}`,
   color: vars.color.tertiary,
-  fontSize: "1.3rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.metadata,
 });
 
 export const comboboxEmpty = style({
   padding: vars.spacing.md,
   color: vars.color.tertiary,
-  fontSize: "1.3rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.metadata,
 });
 
 export const comboboxList = style({
   display: "flex",
   flexDirection: "column",
-  gap: "0.2rem",
+  gap: vars.spacing.xs,
 });
 
 export const comboboxItem = style({
@@ -322,7 +309,7 @@ export const comboboxItem = style({
   minHeight: "5.2rem",
   alignItems: "center",
   gap: vars.spacing.sm,
-  padding: "0.8rem 1rem",
+  padding: `${vars.spacing.sm} ${vars.spacing.md}`,
   borderRadius: vars.radius.control,
   color: vars.color.primary,
   cursor: "pointer",
@@ -334,8 +321,8 @@ export const comboboxItem = style({
 
 export const comboboxIndicator = style({
   display: "inline-flex",
-  width: "1.6rem",
-  height: "1.6rem",
+  width: vars.size.iconSm,
+  height: vars.size.iconSm,
   flex: "0 0 auto",
   alignItems: "center",
   justifyContent: "center",
@@ -345,30 +332,28 @@ export const postingCopy = style({
   display: "flex",
   minWidth: 0,
   flexDirection: "column",
-  gap: "0.2rem",
+  gap: vars.spacing.xs,
 });
 
 export const postingName = style({
   overflow: "hidden",
-  fontSize: "1.4rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
+
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
 });
 
 export const companyName = style({
   color: vars.color.tertiary,
-  fontSize: "1.2rem",
-  lineHeight: "1.6rem",
+  ...textMetrics.metadata,
 });
 
-export const jobRoleFrame = style({ minHeight: "4.8rem" });
+export const jobRoleFrame = style({ minHeight: vars.size.controlMd });
 
 export const selectedJobRole = style({
   color: vars.color.primary,
-  fontSize: "1.6rem",
+  ...textMetrics.body,
   fontWeight: 500,
-  lineHeight: "2rem",
 });
 
 export const choiceGroup = style({
@@ -382,15 +367,15 @@ export const choicePill = style({
   minHeight: "3.8rem",
   alignItems: "center",
   justifyContent: "center",
-  padding: "0.8rem 2rem",
+  padding: `${vars.spacing.sm} ${vars.spacing.lg}`,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.pill,
   backgroundColor: "transparent",
   color: vars.color.secondary,
   fontFamily: vars.font.sans,
-  fontSize: "1.45rem",
+  ...textMetrics.bodySm,
   fontWeight: 500,
-  lineHeight: "1.9rem",
+
   cursor: "pointer",
   transition: `background-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, border-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, color ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
   selectors: {
@@ -437,7 +422,7 @@ export const methodChoice = style({
   flexDirection: "column",
   alignItems: "flex-start",
   justifyContent: "center",
-  padding: "1.6rem",
+  padding: vars.spacing.base,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.control,
   backgroundColor: "transparent",
@@ -468,9 +453,8 @@ export const methodChoice = style({
 });
 
 export const methodChoiceLabel = style({
-  fontSize: "1.5rem",
+  ...textMetrics.bodySm,
   fontWeight: 700,
-  lineHeight: "2rem",
 });
 
 export const regionFields = style({
@@ -496,7 +480,7 @@ export const participantSlider = style({
   width: "100%",
   minWidth: 0,
   flexDirection: "column",
-  gap: "2.4rem",
+  gap: vars.spacing.xl,
 });
 
 export const participantHeading = style({
@@ -508,16 +492,15 @@ export const participantHeading = style({
 
 export const participantValue = style({
   color: vars.color.secondary,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   fontWeight: 500,
-  lineHeight: "1.7rem",
 });
 
 export const sliderBody = style({
   display: "flex",
   flexDirection: "column",
-  gap: "1.2rem",
-  paddingInline: "1.1rem",
+  gap: vars.spacing.md,
+  paddingInline: vars.spacing.md,
 });
 
 export const sliderControl = style({
@@ -565,8 +548,7 @@ export const sliderTicks = style({
   justifyContent: "space-between",
   color: vars.color.tertiary,
   fontFamily: vars.font.mono,
-  fontSize: "1.2rem",
-  lineHeight: "1.6rem",
+  ...textMetrics.metadata,
 });
 
 export const selectTrigger = style({
@@ -575,7 +557,7 @@ export const selectTrigger = style({
   alignItems: "center",
   justifyContent: "space-between",
   gap: vars.spacing.sm,
-  padding: "1.3rem 1.6rem",
+  padding: `${vars.spacing.sm} ${vars.spacing.base}`,
   textAlign: "left",
   cursor: "pointer",
   selectors: {
@@ -631,7 +613,7 @@ export const selectPopup = style({
 export const selectList = style({
   display: "flex",
   flexDirection: "column",
-  gap: "0.2rem",
+  gap: vars.spacing.xs,
 });
 
 export const selectItem = style({
@@ -640,11 +622,11 @@ export const selectItem = style({
   alignItems: "center",
   justifyContent: "space-between",
   gap: vars.spacing.sm,
-  padding: "0.8rem 1rem",
+  padding: `${vars.spacing.sm} ${vars.spacing.md}`,
   borderRadius: vars.radius.control,
   color: vars.color.primary,
-  fontSize: "1.4rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
+
   cursor: "pointer",
   selectors: {
     "&[data-highlighted]": { backgroundColor: vars.color.fillSecondary },
@@ -653,8 +635,8 @@ export const selectItem = style({
 
 export const selectIndicator = style({
   display: "inline-flex",
-  width: "1.6rem",
-  height: "1.6rem",
+  width: vars.size.iconSm,
+  height: vars.size.iconSm,
   flex: "0 0 auto",
   alignItems: "center",
   justifyContent: "center",
@@ -670,31 +652,29 @@ export const scheduleSection = style({
 export const scheduleColumnHeader = style({
   display: "none",
   color: vars.color.tertiary,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   fontWeight: 500,
-  lineHeight: "1.7rem",
+
   "@media": {
     [media.md]: {
       display: "grid",
       gridTemplateColumns: "minmax(0, 208fr) minmax(0, 148fr) minmax(0, 148fr)",
-      gap: "1.2rem",
+      gap: vars.spacing.md,
     },
   },
 });
 
 export const limitNotice = style({
-  padding: "1.2rem 1.4rem",
+  padding: `${vars.spacing.md} ${vars.spacing.base}`,
   borderRadius: vars.radius.control,
   backgroundColor: vars.color.fillTertiary,
   color: vars.color.secondary,
-  fontSize: "1.25rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
 });
 
 export const warningNotice = style({
   color: vars.color.secondary,
-  fontSize: "1.25rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
 });
 
 export const scheduleRow = style({
@@ -706,7 +686,7 @@ export const scheduleRow = style({
   "@media": {
     [media.md]: {
       gridTemplateColumns: "minmax(0, 208fr) minmax(0, 148fr) minmax(0, 148fr)",
-      gap: "1.2rem",
+      gap: vars.spacing.md,
     },
   },
 });
@@ -737,15 +717,13 @@ export const scheduleFieldLabel = style([
 ]);
 
 export const scheduleControl = style({
-  height: "4.6rem",
-  minHeight: "4.6rem",
+  minHeight: vars.size.controlMd,
 });
 
 export const nativeInput = style({
   ...controlFrame,
-  height: "4.6rem",
-  minHeight: "4.6rem",
-  padding: "1.3rem 1.6rem",
+  minHeight: vars.size.controlMd,
+  padding: `${vars.spacing.sm} ${vars.spacing.base}`,
   outline: 0,
   selectors: {
     "&:focus-visible": {
@@ -758,8 +736,8 @@ export const nativeInput = style({
 
 export const introductionInput = style({
   ...controlFrame,
-  minHeight: "4.6rem",
-  padding: "1.3rem 1.6rem",
+  minHeight: vars.size.controlMd,
+  padding: `${vars.spacing.sm} ${vars.spacing.base}`,
   outline: 0,
   selectors: {
     "&:focus-visible": {
@@ -773,11 +751,11 @@ export const introductionInput = style({
 export const introductionTextarea = style({
   ...controlFrame,
   minHeight: "8.8rem",
-  padding: "1.3rem 1.6rem",
+  padding: `${vars.spacing.md} ${vars.spacing.base}`,
   outline: 0,
-  fontSize: "1.5rem",
+  ...textMetrics.body,
   fontWeight: 400,
-  lineHeight: "2.3rem",
+
   resize: "vertical",
   selectors: {
     "&:focus-visible": {
@@ -793,7 +771,7 @@ export const resumeShareRow = style({
   alignItems: "center",
   justifyContent: "space-between",
   gap: vars.spacing.base,
-  padding: "1.4rem 1.8rem",
+  padding: `${vars.spacing.base} ${vars.spacing.lg}`,
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.cta,
   backgroundColor: "transparent",
@@ -803,20 +781,18 @@ export const resumeShareCopy = style({
   display: "flex",
   minWidth: 0,
   flexDirection: "column",
-  gap: "0.2rem",
+  gap: vars.spacing.xs,
 });
 
 export const resumeShareTitle = style({
   color: vars.color.primary,
-  fontSize: "1.45rem",
+  ...textMetrics.cardTitle,
   fontWeight: 500,
-  lineHeight: "1.9rem",
 });
 
 export const resumeShareDescription = style({
   color: vars.color.tertiary,
-  fontSize: "1.25rem",
-  lineHeight: "1.7rem",
+  ...textMetrics.bodySm,
 });
 
 export const resumeShareSwitch = style({
@@ -881,15 +857,13 @@ export const pendingCard = style({
 
 export const pendingLabel = style({
   color: vars.color.primary,
-  fontSize: "1.8rem",
+  ...textMetrics.cardTitle,
   fontWeight: 600,
-  lineHeight: "2.4rem",
 });
 
 export const pendingDescription = style({
   color: vars.color.tertiary,
-  fontSize: "1.4rem",
-  lineHeight: "2rem",
+  ...textMetrics.bodySm,
 });
 
 export const reviewStack = style({
@@ -912,21 +886,21 @@ export const reviewRow = style({
   gridTemplateColumns: "minmax(0, 1fr) auto",
   alignItems: "center",
   gap: vars.spacing.sm,
-  padding: "1.7rem 2rem",
+  padding: `${vars.spacing.base} ${vars.spacing.lg}`,
   borderBottom: `1px solid ${vars.color.strokeLight}`,
   "@media": {
     [media.md]: {
       gridTemplateColumns: "12rem minmax(0, 1fr) auto",
-      gap: "2rem",
-      paddingInline: "2.6rem",
+      gap: vars.spacing.lg,
+      paddingInline: vars.spacing.xl,
     },
   },
 });
 
 export const reviewLabel = style({
   color: vars.color.tertiary,
-  fontSize: "1.3rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
+
   "@media": {
     [media.md]: { gridColumn: "1" },
   },
@@ -936,9 +910,9 @@ export const reviewValue = style({
   minWidth: 0,
   gridColumn: "1 / -1",
   color: vars.color.primary,
-  fontSize: "1.5rem",
+  ...textMetrics.body,
   fontWeight: 500,
-  lineHeight: "2.1rem",
+
   overflowWrap: "anywhere",
   "@media": {
     [media.md]: { gridColumn: "2" },
@@ -948,14 +922,14 @@ export const reviewValue = style({
 export const reviewEdit = style({
   gridColumn: "2",
   gridRow: "1",
-  padding: "0.4rem",
+  padding: vars.spacing.xs,
   border: 0,
   borderRadius: vars.radius.control,
   backgroundColor: "transparent",
   color: vars.color.tertiary,
   fontFamily: vars.font.sans,
-  fontSize: "1.3rem",
-  lineHeight: "1.7rem",
+  ...textMetrics.metadata,
+
   textDecoration: "underline",
   textUnderlineOffset: "0.15em",
   cursor: "pointer",
@@ -977,18 +951,18 @@ export const reviewSummary = style({
   display: "flex",
   flexDirection: "column",
   gap: vars.spacing.sm,
-  padding: "1.8rem 2rem",
+  padding: `${vars.spacing.lg} ${vars.spacing.lg}`,
   backgroundColor: vars.color.blue10,
   "@media": {
-    [media.md]: { paddingInline: "2.6rem" },
+    [media.md]: { paddingInline: vars.spacing.xl },
   },
 });
 
 export const reviewSummaryLabel = style({
   color: vars.color.blue,
   fontFamily: vars.font.mono,
-  fontSize: "1.1rem",
-  lineHeight: "1.5rem",
+  ...textMetrics.bodySm,
+
   letterSpacing: "0.08em",
 });
 
@@ -1001,8 +975,7 @@ export const reviewSummaryText = style([
 
 export const submitError = style({
   color: vars.color.red,
-  fontSize: "1.3rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
 });
 
 export const footer = style({

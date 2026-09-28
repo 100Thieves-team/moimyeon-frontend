@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars, textStyle } from "@/styles";
+import { media, vars, textStyle, textMetrics } from "@/styles";
 
 export const form = style({
   display: "flex",
@@ -30,7 +30,7 @@ export const fieldLabel = style([
 
 export const fieldOptional = style({
   fontFamily: vars.font.mono,
-  fontSize: "1.05rem",
+  ...textMetrics.bodySm,
   letterSpacing: "0.06em",
   color: vars.color.tertiary,
 });
@@ -38,15 +38,15 @@ export const fieldOptional = style({
 export const tagChips = style({
   display: "flex",
   flexWrap: "wrap",
-  gap: "0.6rem",
+  gap: vars.spacing.sm,
 });
 
 export const tagChip = style({
-  padding: "0.8rem 1.3rem",
+  padding: `${vars.spacing.sm} ${vars.spacing.md}`,
   borderRadius: vars.radius.pill,
   border: `1px solid ${vars.color.strokeMedium}`,
   backgroundColor: "transparent",
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   fontWeight: 500,
   color: vars.color.secondary,
   cursor: "pointer",
@@ -69,13 +69,13 @@ export const tagChip = style({
 
 export const textarea = style({
   width: "100%",
-  padding: "1.3rem 1.6rem",
+  padding: `${vars.spacing.md} ${vars.spacing.base}`,
   borderRadius: vars.radius.control,
   border: `1px solid ${vars.color.strokeMedium}`,
   backgroundColor: vars.color.background,
   fontFamily: vars.font.sans,
-  fontSize: "1.5rem",
-  lineHeight: 1.5,
+  ...textMetrics.body,
+
   color: vars.color.primary,
   resize: "vertical",
   "::placeholder": {
@@ -92,7 +92,7 @@ export const textarea = style({
 const anonymousRowBase = {
   display: "flex",
   alignItems: "center",
-  gap: "0.8rem",
+  gap: vars.spacing.sm,
   width: "fit-content",
 } as const;
 
@@ -112,8 +112,8 @@ export const checkbox = style({
   alignItems: "center",
   justifyContent: "center",
   flexShrink: 0,
-  width: "1.8rem",
-  height: "1.8rem",
+  width: vars.size.iconMd,
+  height: vars.size.iconMd,
   padding: 0,
   borderRadius: "0.5rem",
   border: `1px solid ${vars.color.strokeMedium}`,
@@ -144,18 +144,18 @@ export const checkboxIndicator = style({
 });
 
 export const anonymousLabel = style({
-  fontSize: "1.3rem",
+  ...textMetrics.bodySm,
   fontWeight: 500,
   color: vars.color.primary,
 });
 
 export const fieldError = style({
-  fontSize: "1.25rem",
+  ...textMetrics.bodySm,
   color: vars.color.red,
 });
 
 export const rootError = style({
-  fontSize: "1.25rem",
+  ...textMetrics.bodySm,
   color: vars.color.red,
 });
 
@@ -164,7 +164,7 @@ export const queryState = style({
   flexDirection: "column",
   alignItems: "flex-start",
   gap: vars.spacing.sm,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   color: vars.color.secondary,
 });
 
@@ -198,16 +198,15 @@ export const dialogPopup = style({
 });
 
 export const dialogTitle = style({
-  paddingRight: "4rem",
-  fontSize: "2.2rem",
+  paddingRight: vars.spacing["3xl"],
+  ...textMetrics.sectionTitle,
   fontWeight: 600,
   color: vars.color.primary,
-  lineHeight: "3rem",
 });
 
 export const dialogDescription = style({
-  fontSize: "1.6rem",
-  lineHeight: "2.4rem",
+  ...textMetrics.body,
+
   color: vars.color.secondary,
 });
 

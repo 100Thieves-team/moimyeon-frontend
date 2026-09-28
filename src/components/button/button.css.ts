@@ -87,22 +87,22 @@ export const buttonRecipe = recipe({
       sm: [
         textStyle.buttonSm,
         {
-          minHeight: "4.4rem",
-          paddingInline: "1.6rem",
+          minHeight: vars.size.controlSm,
+          paddingInline: vars.spacing.base,
         },
       ],
       md: [
         textStyle.buttonMd,
         {
-          minHeight: "4.8rem",
-          paddingInline: "2.4rem",
+          minHeight: vars.size.controlMd,
+          paddingInline: vars.spacing.xl,
         },
       ],
       lg: [
         textStyle.buttonLg,
         {
-          minHeight: "5.6rem",
-          paddingInline: "2.8rem",
+          minHeight: vars.size.controlLg,
+          paddingInline: vars.spacing["2xl"],
         },
       ],
     },

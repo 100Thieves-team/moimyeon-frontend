@@ -1,4 +1,5 @@
 "use client";
+import { iconSizes } from "@/styles/tokens";
 
 import { Checkbox } from "@base-ui/react/checkbox";
 import { Form } from "@base-ui/react/form";
@@ -94,7 +95,7 @@ export function CreateReviewForm({ onCompleted, roomId, target }: CreateReviewFo
                 }}
               >
                 <Checkbox.Indicator className={styles.checkboxIndicator}>
-                  <Check size={12} strokeWidth={3} />
+                  <Check size={iconSizes.sm} strokeWidth={3} />
                 </Checkbox.Indicator>
               </Checkbox.Root>
               <span className={styles.anonymousLabel}>익명으로 남기기</span>

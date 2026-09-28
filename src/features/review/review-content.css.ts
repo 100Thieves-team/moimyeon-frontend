@@ -1,24 +1,24 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars } from "@/styles";
+import { media, vars, textMetrics } from "@/styles";
 
 export const page = style({
   display: "flex",
   justifyContent: "center",
-  padding: `${vars.spacing.xl} ${vars.spacing.lg}`,
+  padding: `${vars.layout.pageTop} ${vars.layout.sidePadding} max(${vars.spacing.section}, env(safe-area-inset-bottom))`,
 });
 
 export const column = style({
   display: "flex",
   flexDirection: "column",
-  gap: vars.spacing.lg,
+  gap: vars.layout.sectionGap,
   width: "100%",
-  maxWidth: "68rem",
+  maxWidth: vars.layout.formMaxWidth,
 });
 
 export const title = style({
-  fontSize: "3rem",
+  ...textMetrics.pageTitle,
   fontWeight: 300,
-  lineHeight: 1.2,
+
   color: vars.color.primary,
 });
 
@@ -26,8 +26,8 @@ export const sessionCard = style({
   display: "flex",
   minWidth: 0,
   alignItems: "center",
-  gap: "1.4rem",
-  padding: "1.4rem 1.8rem",
+  gap: vars.spacing.base,
+  padding: vars.layout.cardPadding,
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.floating,
   backgroundColor: vars.color.background,
@@ -38,15 +38,15 @@ export const sessionInfo = style({
   minWidth: 0,
   flex: "1 1 auto",
   flexDirection: "column",
-  gap: "0.2rem",
+  gap: vars.spacing.xs,
 });
 
 export const sessionTitle = style({
   overflow: "hidden",
   color: vars.color.primary,
-  fontSize: "1.6rem",
+  ...textMetrics.cardTitle,
   fontWeight: 500,
-  lineHeight: "2.1rem",
+
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
 });
@@ -54,18 +54,18 @@ export const sessionTitle = style({
 export const sessionDate = style({
   overflow: "hidden",
   color: vars.color.tertiary,
-  fontSize: "1.4rem",
-  lineHeight: "1.9rem",
+  ...textMetrics.metadata,
+
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
 });
 
 export const detailLink = style({
   flex: "0 0 auto",
-  paddingBlock: "0.8rem",
+  paddingBlock: vars.spacing.sm,
   color: vars.color.tertiary,
-  fontSize: "1.4rem",
-  lineHeight: "1.9rem",
+  ...textMetrics.bodySm,
+
   textDecoration: "none",
   selectors: {
     "&:focus-visible": { outline: `2px solid ${vars.color.primary}`, outlineOffset: "2px" },
@@ -104,14 +104,14 @@ export const errorCard = style({
 });
 
 export const errorTitle = style({
-  fontSize: "2rem",
+  ...textMetrics.bodySm,
   fontWeight: 700,
   color: vars.color.primary,
 });
 
 export const errorDescription = style({
-  fontSize: "1.4rem",
-  lineHeight: 1.6,
+  ...textMetrics.body,
+
   color: vars.color.secondary,
 });
 

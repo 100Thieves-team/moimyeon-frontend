@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars } from "@/styles";
+import { media, vars, textMetrics } from "@/styles";
 const surface = {
   backgroundColor: vars.color.trueWhite,
   "@media": { [media.dark]: { backgroundColor: vars.color.background } },
@@ -26,22 +26,22 @@ export const popup = style({
   color: vars.color.primary,
 });
 export const body = style({
-  padding: "2.8rem 2.8rem 0",
+  padding: `${vars.spacing["2xl"]} ${vars.spacing["2xl"]} 0`,
   paddingRight: "6.4rem",
   display: "flex",
   flexDirection: "column",
   gap: vars.spacing.sm,
 });
-export const title = style({ fontSize: "2.2rem", fontWeight: 600, lineHeight: "3rem" });
+export const title = style({ ...textMetrics.sectionTitle, fontWeight: 600 });
 export const description = style({
-  fontSize: "1.6rem",
-  lineHeight: "2.4rem",
+  ...textMetrics.body,
+
   color: vars.color.secondary,
 });
-export const error = style({ fontSize: "1.4rem", lineHeight: "2rem", color: vars.color.red });
+export const error = style({ ...textMetrics.bodySm, color: vars.color.red });
 export const footer = style({
   display: "flex",
   justifyContent: "flex-end",
   gap: vars.spacing.sm,
-  padding: "1.6rem 2.8rem 1.4rem",
+  padding: `${vars.spacing.base} ${vars.spacing["2xl"]} ${vars.spacing.base}`,
 });

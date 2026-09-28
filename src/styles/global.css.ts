@@ -17,7 +17,7 @@ globalStyle("*, *::before, *::after", {
 
 globalStyle("html, body", {
   maxWidth: "100vw",
-  overflowX: "hidden",
+  overflowX: "clip",
 });
 
 globalStyle("body", {

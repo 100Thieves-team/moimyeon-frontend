@@ -1,3 +1,4 @@
+import { textMetrics } from "@/styles/typography.css";
 import { style } from "@vanilla-extract/css";
 import { media } from "@/styles/tokens";
 import { vars } from "@/styles/theme.css";
@@ -34,8 +35,8 @@ export const fieldContent = style([
   {
     position: "relative",
     zIndex: 1,
-    minHeight: "4.4rem",
-    padding: "0.7rem 3.6rem 0.7rem 1.2rem",
+    minHeight: `calc(${vars.size.controlMd} - 2px)`,
+    padding: `${vars.spacing.sm} ${vars.spacing["3xl"]} ${vars.spacing.sm} ${vars.spacing.md}`,
     pointerEvents: "none",
   },
 ]);
@@ -134,26 +135,22 @@ export const header = style({
   gridTemplateColumns: "minmax(0, 1fr)",
   alignItems: "center",
   gap: vars.spacing.base,
-  padding: "1.6rem 2.4rem",
+  padding: `${vars.spacing.base} ${vars.spacing.xl}`,
   paddingRight: "6.4rem",
   borderBottom: `1px solid ${vars.color.strokeLight}`,
   "@media": {
     [mobile]: {
       minHeight: "6.8rem",
       gridTemplateColumns: "minmax(0, 1fr)",
-      padding: "1.2rem 1.6rem",
+      padding: `${vars.spacing.md} ${vars.spacing.base}`,
       paddingRight: "6.4rem",
     },
   },
 });
 
 export const title = style({
-  fontSize: "2.4rem",
+  ...textMetrics.sectionTitle,
   fontWeight: 700,
-  lineHeight: "3.2rem",
-  "@media": {
-    [mobile]: { fontSize: "2rem", lineHeight: "2.8rem" },
-  },
 });
 
 export const dialogBody = style({
@@ -172,14 +169,14 @@ export const groupList = style({
   display: "flex",
   minHeight: 0,
   flexDirection: "column",
-  gap: "0.4rem",
+  gap: vars.spacing.xs,
   padding: vars.spacing.base,
   overflowY: "auto",
   borderRight: `1px solid ${vars.color.strokeLight}`,
   "@media": {
     [mobile]: {
       flexDirection: "row",
-      padding: "1.2rem 1.6rem",
+      padding: `${vars.spacing.md} ${vars.spacing.base}`,
       overflowX: "auto",
       overflowY: "hidden",
       borderRight: 0,
@@ -191,20 +188,20 @@ export const groupList = style({
 export const groupTab = style({
   display: "flex",
   width: "100%",
-  minHeight: "4.8rem",
+  minHeight: vars.size.controlSm,
   flex: "0 0 auto",
   alignItems: "center",
   justifyContent: "space-between",
   gap: vars.spacing.sm,
-  padding: "1.2rem 1.6rem",
+  padding: `${vars.spacing.md} ${vars.spacing.base}`,
   border: 0,
   borderRadius: vars.radius.control,
   backgroundColor: "transparent",
   color: vars.color.secondary,
   fontFamily: vars.font.sans,
-  fontSize: "1.5rem",
+  ...textMetrics.body,
   fontWeight: 500,
-  lineHeight: "2rem",
+
   textAlign: "left",
   cursor: "pointer",
   selectors: {
@@ -221,8 +218,8 @@ export const groupTab = style({
   "@media": {
     [mobile]: {
       width: "auto",
-      minHeight: "4.2rem",
-      padding: "1rem 1.2rem",
+      minHeight: vars.size.controlSm,
+      padding: `${vars.spacing.md} ${vars.spacing.md}`,
       whiteSpace: "nowrap",
     },
     [media.hover]: {
@@ -248,17 +245,16 @@ export const roleSection = style({
 
 export const rolePanel = style({
   minHeight: "100%",
-  padding: "3.2rem",
+  padding: vars.spacing["2xl"],
   "@media": {
-    [mobile]: { padding: "2.4rem 1.6rem" },
+    [mobile]: { padding: `${vars.spacing.xl} ${vars.spacing.base}` },
   },
 });
 
 export const groupTitle = style({
   marginBottom: vars.spacing.xl,
-  fontSize: "2rem",
+  ...textMetrics.cardTitle,
   fontWeight: 700,
-  lineHeight: "2.8rem",
 });
 
 export const roleList = style({
@@ -269,16 +265,16 @@ export const roleList = style({
 });
 
 export const roleToggle = style({
-  minHeight: "4.2rem",
-  padding: "1rem 1.4rem",
+  minHeight: vars.size.controlSm,
+  padding: `${vars.spacing.md} ${vars.spacing.base}`,
   border: "1px solid transparent",
   borderRadius: vars.radius.control,
   backgroundColor: vars.color.fillTertiary,
   color: vars.color.secondary,
   fontFamily: vars.font.sans,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   fontWeight: 500,
-  lineHeight: "2rem",
+
   cursor: "pointer",
   transition: `background-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, border-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, color ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
   selectors: {
@@ -306,8 +302,8 @@ export const emptyState = style({
   display: "grid",
   minHeight: "100%",
   color: vars.color.tertiary,
-  fontSize: "1.5rem",
-  lineHeight: "2rem",
+  ...textMetrics.body,
+
   placeItems: "center",
 });
 
@@ -317,12 +313,12 @@ export const footer = style({
   gridTemplateColumns: "minmax(0, 1fr) auto",
   alignItems: "center",
   gap: vars.spacing.lg,
-  padding: "1.6rem 2.4rem",
+  padding: `${vars.spacing.base} ${vars.spacing.xl}`,
   "@media": {
     [mobile]: {
       gridTemplateColumns: "minmax(0, 1fr)",
       gap: vars.spacing.md,
-      padding: "1.2rem 1.6rem 1.6rem",
+      padding: `${vars.spacing.md} ${vars.spacing.base} ${vars.spacing.base}`,
     },
   },
 });

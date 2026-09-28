@@ -1,3 +1,4 @@
+import { vars } from "@/styles/theme.css";
 import { Skeleton } from "@/components/skeleton";
 import * as styles from "./interview-create-wizard.css";
 
@@ -26,7 +27,7 @@ export function InterviewCreateSkeleton() {
                 <div className={styles.field} key={field}>
                   <Skeleton width="7rem" height="2rem" />
                   {field < 2 ? (
-                    <Skeleton width="100%" height="4.8rem" />
+                    <Skeleton width="100%" height={vars.size.controlMd} />
                   ) : (
                     <div className={styles.choiceGroup}>
                       {[0, 1, 2, 3].map((choice) => (

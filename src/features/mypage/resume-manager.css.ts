@@ -1,3 +1,4 @@
+import { textMetrics } from "@/styles/typography.css";
 import { textStyle } from "@/styles/typography.css";
 import { style } from "@vanilla-extract/css";
 import { media } from "@/styles/tokens";
@@ -20,7 +21,7 @@ export const row = style({
   display: "flex",
   flexDirection: "column",
   gap: vars.spacing.md,
-  paddingBlock: "1.8rem",
+  paddingBlock: vars.spacing.lg,
   selectors: {
     "&:not(:first-child)": {
       borderTop: `1px solid ${vars.color.strokeLight}`,
@@ -43,7 +44,7 @@ export const fileCell = style({
   display: "flex",
   minWidth: 0,
   alignItems: "center",
-  gap: "1.4rem",
+  gap: vars.spacing.base,
   "@media": {
     [media.md]: {
       flex: "0 1 30rem",
@@ -53,14 +54,14 @@ export const fileCell = style({
 
 export const pdfBadge = style({
   flex: "0 0 auto",
-  padding: "0.4rem 0.8rem",
+  padding: `${vars.spacing.xs} ${vars.spacing.sm}`,
   borderRadius: "0.5rem",
   backgroundColor: vars.color.fillSecondary,
   color: vars.color.secondary,
   fontFamily: vars.font.mono,
-  fontSize: "1rem",
+  ...textMetrics.metadata,
   fontWeight: 700,
-  lineHeight: "1.4rem",
+
   letterSpacing: "0.06em",
 });
 
@@ -68,7 +69,7 @@ export const fileInfo = style({
   display: "flex",
   minWidth: 0,
   flexDirection: "column",
-  gap: "0.2rem",
+  gap: vars.spacing.xs,
 });
 
 export const fileHeading = style({
@@ -91,13 +92,12 @@ export const fileName = style([
 
 export const defaultBadge = style({
   flex: "0 0 auto",
-  padding: "0.2rem 0.8rem",
+  padding: `0.2rem ${vars.spacing.sm}`,
   borderRadius: vars.radius.pill,
   backgroundColor: vars.color.blue10,
   color: vars.color.blue,
-  fontSize: "1.1rem",
+  ...textMetrics.metadata,
   fontWeight: 500,
-  lineHeight: "1.5rem",
 });
 
 export const fileMeta = style([
@@ -138,18 +138,18 @@ export const rowActions = style({
 
 export const makeDefaultButton = style({
   display: "inline-flex",
-  minHeight: "3.4rem",
+  minHeight: vars.size.controlSm,
   flex: "0 0 auto",
   alignItems: "center",
   justifyContent: "center",
-  paddingInline: "1.4rem",
+  paddingInline: vars.spacing.base,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: "1rem",
   backgroundColor: "transparent",
   color: vars.color.secondary,
   cursor: "pointer",
   fontFamily: vars.font.sans,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   fontWeight: 500,
   selectors: {
     "&:disabled": {
@@ -172,8 +172,8 @@ export const makeDefaultButton = style({
 
 export const rowError = style({
   color: vars.color.red,
-  fontSize: "1.25rem",
-  lineHeight: "1.7rem",
+  ...textMetrics.bodySm,
+
   "@media": {
     [media.md]: {
       flexBasis: "100%",
@@ -184,16 +184,16 @@ export const rowError = style({
 
 export const deleteButton = style({
   display: "inline-flex",
-  minHeight: "3.4rem",
+  minHeight: vars.size.controlSm,
   alignItems: "center",
-  paddingInline: "0.8rem",
+  paddingInline: vars.spacing.sm,
   border: 0,
   borderRadius: vars.radius.control,
   backgroundColor: "transparent",
   color: vars.color.tertiary,
   cursor: "pointer",
   fontFamily: vars.font.sans,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   fontWeight: 500,
   selectors: {
     "&:focus-visible": {
@@ -217,9 +217,9 @@ export const retryButton = style({
   color: vars.color.secondary,
   cursor: "pointer",
   fontFamily: vars.font.sans,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   fontWeight: 500,
-  lineHeight: "2rem",
+
   textDecoration: "underline",
   textUnderlineOffset: "0.3em",
   selectors: {
@@ -243,21 +243,19 @@ export const empty = style({
   border: `1px dashed ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.cta,
   color: vars.color.tertiary,
-  fontSize: "1.35rem",
-  lineHeight: "1.9rem",
+  ...textMetrics.bodySm,
+
   textAlign: "center",
 });
 
 export const footerMessage = style({
   color: vars.color.tertiary,
-  fontSize: "1.25rem",
-  lineHeight: "1.7rem",
+  ...textMetrics.bodySm,
 });
 
 export const uploadError = style({
   color: vars.color.red,
-  fontSize: "1.25rem",
-  lineHeight: "1.7rem",
+  ...textMetrics.bodySm,
 });
 
 export const visuallyHidden = style({
@@ -295,7 +293,7 @@ export const dialogPopup = style({
   width: "min(38.4rem, calc(100vw - 3.2rem))",
   flexDirection: "column",
   gap: vars.spacing.sm,
-  padding: "2.4rem",
+  padding: vars.spacing.xl,
   borderRadius: "2rem",
   backgroundColor: vars.color.background,
   boxShadow: vars.shadow.cardSoft,
@@ -314,25 +312,24 @@ export const dialogPopup = style({
 });
 
 export const dialogTitle = style({
-  paddingRight: "4rem",
+  paddingRight: vars.spacing["3xl"],
   color: vars.color.primary,
-  fontSize: "2.2rem",
+  ...textMetrics.sectionTitle,
   fontWeight: 600,
-  lineHeight: "3rem",
+
   letterSpacing: "-0.01em",
 });
 
 export const dialogDescription = style({
   color: vars.color.secondary,
-  fontSize: "1.6rem",
-  lineHeight: "2.4rem",
+  ...textMetrics.body,
+
   overflowWrap: "anywhere",
 });
 
 export const dialogError = style({
   color: vars.color.red,
-  fontSize: "1.25rem",
-  lineHeight: "1.7rem",
+  ...textMetrics.bodySm,
 });
 
 export const dialogFooter = style({

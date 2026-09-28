@@ -1,3 +1,4 @@
+import { textMetrics } from "@/styles/typography.css";
 import { style } from "@vanilla-extract/css";
 import { media } from "@/styles/tokens";
 import { vars } from "@/styles/theme.css";
@@ -36,8 +37,8 @@ export const popup = style({
   maxWidth: "calc(100vw - 3.2rem)",
   flexDirection: "column",
   alignItems: "stretch",
-  gap: "2rem",
-  padding: "3.6rem",
+  gap: vars.spacing.lg,
+  padding: vars.spacing["3xl"],
   overflow: "hidden",
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.media,
@@ -59,7 +60,7 @@ export const popup = style({
   },
   "@media": {
     "screen and (max-width: 599px)": {
-      padding: "2.4rem",
+      padding: vars.spacing.xl,
     },
     [media.reducedMotion]: {
       transition: "none",
@@ -68,11 +69,11 @@ export const popup = style({
 });
 
 export const title = style({
-  paddingRight: "3.2rem",
+  paddingRight: vars.spacing["2xl"],
   fontFamily: vars.font.sans,
-  fontSize: "2.6rem",
+  ...textMetrics.sectionTitle,
   fontWeight: 300,
-  lineHeight: "3.2rem",
+
   letterSpacing: "-0.02em",
 });
 
@@ -84,20 +85,20 @@ export const googleAction = style({
   position: "relative",
   display: "flex",
   width: "100%",
-  minHeight: "4.8rem",
+  minHeight: vars.size.controlMd,
   alignItems: "center",
   justifyContent: "center",
-  gap: "1rem",
-  padding: "1.3rem 2rem",
+  gap: vars.spacing.md,
+  padding: `${vars.spacing.sm} ${vars.spacing.lg}`,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.cta,
   backgroundColor: vars.color.background,
   color: vars.color.primary,
   boxShadow: vars.shadow.glassHighlight,
   fontFamily: vars.font.sans,
-  fontSize: "1.6rem",
+  ...textMetrics.body,
   fontWeight: 500,
-  lineHeight: "2rem",
+
   cursor: "pointer",
   transition: `background-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, transform ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
   selectors: {
@@ -123,8 +124,8 @@ export const googleAction = style({
 
 export const googleMark = style({
   display: "block",
-  width: "2rem",
-  height: "2rem",
+  width: vars.size.iconMd,
+  height: vars.size.iconMd,
   flex: "0 0 2rem",
 });
 
@@ -132,9 +133,9 @@ export const terms = style({
   width: "100%",
   color: vars.color.tertiary,
   fontFamily: vars.font.sans,
-  fontSize: "1.25rem",
+  ...textMetrics.metadata,
   fontWeight: 400,
-  lineHeight: "1.8rem",
+
   textAlign: "center",
 });
 
@@ -154,65 +155,62 @@ export const error = style({
   marginTop: "-0.8rem",
   color: vars.color.red,
   fontFamily: vars.font.sans,
-  fontSize: "1.3rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
+
   textAlign: "center",
 });
 
 export const devSection = style({
   display: "flex",
   flexDirection: "column",
-  gap: "1.2rem",
-  paddingTop: "2rem",
+  gap: vars.spacing.md,
+  paddingTop: vars.spacing.lg,
   borderTop: `1px solid ${vars.color.strokeLight}`,
 });
 
 export const devTitle = style({
   color: vars.color.primary,
   fontFamily: vars.font.sans,
-  fontSize: "1.5rem",
+  ...textMetrics.cardTitle,
   fontWeight: 600,
-  lineHeight: "2rem",
 });
 
 export const devDescription = style({
   color: vars.color.tertiary,
   fontFamily: vars.font.sans,
-  fontSize: "1.25rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
 });
 
 export const devForm = style({
   display: "flex",
   flexDirection: "column",
-  gap: "1.2rem",
+  gap: vars.spacing.md,
 });
 
 export const devField = style({
   display: "flex",
   flexDirection: "column",
-  gap: "0.8rem",
+  gap: vars.spacing.sm,
 });
 
 export const devLabel = style({
   color: vars.color.secondary,
   fontFamily: vars.font.sans,
-  fontSize: "1.3rem",
+  ...textMetrics.bodySm,
   fontWeight: 500,
-  lineHeight: "1.8rem",
 });
 
 export const devInput = style({
   width: "100%",
-  minHeight: "4.8rem",
-  paddingInline: "1.4rem",
+  minHeight: vars.size.controlMd,
+  paddingInline: vars.spacing.base,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.control,
   backgroundColor: vars.color.background,
   color: vars.color.primary,
   fontFamily: vars.font.mono,
-  fontSize: "1.6rem",
-  lineHeight: "2rem",
+  ...textMetrics.body,
+
   selectors: {
     "&::placeholder": {
       color: vars.color.quaternary,
@@ -231,11 +229,10 @@ export const devInput = style({
 export const devError = style({
   color: vars.color.red,
   fontFamily: vars.font.sans,
-  fontSize: "1.3rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
 });
 
 export const devSubmit = style({
   width: "100%",
-  marginTop: "0.4rem",
+  marginTop: vars.spacing.xs,
 });

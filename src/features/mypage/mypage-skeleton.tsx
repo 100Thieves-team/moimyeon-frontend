@@ -1,3 +1,4 @@
+import { vars } from "@/styles/theme.css";
 import { Skeleton } from "@/components/skeleton";
 import * as styles from "./mypage-shell.css";
 import * as panelStyles from "./mypage-panel.css";
@@ -19,7 +20,7 @@ export function MyPageSkeleton() {
             <Skeleton className={styles.bio} width="85%" height="1lh" />
           </div>
           <div className={styles.accountActions}>
-            <Skeleton width="8rem" height="4.4rem" />
+            <Skeleton width="8rem" height={vars.size.controlSm} />
           </div>
         </div>
         <div className={styles.editorColumn}>
@@ -45,7 +46,7 @@ export function MyPageSkeleton() {
               <Skeleton className={formStyles.companyPillFrame} width="100%" />
             </div>
             <div className={panelStyles.footer}>
-              <Skeleton width="10.4rem" height="4.8rem" />
+              <Skeleton width="10.4rem" height={vars.size.controlMd} />
             </div>
           </div>
         </div>
@@ -58,7 +59,7 @@ function ProfileFieldSkeleton() {
   return (
     <div className={formStyles.field}>
       <Skeleton width="6rem" height="2rem" />
-      <Skeleton width="100%" height="4.6rem" />
+      <Skeleton width="100%" height={vars.size.controlMd} />
     </div>
   );
 }

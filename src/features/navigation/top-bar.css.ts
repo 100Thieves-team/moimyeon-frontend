@@ -1,3 +1,4 @@
+import { textMetrics } from "@/styles/typography.css";
 import { vars } from "@/styles/theme.css";
 import { style } from "@vanilla-extract/css";
 
@@ -5,31 +6,29 @@ const mobile = "screen and (max-width: 599px)";
 
 export const header = style({
   width: "100%",
-  height: "6.4rem",
+  height: vars.size.header,
   flex: "0 0 auto",
-  padding: "0 3.2rem",
+  padding: `0 ${vars.layout.sidePadding}`,
   borderBottom: `1px solid ${vars.color.strokeLight}`,
   backgroundColor: vars.color.background,
-  "@media": {
-    [mobile]: {
-      padding: "0 1.6rem",
-    },
-  },
 });
 
 export const nav = style({
+  width: "100%",
+  maxWidth: vars.layout.maxWidth,
+  marginInline: "auto",
   display: "flex",
   height: "100%",
   alignItems: "center",
   justifyContent: "space-between",
-  gap: "1.6rem",
+  gap: vars.spacing.base,
 });
 
 export const navLeft = style({
   display: "flex",
   minWidth: 0,
   alignItems: "center",
-  gap: "3.6rem",
+  gap: vars.spacing["3xl"],
 });
 
 export const brand = style({
@@ -52,13 +51,13 @@ export const brand = style({
 export const navList = style({
   display: "flex",
   alignItems: "flex-start",
-  gap: "2.4rem",
+  gap: vars.spacing.xl,
   listStyle: "none",
   color: vars.color.tertiary,
   fontFamily: vars.font.sans,
-  fontSize: "1.6rem",
+  ...textMetrics.body,
   fontWeight: 400,
-  lineHeight: "2rem",
+
   whiteSpace: "nowrap",
   "@media": {
     [mobile]: {
@@ -90,10 +89,10 @@ export const navActions = style({
   display: "flex",
   flex: "0 0 auto",
   alignItems: "center",
-  gap: "1.6rem",
+  gap: vars.spacing.base,
   "@media": {
     [mobile]: {
-      gap: "0.8rem",
+      gap: vars.spacing.sm,
     },
   },
 });

@@ -1,3 +1,4 @@
+import { textMetrics } from "@/styles/typography.css";
 import { globalStyle, style, styleVariants } from "@vanilla-extract/css";
 import { media } from "@/styles/tokens";
 import { vars } from "@/styles/theme.css";
@@ -10,16 +11,7 @@ const card = {
 
 export const content = style({
   width: "100%",
-  padding: "3.2rem 1.6rem 6.4rem",
-  "@media": {
-    [media.sm]: {
-      paddingInline: "3.2rem",
-      paddingTop: "4.4rem",
-    },
-    [media.xl]: {
-      paddingInline: "6.4rem",
-    },
-  },
+  padding: `${vars.layout.pageTop} ${vars.layout.sidePadding} max(${vars.spacing.section}, env(safe-area-inset-bottom))`,
 });
 
 // Avoid a body scroll container so the sidebar sticks to the viewport.
@@ -30,7 +22,7 @@ globalStyle(`body:has(${content})`, {
 export const columns = style({
   display: "grid",
   width: "100%",
-  maxWidth: "131.2rem",
+  maxWidth: vars.layout.maxWidth,
   marginInline: "auto",
   alignItems: "start",
   gap: vars.spacing.xl,
@@ -60,7 +52,7 @@ export const trustCard = style({
   display: "flex",
   flexDirection: "column",
   gap: vars.spacing.lg,
-  padding: "2.8rem",
+  padding: vars.layout.cardPadding,
 });
 
 export const identity = style({
@@ -94,9 +86,9 @@ export const identityCopy = style({
 export const nickname = style({
   overflow: "hidden",
   color: vars.color.primary,
-  fontSize: "2rem",
+  ...textMetrics.cardTitle,
   fontWeight: 500,
-  lineHeight: "2.5rem",
+
   letterSpacing: "-0.01em",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
@@ -105,16 +97,16 @@ export const nickname = style({
 export const jobTitle = style({
   overflow: "hidden",
   color: vars.color.tertiary,
-  fontSize: "1.3rem",
-  lineHeight: "1.7rem",
+  ...textMetrics.cardTitle,
+
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
 });
 
 export const bio = style({
   color: vars.color.secondary,
-  fontSize: "1.35rem",
-  lineHeight: "2rem",
+  ...textMetrics.body,
+
   overflowWrap: "anywhere",
 });
 
@@ -161,20 +153,18 @@ export const attendanceIcon = style({
 export const statCopy = style({
   display: "flex",
   flexDirection: "column",
-  gap: "0.2rem",
+  gap: vars.spacing.xs,
 });
 
 export const statLabel = style({
   color: vars.color.tertiary,
-  fontSize: "1.15rem",
-  lineHeight: "1.5rem",
+  ...textMetrics.bodySm,
 });
 
 export const statValue = style({
   color: vars.color.primary,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   fontWeight: 500,
-  lineHeight: "1.9rem",
 });
 
 export const attendanceChecks = style({
@@ -219,21 +209,19 @@ export const tags = style({
 export const tag = style({
   display: "flex",
   alignItems: "baseline",
-  gap: "0.6rem",
-  padding: "0.6rem 1.2rem",
+  gap: vars.spacing.sm,
+  padding: `${vars.spacing.sm} ${vars.spacing.md}`,
   borderRadius: vars.radius.pill,
   backgroundColor: vars.color.fillSecondary,
   color: vars.color.secondary,
-  fontSize: "1.25rem",
+  ...textMetrics.metadata,
   fontWeight: 500,
-  lineHeight: "1.6rem",
 });
 
 export const tagCount = style({
   color: vars.color.tertiary,
   fontFamily: vars.font.mono,
-  fontSize: "1.05rem",
-  lineHeight: "1.4rem",
+  ...textMetrics.metadata,
 });
 
 export const accountActions = style({
@@ -252,8 +240,7 @@ export const logoutAction = style({
 
 export const logoutError = style({
   color: vars.color.red,
-  fontSize: "1.2rem",
-  lineHeight: "1.6rem",
+  ...textMetrics.bodySm,
 });
 
 export const editorColumn = style({
@@ -274,16 +261,16 @@ export const tabList = style({
 });
 
 export const tab = style({
-  minHeight: "3.9rem",
-  padding: "1rem 2rem",
+  minHeight: vars.size.controlMd,
+  padding: `${vars.spacing.md} ${vars.spacing.lg}`,
   border: 0,
   borderRadius: "0.9rem",
   backgroundColor: "transparent",
   color: vars.color.secondary,
   cursor: "pointer",
   fontFamily: vars.font.sans,
-  fontSize: "1.4rem",
-  lineHeight: "1.9rem",
+  ...textMetrics.bodySm,
+
   whiteSpace: "nowrap",
   selectors: {
     "&[data-active]": {
@@ -307,7 +294,7 @@ export const tab = style({
 
 export const errorPage = style({
   display: "grid",
-  minHeight: "calc(100dvh - 6.4rem)",
+  minHeight: `calc(100dvh - ${vars.size.header})`,
   padding: vars.spacing.xl,
   backgroundColor: vars.color.background,
   placeItems: "center",
@@ -325,15 +312,13 @@ export const errorCard = style({
 });
 
 export const errorTitle = style({
-  fontSize: "2rem",
+  ...textMetrics.bodySm,
   fontWeight: 500,
-  lineHeight: "2.5rem",
 });
 
 export const errorDescription = style({
   color: vars.color.secondary,
-  fontSize: "1.5rem",
-  lineHeight: "2.2rem",
+  ...textMetrics.body,
 });
 
 export const retryButtonLayout = style({

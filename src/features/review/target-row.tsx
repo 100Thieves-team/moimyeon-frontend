@@ -1,4 +1,5 @@
 "use client";
+import { iconSizes } from "@/styles/tokens";
 
 import { Popover } from "@base-ui/react/popover";
 import { Collapsible } from "@base-ui/react/collapsible";
@@ -74,7 +75,7 @@ function TargetRowFrame({
           {submitted && (
             <span className={styles.submitted}>
               <span aria-hidden="true" className={styles.submittedCheck}>
-                <Check size={12} strokeWidth={3} />
+                <Check size={iconSizes.sm} strokeWidth={3} />
               </span>
               제출함
             </span>
@@ -82,7 +83,7 @@ function TargetRowFrame({
           <ChevronDown
             aria-hidden="true"
             className={expanded ? styles.chevronOpen : styles.chevron}
-            size={16}
+            size={iconSizes.sm}
             strokeWidth={2}
           />
         </Collapsible.Trigger>

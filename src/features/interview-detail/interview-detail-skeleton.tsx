@@ -1,3 +1,4 @@
+import { vars } from "@/styles/theme.css";
 import { Skeleton } from "@/components/skeleton";
 import * as styles from "./interview-detail.css";
 
@@ -18,8 +19,8 @@ export function InterviewDetailSkeleton({
         <div className={isPanel ? undefined : styles.hero}>
           {!isPanel && (
             <>
-              <Skeleton className={styles.title} width="80%" height="4.6rem" />
-              <Skeleton className={styles.meta} width="45%" height="2.4rem" />
+              <Skeleton className={styles.title} width="80%" height="1lh" />
+              <Skeleton className={styles.meta} width="45%" height="1lh" />
             </>
           )}
           <div className={isPanel ? styles.panelInfoStrip : styles.infoStrip}>
@@ -62,7 +63,7 @@ export function InterviewDetailSkeleton({
               </div>
               <Skeleton className={styles.remainingQuota} width="6rem" height="1lh" />
               <Skeleton width="100%" height="0.6rem" />
-              <Skeleton width="100%" height="5rem" />
+              <Skeleton width="100%" height={vars.size.controlMd} />
             </div>
           </div>
         </div>
