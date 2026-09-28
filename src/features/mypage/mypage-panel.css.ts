@@ -1,11 +1,11 @@
 import { style } from "@vanilla-extract/css";
-import { vars } from "@/styles";
+import { vars, textMetrics } from "@/styles";
 
 export const title = style({
   color: vars.color.primary,
-  fontSize: "1.7rem",
+  ...textMetrics.sectionTitle,
   fontWeight: 500,
-  lineHeight: "2.2rem",
+
   letterSpacing: "-0.01em",
 });
 
@@ -22,13 +22,8 @@ export const card = style({
   width: "100%",
   minWidth: 0,
   flexDirection: "column",
-  gap: vars.spacing.xl,
-  padding: vars.spacing["2xl"],
-  "@media": {
-    "screen and (max-width: 599px)": {
-      padding: vars.spacing.lg,
-    },
-  },
+  gap: vars.spacing.lg,
+  padding: vars.layout.cardPadding,
 });
 
 export const footer = style({

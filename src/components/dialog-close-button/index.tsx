@@ -1,3 +1,4 @@
+import { iconSizes } from "@/styles/tokens";
 import { X } from "lucide-react";
 import type { ComponentProps } from "react";
 import * as styles from "./dialog-close-button.css";
@@ -9,7 +10,7 @@ export function DialogCloseButton({ className, ...props }: ComponentProps<"butto
       {...props}
       className={[styles.closeButton, className].filter(Boolean).join(" ")}
     >
-      <X aria-hidden="true" size={20} strokeWidth={1.75} />
+      <X aria-hidden="true" size={iconSizes.md} strokeWidth={1.75} />
     </button>
   );
 }

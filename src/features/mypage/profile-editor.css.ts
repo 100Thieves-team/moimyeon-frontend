@@ -1,3 +1,4 @@
+import { textMetrics } from "@/styles/typography.css";
 import { textStyle } from "@/styles/typography.css";
 import { style } from "@vanilla-extract/css";
 import { media } from "@/styles/tokens";
@@ -7,7 +8,7 @@ export const form = style({
   display: "flex",
   width: "100%",
   flexDirection: "column",
-  gap: vars.spacing.base,
+  gap: vars.spacing.lg,
 });
 
 export const firstRow = style({
@@ -37,14 +38,14 @@ export const label = style([
 
 const inputFrame = {
   width: "100%",
-  minHeight: "4.6rem",
+  minHeight: vars.size.controlMd,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.control,
   backgroundColor: "transparent",
   color: vars.color.primary,
   fontFamily: vars.font.sans,
-  fontSize: "1.5rem",
-  lineHeight: "2rem",
+  ...textMetrics.body,
+
   transition: `border-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, box-shadow ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
   selectors: {
     "&:focus-within": {
@@ -62,7 +63,7 @@ const inputFrame = {
 export const nicknameInputGroup = style({
   ...inputFrame,
   display: "flex",
-  height: "4.6rem",
+  height: vars.size.controlMd,
   boxSizing: "border-box",
   alignItems: "center",
   gap: vars.spacing.xs,
@@ -72,31 +73,29 @@ export const nicknameInputGroup = style({
 
 export const nicknameInput = style({
   minWidth: 0,
-  minHeight: "4.4rem",
+  minHeight: `calc(${vars.size.controlMd} - 2px)`,
   flex: 1,
   border: 0,
   outline: 0,
   backgroundColor: "transparent",
   color: vars.color.primary,
   fontFamily: vars.font.sans,
-  fontSize: "1.5rem",
-  lineHeight: "2rem",
+  ...textMetrics.body,
 });
 
 export const suggestionButton = style({
-  minHeight: "4rem",
-  paddingInline: "1.2rem",
-  gap: "0.6rem",
+  minHeight: vars.size.controlSm,
+  paddingInline: vars.spacing.md,
+  gap: vars.spacing.sm,
   color: vars.color.tertiary,
-  fontSize: "1.25rem",
-  lineHeight: "1.6rem",
+  ...textMetrics.metadata,
 });
 
 export const bioInput = style({
   ...inputFrame,
   minHeight: "7.2rem",
   resize: "vertical",
-  padding: "1.3rem 1.6rem",
+  padding: `${vars.spacing.md} ${vars.spacing.base}`,
   outline: 0,
   selectors: {
     ...inputFrame.selectors,
@@ -110,7 +109,7 @@ export const bioInput = style({
 export const companyPillFrame = style({
   minHeight: "5rem",
   "@media": { "screen and (max-width: 799px)": { minHeight: "8.8rem" } },
-  padding: "0.9rem 1.2rem",
+  padding: `${vars.spacing.sm} ${vars.spacing.md}`,
 });
 
 export const companyInput = style({
@@ -123,8 +122,8 @@ export const companyInput = style({
   backgroundColor: "transparent",
   color: vars.color.primary,
   fontFamily: vars.font.sans,
-  fontSize: "1.4rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.body,
+
   selectors: {
     "&::placeholder": {
       color: vars.color.tertiary,
@@ -171,7 +170,7 @@ export const popup = style({
 export const list = style({
   display: "flex",
   flexDirection: "column",
-  gap: "0.2rem",
+  gap: vars.spacing.xs,
 });
 
 export const item = style({
@@ -179,11 +178,11 @@ export const item = style({
   minHeight: "4rem",
   alignItems: "center",
   gap: vars.spacing.sm,
-  padding: "0.8rem 1rem",
+  padding: `${vars.spacing.sm} ${vars.spacing.md}`,
   borderRadius: vars.radius.control,
   color: vars.color.primary,
-  fontSize: "1.4rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
+
   cursor: "pointer",
   selectors: {
     "&[data-highlighted]": {
@@ -197,8 +196,8 @@ export const item = style({
 
 export const itemIndicator = style({
   display: "inline-flex",
-  width: "1.6rem",
-  height: "1.6rem",
+  width: vars.size.iconSm,
+  height: vars.size.iconSm,
   flex: "0 0 auto",
   alignItems: "center",
   justifyContent: "center",
@@ -208,20 +207,17 @@ export const itemIndicator = style({
 export const empty = style({
   padding: vars.spacing.md,
   color: vars.color.tertiary,
-  fontSize: "1.3rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.metadata,
 });
 
 export const searchStatus = style({
-  padding: "0.8rem 1rem",
+  padding: `${vars.spacing.sm} ${vars.spacing.md}`,
   color: vars.color.tertiary,
-  fontSize: "1.3rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.metadata,
 });
 
 export const fieldMessage = style({
-  fontSize: "1.2rem",
-  lineHeight: "1.6rem",
+  ...textMetrics.bodySm,
 });
 
 export const errorMessage = style({
@@ -230,6 +226,5 @@ export const errorMessage = style({
 
 export const submitError = style({
   color: vars.color.red,
-  fontSize: "1.3rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
 });

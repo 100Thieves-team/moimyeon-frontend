@@ -5,8 +5,15 @@ import { media } from "./tokens";
 const sans = vars.font.sans;
 const mono = vars.font.mono;
 
+// 크기와 행간만 공유해 각 화면의 글꼴과 강조 굵기를 유지한다.
+export const textMetrics = vars.type;
+
 // @media 블록은 오름차순(md → lg)이어야 함
 export const textStyle = styleVariants({
+  pageTitle: { fontFamily: sans, fontWeight: 300, ...textMetrics.pageTitle },
+  sectionTitle: { fontFamily: sans, fontWeight: 300, ...textMetrics.sectionTitle },
+  cardTitle: { fontFamily: sans, fontWeight: 500, ...textMetrics.cardTitle },
+  bodySm: { fontFamily: sans, fontWeight: 400, ...textMetrics.bodySm },
   navLabel: {
     fontFamily: sans,
     fontSize: "1.6rem",
@@ -15,9 +22,8 @@ export const textStyle = styleVariants({
   },
   body: {
     fontFamily: sans,
-    fontSize: "1.6rem",
     fontWeight: 400,
-    lineHeight: 1.5,
+    ...textMetrics.body,
   },
   heroSubtitle: {
     fontFamily: sans,
@@ -147,15 +153,13 @@ export const textStyle = styleVariants({
   },
   fieldLabel: {
     fontFamily: sans,
-    fontSize: "1.4rem",
     fontWeight: 700,
-    lineHeight: "2rem",
+    ...textMetrics.bodySm,
   },
   metadata: {
     fontFamily: sans,
-    fontSize: "1.3rem",
     fontWeight: 400,
-    lineHeight: "1.7rem",
+    ...textMetrics.metadata,
   },
   testimonial: {
     fontFamily: sans,

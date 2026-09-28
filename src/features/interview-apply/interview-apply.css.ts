@@ -1,49 +1,47 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars, textStyle } from "@/styles";
+import { media, vars, textStyle, textMetrics } from "@/styles";
 
 export const page = style({
   display: "flex",
   width: "100%",
-  minHeight: "calc(100dvh - 6.4rem)",
+  minHeight: `calc(100dvh - ${vars.size.header})`,
   flex: "1 1 auto",
   justifyContent: "center",
-  padding: "4.8rem 1.6rem 6.4rem",
+  padding: `${vars.layout.pageTop} ${vars.layout.sidePadding} max(${vars.spacing.section}, env(safe-area-inset-bottom))`,
   backgroundColor: vars.color.background,
-  "@media": { [media.md]: { paddingInline: "3.2rem" } },
 });
 
 export const content = style({
   display: "flex",
   width: "100%",
-  maxWidth: "68rem",
+  maxWidth: vars.layout.formMaxWidth,
   minWidth: 0,
   flexDirection: "column",
   alignItems: "stretch",
-  gap: vars.spacing.lg,
+  gap: vars.layout.sectionGap,
 });
 
 export const heading = style({
   display: "flex",
   flexDirection: "column",
-  gap: "0.6rem",
+  gap: vars.spacing.sm,
 });
 
 export const title = style({
   color: vars.color.primary,
-  fontSize: "3rem",
+  ...textMetrics.pageTitle,
   fontWeight: 300,
-  lineHeight: "3.6rem",
+
   letterSpacing: "-0.02em",
   textWrap: "balance",
-  "@media": { [media.sm]: { fontSize: "3.2rem", lineHeight: "3.8rem" } },
 });
 
 export const roomSummary = style({
   display: "flex",
   minWidth: 0,
   alignItems: "center",
-  gap: "1.4rem",
-  padding: "1.4rem 1.8rem",
+  gap: vars.spacing.base,
+  padding: `${vars.spacing.base} ${vars.spacing.lg}`,
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.floating,
   backgroundColor: vars.color.background,
@@ -54,15 +52,15 @@ export const roomCopy = style({
   minWidth: 0,
   flex: "1 1 auto",
   flexDirection: "column",
-  gap: "0.2rem",
+  gap: vars.spacing.xs,
 });
 
 export const roomTitle = style({
   overflow: "hidden",
   color: vars.color.primary,
-  fontSize: "1.6rem",
+  ...textMetrics.cardTitle,
   fontWeight: 500,
-  lineHeight: "2.1rem",
+
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
 });
@@ -70,18 +68,18 @@ export const roomTitle = style({
 export const roomMeta = style({
   overflow: "hidden",
   color: vars.color.tertiary,
-  fontSize: "1.4rem",
-  lineHeight: "1.9rem",
+  ...textMetrics.metadata,
+
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
 });
 
 export const detailLink = style({
   flex: "0 0 auto",
-  paddingBlock: "0.8rem",
+  paddingBlock: vars.spacing.sm,
   color: vars.color.tertiary,
-  fontSize: "1.4rem",
-  lineHeight: "1.9rem",
+  ...textMetrics.bodySm,
+
   textDecoration: "none",
   selectors: {
     "&:focus-visible": { outline: `2px solid ${vars.color.primary}`, outlineOffset: "2px" },
@@ -95,12 +93,11 @@ export const formCard = style({
   display: "flex",
   minWidth: 0,
   flexDirection: "column",
-  gap: "2.2rem",
-  padding: "2.8rem",
+  gap: vars.spacing.lg,
+  padding: vars.layout.cardPadding,
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.media,
   backgroundColor: vars.color.background,
-  "@media": { "screen and (max-width: 599px)": { padding: "2rem" } },
 });
 
 export const field = style({
@@ -123,25 +120,25 @@ export const fieldLabel = style([
 export const fieldRequirement = style({
   color: vars.color.tertiary,
   fontFamily: vars.font.mono,
-  fontSize: "1.2rem",
+  ...textMetrics.bodySm,
   fontWeight: 400,
-  lineHeight: "1.6rem",
+
   letterSpacing: "0.06em",
 });
 
 export const note = style({
   width: "100%",
   minHeight: "7.2rem",
-  padding: "1.3rem 1.6rem",
+  padding: `${vars.spacing.md} ${vars.spacing.base}`,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.control,
   outline: 0,
   backgroundColor: "transparent",
   color: vars.color.primary,
   fontFamily: vars.font.sans,
-  fontSize: "1.6rem",
+  ...textMetrics.body,
   fontWeight: 400,
-  lineHeight: "2.2rem",
+
   resize: "vertical",
   transition: `border-color ${vars.motion.duration.fast} ${vars.motion.ease.fade}, box-shadow ${vars.motion.duration.fast} ${vars.motion.ease.fade}`,
   selectors: {
@@ -157,26 +154,24 @@ export const note = style({
 
 export const fieldError = style({
   color: vars.color.red,
-  fontSize: "1.2rem",
-  lineHeight: "1.6rem",
+  ...textMetrics.bodySm,
 });
 
 export const rootError = style({
-  padding: "1.2rem 1.4rem",
+  padding: `${vars.spacing.md} ${vars.spacing.base}`,
   borderRadius: vars.radius.control,
   backgroundColor: vars.color.red10,
   color: vars.color.red,
-  fontSize: "1.3rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
 });
 
-export const submitButton = style({ width: "100%", minHeight: "5rem" });
+export const submitButton = style({ width: "100%", minHeight: vars.size.controlMd });
 
 export const errorPage = style({
   display: "grid",
-  minHeight: "calc(100dvh - 6.4rem)",
+  minHeight: `calc(100dvh - ${vars.size.header})`,
   placeItems: "center",
-  padding: "3.2rem 1.6rem",
+  padding: `${vars.spacing["2xl"]} ${vars.spacing.base}`,
 });
 
 export const errorCard = style({
@@ -185,7 +180,7 @@ export const errorCard = style({
   flexDirection: "column",
   alignItems: "flex-start",
   gap: vars.spacing.base,
-  padding: "3.2rem",
+  padding: vars.spacing["2xl"],
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.media,
   boxShadow: vars.shadow.cardRaise,
@@ -193,15 +188,13 @@ export const errorCard = style({
 
 export const errorTitle = style({
   color: vars.color.primary,
-  fontSize: "2.4rem",
+  ...textMetrics.bodySm,
   fontWeight: 500,
-  lineHeight: "3rem",
 });
 
 export const errorDescription = style({
   color: vars.color.secondary,
-  fontSize: "1.5rem",
-  lineHeight: "2.2rem",
+  ...textMetrics.body,
 });
 
 export const errorActions = style({

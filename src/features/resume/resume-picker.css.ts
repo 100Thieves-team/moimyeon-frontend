@@ -1,12 +1,12 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars, textStyle } from "@/styles";
+import { media, vars, textStyle, textMetrics } from "@/styles";
 
 export const resumeFileRow = style({
   display: "flex",
   minWidth: 0,
   alignItems: "center",
-  gap: "1.4rem",
-  padding: "1.6rem 1.8rem",
+  gap: vars.spacing.base,
+  padding: `${vars.spacing.base} ${vars.spacing.lg}`,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.cta,
   backgroundColor: vars.color.background,
@@ -14,14 +14,14 @@ export const resumeFileRow = style({
 
 export const resumePdfBadge = style({
   flex: "0 0 auto",
-  padding: "0.4rem 0.8rem",
+  padding: `${vars.spacing.xs} ${vars.spacing.sm}`,
   borderRadius: "0.5rem",
   backgroundColor: vars.color.fillSecondary,
   color: vars.color.secondary,
   fontFamily: vars.font.mono,
-  fontSize: "1rem",
+  ...textMetrics.metadata,
   fontWeight: 700,
-  lineHeight: "1.4rem",
+
   letterSpacing: "0.06em",
 });
 
@@ -30,7 +30,7 @@ export const resumeFileInfo = style({
   minWidth: 0,
   flex: "1 1 auto",
   flexDirection: "column",
-  gap: "0.2rem",
+  gap: vars.spacing.xs,
 });
 
 export const resumeFileName = style([
@@ -56,17 +56,17 @@ export const resumeFileMeta = style([
 
 export const resumeChangeButton = style({
   display: "inline-flex",
-  minHeight: "3.6rem",
+  minHeight: vars.size.controlSm,
   flex: "0 0 auto",
   alignItems: "center",
   justifyContent: "center",
-  paddingInline: "1.4rem",
+  paddingInline: vars.spacing.base,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.control,
   backgroundColor: "transparent",
   color: vars.color.secondary,
   fontFamily: vars.font.sans,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   fontWeight: 500,
   cursor: "pointer",
   selectors: {
@@ -88,7 +88,7 @@ export const resumeEmptyTrigger = style({
   backgroundColor: "transparent",
   color: vars.color.secondary,
   fontFamily: vars.font.sans,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   fontWeight: 500,
   cursor: "pointer",
   selectors: {
@@ -103,7 +103,7 @@ export const resumeSummary = style({
   display: "flex",
   flexDirection: "column",
   gap: vars.spacing.sm,
-  padding: "1.8rem 2rem",
+  padding: `${vars.spacing.lg} ${vars.spacing.lg}`,
   borderRadius: vars.radius.cta,
   backgroundColor: vars.color.blue10,
 });
@@ -111,8 +111,8 @@ export const resumeSummary = style({
 export const resumeSummaryLabel = style({
   color: vars.color.blue,
   fontFamily: vars.font.mono,
-  fontSize: "1.2rem",
-  lineHeight: "1.6rem",
+  ...textMetrics.bodySm,
+
   letterSpacing: "0.1em",
 });
 
@@ -167,15 +167,15 @@ export const resumeDialogHeader = style({
   alignItems: "center",
   justifyContent: "space-between",
   gap: vars.spacing.base,
-  padding: "2.2rem 2.4rem 0",
+  padding: `${vars.spacing.xl} ${vars.spacing.xl} 0`,
   paddingRight: "6.4rem",
 });
 
 export const resumeDialogTitle = style({
   color: vars.color.primary,
-  fontSize: "1.7rem",
+  ...textMetrics.sectionTitle,
   fontWeight: 500,
-  lineHeight: "2.3rem",
+
   letterSpacing: "-0.01em",
 });
 
@@ -185,7 +185,7 @@ export const resumeDialogBody = style({
   flexDirection: "column",
   gap: vars.spacing.sm,
   overflowY: "auto",
-  padding: "1.6rem 2.4rem 2rem",
+  padding: `${vars.spacing.base} ${vars.spacing.xl} ${vars.spacing.lg}`,
 });
 
 export const resumeOptionList = style({
@@ -200,7 +200,7 @@ export const resumeOption = style({
   minWidth: 0,
   alignItems: "center",
   gap: vars.spacing.md,
-  padding: "1.4rem 1.6rem",
+  padding: `${vars.spacing.base} ${vars.spacing.base}`,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: "1.2rem",
   color: vars.color.primary,
@@ -221,7 +221,7 @@ export const resumeOptionCopy = style({
   minWidth: 0,
   flex: "1 1 auto",
   flexDirection: "column",
-  gap: "0.3rem",
+  gap: vars.spacing.xs,
 });
 
 export const resumeOptionHeading = style({
@@ -244,13 +244,13 @@ export const resumeOptionName = style([
 
 export const resumeRecentBadge = style({
   flex: "0 0 auto",
-  padding: "0.2rem 0.8rem",
+  padding: `0.2rem ${vars.spacing.sm}`,
   borderRadius: vars.radius.pill,
   backgroundColor: vars.color.lightGrey,
   color: vars.color.secondary,
-  fontSize: "1.2rem",
+  ...textMetrics.metadata,
   fontWeight: 500,
-  lineHeight: "1.6rem",
+
   "@media": {
     [media.dark]: { backgroundColor: vars.color.fillSecondary },
   },
@@ -273,10 +273,10 @@ export const resumeOptionCheck = style({
 });
 
 export const resumeDialogEmpty = style({
-  padding: "2rem",
+  padding: vars.spacing.lg,
   color: vars.color.tertiary,
-  fontSize: "1.4rem",
-  lineHeight: "2rem",
+  ...textMetrics.bodySm,
+
   textAlign: "center",
 });
 
@@ -295,8 +295,7 @@ export const resumeUploadButton = style({ width: "100%", borderStyle: "dashed" }
 
 export const resumeUploadError = style({
   color: vars.color.red,
-  fontSize: "1.2rem",
-  lineHeight: "1.6rem",
+  ...textMetrics.bodySm,
 });
 
 export const resumeDialogFooter = style({
@@ -304,5 +303,5 @@ export const resumeDialogFooter = style({
   alignItems: "center",
   justifyContent: "flex-end",
   gap: vars.spacing.sm,
-  padding: "1.4rem 2.4rem",
+  padding: `${vars.spacing.base} ${vars.spacing.xl}`,
 });

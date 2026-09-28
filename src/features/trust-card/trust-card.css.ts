@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars } from "@/styles";
+import { media, vars, textMetrics } from "@/styles";
 
 export const trigger = style({
   display: "inline-flex",
@@ -24,7 +24,7 @@ export const popup = style({
   maxWidth: "calc(100vw - 3.2rem)",
   maxHeight: "var(--available-height)",
   overflowY: "auto",
-  padding: "2.6rem",
+  padding: vars.spacing.xl,
   borderRadius: vars.radius.media,
   border: `1px solid ${vars.color.strokeLight}`,
   backgroundColor: vars.color.trueWhite,
@@ -37,7 +37,7 @@ export const queryState = style({
   flexDirection: "column",
   alignItems: "flex-start",
   gap: vars.spacing.sm,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   color: vars.color.secondary,
 });
 
@@ -60,7 +60,7 @@ export const card = style({
   display: "flex",
   minWidth: 0,
   flexDirection: "column",
-  gap: "1.4rem",
+  gap: vars.spacing.base,
 });
 
 export const identity = style({
@@ -89,7 +89,7 @@ export const identityCopy = style({
   display: "flex",
   minWidth: 0,
   flexDirection: "column",
-  gap: "0.2rem",
+  gap: vars.spacing.xs,
 });
 
 export const nameRow = style({
@@ -102,96 +102,93 @@ export const nameRow = style({
 export const nickname = style({
   overflow: "hidden",
   color: vars.color.primary,
-  fontSize: "1.5rem",
+  ...textMetrics.body,
   fontWeight: 500,
-  lineHeight: 1.4,
+
   overflowWrap: "anywhere",
 });
 
 export const hostBadge = style({
   flex: "0 0 auto",
-  padding: "0.3rem 0.9rem",
+  padding: `0.3rem ${vars.spacing.sm}`,
   borderRadius: vars.radius.pill,
   backgroundColor: vars.color.yellow10,
   color: vars.color.brown,
   "@media": { [media.dark]: { color: vars.color.yellow } },
-  fontSize: "1.1rem",
+  ...textMetrics.metadata,
   fontWeight: 700,
-  lineHeight: "1.5rem",
 });
 
 export const jobRoles = style({
   overflow: "hidden",
   color: vars.color.tertiary,
-  fontSize: "1.4rem",
-  lineHeight: 1.4,
+  ...textMetrics.bodySm,
+
   overflowWrap: "anywhere",
 });
 
 export const trustSummary = style({
   color: vars.color.secondary,
-  fontSize: "1.4rem",
-  lineHeight: 1.5,
+  ...textMetrics.bodySm,
+
   overflowWrap: "anywhere",
 });
 
 export const bio = style({
   display: "flex",
   flexDirection: "column",
-  gap: "0.5rem",
-  padding: "1.2rem 1.4rem",
+  gap: vars.spacing.xs,
+  padding: `${vars.spacing.md} ${vars.spacing.base}`,
   borderRadius: "1.2rem",
   backgroundColor: vars.color.blue10,
   color: vars.color.primary,
-  fontSize: "1.4rem",
-  lineHeight: 1.5,
+  ...textMetrics.body,
+
   overflowWrap: "anywhere",
 });
 
 export const bioLabel = style({
   color: vars.color.blue,
   fontFamily: vars.font.mono,
-  fontSize: "1.05rem",
-  lineHeight: "1.4rem",
+  ...textMetrics.bodySm,
+
   letterSpacing: "0.1em",
 });
 
 export const tagsBlock = style({
   display: "flex",
   flexDirection: "column",
-  gap: "0.7rem",
+  gap: vars.spacing.sm,
 });
 
 export const tagsLabel = style({
   color: vars.color.tertiary,
-  fontSize: "1.3rem",
-  lineHeight: 1.4,
+  ...textMetrics.bodySm,
 });
 
 export const tags = style({
   display: "flex",
   flexWrap: "wrap",
-  gap: "0.6rem",
+  gap: vars.spacing.sm,
   listStyle: "none",
 });
 
 export const tag = style({
   display: "inline-flex",
   alignItems: "baseline",
-  gap: "0.5rem",
-  padding: "0.5rem 1rem",
+  gap: vars.spacing.xs,
+  padding: `${vars.spacing.xs} ${vars.spacing.md}`,
   borderRadius: vars.radius.pill,
   backgroundColor: vars.color.fillSecondary,
   color: vars.color.secondary,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   fontWeight: 500,
-  lineHeight: 1.4,
 });
 
 export const tagCount = style({
   color: vars.color.tertiary,
   fontFamily: vars.font.mono,
-  fontSize: "1rem",
+  ...textMetrics.metadata,
 });
 
 export const avatar = style([

@@ -1,4 +1,5 @@
 "use client";
+import { iconSizes } from "@/styles/tokens";
 
 import { AlertDialog } from "@base-ui/react/alert-dialog";
 import { Checkbox } from "@base-ui/react/checkbox";
@@ -129,7 +130,7 @@ export function EditReviewForm({ onCompleted, roomId, target }: EditReviewFormPr
             name="anonymous"
           >
             <Checkbox.Indicator className={styles.checkboxIndicator}>
-              <Check size={12} strokeWidth={3} />
+              <Check size={iconSizes.sm} strokeWidth={3} />
             </Checkbox.Indicator>
           </Checkbox.Root>
           <span className={styles.anonymousLabel}>익명으로 남기기</span>

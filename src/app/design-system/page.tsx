@@ -1,5 +1,6 @@
 import { Button, LinkButton } from "@/components/button";
 import { breakpoints, grid, sprinkles, textStyle, vars } from "@/styles";
+import { desktopTypeValues, sizeValues, typeValues } from "@/styles/tokens";
 import type { Metadata } from "next";
 import * as styles from "./page.css";
 
@@ -43,6 +44,52 @@ export default function DesignSystemPage() {
         <div className={styles.ruler} />
         <span className={textStyle.caption}>1.6rem ruler — 정확히 16px이어야 함</span>
       </div>
+
+      <SectionTitle>제품 화면 타이포그래피</SectionTitle>
+      <p className={textStyle.bodySm}>크기 / 행간 · rem 기준 · 데스크톱은 800px부터 적용됩니다.</p>
+      <div className={styles.metricsTable}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>용도</th>
+              <th>모바일</th>
+              <th>데스크톱</th>
+              <th>미리보기</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(typeValues).map(([name, mobile]) => {
+              const desktop = { ...typeValues, ...desktopTypeValues }[
+                name as keyof typeof typeValues
+              ];
+              return (
+                <tr key={name}>
+                  <th scope="row">{name}</th>
+                  <td>
+                    {mobile.fontSize} / {mobile.lineHeight}
+                  </td>
+                  <td>
+                    {desktop.fontSize} / {desktop.lineHeight}
+                  </td>
+                  <td>
+                    <span className={textStyle[name as keyof typeof typeValues]}>모이면 Aa</span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <SectionTitle>UI 치수</SectionTitle>
+      <div className={styles.componentExamples}>
+        {Object.entries(sizeValues).map(([name, value]) => (
+          <TokenLabel key={name} name={name} value={value} />
+        ))}
+      </div>
+      <label className={styles.inputExample}>
+        <span className={textStyle.fieldLabel}>기본 입력 · 4.8rem</span>
+        <input className={styles.inputSpecimen} readOnly value="모이면에서 함께 준비해요" />
+      </label>
 
       <SectionTitle>Color — {Object.keys(vars.color).length} tokens</SectionTitle>
       <div className={sprinkles({ display: "flex", flexWrap: "wrap", gap: "lg" })}>

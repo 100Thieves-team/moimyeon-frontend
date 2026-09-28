@@ -1,10 +1,11 @@
+import { textMetrics } from "@/styles/typography.css";
 import { style } from "@vanilla-extract/css";
 import { media } from "@/styles/tokens";
 import { vars } from "@/styles/theme.css";
 
 export const frame = style({
   width: "100%",
-  minHeight: "4.6rem",
+  minHeight: vars.size.controlMd,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.control,
   backgroundColor: "transparent",
@@ -34,14 +35,13 @@ export const pill = style({
   display: "inline-flex",
   minHeight: "3rem",
   alignItems: "center",
-  gap: "0.4rem",
-  padding: "0.5rem 0.6rem 0.5rem 1.2rem",
+  gap: vars.spacing.xs,
+  padding: `${vars.spacing.xs} ${vars.spacing.sm} ${vars.spacing.xs} ${vars.spacing.md}`,
   borderRadius: vars.radius.pill,
   backgroundColor: vars.color.fillSecondary,
   color: vars.color.primary,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   fontWeight: 500,
-  lineHeight: "1.7rem",
 });
 
 export const pillRemove = style({
@@ -75,6 +75,5 @@ export const pillRemove = style({
 
 export const placeholder = style({
   color: vars.color.tertiary,
-  fontSize: "1.5rem",
-  lineHeight: "2rem",
+  ...textMetrics.body,
 });

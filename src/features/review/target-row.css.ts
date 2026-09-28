@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars } from "@/styles";
+import { media, vars, textMetrics } from "@/styles";
 
 export const row = style({
   display: "flex",
@@ -26,7 +26,7 @@ export const expandTrigger = style({
   display: "flex",
   alignItems: "center",
   justifyContent: "flex-end",
-  gap: "0.8rem",
+  gap: vars.spacing.sm,
   flex: "1 0 0",
   minWidth: "0.1rem",
   alignSelf: "stretch",
@@ -60,7 +60,7 @@ export const avatar = style({
 export const nameColumn = style({
   display: "flex",
   flexDirection: "column",
-  gap: "0.1rem",
+  gap: vars.spacing.xs,
   flex: "1 0 0",
   minWidth: "0.1rem",
 });
@@ -68,21 +68,21 @@ export const nameColumn = style({
 export const nameRow = style({
   display: "flex",
   alignItems: "center",
-  gap: "0.7rem",
+  gap: vars.spacing.sm,
 });
 
 export const nickname = style({
-  fontSize: "1.45rem",
+  ...textMetrics.body,
   fontWeight: 500,
   color: vars.color.primary,
 });
 
 export const hostBadge = style({
   display: "inline-flex",
-  padding: "0.2rem 0.8rem",
+  padding: `0.2rem ${vars.spacing.sm}`,
   borderRadius: vars.radius.pill,
   backgroundColor: vars.color.yellow10,
-  fontSize: "1.05rem",
+  ...textMetrics.metadata,
   fontWeight: 700,
   color: vars.color.brown,
 });
@@ -90,8 +90,8 @@ export const hostBadge = style({
 export const submitted = style({
   display: "inline-flex",
   alignItems: "center",
-  gap: "0.6rem",
-  fontSize: "1.25rem",
+  gap: vars.spacing.sm,
+  ...textMetrics.metadata,
   fontWeight: 500,
   color: vars.color.secondary,
 });
@@ -137,6 +137,6 @@ export const queryState = style({
   flexDirection: "column",
   alignItems: "flex-start",
   gap: vars.spacing.sm,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   color: vars.color.secondary,
 });

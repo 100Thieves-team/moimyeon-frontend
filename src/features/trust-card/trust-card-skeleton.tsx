@@ -1,3 +1,4 @@
+import { vars } from "@/styles/theme.css";
 import { Skeleton } from "@/components/skeleton";
 import * as styles from "./trust-card.css";
 
@@ -7,11 +8,11 @@ export function TrustCardSkeleton() {
       <div className={styles.identity}>
         <Skeleton circle width="4.4rem" height="4.4rem" />
         <div className={styles.identityCopy}>
-          <Skeleton width="8rem" height="2.1rem" />
+          <Skeleton width="8rem" height={vars.type.body.lineHeight} />
           <Skeleton className={styles.jobRoles} width="12rem" height="1lh" />
         </div>
       </div>
-      <Skeleton width="85%" height="2.1rem" />
+      <Skeleton width="85%" height={vars.type.body.lineHeight} />
       <div className={styles.bio}>
         <span className={styles.bioLabel}>소개</span>
         <Skeleton width="100%" height="1lh" />

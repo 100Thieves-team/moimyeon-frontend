@@ -1,4 +1,5 @@
 "use client";
+import { iconSizes } from "@/styles/tokens";
 
 import { Dialog } from "@base-ui/react/dialog";
 import { Tabs } from "@base-ui/react/tabs";
@@ -137,7 +138,7 @@ export function RegionDialog({ handle, onValueChange, regions, value }: RegionDi
                     onClick={() => setDraftId(null)}
                     type="button"
                   >
-                    <X aria-hidden="true" size={14} />
+                    <X aria-hidden="true" size={iconSizes.sm} />
                   </button>
                 </span>
               ) : null}
@@ -149,7 +150,7 @@ export function RegionDialog({ handle, onValueChange, regions, value }: RegionDi
                 type="button"
                 variant="secondary"
               >
-                <RotateCcw aria-hidden="true" size={18} strokeWidth={1.75} />
+                <RotateCcw aria-hidden="true" size={iconSizes.md} strokeWidth={1.75} />
                 초기화
               </Button>
               <Dialog.Close render={<Button onClick={confirmSelection} type="button" />}>

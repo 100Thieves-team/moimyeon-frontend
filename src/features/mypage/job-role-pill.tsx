@@ -1,3 +1,4 @@
+import { iconSizes } from "@/styles/tokens";
 import { X } from "lucide-react";
 import type { JobRoleOption } from "./mypage-model";
 import * as styles from "./job-role-field.css";
@@ -18,7 +19,7 @@ export function JobRolePill({ onRemove, role, variant }: JobRolePillProps) {
         onClick={onRemove}
         type="button"
       >
-        <X aria-hidden="true" size={14} strokeWidth={2} />
+        <X aria-hidden="true" size={iconSizes.sm} strokeWidth={2} />
       </button>
     </span>
   );

@@ -21,7 +21,7 @@ export const filterLabel = style({
 export const filterControl = style({
   ...placeholder,
   width: "100%",
-  height: "4.4rem",
+  height: vars.size.controlSm,
   borderRadius: vars.radius.control,
 });
 
@@ -33,7 +33,7 @@ export const filterToggleRow = style({
 export const filterToggle = style({
   ...placeholder,
   width: "6.4rem",
-  height: "3.8rem",
+  height: vars.size.controlSm,
   borderRadius: vars.radius.pill,
 });
 

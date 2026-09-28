@@ -1,8 +1,7 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars } from "@/styles";
+import { media, vars, textMetrics } from "@/styles";
 
 const desktopFilterMedia = "screen and (min-width: 1000px)";
-const mobileFilters = "screen and (max-width: 999px)";
 
 const focusRing = {
   outline: `2px solid ${vars.color.primary}`,
@@ -11,12 +10,9 @@ const focusRing = {
 
 export const shell = style({
   width: "100%",
-  maxWidth: "128rem",
+  maxWidth: `calc(${vars.layout.maxWidth} + 2 * ${vars.layout.sidePadding})`,
   marginInline: "auto",
-  padding: "4.8rem 3.2rem 10rem",
-  "@media": {
-    [mobileFilters]: { padding: "2.4rem 1.6rem 8rem" },
-  },
+  padding: `${vars.layout.pageTop} ${vars.layout.sidePadding} max(${vars.spacing.section}, env(safe-area-inset-bottom))`,
 });
 
 export const discoveryLayout = style({
@@ -36,7 +32,7 @@ export const desktopFilters = style({
   "@media": {
     [desktopFilterMedia]: {
       position: "sticky",
-      top: "8.8rem",
+      top: `calc(${vars.size.header} + ${vars.spacing.xl})`,
       display: "block",
       alignSelf: "start",
     },
@@ -52,23 +48,22 @@ export const filterHeadingRow = style({
 });
 
 export const filterHeading = style({
-  fontSize: "2rem",
+  ...textMetrics.sectionTitle,
   fontWeight: 700,
-  lineHeight: "2.8rem",
 });
 
 export const resetButton = style({
   display: "inline-flex",
-  minHeight: "3.6rem",
+  minHeight: vars.size.controlSm,
   alignItems: "center",
-  gap: "0.5rem",
+  gap: vars.spacing.xs,
   paddingInline: vars.spacing.sm,
   border: 0,
   borderRadius: vars.radius.control,
   backgroundColor: "transparent",
   color: vars.color.tertiary,
   fontFamily: vars.font.sans,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   cursor: "pointer",
   selectors: {
     "&:focus-visible": focusRing,
@@ -83,20 +78,19 @@ export const resetButton = style({
 export const filterFields = style({
   display: "flex",
   flexDirection: "column",
-  gap: vars.spacing.xl,
+  gap: vars.spacing.lg,
 });
 
 export const filterSection = style({
   display: "flex",
   flexDirection: "column",
-  gap: vars.spacing.md,
+  gap: vars.spacing.sm,
 });
 
 export const filterLabel = style({
   color: vars.color.secondary,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   fontWeight: 600,
-  lineHeight: "2rem",
 });
 
 export const searchInputGroup = style({
@@ -105,7 +99,7 @@ export const searchInputGroup = style({
   minHeight: "4.4rem",
   alignItems: "center",
   gap: vars.spacing.sm,
-  padding: "0 1.2rem",
+  padding: `0 ${vars.spacing.md}`,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.control,
   backgroundColor: vars.color.background,
@@ -127,8 +121,8 @@ export const searchInput = style({
   backgroundColor: "transparent",
   color: vars.color.primary,
   fontFamily: vars.font.sans,
-  fontSize: "1.4rem",
-  lineHeight: "2rem",
+  ...textMetrics.body,
+
   selectors: { "&::placeholder": { color: vars.color.tertiary } },
 });
 
@@ -164,17 +158,16 @@ export const comboboxPopup = style({
 });
 
 export const comboboxStatus = style({
-  padding: "0.8rem 1rem",
+  padding: `${vars.spacing.sm} ${vars.spacing.md}`,
   color: vars.color.tertiary,
-  fontSize: "1.3rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.metadata,
 });
 
 export const comboboxList = style({
   display: "flex",
   maxHeight: "27rem",
   flexDirection: "column",
-  gap: "0.2rem",
+  gap: vars.spacing.xs,
   overflowY: "auto",
 });
 
@@ -183,7 +176,7 @@ export const comboboxItem = style({
   minHeight: "4.8rem",
   alignItems: "center",
   gap: vars.spacing.sm,
-  padding: "0.8rem",
+  padding: vars.spacing.sm,
   borderRadius: vars.radius.control,
   cursor: "pointer",
   selectors: {
@@ -194,8 +187,8 @@ export const comboboxItem = style({
 
 export const comboboxIndicator = style({
   display: "inline-flex",
-  width: "1.6rem",
-  height: "1.6rem",
+  width: vars.size.iconSm,
+  height: vars.size.iconSm,
   flex: "0 0 auto",
   alignItems: "center",
   justifyContent: "center",
@@ -204,7 +197,7 @@ export const comboboxIndicator = style({
 export const resultKind = style({
   flex: "0 0 4.2rem",
   color: vars.color.tertiary,
-  fontSize: "1.2rem",
+  ...textMetrics.metadata,
   textAlign: "center",
   whiteSpace: "nowrap",
 });
@@ -216,26 +209,26 @@ export const resultCopy = style({
 });
 export const resultName = style({
   overflow: "hidden",
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
 });
-export const resultCompany = style({ color: vars.color.tertiary, fontSize: "1.2rem" });
+export const resultCompany = style({ color: vars.color.tertiary, ...textMetrics.metadata });
 
 export const filterDialogTrigger = style({
   display: "flex",
   width: "100%",
-  minHeight: "4.4rem",
+  minHeight: vars.size.controlSm,
   alignItems: "center",
   justifyContent: "space-between",
   gap: vars.spacing.sm,
-  padding: "0 1.2rem",
+  padding: `0 ${vars.spacing.md}`,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.control,
   backgroundColor: vars.color.background,
   color: vars.color.secondary,
   fontFamily: vars.font.sans,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   textAlign: "left",
   cursor: "pointer",
   selectors: { "&:focus-visible": focusRing },
@@ -244,14 +237,14 @@ export const filterDialogTrigger = style({
 export const toggleGroup = style({ display: "flex", flexWrap: "wrap", gap: vars.spacing.sm });
 
 export const filterToggle = style({
-  minHeight: "3.8rem",
-  padding: "0.8rem 1.2rem",
+  minHeight: vars.size.controlSm,
+  padding: `${vars.spacing.sm} ${vars.spacing.md}`,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.pill,
   backgroundColor: vars.color.background,
   color: vars.color.secondary,
   fontFamily: vars.font.sans,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   cursor: "pointer",
   selectors: {
     "&[data-pressed]": {
@@ -267,17 +260,17 @@ export const selectTrigger = style({
   display: "inline-flex",
   width: "100%",
   minWidth: "13.6rem",
-  minHeight: "4.4rem",
+  minHeight: vars.size.controlSm,
   alignItems: "center",
   justifyContent: "space-between",
   gap: vars.spacing.sm,
-  padding: "0 1.2rem",
+  padding: `0 ${vars.spacing.md}`,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.control,
   backgroundColor: vars.color.background,
   color: vars.color.secondary,
   fontFamily: vars.font.sans,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   cursor: "pointer",
   selectors: { "&:focus-visible": focusRing },
 });
@@ -293,16 +286,20 @@ export const selectPopup = style({
   backgroundColor: vars.color.background,
   boxShadow: vars.shadow.cardRaise,
 });
-export const selectList = style({ maxHeight: "32rem", padding: "0.6rem", overflowY: "auto" });
+export const selectList = style({
+  maxHeight: "32rem",
+  padding: vars.spacing.sm,
+  overflowY: "auto",
+});
 export const selectItem = style({
   display: "flex",
   minHeight: "4.2rem",
   alignItems: "center",
   justifyContent: "space-between",
   gap: vars.spacing.base,
-  padding: "0.8rem 1rem",
+  padding: `${vars.spacing.sm} ${vars.spacing.md}`,
   borderRadius: vars.radius.control,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   cursor: "pointer",
   selectors: { "&[data-highlighted]": { backgroundColor: vars.color.fillSecondary } },
 });
@@ -316,16 +313,16 @@ export const sortSelect = style({
 export const mobileFilterButton = style({
   display: "inline-flex",
   width: "fit-content",
-  minHeight: "4.4rem",
+  minHeight: vars.size.controlSm,
   alignItems: "center",
   gap: vars.spacing.sm,
-  padding: "0 1.4rem",
+  padding: `0 ${vars.spacing.base}`,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.control,
   backgroundColor: vars.color.background,
   color: vars.color.primary,
   fontFamily: vars.font.sans,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   fontWeight: 600,
   cursor: "pointer",
   selectors: { "&:focus-visible": focusRing },
@@ -336,11 +333,11 @@ export const filterCount = style({
   display: "grid",
   minWidth: "2rem",
   height: "2rem",
-  paddingInline: "0.5rem",
+  paddingInline: vars.spacing.xs,
   borderRadius: vars.radius.pill,
   backgroundColor: vars.color.primary,
   color: vars.color.background,
-  fontSize: "1.2rem",
+  ...textMetrics.metadata,
   placeItems: "center",
 });
 
@@ -368,13 +365,16 @@ export const mobileFilterHeader = style({
   minHeight: "6.4rem",
   alignItems: "center",
   justifyContent: "space-between",
-  padding: "1.2rem 1.6rem",
+  padding: `${vars.spacing.md} ${vars.spacing.base}`,
   paddingRight: "6.4rem",
   borderBottom: `1px solid ${vars.color.strokeLight}`,
 });
-export const mobileFilterTitle = style({ fontSize: "2rem", fontWeight: 700 });
+export const mobileFilterTitle = style({ ...textMetrics.sectionTitle, fontWeight: 700 });
 
-export const mobileFilterBody = style({ padding: "2.4rem 1.6rem", overflowY: "auto" });
+export const mobileFilterBody = style({
+  padding: `${vars.spacing.xl} ${vars.spacing.base}`,
+  overflowY: "auto",
+});
 export const mobileFilterFooter = style({
   display: "grid",
   gridTemplateColumns: "1fr 2fr",
@@ -393,12 +393,12 @@ export const resultsHeader = style({
 });
 export const titleRow = style({ display: "flex", alignItems: "baseline", gap: vars.spacing.sm });
 export const title = style({
-  fontSize: "2.8rem",
+  ...textMetrics.pageTitle,
   fontWeight: 700,
-  lineHeight: "3.6rem",
+
   letterSpacing: "-0.03em",
 });
-export const totalCount = style({ color: vars.color.blue, fontSize: "1.5rem", fontWeight: 700 });
+export const totalCount = style({ color: vars.color.blue, ...textMetrics.body, fontWeight: 700 });
 
 export const appliedFilters = style({
   display: "flex",
@@ -410,14 +410,14 @@ export const appliedFilter = style({
   display: "inline-flex",
   minHeight: "3.4rem",
   alignItems: "center",
-  gap: "0.6rem",
-  padding: "0.6rem 1rem",
+  gap: vars.spacing.sm,
+  padding: `${vars.spacing.sm} ${vars.spacing.md}`,
   border: 0,
   borderRadius: vars.radius.pill,
   backgroundColor: vars.color.primary10,
   color: vars.color.primary,
   fontFamily: vars.font.sans,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   cursor: "pointer",
   selectors: { "&:focus-visible": focusRing },
 });
@@ -435,7 +435,7 @@ export const card = style({
   flexDirection: "column",
   justifyContent: "space-between",
   gap: vars.spacing.base,
-  padding: "2.2rem",
+  padding: vars.layout.cardPadding,
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: "2rem",
   backgroundColor: vars.color.background,
@@ -459,23 +459,23 @@ export const cardBadgeRow = style({
   justifyContent: "space-between",
   gap: vars.spacing.sm,
 });
-export const cardBadges = style({ display: "flex", flex: "0 0 auto", gap: "0.6rem" });
+export const cardBadges = style({ display: "flex", flex: "0 0 auto", gap: vars.spacing.sm });
 export const cardMetaBadge = style({
   display: "flex",
   minWidth: 0,
   alignItems: "center",
-  gap: "0.4rem",
+  gap: vars.spacing.xs,
   color: vars.color.tertiary,
-  fontSize: "1.2rem",
+  ...textMetrics.metadata,
   whiteSpace: "nowrap",
 });
 const statusBadgeBase = style({
   display: "inline-flex",
   minHeight: "2.6rem",
   alignItems: "center",
-  padding: "0.4rem 0.8rem",
+  padding: `${vars.spacing.xs} ${vars.spacing.sm}`,
   borderRadius: vars.radius.pill,
-  fontSize: "1.2rem",
+  ...textMetrics.metadata,
   fontWeight: 500,
 });
 export const recruitingBadge = style([
@@ -491,19 +491,19 @@ export const cardTitle = style({
   minHeight: "2lh",
   display: "-webkit-box",
   overflow: "hidden",
-  fontSize: "1.9rem",
+  ...textMetrics.cardTitle,
   fontWeight: 700,
-  lineHeight: "2.6rem",
+
   letterSpacing: "-0.02em",
   WebkitBoxOrient: "vertical",
   WebkitLineClamp: 2,
 });
 export const cardDescription = style({
-  marginTop: "0.6rem",
+  marginTop: vars.spacing.sm,
   overflow: "hidden",
   color: vars.color.secondary,
-  fontSize: "1.4rem",
-  lineHeight: "2rem",
+  ...textMetrics.bodySm,
+
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
 });
@@ -519,10 +519,9 @@ export const cardFooter = style({
 export const cardFooterItem = style({
   display: "inline-flex",
   alignItems: "center",
-  gap: "0.5rem",
+  gap: vars.spacing.xs,
   color: vars.color.tertiary,
-  fontSize: "1.25rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.metadata,
 });
 
 export const emptyState = style({
@@ -534,17 +533,17 @@ export const emptyState = style({
   placeContent: "center",
   textAlign: "center",
 });
-export const emptyTitle = style({ fontSize: "1.8rem", fontWeight: 700 });
+export const emptyTitle = style({ ...textMetrics.cardTitle, fontWeight: 700 });
 export const emptyDescription = style({
   marginTop: vars.spacing.sm,
   color: vars.color.tertiary,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
 });
 export const loadMoreSentinel = style({ height: "1px" });
 export const paginationStatus = style({
-  padding: "2.4rem",
+  padding: vars.spacing.xl,
   color: vars.color.tertiary,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   textAlign: "center",
 });
 export const paginationError = style({
@@ -552,7 +551,7 @@ export const paginationError = style({
   alignItems: "center",
   justifyContent: "center",
   gap: vars.spacing.md,
-  padding: "2.4rem",
+  padding: vars.spacing.xl,
   color: vars.color.secondary,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
 });

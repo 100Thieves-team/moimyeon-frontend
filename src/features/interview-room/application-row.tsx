@@ -1,4 +1,5 @@
 "use client";
+import { iconSizes } from "@/styles/tokens";
 
 import { Popover } from "@base-ui/react/popover";
 import { Collapsible } from "@base-ui/react/collapsible";
@@ -133,7 +134,7 @@ export function ApplicationRow({
             )}
           </div>
           <Collapsible.Trigger aria-label={`${nickname} 신청 내용`} className={styles.expand}>
-            <ChevronDown aria-hidden="true" size={18} />
+            <ChevronDown aria-hidden="true" size={iconSizes.md} />
           </Collapsible.Trigger>
         </div>
         <Collapsible.Panel className={styles.details}>

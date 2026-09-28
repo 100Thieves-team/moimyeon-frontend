@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { vars } from "@/styles";
+import { vars, textMetrics } from "@/styles";
 
 export const container = style({
   display: "flex",
@@ -14,13 +14,13 @@ export const header = style({
 });
 
 export const count = style({
-  fontSize: "1.25rem",
+  ...textMetrics.metadata,
   color: vars.color.tertiary,
 });
 
 export const empty = style({
   padding: `${vars.spacing.lg} 0`,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   color: vars.color.tertiary,
 });
 
@@ -33,7 +33,7 @@ export const list = style({
 export const item = style({
   display: "flex",
   flexDirection: "column",
-  gap: "0.8rem",
+  gap: vars.spacing.sm,
   padding: `${vars.spacing.md} 0`,
   selectors: {
     "&:first-child": { paddingTop: 0 },
@@ -48,18 +48,18 @@ export const tagRow = style({
   listStyle: "none",
   display: "flex",
   flexWrap: "wrap",
-  gap: "0.6rem",
+  gap: vars.spacing.sm,
 });
 
 export const content = style({
-  fontSize: "1.5rem",
-  lineHeight: "2rem",
+  ...textMetrics.body,
+
   color: vars.color.primary,
 });
 
 export const author = style({
-  fontSize: "1.2rem",
-  lineHeight: "1.6rem",
+  ...textMetrics.metadata,
+
   color: vars.color.tertiary,
 });
 
@@ -70,7 +70,7 @@ const skeletonBase = {
 
 export const skeletonTagRow = style({
   display: "flex",
-  gap: "0.6rem",
+  gap: vars.spacing.sm,
 });
 
 export const skeletonChip = style({

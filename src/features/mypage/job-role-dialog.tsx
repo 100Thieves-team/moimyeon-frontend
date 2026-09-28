@@ -1,4 +1,5 @@
 "use client";
+import { iconSizes } from "@/styles/tokens";
 
 import { Dialog } from "@base-ui/react/dialog";
 import { Tabs } from "@base-ui/react/tabs";
@@ -200,7 +201,7 @@ export function JobRoleDialog(props: JobRoleDialogProps) {
                 type="button"
                 variant="secondary"
               >
-                <RotateCcw aria-hidden="true" size={18} strokeWidth={1.75} />
+                <RotateCcw aria-hidden="true" size={iconSizes.md} strokeWidth={1.75} />
                 초기화
               </Button>
               <Dialog.Close render={<Button onClick={confirmSelection} type="button" />}>

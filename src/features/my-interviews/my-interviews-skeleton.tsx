@@ -1,3 +1,4 @@
+import { vars } from "@/styles/theme.css";
 import { Skeleton } from "@/components/skeleton";
 import * as styles from "./my-interviews.css";
 
@@ -22,7 +23,7 @@ export function MyInterviewsSkeleton() {
               </div>
               <div className={styles.actions}>
                 <Skeleton width="6rem" height="2.9rem" circle />
-                <Skeleton width="8rem" height="4.4rem" />
+                <Skeleton width="8rem" height={vars.size.controlSm} />
               </div>
             </div>
           ))}
