@@ -1,4 +1,5 @@
 "use client";
+import { iconSizes } from "@/styles/tokens";
 
 import { Field } from "@base-ui/react/field";
 import { Radio } from "@base-ui/react/radio";
@@ -67,7 +68,7 @@ function SelectControl<Value extends number | string>({
       >
         <Select.Value className={styles.selectValue} placeholder={placeholder} />
         <Select.Icon className={styles.selectIcon}>
-          <ChevronDown aria-hidden="true" size={16} />
+          <ChevronDown aria-hidden="true" size={iconSizes.sm} />
         </Select.Icon>
       </Select.Trigger>
       <Select.Portal>
@@ -78,7 +79,7 @@ function SelectControl<Value extends number | string>({
                 <Select.Item className={styles.selectItem} key={item.value} value={item.value}>
                   <Select.ItemText>{item.label}</Select.ItemText>
                   <Select.ItemIndicator className={styles.selectIndicator}>
-                    <Check aria-hidden="true" size={14} />
+                    <Check aria-hidden="true" size={iconSizes.sm} />
                   </Select.ItemIndicator>
                 </Select.Item>
               ))}

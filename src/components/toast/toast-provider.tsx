@@ -1,4 +1,5 @@
 "use client";
+import { iconSizes } from "@/styles/tokens";
 
 import { Toast } from "@base-ui/react/toast";
 import { Check, X } from "lucide-react";
@@ -29,13 +30,13 @@ function ToastList() {
       toast={toast}
     >
       <Toast.Content className={styles.content}>
-        <Check aria-hidden="true" className={styles.icon} size={18} strokeWidth={2} />
+        <Check aria-hidden="true" className={styles.icon} size={iconSizes.md} strokeWidth={2} />
         <div className={styles.text}>
           <Toast.Title className={styles.title} />
           {toast.description && <Toast.Description className={styles.description} />}
         </div>
         <Toast.Close aria-label="알림 닫기" className={styles.close}>
-          <X aria-hidden="true" size={16} strokeWidth={2} />
+          <X aria-hidden="true" size={iconSizes.sm} strokeWidth={2} />
         </Toast.Close>
       </Toast.Content>
     </Toast.Root>

@@ -201,8 +201,11 @@ layout:
   remBase: 10px
   grid: 12
   columnGap: 2rem
-  sidePadding: 1rem
-  maxWidth: 200rem
+  sidePadding: 1.6rem
+  desktopSidePadding: 2rem
+  maxWidth: 128rem
+  formMaxWidth: 64rem
+  documentMaxWidth: 80rem
   breakpoints:
     sm: 600px
     md: 800px
@@ -302,6 +305,32 @@ components:
     shadow: "{shadows.card-raise}"
     shadowHover: "{shadows.card-raise-hover}"
 ---
+
+## 모이면 제품 화면의 크기 기준
+
+2026-09-23 Dia 사이트맵과 대표 화면을 Dembrandt 0.36.0으로 재측정했다.
+아래 값은 Dia의 실측 스케일을 모이면의 목록·폼·상세 화면에 맞춘 **제품 적용값**이다.
+기존 글꼴, 강조 굵기, 색상, 모서리, 그림자, 모션은 유지한다.
+이 절의 제품 기준을 기존 마케팅용 `h1`–`h4` 스케일보다 우선 적용한다.
+
+| 역할         | 모바일 크기 / 행간(px) | 800px 이상 크기 / 행간(px) |
+| ------------ | ---------------------- | -------------------------- |
+| pageTitle    | 30 / 38                | 36 / 44                    |
+| sectionTitle | 20 / 26                | 26 / 32                    |
+| cardTitle    | 18 / 26                | 18 / 26                    |
+| body         | 16 / 24                | 16 / 24                    |
+| bodySm       | 14 / 20                | 14 / 20                    |
+| metadata     | 13 / 17                | 13 / 17                    |
+
+- `textStyle`은 독립적인 텍스트 스타일, `textMetrics`는 기존 글꼴·굵기를 유지하며 크기와 행간만 적용할 때 사용한다.
+- 필드 라벨·도움말·오류는 `bodySm`, 날짜·상태 배지는 `metadata`, 입력과 긴 사용자 작성 내용은 `body`를 사용한다.
+- 페이지 좌우 여백은 16px, 600px부터 20px다. 상단 여백은 24px, 800px부터 40px다.
+- 일반 콘텐츠의 최대 너비는 1280px, 폼 본문은 640px, 문서는 800px다. 생성 단계의 내비게이션과 보조 패널은 별도 열로 유지한다.
+- 라벨과 입력 사이는 8px, 필드 사이는 20px, 카드 사이는 16px다. 카드 내부 여백은 20px, 800px부터 24px다.
+- 페이지 섹션 간격은 32px, 800px부터 40px다. 60–150px의 기존 section 토큰은 소개·빈 상태 등 큰 공간에 사용한다.
+- `vars.size.controlSm/Md/Lg`는 44/48/56px다. 일반 입력은 48px, 탐색 필터는 44px를 사용한다. 여러 줄 입력과 내용이 긴 컨트롤은 늘어날 수 있다.
+- 아이콘은 16/20/24px다. CSS는 `vars.size.iconSm/Md/Lg`, Lucide의 `size` prop은 `iconSizes.sm/md/lg`를 사용한다.
+- 헤더와 관련 화면 높이 계산은 `vars.size.header`(64px)를 공유한다.
 
 ## Overview
 
@@ -452,12 +481,14 @@ points:
 - `xl` 1200px — wide layout adjustments
 - `2xl` 1400px — ultra-wide refinements
 
-2000px is not a breakpoint; it is the container ceiling (`layout.maxWidth`).
+The source site uses a 2000px container ceiling; Moimyeon uses a 1280px
+product container (`layout.maxWidth`). Neither value is a breakpoint.
 When porting a style from the source site, snap its 100px-step value to the
 nearest tier (900 → `lg`, 1100 → `xl`).
 
-Content sits on a 12-column grid with a `2rem` column gap, `1rem` side padding,
-and a `200rem` (2000px) maximum container width.
+The source uses a 12-column grid. Product screens keep their existing columns,
+a `2rem` column gap, responsive `1.6rem` / `2rem` side padding, and a
+`128rem` (1280px) maximum content width.
 
 ### Spacing
 

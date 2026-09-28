@@ -1,3 +1,4 @@
+import { vars } from "@/styles/theme.css";
 import { Skeleton } from "@/components/skeleton";
 import * as styles from "./interview-apply.css";
 import * as resumeStyles from "@/features/resume/resume-picker.css";
@@ -11,10 +12,10 @@ export function InterviewApplySkeleton() {
         </header>
         <div className={styles.roomSummary}>
           <div className={styles.roomCopy}>
-            <Skeleton width="75%" height="2.1rem" />
-            <Skeleton width="50%" height="1.9rem" />
+            <Skeleton width="75%" height={vars.type.cardTitle.lineHeight} />
+            <Skeleton width="50%" height={vars.type.bodySm.lineHeight} />
           </div>
-          <Skeleton width="5.6rem" height="1.9rem" />
+          <Skeleton width="5.6rem" height={vars.type.bodySm.lineHeight} />
         </div>
         <div className={styles.formCard}>
           <div className={styles.field}>
@@ -29,7 +30,7 @@ export function InterviewApplySkeleton() {
             <Skeleton width="6rem" height="2rem" />
             <Skeleton width="100%" height="7.2rem" />
           </div>
-          <Skeleton width="100%" height="5rem" />
+          <Skeleton width="100%" height={vars.size.controlMd} />
         </div>
       </div>
     </main>

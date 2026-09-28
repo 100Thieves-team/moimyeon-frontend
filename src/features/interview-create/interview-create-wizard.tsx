@@ -28,7 +28,7 @@ import {
   roomsQueryKey,
 } from "@/api/generated/@tanstack/react-query.gen";
 import type { JobRoleGroup } from "@/features/mypage/mypage-model";
-import { motionValues } from "@/styles";
+import { iconSizes, motionValues } from "@/styles";
 import { InterviewInfoStep } from "./interview-info-step";
 import {
   getInterviewCreateDefaultValues,
@@ -278,7 +278,7 @@ export function InterviewCreateWizard({
                     <span className={styles.stepNumber}>
                       {completedSteps[index] ? (
                         <>
-                          <Check aria-hidden="true" size={14} strokeWidth={2} />
+                          <Check aria-hidden="true" size={iconSizes.sm} strokeWidth={2} />
                           <span className={styles.visuallyHidden}>완료</span>
                         </>
                       ) : (
@@ -359,7 +359,7 @@ export function InterviewCreateWizard({
                 <div className={styles.navigationActions}>
                   {currentStepIndex > 0 ? (
                     <Button onClick={goPrevious} size="sm" type="button" variant="ghost">
-                      <ArrowLeft aria-hidden="true" size={16} />
+                      <ArrowLeft aria-hidden="true" size={iconSizes.sm} />
                       이전
                     </Button>
                   ) : null}
@@ -382,7 +382,7 @@ export function InterviewCreateWizard({
                       type="button"
                     >
                       다음
-                      <ArrowRight aria-hidden="true" size={16} />
+                      <ArrowRight aria-hidden="true" size={iconSizes.sm} />
                     </Button>
                   )}
                 </div>

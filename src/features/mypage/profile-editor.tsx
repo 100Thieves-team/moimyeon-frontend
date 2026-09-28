@@ -1,4 +1,5 @@
 "use client";
+import { iconSizes } from "@/styles/tokens";
 
 import { Combobox } from "@base-ui/react/combobox";
 import { Dialog } from "@base-ui/react/dialog";
@@ -200,7 +201,7 @@ function CompanyCombobox({ name, onBlur, onChange, value }: CompanyComboboxProps
                       aria-label={`${company.name} 삭제`}
                       className={pillFieldStyles.pillRemove}
                     >
-                      <X aria-hidden="true" size={12} strokeWidth={2} />
+                      <X aria-hidden="true" size={iconSizes.sm} strokeWidth={2} />
                     </Combobox.ChipRemove>
                   </Combobox.Chip>
                 ))}
@@ -230,7 +231,7 @@ function CompanyCombobox({ name, onBlur, onChange, value }: CompanyComboboxProps
               {(company: ProfileCompany) => (
                 <Combobox.Item className={styles.item} key={company.companyId} value={company}>
                   <Combobox.ItemIndicator className={styles.itemIndicator}>
-                    <Check aria-hidden="true" size={14} strokeWidth={2} />
+                    <Check aria-hidden="true" size={iconSizes.sm} strokeWidth={2} />
                   </Combobox.ItemIndicator>
                   <span>{company.name}</span>
                 </Combobox.Item>
@@ -401,7 +402,7 @@ export function ProfileEditor({ jobRoleGroups, member }: ProfileEditorProps) {
                     type="button"
                     variant="ghost"
                   >
-                    <RotateCcw aria-hidden="true" size={14} strokeWidth={2} />
+                    <RotateCcw aria-hidden="true" size={iconSizes.sm} strokeWidth={2} />
                     {isNicknameSuggestionFetching ? "만드는 중..." : "새로 만들기"}
                   </Button>
                 </div>
@@ -466,7 +467,7 @@ export function ProfileEditor({ jobRoleGroups, member }: ProfileEditorProps) {
                         <ChevronDown
                           aria-hidden="true"
                           className={jobRoleStyles.fieldChevron}
-                          size={16}
+                          size={iconSizes.sm}
                         />
                       </div>
                     </div>

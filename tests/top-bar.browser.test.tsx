@@ -9,7 +9,7 @@ const mocks = vi.hoisted(() => ({
   issueDevSession: vi.fn(),
   routerRefresh: vi.fn(),
   routerReplace: vi.fn(),
-  segment: null as string | null,
+  pathname: "/",
 }));
 
 vi.mock("@/api", () => ({
@@ -27,13 +27,13 @@ vi.mock("next/navigation", () => ({
     refresh: mocks.routerRefresh,
     replace: mocks.routerReplace,
   }),
-  useSelectedLayoutSegment: () => mocks.segment,
+  usePathname: () => mocks.pathname,
 }));
 
 beforeEach(async () => {
   vi.clearAllMocks();
   mocks.getCurrentMemberState.mockResolvedValue({ error: {}, status: "anonymous" });
-  mocks.segment = null;
+  mocks.pathname = "/";
   await page.viewport(1440, 1024);
 });
 

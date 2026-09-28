@@ -1,4 +1,5 @@
 "use client";
+import { iconSizes } from "@/styles/tokens";
 
 import { Combobox } from "@base-ui/react/combobox";
 import { Dialog } from "@base-ui/react/dialog";
@@ -182,7 +183,7 @@ function PostingCombobox({ name, onBlur, onChange, value }: PostingComboboxProps
                   value={posting}
                 >
                   <Combobox.ItemIndicator className={styles.comboboxIndicator}>
-                    <Check aria-hidden="true" size={14} strokeWidth={2} />
+                    <Check aria-hidden="true" size={iconSizes.sm} strokeWidth={2} />
                   </Combobox.ItemIndicator>
                   <span className={styles.postingCopy}>
                     <span className={styles.postingName}>{posting.postingName}</span>
@@ -289,7 +290,7 @@ export function InterviewInfoStep({ jobRoleGroups, options }: InterviewInfoStepP
                     <ChevronDown
                       aria-hidden="true"
                       className={jobRoleStyles.fieldChevron}
-                      size={16}
+                      size={iconSizes.sm}
                     />
                   </div>
                 </div>

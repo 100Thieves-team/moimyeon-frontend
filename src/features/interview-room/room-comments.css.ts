@@ -1,11 +1,10 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars } from "@/styles";
+import { media, vars, textMetrics } from "@/styles";
 import { hostBadge as baseHostBadge } from "./interview-room.css";
 
 const commentText = style({
   fontFamily: vars.font.sans,
-  fontSize: "1.45rem",
-  lineHeight: "2.2rem",
+  ...textMetrics.body,
   fontWeight: 400,
 });
 
@@ -97,8 +96,8 @@ export const head = style({
   gap: vars.spacing.sm,
   flexWrap: "wrap",
 });
-export const nickname = style({ fontSize: "1.35rem", fontWeight: 500, overflowWrap: "anywhere" });
-export const date = style({ color: vars.color.tertiary, fontSize: "1.15rem" });
+export const nickname = style({ ...textMetrics.bodySm, fontWeight: 500, overflowWrap: "anywhere" });
+export const date = style({ color: vars.color.tertiary, ...textMetrics.metadata });
 export const content = style([
   commentText,
   {
@@ -115,9 +114,9 @@ export const deleted = style([
 ]);
 export const deleteButton = style({
   marginInlineStart: "auto",
-  fontSize: "1.2rem",
-  minHeight: "3rem",
-  padding: "0 0.6rem",
+  ...textMetrics.metadata,
+  minHeight: vars.size.controlSm,
+  padding: `0 ${vars.spacing.sm}`,
 });
 export const notice = style({
   border: `1px dashed ${vars.color.strokeMedium}`,
@@ -125,8 +124,7 @@ export const notice = style({
   padding: vars.spacing.base,
   textAlign: "center",
   color: vars.color.secondary,
-  fontSize: "1.35rem",
-  lineHeight: "2rem",
+  ...textMetrics.bodySm,
 });
 export const preview = style({
   marginBottom: vars.spacing.base,
@@ -134,13 +132,12 @@ export const preview = style({
   borderRadius: vars.radius.cta,
   backgroundColor: vars.color.fillSecondary,
   color: vars.color.secondary,
-  fontSize: "1.2rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.metadata,
 });
 export const error = style({
   color: vars.color.red,
-  fontSize: "1.3rem",
-  lineHeight: "1.9rem",
+  ...textMetrics.bodySm,
+
   marginBlock: vars.spacing.sm,
 });
 export const status = style({
@@ -149,6 +146,6 @@ export const status = style({
   alignItems: "center",
   gap: vars.spacing.md,
   padding: `${vars.spacing.xl} 0`,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   color: vars.color.secondary,
 });

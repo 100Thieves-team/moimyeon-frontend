@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars } from "@/styles";
+import { media, vars, textMetrics } from "@/styles";
 
 const stackTransition = `transform ${vars.motion.duration.slow} ${vars.motion.ease.site}, opacity ${vars.motion.duration.base} ${vars.motion.ease.out}, height ${vars.motion.duration.fast} ${vars.motion.ease.fade}`;
 const swipeExitTransition = `transform ${vars.motion.duration.base} ${vars.motion.ease.out}, opacity ${vars.motion.duration.base} ${vars.motion.ease.out}, height ${vars.motion.duration.fast} ${vars.motion.ease.fade}`;
@@ -143,16 +143,14 @@ export const text = style({
 
 export const title = style({
   margin: 0,
-  fontSize: "1.4rem",
+  ...textMetrics.pageTitle,
   fontWeight: 600,
-  lineHeight: "2rem",
 });
 
 export const description = style({
   margin: 0,
   color: vars.color.secondary,
-  fontSize: "1.3rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
 });
 
 export const close = style({

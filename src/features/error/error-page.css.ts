@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { vars } from "@/styles";
+import { vars, textMetrics } from "@/styles";
 
 const mobile = "screen and (max-width: 599px)";
 
@@ -7,14 +7,9 @@ export const page = style({
   display: "grid",
   minHeight: "100dvh",
   gridTemplateRows: "auto minmax(0, 1fr)",
-  padding: "4rem clamp(2rem, 5vw, 6rem) 6rem",
+  padding: `${vars.layout.pageTop} ${vars.layout.sidePadding} max(${vars.spacing.section}, env(safe-area-inset-bottom))`,
   backgroundColor: vars.color.background,
   color: vars.color.primary,
-  "@media": {
-    [mobile]: {
-      padding: "3.2rem 2rem 4rem",
-    },
-  },
 });
 
 export const header = style({
@@ -45,7 +40,7 @@ export const main = style({
   paddingBottom: "6.4rem",
   "@media": {
     [mobile]: {
-      paddingBottom: "3.2rem",
+      paddingBottom: vars.spacing["2xl"],
     },
   },
 });
@@ -61,33 +56,25 @@ export const content = style({
 
 export const title = style({
   fontFamily: vars.font.sans,
-  fontSize: "7.2rem",
+  ...textMetrics.pageTitle,
   fontWeight: 300,
-  lineHeight: "8.4rem",
+
   letterSpacing: "-0.04em",
   textWrap: "balance",
-  "@media": {
-    [mobile]: {
-      fontSize: "5.2rem",
-      lineHeight: "6rem",
-    },
-  },
 });
 
 export const description = style({
-  marginTop: "1.6rem",
+  marginTop: vars.spacing.base,
   color: vars.color.secondary,
   fontFamily: vars.font.sans,
-  fontSize: "2.2rem",
+  ...textMetrics.body,
   fontWeight: 400,
-  lineHeight: "3rem",
+
   letterSpacing: "-0.02em",
   textWrap: "balance",
   "@media": {
     [mobile]: {
-      marginTop: "1.2rem",
-      fontSize: "1.8rem",
-      lineHeight: "2.6rem",
+      marginTop: vars.spacing.md,
     },
   },
 });
@@ -96,14 +83,14 @@ export const actions = style({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  gap: "1.2rem",
+  gap: vars.spacing.md,
   marginTop: "5.6rem",
   "@media": {
     [mobile]: {
       width: "100%",
       maxWidth: "24rem",
       flexDirection: "column",
-      marginTop: "4rem",
+      marginTop: vars.spacing["3xl"],
     },
   },
 });

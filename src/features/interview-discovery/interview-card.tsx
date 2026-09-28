@@ -1,3 +1,4 @@
+import { iconSizes } from "@/styles/tokens";
 import Link from "next/link";
 import { CalendarDays, MapPin, Users } from "lucide-react";
 import type { RoomsResponse } from "@/api";
@@ -36,7 +37,7 @@ export function InterviewCard({ room }: { room: InterviewRoom }) {
       <div className={styles.cardBadgeRow}>
         <div className={styles.cardMetaBadge}>
           {room.method === "OFFLINE" ? (
-            <MapPin aria-hidden="true" size={13} strokeWidth={1.75} />
+            <MapPin aria-hidden="true" size={iconSizes.sm} strokeWidth={1.75} />
           ) : null}
           <span>{[room.methodLabel, regionLabel].filter(Boolean).join(" · ")}</span>
         </div>
@@ -62,12 +63,12 @@ export function InterviewCard({ room }: { room: InterviewRoom }) {
 
       <div className={styles.cardFooter}>
         <span className={styles.cardFooterItem}>
-          <CalendarDays aria-hidden="true" size={15} strokeWidth={1.75} />
+          <CalendarDays aria-hidden="true" size={iconSizes.sm} strokeWidth={1.75} />
           {formatSchedule(room.schedule)}
         </span>
         {room.recruit ? (
           <span className={styles.cardFooterItem}>
-            <Users aria-hidden="true" size={15} strokeWidth={1.75} />
+            <Users aria-hidden="true" size={iconSizes.sm} strokeWidth={1.75} />
             {room.recruit.current}/{room.recruit.max}명
           </span>
         ) : null}

@@ -1,3 +1,4 @@
+import { iconSizes } from "@/styles/tokens";
 import type { ReactNode } from "react";
 import { Tabs } from "@base-ui/react/tabs";
 import { CalendarCheck, Sprout } from "lucide-react";
@@ -32,7 +33,7 @@ function TrustStats({ trust }: TrustStatsProps) {
           {trust.activityTopPercent !== null && (
             <div className={styles.statRow}>
               <div className={styles.activityIcon}>
-                <Sprout aria-hidden="true" size={15} strokeWidth={2} />
+                <Sprout aria-hidden="true" size={iconSizes.sm} strokeWidth={2} />
               </div>
               <div className={styles.statCopy}>
                 <dt className={styles.statLabel}>활동률</dt>
@@ -43,7 +44,7 @@ function TrustStats({ trust }: TrustStatsProps) {
           {trust.recentAttendances.length > 0 && (
             <div className={styles.statRow}>
               <div className={styles.attendanceIcon}>
-                <CalendarCheck aria-hidden="true" size={15} strokeWidth={2} />
+                <CalendarCheck aria-hidden="true" size={iconSizes.sm} strokeWidth={2} />
               </div>
               <div className={styles.statCopy}>
                 <dt className={styles.statLabel}>최근 출석</dt>

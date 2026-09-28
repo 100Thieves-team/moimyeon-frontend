@@ -1,4 +1,5 @@
 "use client";
+import { iconSizes } from "@/styles/tokens";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSuspenseInfiniteQuery, useSuspenseQueries } from "@tanstack/react-query";
@@ -204,7 +205,7 @@ export function InterviewDiscoveryContent({ filters }: InterviewDiscoveryContent
                   type="button"
                 >
                   {filter.label}
-                  <X aria-hidden="true" size={14} />
+                  <X aria-hidden="true" size={iconSizes.sm} />
                 </button>
               ))}
             </div>

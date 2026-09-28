@@ -1,4 +1,5 @@
 "use client";
+import { iconSizes } from "@/styles/tokens";
 
 import { Combobox } from "@base-ui/react/combobox";
 import { Dialog } from "@base-ui/react/dialog";
@@ -229,7 +230,12 @@ function CompanyPostingSearch({ onChange, value }: CompanyPostingSearchProps) {
       value={selectedOption}
     >
       <Combobox.InputGroup className={styles.searchInputGroup}>
-        <Search aria-hidden="true" className={styles.searchIcon} size={17} strokeWidth={1.75} />
+        <Search
+          aria-hidden="true"
+          className={styles.searchIcon}
+          size={iconSizes.md}
+          strokeWidth={1.75}
+        />
         <Combobox.Input
           aria-label="회사 또는 채용 공고 검색"
           autoComplete="off"
@@ -245,7 +251,7 @@ function CompanyPostingSearch({ onChange, value }: CompanyPostingSearchProps) {
             onClick={clearSelection}
             type="button"
           >
-            <X aria-hidden="true" size={16} />
+            <X aria-hidden="true" size={iconSizes.sm} />
           </button>
         ) : null}
       </Combobox.InputGroup>
@@ -263,7 +269,7 @@ function CompanyPostingSearch({ onChange, value }: CompanyPostingSearchProps) {
                   value={item}
                 >
                   <Combobox.ItemIndicator className={styles.comboboxIndicator}>
-                    <Check aria-hidden="true" size={14} />
+                    <Check aria-hidden="true" size={iconSizes.sm} />
                   </Combobox.ItemIndicator>
                   <span className={styles.resultKind}>
                     {item.kind === "company" ? "회사" : "공고"}
@@ -313,7 +319,7 @@ function SelectControl({
       >
         <Select.Value placeholder={placeholder} />
         <Select.Icon className={styles.selectIcon}>
-          <ChevronDown aria-hidden="true" size={16} />
+          <ChevronDown aria-hidden="true" size={iconSizes.sm} />
         </Select.Icon>
       </Select.Trigger>
       <Select.Portal>
@@ -324,7 +330,7 @@ function SelectControl({
                 <Select.Item className={styles.selectItem} key={item.value} value={item.value}>
                   <Select.ItemText>{item.label}</Select.ItemText>
                   <Select.ItemIndicator className={styles.selectIndicator}>
-                    <Check aria-hidden="true" size={14} />
+                    <Check aria-hidden="true" size={iconSizes.sm} />
                   </Select.ItemIndicator>
                 </Select.Item>
               ))}
@@ -375,7 +381,7 @@ function FilterFields({
         <h2 className={styles.filterLabel}>직무</h2>
         <button className={styles.filterDialogTrigger} onClick={onOpenJobRole} type="button">
           <span>{jobRoleLabel ?? "직무를 선택해 주세요"}</span>
-          <ChevronDown aria-hidden="true" size={16} />
+          <ChevronDown aria-hidden="true" size={iconSizes.sm} />
         </button>
       </section>
 
@@ -417,7 +423,7 @@ function FilterFields({
         <h2 className={styles.filterLabel}>지역</h2>
         <button className={styles.filterDialogTrigger} onClick={onOpenRegion} type="button">
           <span>{regionLabel ?? "지역을 선택해 주세요"}</span>
-          <ChevronDown aria-hidden="true" size={16} />
+          <ChevronDown aria-hidden="true" size={iconSizes.sm} />
         </button>
       </section>
     </div>
@@ -489,7 +495,7 @@ export function InterviewDiscoveryFilters({
           <h2 className={styles.filterHeading}>필터</h2>
           {selectedFilterCount > 0 ? (
             <button className={styles.resetButton} onClick={clearDesktopFilters} type="button">
-              <RotateCcw aria-hidden="true" size={15} />
+              <RotateCcw aria-hidden="true" size={iconSizes.sm} />
               초기화
             </button>
           ) : null}
@@ -515,7 +521,7 @@ export function InterviewDiscoveryFilters({
       </aside>
 
       <button className={styles.mobileFilterButton} onClick={openMobileFilters} type="button">
-        <Filter aria-hidden="true" size={17} />
+        <Filter aria-hidden="true" size={iconSizes.md} />
         필터
         {selectedFilterCount > 0 ? (
           <span className={styles.filterCount}>{selectedFilterCount}</span>

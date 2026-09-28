@@ -1,4 +1,5 @@
 "use client";
+import { iconSizes } from "@/styles/tokens";
 
 import { Controller } from "react-hook-form";
 
@@ -188,7 +189,7 @@ export function ResumePicker({
                     <Check
                       aria-hidden="true"
                       className={styles.resumeOptionCheck}
-                      size={17}
+                      size={iconSizes.md}
                       strokeWidth={1.75}
                     />
                   </Radio.Root>

@@ -1,35 +1,30 @@
 import { globalStyle, style, styleVariants } from "@vanilla-extract/css";
-import { media, vars } from "@/styles";
+import { media, vars, textMetrics } from "@/styles";
 
 const mobile = "screen and (max-width: 799px)";
 
 export const page = style({
   display: "flex",
   width: "100%",
-  minHeight: "calc(100dvh - 6.4rem)",
+  minHeight: `calc(100dvh - ${vars.size.header})`,
   flex: "1 1 auto",
   flexDirection: "column",
-  padding: "0 3.2rem 2.4rem",
+  padding: `${vars.layout.pageTop} ${vars.layout.sidePadding} max(${vars.spacing.section}, env(safe-area-inset-bottom))`,
   backgroundColor: vars.color.background,
-  "@media": {
-    [mobile]: {
-      padding: "0 1.6rem 1.2rem",
-    },
-  },
 });
 
 export const content = style({
   width: "100%",
-  maxWidth: "124.8rem",
+  maxWidth: vars.layout.maxWidth,
   marginInline: "auto",
-  paddingBottom: "3.2rem",
+  paddingBottom: vars.spacing["2xl"],
 });
 
 export const hero = style({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-  paddingTop: "2.4rem",
+  paddingTop: 0,
 });
 
 export const badges = style({
@@ -43,11 +38,10 @@ const statusBadgeBase = {
   display: "inline-flex",
   minHeight: "2.6rem",
   alignItems: "center",
-  paddingInline: "1.2rem",
+  paddingInline: vars.spacing.md,
   borderRadius: vars.radius.pill,
-  fontSize: "1.2rem",
+  ...textMetrics.metadata,
   fontWeight: 500,
-  lineHeight: "1.6rem",
 } as const;
 
 export const statusBadge = styleVariants({
@@ -80,21 +74,21 @@ export const hostBadge = style({
 
 export const title = style({
   maxWidth: "90rem",
-  marginTop: "1.2rem",
+  marginTop: vars.spacing.md,
   color: vars.color.primary,
-  fontSize: "clamp(3rem, 2.2rem + 1.25vw, 4rem)",
+  ...textMetrics.pageTitle,
   fontWeight: 300,
-  lineHeight: 1.15,
+
   letterSpacing: "-0.035em",
   overflowWrap: "anywhere",
   textWrap: "balance",
 });
 
 export const meta = style({
-  marginTop: "1.2rem",
+  marginTop: vars.spacing.md,
   color: vars.color.secondary,
-  fontSize: "1.6rem",
-  lineHeight: 1.5,
+  ...textMetrics.bodySm,
+
   overflowWrap: "anywhere",
 });
 
@@ -102,13 +96,13 @@ export const infoStrip = style({
   display: "grid",
   width: "100%",
   gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-  marginTop: "1.8rem",
-  paddingBlock: "1.8rem",
+  marginTop: vars.spacing.lg,
+  paddingBlock: vars.spacing.lg,
   borderBlock: `1px solid ${vars.color.strokeLight}`,
   "@media": {
     [mobile]: {
       gridTemplateColumns: "1fr",
-      marginTop: "1.8rem",
+      marginTop: vars.spacing.lg,
       paddingBlock: 0,
     },
   },
@@ -130,13 +124,13 @@ export const infoColumn = style({
   gap: vars.spacing.xs,
   selectors: {
     "&:not(:first-child)": {
-      paddingInlineStart: "2.8rem",
+      paddingInlineStart: vars.spacing["2xl"],
       borderInlineStart: `1px solid ${vars.color.strokeLight}`,
     },
   },
   "@media": {
     [mobile]: {
-      paddingBlock: "1.6rem",
+      paddingBlock: vars.spacing.base,
       selectors: {
         "&:not(:first-child)": {
           paddingInlineStart: 0,
@@ -150,15 +144,13 @@ export const infoColumn = style({
 
 export const infoLabel = style({
   color: vars.color.tertiary,
-  fontSize: "1.3rem",
-  lineHeight: 1.4,
+  ...textMetrics.bodySm,
 });
 
 export const infoValue = style({
   color: vars.color.primary,
-  fontSize: "1.6rem",
+  ...textMetrics.body,
   fontWeight: 500,
-  lineHeight: 1.4,
 });
 
 const progressBase = {
@@ -174,26 +166,26 @@ export const detailLayout = style({
   display: "grid",
   gridTemplateColumns: "minmax(0, 1fr) 40rem",
   alignItems: "start",
-  gap: "4.8rem",
-  paddingTop: "1rem",
+  gap: vars.layout.sectionGap,
+  paddingTop: vars.spacing.md,
   "@media": {
     [mobile]: {
       gridTemplateColumns: "minmax(0, 1fr)",
-      gap: "2.4rem",
-      paddingTop: "2.4rem",
+
+      paddingTop: vars.spacing.xl,
     },
   },
 });
 
 export const rightRail = style({
   position: "sticky",
-  top: "8rem",
+  top: `calc(${vars.size.header} + ${vars.spacing.base})`,
   display: "flex",
   width: "100%",
   minWidth: 0,
   flexDirection: "column",
   alignItems: "stretch",
-  gap: "1.6rem",
+  gap: vars.spacing.base,
   "@media": {
     [mobile]: {
       position: "static",
@@ -208,7 +200,7 @@ export const detailCopy = style({
   display: "flex",
   minWidth: 0,
   flexDirection: "column",
-  gap: "2.2rem",
+  gap: vars.spacing.xl,
 });
 
 export const detailSection = style({
@@ -221,23 +213,22 @@ export const policySection = style({
   display: "flex",
   flexDirection: "column",
   gap: vars.spacing.sm,
-  paddingTop: "1.8rem",
+  paddingTop: vars.spacing.lg,
   borderTop: `1px solid ${vars.color.strokeLight}`,
 });
 
 export const sectionTitle = style({
   color: vars.color.primary,
-  fontSize: "1.6rem",
+  ...textMetrics.sectionTitle,
   fontWeight: 700,
-  lineHeight: 1.4,
 });
 
 export const description = style({
   minHeight: "2lh",
-  maxWidth: "64rem",
+  maxWidth: vars.layout.formMaxWidth,
   color: vars.color.secondary,
-  fontSize: "1.6rem",
-  lineHeight: 1.6,
+  ...textMetrics.body,
+
   overflowWrap: "anywhere",
   textWrap: "pretty",
 });
@@ -245,8 +236,7 @@ export const description = style({
 export const policyList = style({
   listStyle: "none",
   color: vars.color.secondary,
-  fontSize: "1.5rem",
-  lineHeight: 1.6,
+  ...textMetrics.body,
 });
 
 export const actionCard = style({
@@ -255,7 +245,7 @@ export const actionCard = style({
   minWidth: 0,
   flexDirection: "column",
   gap: vars.spacing.lg,
-  padding: vars.spacing.xl,
+  padding: vars.layout.cardPadding,
   overflow: "hidden",
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.media,
@@ -285,14 +275,14 @@ export const quotaStatusRow = style({
   display: "flex",
   flexWrap: "wrap",
   alignItems: "center",
-  gap: "0.8rem",
+  gap: vars.spacing.sm,
 });
 
 export const quotaNumber = style({
   color: vars.color.tertiary,
-  fontSize: "1.3rem",
+  ...textMetrics.metadata,
   fontWeight: 400,
-  lineHeight: "1.8rem",
+
   whiteSpace: "nowrap",
   marginInlineStart: "auto",
   textAlign: "right",
@@ -300,9 +290,8 @@ export const quotaNumber = style({
 
 export const remainingQuota = style({
   color: vars.color.blue,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   fontWeight: 500,
-  lineHeight: 1.4,
 });
 
 export const actionProgress = style({
@@ -335,7 +324,7 @@ export const participantAvatarItem = style({
 
 export const participantAvatarTrigger = style({
   width: "4rem",
-  height: "4rem",
+  height: vars.size.controlMd,
   borderRadius: vars.radius.pill,
 });
 
@@ -396,9 +385,9 @@ export const participantAvatarOverflow = style({
 
 export const actionMessage = style({
   color: vars.color.secondary,
-  fontSize: "1.4rem",
+  ...textMetrics.bodySm,
   fontWeight: 500,
-  lineHeight: 1.4,
+
   overflowWrap: "anywhere",
   textAlign: "center",
 });
@@ -413,22 +402,21 @@ export const actionControls = style({
 });
 
 export const actionError = style({
-  padding: "0.8rem 1rem",
+  padding: `${vars.spacing.sm} ${vars.spacing.md}`,
   border: `1px solid ${vars.color.red50}`,
   borderRadius: vars.radius.control,
   backgroundColor: vars.color.background,
   color: vars.color.red,
-  fontSize: "1.2rem",
-  lineHeight: "1.6rem",
+  ...textMetrics.bodySm,
 });
 
 export const errorPage = style({
   display: "grid",
-  minHeight: "calc(100dvh - 6.4rem)",
-  padding: "3.2rem",
+  minHeight: `calc(100dvh - ${vars.size.header})`,
+  padding: vars.spacing["2xl"],
   placeItems: "center",
   "@media": {
-    [mobile]: { padding: "1.6rem" },
+    [mobile]: { padding: vars.spacing.base },
   },
 });
 
@@ -438,7 +426,7 @@ export const errorCard = style({
   maxWidth: "52rem",
   flexDirection: "column",
   alignItems: "center",
-  padding: "4rem 3.2rem",
+  padding: `${vars.spacing["3xl"]} ${vars.spacing["2xl"]}`,
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.media,
   backgroundColor: vars.color.background,
@@ -447,16 +435,14 @@ export const errorCard = style({
 });
 
 export const errorTitle = style({
-  fontSize: "2.6rem",
+  ...textMetrics.bodySm,
   fontWeight: 500,
-  lineHeight: "3.2rem",
 });
 
 export const errorDescription = style({
   marginTop: vars.spacing.sm,
   color: vars.color.secondary,
-  fontSize: "1.5rem",
-  lineHeight: "2.2rem",
+  ...textMetrics.body,
 });
 
 export const errorActions = style({
@@ -484,5 +470,5 @@ globalStyle(`${actionProgress}::-moz-progress-bar`, {
 
 globalStyle(`${actionControls} > :is(button, a)`, {
   width: "100%",
-  minHeight: "5rem",
+  minHeight: vars.size.controlMd,
 });

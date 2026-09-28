@@ -1,4 +1,4 @@
-import { style } from "@vanilla-extract/css";
+import { globalStyle, style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 import { vars } from "@/styles/theme.css";
 import { media } from "@/styles/tokens";
@@ -137,4 +137,29 @@ export const ruler = style({
 export const typeRow = style({
   paddingBlock: vars.spacing.md,
   borderBottom: `1px solid ${vars.color.strokeLight}`,
+});
+
+export const metricsTable = style({ overflowX: "auto", marginTop: vars.spacing.base });
+export const table = style({ width: "100%", borderCollapse: "collapse", textAlign: "left" });
+globalStyle(`${table} th, ${table} td`, {
+  padding: vars.spacing.md,
+  borderBottom: `1px solid ${vars.color.strokeLight}`,
+  whiteSpace: "nowrap",
+});
+export const inputExample = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.spacing.sm,
+  marginTop: vars.spacing.lg,
+});
+export const inputSpecimen = style({
+  width: "min(100%, 32rem)",
+  minHeight: vars.size.controlMd,
+  paddingInline: vars.spacing.base,
+  fontFamily: vars.font.sans,
+  ...vars.type.body,
+  color: vars.color.primary,
+  background: "transparent",
+  border: `1px solid ${vars.color.strokeMedium}`,
+  borderRadius: vars.radius.control,
 });

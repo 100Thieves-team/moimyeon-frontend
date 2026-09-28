@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars } from "@/styles";
+import { media, vars, textMetrics } from "@/styles";
 
 const mobile = "screen and (max-width: 799px)";
 const surface = {
@@ -10,23 +10,22 @@ const surface = {
 export const page = style({
   width: "100%",
   flex: "1 1 auto",
-  minHeight: "calc(100dvh - 6.4rem)",
-  padding: "3.6rem 6.4rem 5.6rem",
+  minHeight: `calc(100dvh - ${vars.size.header})`,
+  padding: `${vars.layout.pageTop} ${vars.layout.sidePadding} max(${vars.spacing.section}, env(safe-area-inset-bottom))`,
   backgroundColor: vars.color.background,
   color: vars.color.primary,
-  "@media": { [mobile]: { padding: "2.4rem 1.6rem 4rem" } },
 });
 export const content = style({
   width: "100%",
-  maxWidth: "144rem",
+  maxWidth: vars.layout.maxWidth,
   marginInline: "auto",
   minWidth: 0,
 });
 export const heading = style({
   display: "flex",
   flexDirection: "column",
-  gap: "0.6rem",
-  paddingBottom: "2rem",
+  gap: vars.spacing.sm,
+  paddingBottom: vars.layout.sectionGap,
 });
 export const roomMeta = style({
   minHeight: "1.8rem",
@@ -34,40 +33,39 @@ export const roomMeta = style({
   display: "flex",
   flexWrap: "wrap",
   alignItems: "center",
-  gap: "1rem",
+  gap: vars.spacing.md,
   color: vars.color.tertiary,
-  fontSize: "1.3rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.metadata,
 });
 export const title = style({
-  fontSize: "3rem",
+  ...textMetrics.pageTitle,
   fontWeight: 300,
-  lineHeight: 1.3,
+
   overflowWrap: "anywhere",
-  "@media": { [mobile]: { fontSize: "2.4rem", minHeight: "2lh" } },
+  "@media": { [mobile]: { minHeight: "2lh" } },
 });
 export const navigation = style({
   display: "flex",
   alignItems: "stretch",
-  gap: "2.8rem",
+  gap: vars.spacing["2xl"],
   borderBottom: `1px solid ${vars.color.strokeLight}`,
   overflowX: "auto",
-  "@media": { [mobile]: { gap: "1.6rem" } },
+  "@media": { [mobile]: { gap: vars.spacing.base } },
 });
 export const tabs = style({
   display: "flex",
-  gap: "2.8rem",
-  "@media": { [mobile]: { gap: "1.6rem" } },
+  gap: vars.spacing["2xl"],
+  "@media": { [mobile]: { gap: vars.spacing.base } },
 });
 export const tab = style({
   border: 0,
   borderBottom: "2px solid transparent",
-  padding: "1.2rem 0.2rem",
+  padding: `${vars.spacing.md} 0.2rem`,
   background: "transparent",
   color: vars.color.tertiary,
   whiteSpace: "nowrap",
-  fontSize: "1.45rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
+
   fontWeight: 500,
   cursor: "pointer",
   selectors: {
@@ -79,7 +77,7 @@ export const tab = style({
     "&[data-disabled]": { cursor: "not-allowed", color: vars.color.quaternary },
   },
 });
-export const panel = style({ paddingTop: "2.8rem" });
+export const panel = style({ paddingTop: vars.layout.sectionGap });
 export const list = style({
   ...surface,
   listStyle: "none",
@@ -97,19 +95,19 @@ export const application = style({
 });
 export const row = style({
   display: "flex",
-  gap: "1.4rem",
+  gap: vars.spacing.base,
   alignItems: "center",
-  padding: "1.8rem 2.6rem",
+  padding: `${vars.spacing.lg} ${vars.spacing.xl}`,
   minWidth: 0,
   "@media": {
     "screen and (max-width: 1100px)": { flexWrap: "wrap" },
-    [mobile]: { gap: "1rem", padding: "1.6rem" },
+    [mobile]: { gap: vars.spacing.md, padding: vars.spacing.base },
   },
 });
 export const profile = style({
   display: "flex",
   alignItems: "center",
-  gap: "1.4rem",
+  gap: vars.spacing.base,
   flexShrink: 0,
   minWidth: 0,
   "@media": { [mobile]: { flex: "1 1 24rem" } },
@@ -128,7 +126,7 @@ export const avatar = style({
 export const identity = style({
   display: "flex",
   flexDirection: "column",
-  gap: "0.2rem",
+  gap: vars.spacing.xs,
   width: "27rem",
   flexShrink: 0,
   minWidth: 0,
@@ -136,16 +134,16 @@ export const identity = style({
 });
 export const nickname = style({
   color: vars.color.primary,
-  fontSize: "1.45rem",
+  ...textMetrics.body,
   fontWeight: 500,
-  lineHeight: "1.9rem",
+
   overflowWrap: "anywhere",
 });
 export const meta = style({
   color: vars.color.tertiary,
-  fontSize: "1.2rem",
+  ...textMetrics.metadata,
   fontWeight: 400,
-  lineHeight: "1.7rem",
+
   overflowWrap: "anywhere",
 });
 export const excerpt = style({
@@ -155,13 +153,13 @@ export const excerpt = style({
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
   color: vars.color.secondary,
-  fontSize: "1.35rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.bodySm,
+
   "@media": { "screen and (max-width: 1100px)": { order: 1, flexBasis: "100%" } },
 });
 export const appliedAt = style({
   color: vars.color.tertiary,
-  fontSize: "1.25rem",
+  ...textMetrics.metadata,
   whiteSpace: "nowrap",
   marginLeft: "auto",
 });
@@ -173,8 +171,8 @@ export const actions = style({
 });
 export const status = style({
   color: vars.color.secondary,
-  fontSize: "1.3rem",
-  padding: "0.6rem 1rem",
+  ...textMetrics.metadata,
+  padding: `${vars.spacing.sm} ${vars.spacing.md}`,
   backgroundColor: vars.color.fillTertiary,
   borderRadius: vars.radius.pill,
 });
@@ -198,17 +196,16 @@ export const expand = style([
 export const details = style({
   display: "flex",
   flexDirection: "column",
-  gap: "1.2rem",
-  padding: "0 2.6rem 2rem 8rem",
+  gap: vars.spacing.md,
+  padding: `0 ${vars.spacing.xl} ${vars.spacing.lg} ${vars.spacing.section}`,
   selectors: { "&[hidden]": { display: "none" } },
-  "@media": { [mobile]: { paddingInline: "1.6rem" } },
+  "@media": { [mobile]: { paddingInline: vars.spacing.base } },
 });
 export const note = style({
   color: vars.color.primary,
   whiteSpace: "pre-wrap",
   overflowWrap: "anywhere",
-  fontSize: "1.4rem",
-  lineHeight: 1.6,
+  ...textMetrics.body,
 });
 export const empty = style({
   display: "flex",
@@ -216,10 +213,10 @@ export const empty = style({
   alignItems: "center",
   justifyContent: "center",
   gap: vars.spacing.base,
-  padding: "6rem 1.6rem",
+  padding: `${vars.spacing.sectionSm} ${vars.spacing.base}`,
   color: vars.color.secondary,
-  fontSize: "1.5rem",
-  lineHeight: 1.6,
+  ...textMetrics.body,
+
   textAlign: "center",
 });
 export const feedback = style({
@@ -227,11 +224,10 @@ export const feedback = style({
   flexDirection: "column",
   alignItems: "flex-start",
   gap: vars.spacing.sm,
-  padding: "1.2rem 2.6rem",
-  fontSize: "1.3rem",
-  lineHeight: 1.6,
+  padding: `${vars.spacing.md} ${vars.spacing.xl}`,
+  ...textMetrics.metadata,
 });
-export const error = style({ color: vars.color.red, fontSize: "1.3rem", lineHeight: 1.6 });
+export const error = style({ color: vars.color.red, ...textMetrics.bodySm });
 export const backdrop = style({
   position: "fixed",
   inset: 0,
@@ -255,22 +251,21 @@ export const dialog = style({
 export const dialogHeader = style({
   display: "flex",
   alignItems: "flex-start",
-  gap: "1rem",
+  gap: vars.spacing.md,
   justifyContent: "space-between",
-  padding: "2.8rem 2.8rem 0",
+  padding: `${vars.spacing["2xl"]} ${vars.spacing["2xl"]} 0`,
   paddingRight: "6.4rem",
 });
-export const dialogTitle = style({ fontSize: "2.2rem", fontWeight: 600, lineHeight: "3rem" });
+export const dialogTitle = style({ ...textMetrics.sectionTitle, fontWeight: 600 });
 export const description = style({
   color: vars.color.secondary,
-  fontSize: "1.6rem",
-  lineHeight: "2.4rem",
+  ...textMetrics.body,
 });
 export const dialogBody = style({
   display: "flex",
   flexDirection: "column",
   gap: vars.spacing.sm,
-  padding: "0.8rem 2.8rem 0",
+  padding: `${vars.spacing.sm} ${vars.spacing["2xl"]} 0`,
 });
 export const reasons = style({ display: "flex", flexDirection: "column", gap: vars.spacing.sm });
 export const reason = style({
@@ -278,14 +273,14 @@ export const reason = style({
   alignItems: "center",
   textAlign: "left",
   gap: vars.spacing.md,
-  padding: "1.4rem 1.6rem",
+  padding: `${vars.spacing.base} ${vars.spacing.base}`,
   border: `1px solid ${vars.color.strokeMedium}`,
   borderRadius: "1.2rem",
   background: "transparent",
   color: vars.color.primary,
   cursor: "pointer",
-  fontSize: "1.45rem",
-  lineHeight: "1.9rem",
+  ...textMetrics.body,
+
   selectors: {
     "&[data-checked]": {
       backgroundColor: `color-mix(in srgb, ${vars.color.blue} 6%, transparent)`,
@@ -298,8 +293,8 @@ export const reason = style({
 export const radioCircle = style({
   display: "grid",
   placeItems: "center",
-  width: "1.8rem",
-  height: "1.8rem",
+  width: vars.size.iconMd,
+  height: vars.size.iconMd,
   flexShrink: 0,
   border: `1.5px solid ${vars.color.strokeMedium}`,
   borderRadius: vars.radius.pill,
@@ -315,7 +310,7 @@ export const dialogFooter = style({
   display: "flex",
   justifyContent: "flex-end",
   gap: vars.spacing.sm,
-  padding: "1.6rem 2.8rem 1.4rem",
+  padding: `${vars.spacing.base} ${vars.spacing["2xl"]} ${vars.spacing.base}`,
 });
 export const visuallyHidden = style({
   position: "absolute",
@@ -341,12 +336,12 @@ export const roster = style({
 export const participantRow = style({
   display: "flex",
   alignItems: "center",
-  gap: "1.4rem",
-  padding: "1.8rem 2.6rem",
+  gap: vars.spacing.base,
+  padding: `${vars.spacing.lg} ${vars.spacing.xl}`,
   selectors: {
     "& + &": { borderTop: `1px solid ${vars.color.strokeLight}` },
   },
-  "@media": { [mobile]: { flexWrap: "wrap", padding: "1.6rem" } },
+  "@media": { [mobile]: { flexWrap: "wrap", padding: vars.spacing.base } },
 });
 export const participantProfile = style({
   flexShrink: 0,
@@ -370,20 +365,20 @@ export const participantAvatar = style([
 export const participantIdentity = style({
   display: "flex",
   flexDirection: "column",
-  gap: "0.2rem",
+  gap: vars.spacing.xs,
   minWidth: 0,
 });
 export const participantName = style({
   display: "flex",
   alignItems: "center",
   flexWrap: "wrap",
-  gap: "0.7rem",
+  gap: vars.spacing.sm,
 });
 export const hostBadge = style({
   borderRadius: vars.radius.pill,
-  padding: "0.2rem 0.8rem",
-  fontSize: "1.05rem",
-  lineHeight: "1.4rem",
+  padding: `0.2rem ${vars.spacing.sm}`,
+  ...textMetrics.metadata,
+
   backgroundColor: vars.color.fillSecondary,
   color: vars.color.secondary,
 });
@@ -402,16 +397,16 @@ export const participantSummary = style({
   whiteSpace: "nowrap",
   textWrap: "nowrap",
   color: vars.color.secondary,
-  fontSize: "1.4rem",
-  lineHeight: "1.9rem",
+  ...textMetrics.bodySm,
+
   "@media": { [mobile]: { flexBasis: "100%" } },
 });
 export const participantsFooter = style({
   display: "flex",
   justifyContent: "flex-end",
   alignItems: "flex-start",
-  gap: "2rem",
-  paddingTop: "2rem",
+  gap: vars.spacing.lg,
+  paddingTop: vars.spacing.lg,
   "@media": { [mobile]: { flexDirection: "column" } },
 });
 export const leaveAction = style({
@@ -419,24 +414,23 @@ export const leaveAction = style({
   flexDirection: "column",
   alignItems: "flex-end",
   flexShrink: 0,
-  gap: "0.8rem",
+  gap: vars.spacing.sm,
   maxWidth: "32rem",
   "@media": { [mobile]: { alignItems: "flex-start", maxWidth: "100%" } },
 });
 export const leaveReason = style({
   color: vars.color.secondary,
-  fontSize: "1.3rem",
-  lineHeight: "1.8rem",
+  ...textMetrics.metadata,
 });
 
 export const cardLeaveAction = style({
   display: "flex",
   flexDirection: "column",
-  gap: "0.8rem",
+  gap: vars.spacing.sm,
   width: "100%",
 });
 
 export const cardLeaveButton = style({
   width: "100%",
-  minHeight: "5rem",
+  minHeight: vars.size.controlMd,
 });

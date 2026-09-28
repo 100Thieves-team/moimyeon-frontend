@@ -1,3 +1,4 @@
+import { vars } from "@/styles/theme.css";
 import { Skeleton } from "@/components/skeleton";
 import * as styles from "./resume-manager.css";
 import * as panelStyles from "./mypage-panel.css";
@@ -20,13 +21,13 @@ export function ResumeManagerSkeleton() {
               <Skeleton width="85%" height="2.4rem" />
             </div>
             <div className={styles.rowActions}>
-              <Skeleton width="8rem" height="3.4rem" />
+              <Skeleton width="8rem" height={vars.size.controlSm} />
             </div>
           </div>
         ))}
       </div>
       <div className={panelStyles.footer}>
-        <Skeleton width="16rem" height="4.8rem" />
+        <Skeleton width="16rem" height={vars.size.controlMd} />
       </div>
     </section>
   );
