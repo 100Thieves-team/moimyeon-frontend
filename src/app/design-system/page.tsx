@@ -34,8 +34,8 @@ export default function DesignSystemPage() {
     <main className={styles.container}>
       <h1 className={textStyle.h1}>Foundation</h1>
       <p className={`${textStyle.p1Body} ${sprinkles({ color: "secondary", marginTop: "md" })}`}>
-        DESIGN.md 파운데이션 토큰의 Vanilla Extract 구현을 검증하는 페이지입니다. 다크 모드는 시스템
-        설정을 따라 자동 전환됩니다.
+        DESIGN.md 파운데이션 토큰의 Vanilla Extract 구현을 검증하는 페이지입니다. 시스템 설정과
+        관계없이 라이트모드를 사용합니다.
       </p>
 
       <div

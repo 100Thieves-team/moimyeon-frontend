@@ -1,5 +1,5 @@
 import { globalStyle, style, styleVariants } from "@vanilla-extract/css";
-import { media, vars, textMetrics } from "@/styles";
+import { vars, textMetrics } from "@/styles";
 
 const mobile = "screen and (max-width: 799px)";
 
@@ -69,7 +69,6 @@ export const hostBadge = style({
   backgroundColor: vars.color.yellow10,
   color: vars.color.brown,
   fontWeight: 700,
-  "@media": { [media.dark]: { color: vars.color.yellow } },
 });
 
 export const title = style({
@@ -250,7 +249,6 @@ export const actionCard = style({
   border: `1px solid ${vars.color.strokeLight}`,
   borderRadius: vars.radius.media,
   backgroundColor: vars.color.trueWhite,
-  "@media": { [media.dark]: { backgroundColor: vars.color.background } },
   boxShadow: vars.shadow.cardRaise,
 });
 
@@ -354,7 +352,6 @@ export const hostParticipantAvatar = style([
   {
     backgroundColor: vars.color.yellow10,
     color: vars.color.brown,
-    "@media": { [media.dark]: { color: vars.color.yellow } },
   },
 ]);
 

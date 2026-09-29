@@ -69,7 +69,8 @@ export default defineConfig({
               },
               {
                 browser: "chromium",
-                name: "chromium-dark",
+                name: "chromium-light-in-dark-system",
+                include: ["tests/light-mode.browser.test.tsx"],
                 provider: playwright({ contextOptions: { colorScheme: "dark" } }),
               },
             ],

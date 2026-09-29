@@ -1,8 +1,7 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars, textMetrics } from "@/styles";
+import { vars, textMetrics } from "@/styles";
 const surface = {
   backgroundColor: vars.color.trueWhite,
-  "@media": { [media.dark]: { backgroundColor: vars.color.background } },
 };
 
 export const backdrop = style({

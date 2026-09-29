@@ -11,7 +11,7 @@ const toCubicBezier = ([x1, y1, x2, y2]: [number, number, number, number]) =>
 
 const toMilliseconds = (seconds: number) => `${seconds * 1000}ms`;
 
-// 다크 모드에서 교체되는 시맨틱 컬러
+// 라이트모드 시맨틱 컬러
 const themeContract = createGlobalThemeContract({
   color: {
     background: "color-background",
@@ -30,7 +30,7 @@ const themeContract = createGlobalThemeContract({
   },
 });
 
-// 라이트/다크 공통 고정 토큰 (프리미티브 컬러, 스페이싱, 폰트, 레이아웃, radius, 그림자, 모션)
+// 공통 고정 토큰 (프리미티브 컬러, 스페이싱, 폰트, 레이아웃, radius, 그림자, 모션)
 const staticContract = createGlobalThemeContract({
   color: {
     black: "color-black",
@@ -268,30 +268,6 @@ createGlobalTheme(":root", themeContract, {
     fillTertiary: "rgba(0,0,0,0.04)",
     strokeLight: "rgba(0,0,0,0.06)",
     strokeMedium: "rgba(0,0,0,0.12)",
-  },
-});
-
-// 다크 모드: 시맨틱 컬러 재할당
-// createGlobalTheme(":root") 호출들과 우선순위가 같으므로 반드시 그 뒤에 위치해야 함
-globalStyle(":root", {
-  "@media": {
-    [media.dark]: {
-      vars: assignVars(themeContract.color, {
-        background: "#1B1B1B",
-        primary: "#FFFFFF",
-        secondary: "rgba(255,255,255,0.80)",
-        tertiary: "rgba(255,255,255,0.60)",
-        quaternary: "rgba(255,255,255,0.40)",
-        primary50: "rgba(255,255,255,0.50)",
-        primary10: "rgba(255,255,255,0.10)",
-        fillPrimary: "#FFFFFF",
-        fillSecondary: "rgba(255,255,255,0.20)",
-        fillSecondaryHover: "rgba(255,255,255,0.25)",
-        fillTertiary: "rgba(255,255,255,0.10)",
-        strokeLight: "rgba(255,255,255,0.10)",
-        strokeMedium: "rgba(255,255,255,0.20)",
-      }),
-    },
   },
 });
 

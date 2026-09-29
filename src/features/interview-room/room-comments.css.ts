@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { media, vars, textMetrics } from "@/styles";
+import { vars, textMetrics } from "@/styles";
 import { hostBadge as baseHostBadge } from "./interview-room.css";
 
 const commentText = style({
@@ -17,7 +17,6 @@ export const composer = style({
   borderRadius: vars.radius.floating,
   padding: vars.spacing.sm,
   backgroundColor: vars.color.trueWhite,
-  "@media": { [media.dark]: { backgroundColor: vars.color.background } },
 });
 export const field = style({ display: "flex", flexDirection: "column", gap: vars.spacing.sm });
 export const label = style({
@@ -71,16 +70,12 @@ export const avatar = style({
     '&[data-kind="host"]': { backgroundColor: vars.color.yellow10, color: vars.color.brown },
     '&[data-kind="mine"]': { backgroundColor: vars.color.blue10, color: vars.color.blue },
   },
-  "@media": {
-    [media.dark]: { selectors: { '&[data-kind="host"]': { color: vars.color.yellow } } },
-  },
 });
 export const hostBadge = style([
   baseHostBadge,
   {
     backgroundColor: vars.color.yellow10,
     color: vars.color.brown,
-    "@media": { [media.dark]: { color: vars.color.yellow } },
   },
 ]);
 export const body = style({

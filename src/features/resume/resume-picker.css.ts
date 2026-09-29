@@ -250,10 +250,6 @@ export const resumeRecentBadge = style({
   color: vars.color.secondary,
   ...textMetrics.metadata,
   fontWeight: 500,
-
-  "@media": {
-    [media.dark]: { backgroundColor: vars.color.fillSecondary },
-  },
 });
 
 export const resumeOptionMeta = style([
