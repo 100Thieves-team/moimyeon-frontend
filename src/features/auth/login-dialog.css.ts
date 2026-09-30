@@ -155,7 +155,7 @@ export const error = style({
   marginTop: "-0.8rem",
   color: vars.color.red,
   fontFamily: vars.font.sans,
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
 
   textAlign: "center",
 });
@@ -229,7 +229,7 @@ export const devInput = style({
 export const devError = style({
   color: vars.color.red,
   fontFamily: vars.font.sans,
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
 });
 
 export const devSubmit = style({

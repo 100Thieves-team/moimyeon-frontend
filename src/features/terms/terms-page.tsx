@@ -1,3 +1,4 @@
+import { SiteErrorPage } from "@/features/error/error-page";
 import * as styles from "./terms-page.css";
 import { termsList } from "@/api/generated/sdk.gen";
 
@@ -27,22 +28,27 @@ export async function TermsPage({ type }: TermsPageProps) {
 
   const term = response?.data?.terms.find((candidate) => candidate.type === type) ?? null;
 
+  if (!term) {
+    return (
+      <div role="alert">
+        <SiteErrorPage
+          title="약관을 불러오지 못했어요."
+          description="잠시 후 다시 확인해 주세요."
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={styles.page}>
       <main className={styles.article}>
-        {term ? (
-          <article>
-            <h1 className={styles.title}>{term.title}</h1>
-            <p className={styles.meta}>
-              버전 {term.version} · 시행일 {formatEffectiveDate(term.effectiveFrom)}
-            </p>
-            <div className={styles.content}>{term.content}</div>
-          </article>
-        ) : (
-          <p className={styles.status} role="alert">
-            약관을 불러오지 못했어요.
+        <article>
+          <h1 className={styles.title}>{term.title}</h1>
+          <p className={styles.meta}>
+            버전 {term.version} · 시행일 {formatEffectiveDate(term.effectiveFrom)}
           </p>
-        )}
+          <div className={styles.content}>{term.content}</div>
+        </article>
       </main>
     </div>
   );

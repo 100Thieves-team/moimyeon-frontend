@@ -291,7 +291,7 @@ export const resumeUploadButton = style({ width: "100%", borderStyle: "dashed" }
 
 export const resumeUploadError = style({
   color: vars.color.red,
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
 });
 
 export const resumeDialogFooter = style({

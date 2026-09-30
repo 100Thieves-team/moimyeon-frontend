@@ -1,5 +1,6 @@
 "use client";
 
+import * as errorStyles from "@/features/error/error-state.css";
 import {
   QueryErrorResetBoundary,
   useMutation,
@@ -32,7 +33,7 @@ export function RoomCommentsPanel({ roomId }: { roomId: string }) {
           // oxlint-disable-next-line react/no-unstable-nested-components -- fallbackRender는 컴포넌트 타입이 아닌 렌더 콜백이다.
           fallbackRender={({ error, resetErrorBoundary }) => (
             <section className={styles.status}>
-              <p role="alert">
+              <p role="alert" className={errorStyles.compactHeading}>
                 {getRoomRequestError(error).code === "E1419"
                   ? "현재 참여자만 댓글을 볼 수 있어요."
                   : "댓글을 불러오지 못했어요."}
@@ -123,7 +124,9 @@ function CommentsContent({ roomId }: { roomId: string }) {
   if (denied)
     return (
       <section className={styles.status}>
-        <p role="alert">현재 참여자만 댓글을 볼 수 있어요.</p>
+        <p role="alert" className={errorStyles.compactHeading}>
+          현재 참여자만 댓글을 볼 수 있어요.
+        </p>
       </section>
     );
 
@@ -162,7 +165,9 @@ function CommentsContent({ roomId }: { roomId: string }) {
       )}
       {query.isRefetchError && (
         <div className={styles.status}>
-          <p role="alert">최신 댓글을 불러오지 못했어요.</p>
+          <p role="alert" className={errorStyles.compactHeading}>
+            최신 댓글을 불러오지 못했어요.
+          </p>
           <Button variant="secondary" onClick={() => void query.refetch()}>
             다시 불러오기
           </Button>
@@ -170,7 +175,11 @@ function CommentsContent({ roomId }: { roomId: string }) {
       )}
       {query.hasNextPage && (
         <div className={styles.status}>
-          {query.isFetchNextPageError && <p role="alert">이전 댓글을 불러오지 못했어요.</p>}
+          {query.isFetchNextPageError && (
+            <p role="alert" className={errorStyles.compactHeading}>
+              이전 댓글을 불러오지 못했어요.
+            </p>
+          )}
           <Button
             variant="secondary"
             disabled={query.isFetchingNextPage}

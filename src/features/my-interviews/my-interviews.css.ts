@@ -149,5 +149,5 @@ export const empty = style({
 export const error = style({
   flexBasis: "100%",
   color: vars.color.red,
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
 });

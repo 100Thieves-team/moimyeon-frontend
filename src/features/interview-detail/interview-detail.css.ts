@@ -404,50 +404,7 @@ export const actionError = style({
   borderRadius: vars.radius.control,
   backgroundColor: vars.color.background,
   color: vars.color.red,
-  ...textMetrics.bodySm,
-});
-
-export const errorPage = style({
-  display: "grid",
-  minHeight: `calc(100dvh - ${vars.size.header})`,
-  padding: vars.spacing["2xl"],
-  placeItems: "center",
-  "@media": {
-    [mobile]: { padding: vars.spacing.base },
-  },
-});
-
-export const errorCard = style({
-  display: "flex",
-  width: "100%",
-  maxWidth: "52rem",
-  flexDirection: "column",
-  alignItems: "center",
-  padding: `${vars.spacing["3xl"]} ${vars.spacing["2xl"]}`,
-  border: `1px solid ${vars.color.strokeLight}`,
-  borderRadius: vars.radius.media,
-  backgroundColor: vars.color.background,
-  boxShadow: vars.shadow.cardRaise,
-  textAlign: "center",
-});
-
-export const errorTitle = style({
-  ...textMetrics.bodySm,
-  fontWeight: 500,
-});
-
-export const errorDescription = style({
-  marginTop: vars.spacing.sm,
-  color: vars.color.secondary,
   ...textMetrics.body,
-});
-
-export const errorActions = style({
-  display: "flex",
-  flexWrap: "wrap",
-  justifyContent: "center",
-  gap: vars.spacing.md,
-  marginTop: vars.spacing.xl,
 });
 
 globalStyle(`${actionProgress}::-webkit-progress-bar`, {

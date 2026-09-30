@@ -35,9 +35,3 @@ export const content = style({
   whiteSpace: "pre-wrap",
   wordBreak: "keep-all",
 });
-
-export const status = style({
-  padding: "6.4rem 0",
-  color: vars.color.secondary,
-  textAlign: "center",
-});

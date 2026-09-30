@@ -154,7 +154,7 @@ export const note = style({
 
 export const fieldError = style({
   color: vars.color.red,
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
 });
 
 export const rootError = style({
@@ -162,43 +162,7 @@ export const rootError = style({
   borderRadius: vars.radius.control,
   backgroundColor: vars.color.red10,
   color: vars.color.red,
-  ...textMetrics.bodySm,
-});
-
-export const submitButton = style({ width: "100%", minHeight: vars.size.controlMd });
-
-export const errorPage = style({
-  display: "grid",
-  minHeight: `calc(100dvh - ${vars.size.header})`,
-  placeItems: "center",
-  padding: `${vars.spacing["2xl"]} ${vars.spacing.base}`,
-});
-
-export const errorCard = style({
-  display: "flex",
-  maxWidth: "48rem",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  gap: vars.spacing.base,
-  padding: vars.spacing["2xl"],
-  border: `1px solid ${vars.color.strokeLight}`,
-  borderRadius: vars.radius.media,
-  boxShadow: vars.shadow.cardRaise,
-});
-
-export const errorTitle = style({
-  color: vars.color.primary,
-  ...textMetrics.bodySm,
-  fontWeight: 500,
-});
-
-export const errorDescription = style({
-  color: vars.color.secondary,
   ...textMetrics.body,
 });
 
-export const errorActions = style({
-  display: "flex",
-  flexWrap: "wrap",
-  gap: vars.spacing.sm,
-});
+export const submitButton = style({ width: "100%", minHeight: vars.size.controlMd });

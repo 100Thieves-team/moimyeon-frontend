@@ -553,5 +553,5 @@ export const paginationError = style({
   gap: vars.spacing.md,
   padding: vars.spacing.xl,
   color: vars.color.secondary,
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
 });

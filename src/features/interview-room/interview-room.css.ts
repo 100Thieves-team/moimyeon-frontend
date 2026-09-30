@@ -226,7 +226,7 @@ export const feedback = style({
   padding: `${vars.spacing.md} ${vars.spacing.xl}`,
   ...textMetrics.metadata,
 });
-export const error = style({ color: vars.color.red, ...textMetrics.bodySm });
+export const error = style({ color: vars.color.red, ...textMetrics.body });
 export const backdrop = style({
   position: "fixed",
   inset: 0,

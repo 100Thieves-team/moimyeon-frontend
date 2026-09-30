@@ -131,7 +131,7 @@ export const preview = style({
 });
 export const error = style({
   color: vars.color.red,
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
 
   marginBlock: vars.spacing.sm,
 });

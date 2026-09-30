@@ -172,7 +172,7 @@ export const makeDefaultButton = style({
 
 export const rowError = style({
   color: vars.color.red,
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
 
   "@media": {
     [media.md]: {
@@ -255,7 +255,7 @@ export const footerMessage = style({
 
 export const uploadError = style({
   color: vars.color.red,
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
 });
 
 export const visuallyHidden = style({
@@ -329,7 +329,7 @@ export const dialogDescription = style({
 
 export const dialogError = style({
   color: vars.color.red,
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
 });
 
 export const dialogFooter = style({

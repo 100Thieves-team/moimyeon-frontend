@@ -1,54 +1,38 @@
 import { style } from "@vanilla-extract/css";
-import { vars, textMetrics } from "@/styles";
+import { vars } from "@/styles";
 
 const mobile = "screen and (max-width: 599px)";
 
 export const page = style({
   display: "grid",
   minHeight: "100dvh",
-  gridTemplateRows: "auto minmax(0, 1fr)",
-  padding: `${vars.layout.pageTop} ${vars.layout.sidePadding} max(${vars.spacing.section}, env(safe-area-inset-bottom))`,
-  backgroundColor: vars.color.background,
+  gridTemplateRows: "minmax(0, 1fr)",
+  padding: `0 ${vars.layout.sidePadding} env(safe-area-inset-bottom)`,
+  backgroundColor: "#fbfaf6",
   color: vars.color.primary,
-});
-
-export const header = style({
-  display: "flex",
-  justifyContent: "center",
-});
-
-export const brand = style({
-  borderRadius: "0.2rem",
-  color: vars.color.primary,
-  fontFamily: vars.font.sans,
-  fontSize: "2rem",
-  fontWeight: 500,
-  lineHeight: "2.4rem",
-  letterSpacing: "-0.02em",
-  selectors: {
-    "&:focus-visible": {
-      outline: `2px solid ${vars.color.primary}`,
-      outlineOffset: "3px",
-    },
-  },
 });
 
 export const main = style({
   display: "grid",
   minHeight: 0,
   placeItems: "center",
-  paddingBottom: "6.4rem",
-  "@media": {
-    [mobile]: {
-      paddingBottom: vars.spacing["2xl"],
-    },
-  },
+  paddingBlock: vars.spacing["2xl"],
 });
+
+export const siteMain = style([
+  main,
+  {
+    minHeight: `calc(100dvh - ${vars.size.header})`,
+    paddingInline: vars.layout.sidePadding,
+    paddingTop: vars.spacing.sectionSm,
+    backgroundColor: "#fbfaf6",
+  },
+]);
 
 export const content = style({
   display: "flex",
   width: "100%",
-  maxWidth: "56rem",
+  maxWidth: "96rem",
   flexDirection: "column",
   alignItems: "center",
   textAlign: "center",
@@ -56,25 +40,40 @@ export const content = style({
 
 export const title = style({
   fontFamily: vars.font.sans,
-  ...textMetrics.pageTitle,
+  fontSize: "4.8rem",
+  lineHeight: 1.25,
   fontWeight: 300,
+  "@media": {
+    [mobile]: { fontSize: "3.6rem" },
+  },
 
   letterSpacing: "-0.04em",
   textWrap: "balance",
 });
 
+export const shortTitle = style({
+  fontSize: "7.2rem",
+  lineHeight: "8.4rem",
+  "@media": {
+    [mobile]: { fontSize: "4.8rem", lineHeight: "5.6rem" },
+  },
+});
+
 export const description = style({
-  marginTop: vars.spacing.base,
-  color: vars.color.secondary,
+  marginTop: "2.8rem",
+  color: vars.color.primary,
   fontFamily: vars.font.sans,
-  ...textMetrics.body,
+  fontSize: "2.2rem",
+  lineHeight: "2.6rem",
   fontWeight: 400,
 
   letterSpacing: "-0.02em",
   textWrap: "balance",
   "@media": {
     [mobile]: {
-      marginTop: vars.spacing.md,
+      marginTop: vars.spacing.xl,
+      fontSize: "1.8rem",
+      lineHeight: "2.6rem",
     },
   },
 });
@@ -84,7 +83,7 @@ export const actions = style({
   alignItems: "center",
   justifyContent: "center",
   gap: vars.spacing.md,
-  marginTop: "5.6rem",
+  marginTop: vars.spacing.sectionSm,
   "@media": {
     [mobile]: {
       width: "100%",
@@ -96,11 +95,18 @@ export const actions = style({
 });
 
 export const actionLayout = style({
-  minWidth: "18rem",
+  minWidth: "17rem",
+  minHeight: "5.6rem",
+  paddingInline: "2.8rem",
+  borderRadius: "1.4rem",
+  fontSize: "2rem",
+  lineHeight: "2.4rem",
+  fontWeight: 500,
   "@media": {
     [mobile]: {
       width: "100%",
       minWidth: 0,
+      fontSize: "1.8rem",
     },
   },
 });
