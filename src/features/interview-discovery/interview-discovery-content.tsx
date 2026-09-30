@@ -1,4 +1,5 @@
 "use client";
+import * as errorStyles from "@/features/error/error-state.css";
 import { iconSizes } from "@/styles/tokens";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -230,7 +231,7 @@ export function InterviewDiscoveryContent({ filters }: InterviewDiscoveryContent
           ) : null}
           {isFetchNextPageError ? (
             <div className={styles.paginationError}>
-              <p>다음 면접을 불러오지 못했어요.</p>
+              <p className={errorStyles.compactHeading}>다음 면접을 불러오지 못했어요.</p>
               <Button onClick={() => void fetchNextPage()} size="sm" variant="secondary">
                 다시 시도
               </Button>

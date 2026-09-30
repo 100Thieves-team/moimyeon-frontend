@@ -1,5 +1,6 @@
 "use client";
 
+import * as errorStyles from "@/features/error/error-state.css";
 import { Dialog } from "@base-ui/react/dialog";
 import { Field } from "@base-ui/react/field";
 import { Form } from "@base-ui/react/form";
@@ -201,7 +202,9 @@ function RejectReasonsError({ resetErrorBoundary }: FallbackProps) {
   return (
     <RejectReasonsState>
       <div className={styles.feedback}>
-        <p role="alert">반려 사유를 불러오지 못했어요.</p>
+        <p role="alert" className={errorStyles.compactHeading}>
+          반려 사유를 불러오지 못했어요.
+        </p>
         <Button onClick={resetErrorBoundary} type="button" variant="secondary" size="sm">
           사유 다시 불러오기
         </Button>

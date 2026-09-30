@@ -230,7 +230,7 @@ export const fieldRequirement = style({
 
 export const fieldError = style({
   color: vars.color.red,
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
 });
 
 export const comboboxInputGroup = style({
@@ -975,7 +975,7 @@ export const reviewSummaryText = style([
 
 export const submitError = style({
   color: vars.color.red,
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
 });
 
 export const footer = style({

@@ -1,5 +1,6 @@
 "use client";
 
+import * as errorStyles from "@/features/error/error-state.css";
 import { Tabs } from "@base-ui/react/tabs";
 import { QueryErrorResetBoundary, useSuspenseQuery } from "@tanstack/react-query";
 import { Activity, Suspense, useState, type ReactNode } from "react";
@@ -104,7 +105,7 @@ function RoomTabs({
               // oxlint-disable-next-line react/no-unstable-nested-components -- fallbackRender는 컴포넌트 타입이 아닌 렌더 콜백이다.
               fallbackRender={({ resetErrorBoundary }) => (
                 <section className={styles.empty}>
-                  <h2 className={styles.dialogTitle}>면접 정보를 불러오지 못했어요</h2>
+                  <h2 className={errorStyles.heading}>면접 정보를 불러오지 못했어요</h2>
                   <Button onClick={resetErrorBoundary} variant="secondary">
                     다시 불러오기
                   </Button>
@@ -131,7 +132,7 @@ function RoomTabs({
                 // oxlint-disable-next-line react/no-unstable-nested-components -- fallbackRender는 컴포넌트 타입이 아닌 렌더 콜백이다.
                 fallbackRender={({ resetErrorBoundary }) => (
                   <section className={styles.empty}>
-                    <h2 className={styles.dialogTitle}>참여 신청을 불러오지 못했어요</h2>
+                    <h2 className={errorStyles.heading}>참여 신청을 불러오지 못했어요</h2>
                     <Button onClick={resetErrorBoundary} variant="secondary">
                       다시 불러오기
                     </Button>
@@ -155,7 +156,7 @@ function RoomTabs({
                 // oxlint-disable-next-line react/no-unstable-nested-components -- fallbackRender는 컴포넌트 타입이 아닌 렌더 콜백이다.
                 fallbackRender={({ resetErrorBoundary }) => (
                   <section className={styles.empty}>
-                    <h2 className={styles.dialogTitle}>참여자 목록을 불러오지 못했어요</h2>
+                    <h2 className={errorStyles.heading}>참여자 목록을 불러오지 못했어요</h2>
                     <Button onClick={resetErrorBoundary} variant="secondary">
                       다시 불러오기
                     </Button>

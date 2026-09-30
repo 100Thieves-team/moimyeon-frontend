@@ -37,7 +37,7 @@ export const description = style({
 
   color: vars.color.secondary,
 });
-export const error = style({ ...textMetrics.bodySm, color: vars.color.red });
+export const error = style({ ...textMetrics.body, color: vars.color.red });
 export const footer = style({
   display: "flex",
   justifyContent: "flex-end",

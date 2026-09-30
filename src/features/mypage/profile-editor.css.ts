@@ -221,10 +221,11 @@ export const fieldMessage = style({
 });
 
 export const errorMessage = style({
+  ...textMetrics.body,
   color: vars.color.red,
 });
 
 export const submitError = style({
   color: vars.color.red,
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
 });

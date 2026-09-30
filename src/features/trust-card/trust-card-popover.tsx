@@ -1,5 +1,6 @@
 "use client";
 
+import * as errorStyles from "@/features/error/error-state.css";
 import { Popover } from "@base-ui/react/popover";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
@@ -21,7 +22,9 @@ type TrustCardPopoverProps = {
 function TrustCardError({ resetErrorBoundary }: FallbackProps) {
   return (
     <div className={styles.queryState}>
-      <p role="alert">공개 신뢰 카드를 불러오지 못했어요.</p>
+      <p role="alert" className={errorStyles.compactHeading}>
+        공개 신뢰 카드를 불러오지 못했어요.
+      </p>
       <Button onClick={resetErrorBoundary} size="sm" type="button" variant="secondary">
         다시 불러오기
       </Button>

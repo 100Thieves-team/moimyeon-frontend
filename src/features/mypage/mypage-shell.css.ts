@@ -240,7 +240,7 @@ export const logoutAction = style({
 
 export const logoutError = style({
   color: vars.color.red,
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
 });
 
 export const editorColumn = style({
@@ -290,37 +290,4 @@ export const tab = style({
       outlineOffset: "2px",
     },
   },
-});
-
-export const errorPage = style({
-  display: "grid",
-  minHeight: `calc(100dvh - ${vars.size.header})`,
-  padding: vars.spacing.xl,
-  backgroundColor: vars.color.background,
-  placeItems: "center",
-});
-
-export const errorCard = style({
-  ...card,
-  boxShadow: vars.shadow.cardRaise,
-  display: "flex",
-  width: "min(100%, 42rem)",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  gap: vars.spacing.md,
-  padding: vars.spacing["2xl"],
-});
-
-export const errorTitle = style({
-  ...textMetrics.bodySm,
-  fontWeight: 500,
-});
-
-export const errorDescription = style({
-  color: vars.color.secondary,
-  ...textMetrics.body,
-});
-
-export const retryButtonLayout = style({
-  marginTop: vars.spacing.sm,
 });

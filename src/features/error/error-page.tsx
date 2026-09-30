@@ -1,31 +1,44 @@
 import type { ReactNode } from "react";
-import Link from "next/link";
 import * as styles from "./error-page.css";
 
 type ErrorPageProps = {
-  actions: ReactNode;
+  actions?: ReactNode;
   description: string;
   documentTitle: string;
   title: string;
 };
+
+type ErrorContentProps = Omit<ErrorPageProps, "documentTitle">;
+
+function ErrorContent({ actions, description, title }: ErrorContentProps) {
+  return (
+    <section className={styles.content}>
+      <h1
+        className={`${styles.title} ${title === "404" || title === "오류" ? styles.shortTitle : ""}`}
+      >
+        {title}
+      </h1>
+      <p className={styles.description}>{description}</p>
+      {actions && <div className={styles.actions}>{actions}</div>}
+    </section>
+  );
+}
+
+export function SiteErrorPage(props: ErrorContentProps) {
+  return (
+    <main className={styles.siteMain}>
+      <ErrorContent {...props} />
+    </main>
+  );
+}
 
 export function ErrorPage({ actions, description, documentTitle, title }: ErrorPageProps) {
   return (
     <>
       <title>{documentTitle}</title>
       <div className={styles.page}>
-        <header className={styles.header}>
-          <Link aria-label="모이면 홈" className={styles.brand} href="/">
-            모이면
-          </Link>
-        </header>
-
         <main className={styles.main}>
-          <div className={styles.content}>
-            <h1 className={styles.title}>{title}</h1>
-            <p className={styles.description}>{description}</p>
-            <div className={styles.actions}>{actions}</div>
-          </div>
+          <ErrorContent actions={actions} description={description} title={title} />
         </main>
       </div>
     </>

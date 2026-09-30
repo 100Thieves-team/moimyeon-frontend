@@ -150,12 +150,12 @@ export const anonymousLabel = style({
 });
 
 export const fieldError = style({
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
   color: vars.color.red,
 });
 
 export const rootError = style({
-  ...textMetrics.bodySm,
+  ...textMetrics.body,
   color: vars.color.red,
 });
 
