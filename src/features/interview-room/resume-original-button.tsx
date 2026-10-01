@@ -27,8 +27,7 @@ export function ResumeOriginalButton({
         path: { roomId, resumeSubmissionId: String(participant.resumeSubmissionId) },
         throwOnError: true,
       });
-      if (!response.data?.url) throw response;
-      return response.data.url;
+      return response.data!.url;
     },
     onSuccess: (url, target) => {
       target.location.replace(url);
