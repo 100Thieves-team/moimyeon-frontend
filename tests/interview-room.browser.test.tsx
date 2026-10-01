@@ -870,6 +870,45 @@ describe("방장 진행 확정", () => {
 });
 
 describe("완료 면접 후기 액션", () => {
+  it("후기 조회 중에도 모집 현황을 유지하고 조회 후 후기 버튼을 표시한다", async () => {
+    room.status = "COMPLETED";
+    let finish!: (value: unknown) => void;
+    mocks.overview.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
+    const screen = await renderRoom(false);
+    await expect
+      .element(screen.getByRole("button", { name: "후기 정보 불러오는 중" }))
+      .toBeDisabled();
+    await expect.element(screen.getByText("참여 인원")).toBeVisible();
+    finish({
+      result: "SUCCESS",
+      data: { completedRooms: [{ room: { roomId }, reviewStatus: "WRITABLE" }] },
+    });
+    await expect.element(screen.getByRole("link", { name: "후기 남기기" })).toBeVisible();
+  });
+
+  it("후기 조회 실패 시 카드 안에서 재시도하고 후기 버튼으로 복구한다", async () => {
+    room.status = "COMPLETED";
+    mocks.overview.mockRejectedValueOnce(new Error("offline"));
+    mocks.overview.mockResolvedValue({
+      result: "SUCCESS",
+      data: { completedRooms: [{ room: { roomId }, reviewStatus: "WRITTEN" }] },
+    });
+    const screen = await renderRoom(false);
+    await expect
+      .element(screen.getByRole("alert"))
+      .toHaveTextContent("후기 정보를 불러오지 못했어요");
+    await expect.element(screen.getByText("참여 인원")).toBeVisible();
+    await screen.getByRole("button", { name: "다시 불러오기" }).click();
+    await expect
+      .element(screen.getByRole("link", { name: "후기 수정하기" }))
+      .toHaveAttribute("href", `/interviews/${roomId}/review`);
+  });
+
   it.each([
     { isHost: true, reviewStatus: "WRITABLE", label: "후기 남기기" },
     { isHost: false, reviewStatus: "WRITABLE", label: "후기 남기기" },

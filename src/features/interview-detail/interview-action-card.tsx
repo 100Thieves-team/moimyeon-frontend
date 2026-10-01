@@ -1,6 +1,8 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { QueryErrorResetBoundary, useSuspenseQuery } from "@tanstack/react-query";
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { getInterviewOverviewOptions } from "@/api/generated/@tanstack/react-query.gen";
 import { AlertDialog } from "@base-ui/react/alert-dialog";
 import { useWithdrawApplicationDialog } from "./withdraw-application-dialog";
@@ -31,8 +33,8 @@ function WithdrawAction({ room }: { room: InterviewDetail }) {
 }
 
 function CompletedReviewAction({ roomId }: { roomId: string }) {
-  const { data } = useQuery(getInterviewOverviewOptions());
-  const reviewStatus = data?.data?.completedRooms.find(
+  const { data } = useSuspenseQuery(getInterviewOverviewOptions());
+  const reviewStatus = data.data?.completedRooms.find(
     ({ room }) => room.roomId === roomId,
   )?.reviewStatus;
   if (reviewStatus !== "WRITABLE" && reviewStatus !== "WRITTEN") return null;
@@ -44,6 +46,33 @@ function CompletedReviewAction({ roomId }: { roomId: string }) {
   );
 }
 
+function CompletedReviewActionBoundary({ roomId }: { roomId: string }) {
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary
+          onReset={reset}
+          // oxlint-disable-next-line react/no-unstable-nested-components -- fallbackRender는 컴포넌트 타입이 아닌 렌더 콜백이다.
+          fallbackRender={({ resetErrorBoundary }) => (
+            <div className={styles.actionControls}>
+              <p role="alert" className={styles.actionMessage}>
+                후기 정보를 불러오지 못했어요
+              </p>
+              <Button variant="secondary" onClick={resetErrorBoundary}>
+                다시 불러오기
+              </Button>
+            </div>
+          )}
+        >
+          <Suspense fallback={<Button disabled>후기 정보 불러오는 중</Button>}>
+            <CompletedReviewAction roomId={roomId} />
+          </Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  );
+}
+
 function ActionControl({ room, state }: { room: InterviewDetail; state: InterviewViewerState }) {
   const roomId = room.roomId;
   const returnTo = `/interviews/${roomId}` as const;
@@ -51,7 +80,7 @@ function ActionControl({ room, state }: { room: InterviewDetail; state: Intervie
     room.status === "COMPLETED" &&
     (state.kind === "MANAGE_INTERVIEW" || state.kind === "VIEW_INTERVIEW")
   ) {
-    return <CompletedReviewAction roomId={roomId} />;
+    return <CompletedReviewActionBoundary roomId={roomId} />;
   }
 
   switch (state.kind) {
