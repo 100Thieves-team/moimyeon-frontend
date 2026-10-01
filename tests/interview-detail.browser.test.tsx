@@ -136,6 +136,7 @@ function createRoom(options: RoomOptions = {}) {
     participants: options.participants ?? createParticipants(recruit.current),
     recruit,
     region: { label: "서울 강남구", sigunguId: 1 },
+    previouslyConfirmed: false,
     resumePublic: true,
     roomId,
     round: "SECOND",
@@ -170,7 +171,7 @@ function roomResponse(room: ReturnType<typeof createRoom>) {
   return { data: room, result: "SUCCESS" };
 }
 
-async function renderDetail(onViewApplications = vi.fn()) {
+async function renderDetail() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false, staleTime: Number.POSITIVE_INFINITY },
@@ -183,11 +184,7 @@ async function renderDetail(onViewApplications = vi.fn()) {
         <LoginDialog />
         <Suspense fallback={<p>불러오는 중</p>}>
           <WithdrawApplicationProvider>
-            <InterviewDetailContent
-              roomId={roomId}
-              currentMemberId={hostMemberId}
-              onViewApplications={onViewApplications}
-            />
+            <InterviewDetailContent roomId={roomId} currentMemberId={hostMemberId} />
           </WithdrawApplicationProvider>
         </Suspense>
       </ToastProvider>
@@ -257,7 +254,7 @@ describe("InterviewDetailContent", () => {
     await expect.element(screen.getByText("오프라인 · 서울 강남구")).toBeVisible();
     await expect.element(screen.getByText("최소 3 · 최대 5명")).toBeVisible();
     await expect.element(screen.getByText("3 / 5명")).toBeVisible();
-    await expect.element(screen.getByText("2자리 남았어요")).toBeVisible();
+    await expect.element(screen.getByText("참여 인원")).toBeVisible();
     await expect
       .element(screen.getByRole("complementary", { name: "면접 참가 신청" }).getByText("최소 3명"))
       .not.toBeInTheDocument();
@@ -350,6 +347,25 @@ describe("InterviewDetailContent", () => {
     expect(participantList.getByRole("listitem").elements()).toHaveLength(5);
     await expect.element(participantList.getByText(/^\+/)).not.toBeInTheDocument();
   });
+
+  it.each([390, 1280])(
+    "너비 %ipx에서 모집 카드 아바타를 찌그러짐 없이 원형으로 표시한다",
+    async (viewportWidth) => {
+      await page.viewport(viewportWidth, 900);
+      const { screen } = await renderDetail();
+      const participantList = screen.getByRole("list", { name: "현재 참여자 3명" });
+      await expect.element(participantList).toBeVisible();
+      for (const trigger of participantList.getByRole("button").elements()) {
+        const avatar = trigger.querySelector('[aria-hidden="true"]')!;
+        for (const element of [trigger, avatar]) {
+          const { width, height } = element.getBoundingClientRect();
+          expect(width).toBe(40);
+          expect(height).toBe(width);
+          expect(getComputedStyle(element).borderRadius).toBe("50%");
+        }
+      }
+    },
+  );
 
   it("참여자가 5명을 넘으면 방장을 먼저 정렬하고 나머지 인원을 +N으로 표시한다", async () => {
     mocks.roomDetail.mockResolvedValue(
@@ -471,7 +487,7 @@ describe("InterviewDetailContent", () => {
       { ...eligibleViewer, isParticipating: true, latestApplicationStatus: "ACCEPTED" },
       "참여 취소하기",
     ],
-    ["방장", { ...eligibleViewer, isHost: true, isParticipating: true }, "참여 신청 확인하기"],
+    ["방장", { ...eligibleViewer, isHost: true, isParticipating: true }, "진행 확정하기"],
   ])("%s에게 카드의 회원용 버튼을 표시한다", async (_name, viewer, label) => {
     mocks.roomDetail.mockResolvedValue(roomResponse(createRoom({ viewer })));
     const { screen } = await renderDetail();

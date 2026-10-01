@@ -19,10 +19,21 @@ const mocks = vi.hoisted(() => ({
   participants: vi.fn(),
   comments: vi.fn(),
   applications: vi.fn(),
+  confirm: vi.fn(),
   leave: vi.fn(),
+  viewUrl: vi.fn(),
   profile: vi.fn(),
 }));
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
+  confirmRoomMutation: () => ({ mutationFn: mocks.confirm }),
+  resumeSubmissionViewUrlOptions: ({
+    path,
+  }: {
+    path: { roomId: string; resumeSubmissionId: string };
+  }) => ({
+    queryKey: ["original", path.roomId, path.resumeSubmissionId],
+    queryFn: () => mocks.viewUrl(path),
+  }),
   getRoomCommentsInfiniteQueryKey: ({ path }: { path: { roomId: string } }) => [
     "comments",
     path.roomId,
@@ -238,7 +249,7 @@ describe("참여자 명부", () => {
         .element(screen.getByRole("button", { name: "참여 취소하기", exact: true }))
         .not.toBeInTheDocument();
       await expect
-        .element(screen.getByRole("button", { name: "참여 신청 확인하기", exact: true }))
+        .element(screen.getByRole("button", { name: "진행 확정하기", exact: true }))
         .not.toBeInTheDocument();
       await expect
         .element(screen.getByRole("button", { name: "참가 신청하기", exact: true }))
@@ -290,7 +301,11 @@ describe("참여자 명부", () => {
     await expect
       .element(screen.getByText("이력서 원본은 공개하지 않는 면접이에요.", { exact: false }))
       .not.toBeInTheDocument();
-    await expect.element(screen.getByRole("button", { name: /원본/ })).not.toBeInTheDocument();
+    for (const participant of participants) {
+      await expect
+        .element(screen.getByRole("button", { name: `${participant.nickname} 이력서 원본` }))
+        .not.toBeInTheDocument();
+    }
   });
 
   it("방장은 신청 탭에서 참여자 탭으로 이동하고 자기 행의 방장·나 배지를 확인한다", async () => {
@@ -357,7 +372,7 @@ describe("참여자 명부", () => {
     },
   );
 
-  it("원본 공개 룸에서도 공개 안내 문구와 원본 접근을 표시하지 않는다", async () => {
+  it("모집 중에는 원본 공개 룸에서도 이력서 원본 열람을 비활성화한다", async () => {
     room.resumePublic = true;
     const { screen } = await setup();
     await expect
@@ -590,5 +605,128 @@ describe("참여 취소", () => {
       .element(screen.getByRole("button", { name: "돌아가기", exact: true }))
       .toBeEnabled();
     expect(routerReplaceMock).not.toHaveBeenCalled();
+  });
+});
+
+const openTarget = () => {
+  const target = { opener: {}, location: { replace: vi.fn() }, close: vi.fn() };
+  vi.spyOn(window, "open").mockReturnValue(target as unknown as Window);
+  return target;
+};
+
+describe("확정 참여자 이력서 원본", () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it("본인과 다른 참여자 모두 서버가 허용한 원본만 열 수 있다", async () => {
+    room.status = "CONFIRMED";
+    room.resumePublic = true;
+    participants[0].canViewOriginal = true;
+    participants[1].canViewOriginal = true;
+    participants[2].canViewOriginal = true;
+    const { screen } = await setup();
+    await expect
+      .element(screen.getByRole("button", { name: "꼼꼼한 여우 이력서 원본" }))
+      .toBeEnabled();
+    await expect
+      .element(screen.getByRole("button", { name: "든든한 곰 이력서 원본" }))
+      .toBeEnabled();
+    await expect
+      .element(screen.getByRole("button", { name: "성실한 사슴 이력서 원본" }))
+      .not.toBeInTheDocument();
+    await expect
+      .element(screen.getByRole("button", { name: "진행 확정하기" }))
+      .not.toBeInTheDocument();
+  });
+
+  it("원본을 다시 열 때마다 새 URL을 요청해 새 탭으로 연다", async () => {
+    room.status = "CONFIRMED";
+    participants[1].canViewOriginal = true;
+    const target = openTarget();
+    mocks.viewUrl.mockResolvedValue({
+      result: "SUCCESS",
+      data: { url: "https://files.example.test/first.pdf", expiresAt: "2026-10-01T19:05:00" },
+    });
+    const { screen } = await setup();
+    const button = screen.getByRole("button", { name: "든든한 곰 이력서 원본" });
+    await button.click();
+    await expect.poll(() => target.location.replace.mock.calls.length).toBe(1);
+    expect(mocks.viewUrl).toHaveBeenCalledWith({ roomId, resumeSubmissionId: "2" });
+    expect(target.opener).toBeNull();
+    mocks.viewUrl.mockResolvedValue({
+      result: "SUCCESS",
+      data: { url: "https://files.example.test/second.pdf" },
+    });
+    await expect.element(button).toBeEnabled();
+    await button.click();
+    await expect.poll(() => target.location.replace.mock.calls.length).toBe(2);
+    expect(target.location.replace).toHaveBeenLastCalledWith(
+      "https://files.example.test/second.pdf",
+    );
+    expect(mocks.viewUrl).toHaveBeenCalledTimes(2);
+  });
+
+  it.each(["E1419", "E1429"])(
+    "%s 원본 권한 회수 오류를 안내하고 최신 권한을 반영한다",
+    async (code) => {
+      room.status = "CONFIRMED";
+      participants[1].canViewOriginal = true;
+      const target = openTarget();
+      mocks.viewUrl.mockImplementation(async () => {
+        participants[1].canViewOriginal = false;
+        throw error(code, "지금은 이력서 원본을 열 수 없습니다.");
+      });
+      const { screen } = await setup();
+      await screen.getByRole("button", { name: "든든한 곰 이력서 원본" }).click();
+      await expect
+        .element(screen.getByRole("alert"))
+        .toHaveTextContent("지금은 이력서 원본을 열 수 없습니다.");
+      await expect
+        .element(screen.getByRole("button", { name: "든든한 곰 이력서 원본" }))
+        .not.toBeInTheDocument();
+      expect(target.close).toHaveBeenCalledOnce();
+      expect(target.location.replace).not.toHaveBeenCalled();
+    },
+  );
+
+  it("팝업이 차단되면 안내하고 원본 URL을 발급하지 않는다", async () => {
+    participants[1].canViewOriginal = true;
+    vi.spyOn(window, "open").mockReturnValue(null);
+    const { screen } = await setup();
+    await screen.getByRole("button", { name: "든든한 곰 이력서 원본" }).click();
+    await expect.element(screen.getByText("팝업이 차단됐어요.", { exact: false })).toBeVisible();
+    expect(mocks.viewUrl).not.toHaveBeenCalled();
+  });
+
+  it("원본 조회가 실패하면 빈 탭을 닫고 다시 열 수 있다", async () => {
+    participants[1].canViewOriginal = true;
+    const target = openTarget();
+    mocks.viewUrl.mockRejectedValueOnce(new Error("offline")).mockResolvedValueOnce({
+      result: "SUCCESS",
+      data: { url: "https://files.example.test/resume.pdf" },
+    });
+    const { screen } = await setup();
+    const button = screen.getByRole("button", { name: "든든한 곰 이력서 원본" });
+    await button.click();
+    await expect.element(screen.getByRole("alert")).toBeVisible();
+    expect(target.close).toHaveBeenCalledOnce();
+    await button.click();
+    await expect.poll(() => target.location.replace.mock.calls.length).toBe(1);
+  });
+
+  it("확정 후 최소 인원이어도 방장은 위임 안내를 확인하고 나갈 수 있다", async () => {
+    room.status = "CONFIRMED";
+    room.viewer = { isHost: true, isParticipating: true };
+    room.recruit!.current = room.recruit!.min;
+    const { screen } = await setup();
+    await screen.getByRole("tab", { name: `참여자 ${room.recruit!.current}` }).click();
+    await expect
+      .element(screen.getByRole("button", { name: "참여 취소하기", exact: true }))
+      .toBeEnabled();
+    await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
+    await expect
+      .element(screen.getByText("방장이 위임되면 모집 중으로 돌아가", { exact: false }))
+      .toBeVisible();
+    await screen.getByRole("button", { name: "취소하기", exact: true }).click();
+    await expect.poll(() => routerReplaceMock.mock.calls.length).toBe(1);
   });
 });

@@ -25,6 +25,7 @@ export function getLeaveDisabledReason(room: InterviewRoom) {
     case "RECRUITING":
       return null;
     case "CONFIRMED":
+      if (room.viewer?.isHost) return null;
       if (!room.recruit) return "인원 정보를 확인하지 못했어요. 다시 불러와 주세요.";
       return room.recruit.current > room.recruit.min
         ? null

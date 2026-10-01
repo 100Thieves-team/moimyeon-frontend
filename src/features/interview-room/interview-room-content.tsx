@@ -23,6 +23,7 @@ import { RoomCommentsPanel } from "./room-comments-panel";
 
 import { CommentDeleteProvider } from "./comment-delete-dialog";
 import { WithdrawApplicationProvider } from "@/features/interview-detail/withdraw-application-dialog";
+import { ConfirmRoomDialog } from "./confirm-room-dialog";
 
 type RoomTab = "info" | "applications" | "participants" | "comments";
 
@@ -113,11 +114,7 @@ function RoomTabs({
               )}
             >
               <Suspense fallback={<InterviewDetailSkeleton presentation="panel" />}>
-                <InterviewDetailContent
-                  roomId={roomId}
-                  currentMemberId={currentMemberId}
-                  onViewApplications={() => setTab("applications")}
-                />
+                <InterviewDetailContent roomId={roomId} currentMemberId={currentMemberId} />
               </Suspense>
             </ErrorBoundary>
           )}
@@ -140,7 +137,7 @@ function RoomTabs({
                 )}
               >
                 <Suspense fallback={<ApplicationsSkeleton />}>
-                  <ApplicationsPanel roomId={roomId} />
+                  <ApplicationsPanel room={room} />
                 </Suspense>
               </ErrorBoundary>
             )}
@@ -176,6 +173,7 @@ function RoomTabs({
           <RoomCommentsPanel roomId={roomId} />
         </RoomTabPanel>
       )}
+      {isHost && <ConfirmRoomDialog room={room} onConfirmed={() => setTab("participants")} />}
     </Tabs.Root>
   );
 }
@@ -195,7 +193,8 @@ function RoomTabPanel({ value, children }: { value: RoomTab; children: ReactNode
   );
 }
 
-function ApplicationsPanel({ roomId }: { roomId: string }) {
+function ApplicationsPanel({ room }: { room: InterviewRoom }) {
+  const roomId = room.roomId;
   const query = useSuspenseQuery(roomApplicationsOptions({ path: { roomId } }));
   const data = query.data.data;
   if (!data) throw new Error("Failed to load room applications");
@@ -208,6 +207,7 @@ function ApplicationsPanel({ roomId }: { roomId: string }) {
           application={application}
           key={application.applicationId}
           roomId={roomId}
+          canManage={room.status === "RECRUITING"}
           refreshFailed={query.isRefetchError}
           refreshing={query.isFetching}
         />

@@ -6,6 +6,8 @@ import {
   MOCK_REVIEW_ROOM_ID,
 } from "@/features/review/review-mock";
 
+import { MOCK_CONFIRMATION_SCENARIOS } from "@/mocks/room-confirmation";
+
 type Overview = NonNullable<GetInterviewOverviewResponse["data"]>;
 type Detail = NonNullable<RoomDetailResponse["data"]>;
 
@@ -45,7 +47,9 @@ export function withdrawMockMyInterview(roomId: string) {
   return true;
 }
 
-export function getMockMyInterviews(): GetInterviewOverviewResponse {
+export function getMockMyInterviews(
+  includeConfirmationRooms = false,
+): GetInterviewOverviewResponse {
   const reviewRoom = getMockReviewRoomDetail(MOCK_REVIEW_ROOM_ID)!.data!;
   const reviewOverview = getMockReviewOverview(MOCK_REVIEW_ROOM_ID)!.data!;
 
@@ -64,6 +68,14 @@ export function getMockMyInterviews(): GetInterviewOverviewResponse {
           ],
       participatingRooms: [{ room: summary(participatingRoom) }],
       completedRooms: [
+        ...(includeConfirmationRooms ? MOCK_CONFIRMATION_SCENARIOS : [])
+          .filter(({ room }) => room.status === "COMPLETED")
+          .map(({ room }) => ({
+            room: summary(room),
+            reviewStatus: reviewOverview.targets.some(({ status }) => status === "WRITABLE")
+              ? "WRITABLE"
+              : "WRITTEN",
+          })),
         {
           room: summary(reviewRoom),
           reviewStatus: reviewOverview.targets.some(({ status }) => status === "WRITABLE")

@@ -8,7 +8,12 @@ const commentText = style({
   fontWeight: 400,
 });
 
-export const panel = style({ width: "100%", maxWidth: "89.6rem", minWidth: 0 });
+export const panel = style({
+  width: "100%",
+  maxWidth: "89.6rem",
+  minWidth: 0,
+  marginInline: "auto",
+});
 export const composer = style({
   display: "flex",
   flexDirection: "column",
@@ -62,7 +67,8 @@ export const avatar = style({
   flexShrink: 0,
   width: "3.6rem",
   height: "3.6rem",
-  borderRadius: vars.radius.pill,
+  borderRadius: "50%",
+  aspectRatio: "1",
   backgroundColor: vars.color.fillSecondary,
   color: vars.color.secondary,
   ...textMetrics.bodySm,
@@ -136,6 +142,7 @@ export const error = style({
   marginBlock: vars.spacing.sm,
 });
 export const status = style({
+  textAlign: "center",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",

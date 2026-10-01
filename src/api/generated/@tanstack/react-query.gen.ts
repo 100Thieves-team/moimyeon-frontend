@@ -13,49 +13,42 @@ import {
   acceptApplication,
   authLogout,
   authRefresh,
-  cancelRoom,
-  changeQuestionAsked,
+  completeQaResumeSummary,
+  completeRoomProgress,
   confirmRoom,
-  confirmRoundFeedbackDisclosure,
   createJobPosting,
+  createQaMember,
   createResume,
   createRoom,
   createRoomComment,
   deletePreparationQuestion,
-  deleteQuestionComment,
+  deleteQaData,
+  deleteQaMember,
+  deleteQaRoom,
   deleteResume,
   deleteReview,
   deleteRoomComment,
-  editQuestionComment,
   exampleGet,
   examplePost,
-  getIntervieweeRoundFeedback,
   getInterviewOverview,
   getMyAttendance,
   getMyClosingQuestions,
-  getMyRoundQuestionRecords,
-  getProgressRail,
   getQuestionCardSet,
   getQuestionCardSets,
-  getQuestionComments,
   getReceivedReviews,
   getReview,
   getReviewOverview,
   getReviewTargets,
   getRoomComments,
-  getRoundScreen,
   googleOAuthCallback,
   googleOAuthStart,
   issueDevSession,
   jobPostingLinkMetadata,
   jobPostings,
   jobRoles,
-  leaveFinalRoundFeedback,
   leavePreparationFollowUpQuestion,
   leavePreparationQuestion,
-  leaveProgressFollowUpQuestion,
-  leaveProgressQuestion,
-  leaveQuestionComment,
+  listQaData,
   makeResumeDefault,
   memberMe,
   myRoomApplication,
@@ -68,8 +61,11 @@ import {
   registerWebPushSubscription,
   rejectApplication,
   rejectReasons,
+  rescheduleQaRoom,
+  resetQaMember,
   resume,
   resumes,
+  resumeSubmissionViewUrl,
   retryResumeSummary,
   roomApplications,
   roomCreationLimit,
@@ -78,17 +74,14 @@ import {
   roomLeave,
   roomParticipants,
   rooms,
-  saveSelfRoundFeedback,
   searchCompanies,
   searchJobPostings,
   searchJobRoles,
   skipReview,
-  startRoomProgress,
   submitClosingResponse,
   submitReview,
   submitRoomApplication,
   termsList,
-  toggleQuestionCommentType,
   unregisterWebPushSubscription,
   updateProfile,
   updateReview,
@@ -102,21 +95,20 @@ import type {
   AuthRefreshData,
   AuthRefreshError,
   AuthRefreshResponse,
-  CancelRoomData,
-  CancelRoomError,
-  CancelRoomResponse,
-  ChangeQuestionAskedData,
-  ChangeQuestionAskedError,
-  ChangeQuestionAskedResponse,
+  CompleteQaResumeSummaryData,
+  CompleteQaResumeSummaryError,
+  CompleteQaResumeSummaryResponse,
+  CompleteRoomProgressData,
+  CompleteRoomProgressError,
+  CompleteRoomProgressResponse,
   ConfirmRoomData,
   ConfirmRoomError,
   ConfirmRoomResponse,
-  ConfirmRoundFeedbackDisclosureData,
-  ConfirmRoundFeedbackDisclosureError,
-  ConfirmRoundFeedbackDisclosureResponse,
   CreateJobPostingData,
   CreateJobPostingError,
   CreateJobPostingResponse,
+  CreateQaMemberData,
+  CreateQaMemberResponse,
   CreateResumeData,
   CreateResumeError,
   CreateResumeResponse,
@@ -129,9 +121,15 @@ import type {
   DeletePreparationQuestionData,
   DeletePreparationQuestionError,
   DeletePreparationQuestionResponse,
-  DeleteQuestionCommentData,
-  DeleteQuestionCommentError,
-  DeleteQuestionCommentResponse,
+  DeleteQaDataData,
+  DeleteQaDataError,
+  DeleteQaDataResponse,
+  DeleteQaMemberData,
+  DeleteQaMemberError,
+  DeleteQaMemberResponse,
+  DeleteQaRoomData,
+  DeleteQaRoomError,
+  DeleteQaRoomResponse,
   DeleteResumeData,
   DeleteResumeError,
   DeleteResumeResponse,
@@ -141,16 +139,10 @@ import type {
   DeleteRoomCommentData,
   DeleteRoomCommentError,
   DeleteRoomCommentResponse,
-  EditQuestionCommentData,
-  EditQuestionCommentError,
-  EditQuestionCommentResponse,
   ExampleGetData,
   ExampleGetResponse,
   ExamplePostData,
   ExamplePostResponse,
-  GetIntervieweeRoundFeedbackData,
-  GetIntervieweeRoundFeedbackError,
-  GetIntervieweeRoundFeedbackResponse,
   GetInterviewOverviewData,
   GetInterviewOverviewError,
   GetInterviewOverviewResponse,
@@ -160,20 +152,11 @@ import type {
   GetMyClosingQuestionsData,
   GetMyClosingQuestionsError,
   GetMyClosingQuestionsResponse,
-  GetMyRoundQuestionRecordsData,
-  GetMyRoundQuestionRecordsError,
-  GetMyRoundQuestionRecordsResponse,
-  GetProgressRailData,
-  GetProgressRailError,
-  GetProgressRailResponse,
   GetQuestionCardSetData,
   GetQuestionCardSetResponse,
   GetQuestionCardSetsData,
   GetQuestionCardSetsError,
   GetQuestionCardSetsResponse,
-  GetQuestionCommentsData,
-  GetQuestionCommentsError,
-  GetQuestionCommentsResponse,
   GetReceivedReviewsData,
   GetReceivedReviewsError,
   GetReceivedReviewsResponse,
@@ -189,9 +172,6 @@ import type {
   GetRoomCommentsData,
   GetRoomCommentsError,
   GetRoomCommentsResponse,
-  GetRoundScreenData,
-  GetRoundScreenError,
-  GetRoundScreenResponse,
   GoogleOAuthCallbackData,
   GoogleOAuthStartData,
   IssueDevSessionData,
@@ -205,24 +185,15 @@ import type {
   JobPostingsResponse,
   JobRolesData,
   JobRolesResponse,
-  LeaveFinalRoundFeedbackData,
-  LeaveFinalRoundFeedbackError,
-  LeaveFinalRoundFeedbackResponse,
   LeavePreparationFollowUpQuestionData,
   LeavePreparationFollowUpQuestionError,
   LeavePreparationFollowUpQuestionResponse,
   LeavePreparationQuestionData,
   LeavePreparationQuestionError,
   LeavePreparationQuestionResponse,
-  LeaveProgressFollowUpQuestionData,
-  LeaveProgressFollowUpQuestionError,
-  LeaveProgressFollowUpQuestionResponse,
-  LeaveProgressQuestionData,
-  LeaveProgressQuestionError,
-  LeaveProgressQuestionResponse,
-  LeaveQuestionCommentData,
-  LeaveQuestionCommentError,
-  LeaveQuestionCommentResponse,
+  ListQaDataData,
+  ListQaDataError,
+  ListQaDataResponse,
   MakeResumeDefaultData,
   MakeResumeDefaultError,
   MakeResumeDefaultResponse,
@@ -250,12 +221,21 @@ import type {
   RejectApplicationResponse,
   RejectReasonsData,
   RejectReasonsResponse,
+  RescheduleQaRoomData,
+  RescheduleQaRoomError,
+  RescheduleQaRoomResponse,
+  ResetQaMemberData,
+  ResetQaMemberError,
+  ResetQaMemberResponse,
   ResumeData,
   ResumeError,
   ResumeResponse,
   ResumesData,
   ResumesError,
   ResumesResponse,
+  ResumeSubmissionViewUrlData,
+  ResumeSubmissionViewUrlError,
+  ResumeSubmissionViewUrlResponse,
   RetryResumeSummaryData,
   RetryResumeSummaryError,
   RetryResumeSummaryResponse,
@@ -277,9 +257,6 @@ import type {
   RoomsData,
   RoomsError,
   RoomsResponse,
-  SaveSelfRoundFeedbackData,
-  SaveSelfRoundFeedbackError,
-  SaveSelfRoundFeedbackResponse,
   SearchCompaniesData,
   SearchCompaniesError,
   SearchCompaniesResponse,
@@ -292,9 +269,6 @@ import type {
   SkipReviewData,
   SkipReviewError,
   SkipReviewResponse,
-  StartRoomProgressData,
-  StartRoomProgressError,
-  StartRoomProgressResponse,
   SubmitClosingResponseData,
   SubmitClosingResponseError,
   SubmitClosingResponseResponse,
@@ -306,9 +280,6 @@ import type {
   SubmitRoomApplicationResponse,
   TermsListData,
   TermsListResponse,
-  ToggleQuestionCommentTypeData,
-  ToggleQuestionCommentTypeError,
-  ToggleQuestionCommentTypeResponse,
   UnregisterWebPushSubscriptionData,
   UnregisterWebPushSubscriptionResponse,
   UpdateProfileData,
@@ -469,64 +440,6 @@ export const searchCompaniesOptions = (options?: Options<SearchCompaniesData>) =
   });
 
 /**
- * 라운드 최종 피드백 작성
- *
- * 참여자가 최종 피드백을 한 건 제출한다. E400, E1405, E1901, E1902, E1903을 응답할 수 있다.
- */
-export const leaveFinalRoundFeedbackMutation = (
-  options?: Partial<Options<LeaveFinalRoundFeedbackData>>,
-): UseMutationOptions<
-  LeaveFinalRoundFeedbackResponse,
-  LeaveFinalRoundFeedbackError,
-  Options<LeaveFinalRoundFeedbackData>
-> => {
-  const mutationOptions: UseMutationOptions<
-    LeaveFinalRoundFeedbackResponse,
-    LeaveFinalRoundFeedbackError,
-    Options<LeaveFinalRoundFeedbackData>
-  > = {
-    mutationFn: async (fnOptions) => {
-      const { data } = await leaveFinalRoundFeedback({
-        ...options,
-        ...fnOptions,
-        throwOnError: true,
-      });
-      return data;
-    },
-  };
-  return mutationOptions;
-};
-
-/**
- * 진행 중 꼬리질문 추가
- *
- * 면접자 외 확정 참여자가 현재 라운드 원 질문에 꼬리질문을 추가한다. E400, E1405, E1502, E1503, E1507, E1703, E1704를 응답할 수 있다.
- */
-export const leaveProgressFollowUpQuestionMutation = (
-  options?: Partial<Options<LeaveProgressFollowUpQuestionData>>,
-): UseMutationOptions<
-  LeaveProgressFollowUpQuestionResponse,
-  LeaveProgressFollowUpQuestionError,
-  Options<LeaveProgressFollowUpQuestionData>
-> => {
-  const mutationOptions: UseMutationOptions<
-    LeaveProgressFollowUpQuestionResponse,
-    LeaveProgressFollowUpQuestionError,
-    Options<LeaveProgressFollowUpQuestionData>
-  > = {
-    mutationFn: async (fnOptions) => {
-      const { data } = await leaveProgressFollowUpQuestion({
-        ...options,
-        ...fnOptions,
-        throwOnError: true,
-      });
-      return data;
-    },
-  };
-  return mutationOptions;
-};
-
-/**
  * 채용 공고 즉시 생성
  *
  * 링크로 공고를 즉시 생성한다(§4.1). 승인 대기 없이 verified=false 로 만들어져 바로 룸 생성에 사용할 수 있다. 회사는 기존 카탈로그 회사 id 로 받고, 공고명은 사용자가 확정한 값을 쓰며, 생성자는 인증 회원으로 기록된다. 같은 URL 재요청은 새로 만들지 않고 기존 공고를 돌려준다(멱등). companyId·url·postingName 누락·형식 오류는 400(E400), 존재하지 않는 회사는 400(E1303), 미인증은 401(E1102).
@@ -582,118 +495,6 @@ export const jobRolesOptions = (options?: Options<JobRolesData>) =>
     queryKey: jobRolesQueryKey(options),
   });
 
-export const getProgressRailQueryKey = (options: Options<GetProgressRailData>) =>
-  createQueryKey("getProgressRail", options);
-
-/**
- * 면접 진행 레일 조회
- *
- * 오프닝, 확정 참여자 순 라운드, 클로징 블록을 반환한다. E1405, E1703, E1704를 응답할 수 있다.
- */
-export const getProgressRailOptions = (options: Options<GetProgressRailData>) =>
-  queryOptions<
-    GetProgressRailResponse,
-    GetProgressRailError,
-    GetProgressRailResponse,
-    ReturnType<typeof getProgressRailQueryKey>
-  >({
-    queryFn: async ({ queryKey, signal }) => {
-      const { data } = await getProgressRail({
-        ...options,
-        ...queryKey[0],
-        signal,
-        throwOnError: true,
-      });
-      return data;
-    },
-    queryKey: getProgressRailQueryKey(options),
-  });
-
-export const getQuestionCommentsQueryKey = (options: Options<GetQuestionCommentsData>) =>
-  createQueryKey("getQuestionComments", options);
-
-/**
- * 질문 메모 조회
- *
- * 원 질문 메모를 오래된 순으로 조회한다. E400, E1405, E1507, E1509, E1512를 응답할 수 있다.
- */
-export const getQuestionCommentsOptions = (options: Options<GetQuestionCommentsData>) =>
-  queryOptions<
-    GetQuestionCommentsResponse,
-    GetQuestionCommentsError,
-    GetQuestionCommentsResponse,
-    ReturnType<typeof getQuestionCommentsQueryKey>
-  >({
-    queryFn: async ({ queryKey, signal }) => {
-      const { data } = await getQuestionComments({
-        ...options,
-        ...queryKey[0],
-        signal,
-        throwOnError: true,
-      });
-      return data;
-    },
-    queryKey: getQuestionCommentsQueryKey(options),
-  });
-
-/**
- * 질문 메모 작성
- *
- * 진행 중 원 질문에 최초 MEMO 기록을 남긴다. E400, E1405, E1507, E1509, E1510을 응답할 수 있다.
- */
-export const leaveQuestionCommentMutation = (
-  options?: Partial<Options<LeaveQuestionCommentData>>,
-): UseMutationOptions<
-  LeaveQuestionCommentResponse,
-  LeaveQuestionCommentError,
-  Options<LeaveQuestionCommentData>
-> => {
-  const mutationOptions: UseMutationOptions<
-    LeaveQuestionCommentResponse,
-    LeaveQuestionCommentError,
-    Options<LeaveQuestionCommentData>
-  > = {
-    mutationFn: async (fnOptions) => {
-      const { data } = await leaveQuestionComment({
-        ...options,
-        ...fnOptions,
-        throwOnError: true,
-      });
-      return data;
-    },
-  };
-  return mutationOptions;
-};
-
-/**
- * 진행 중 즉석 질문 추가
- *
- * 면접자 외 확정 참여자가 현재 라운드에 즉석 원 질문을 추가한다. E400, E1405, E1502, E1503, E1703, E1704를 응답할 수 있다.
- */
-export const leaveProgressQuestionMutation = (
-  options?: Partial<Options<LeaveProgressQuestionData>>,
-): UseMutationOptions<
-  LeaveProgressQuestionResponse,
-  LeaveProgressQuestionError,
-  Options<LeaveProgressQuestionData>
-> => {
-  const mutationOptions: UseMutationOptions<
-    LeaveProgressQuestionResponse,
-    LeaveProgressQuestionError,
-    Options<LeaveProgressQuestionData>
-  > = {
-    mutationFn: async (fnOptions) => {
-      const { data } = await leaveProgressQuestion({
-        ...options,
-        ...fnOptions,
-        throwOnError: true,
-      });
-      return data;
-    },
-  };
-  return mutationOptions;
-};
-
 export const regionsQueryKey = (options?: Options<RegionsData>) =>
   createQueryKey("regions", options);
 
@@ -715,35 +516,6 @@ export const regionsOptions = (options?: Options<RegionsData>) =>
     },
     queryKey: regionsQueryKey(options),
   });
-
-/**
- * 면접 진행 시작
- *
- * 확정 참여자가 전원의 출석·불참을 제출해 룸을 한 번만 시작한다. E400, E1405, E1701, E1702, E1706을 응답할 수 있다.
- */
-export const startRoomProgressMutation = (
-  options?: Partial<Options<StartRoomProgressData>>,
-): UseMutationOptions<
-  StartRoomProgressResponse,
-  StartRoomProgressError,
-  Options<StartRoomProgressData>
-> => {
-  const mutationOptions: UseMutationOptions<
-    StartRoomProgressResponse,
-    StartRoomProgressError,
-    Options<StartRoomProgressData>
-  > = {
-    mutationFn: async (fnOptions) => {
-      const { data } = await startRoomProgress({
-        ...options,
-        ...fnOptions,
-        throwOnError: true,
-      });
-      return data;
-    },
-  };
-  return mutationOptions;
-};
 
 export const roomsQueryKey = (options?: Options<RoomsData>) => createQueryKey("rooms", options);
 
@@ -868,92 +640,6 @@ export const createRoomMutation = (
   return mutationOptions;
 };
 
-export const getIntervieweeRoundFeedbackQueryKey = (
-  options: Options<GetIntervieweeRoundFeedbackData>,
-) => createQueryKey("getIntervieweeRoundFeedback", options);
-
-/**
- * 면접자 라운드 피드백 조회
- *
- * 면접자가 피드백 카드 상태를 조회한다. E1405, E1902, E1904를 응답할 수 있다.
- */
-export const getIntervieweeRoundFeedbackOptions = (
-  options: Options<GetIntervieweeRoundFeedbackData>,
-) =>
-  queryOptions<
-    GetIntervieweeRoundFeedbackResponse,
-    GetIntervieweeRoundFeedbackError,
-    GetIntervieweeRoundFeedbackResponse,
-    ReturnType<typeof getIntervieweeRoundFeedbackQueryKey>
-  >({
-    queryFn: async ({ queryKey, signal }) => {
-      const { data } = await getIntervieweeRoundFeedback({
-        ...options,
-        ...queryKey[0],
-        signal,
-        throwOnError: true,
-      });
-      return data;
-    },
-    queryKey: getIntervieweeRoundFeedbackQueryKey(options),
-  });
-
-export const getRoundScreenQueryKey = (options: Options<GetRoundScreenData>) =>
-  createQueryKey("getRoundScreen", options);
-
-/**
- * 라운드 화면 조회
- *
- * 면접자에게는 질문을 숨기고, 나머지 확정 참여자에게는 질문 카드셋을 제공한다. E1405, E1502, E1503, E1703, E1704를 응답할 수 있다.
- */
-export const getRoundScreenOptions = (options: Options<GetRoundScreenData>) =>
-  queryOptions<
-    GetRoundScreenResponse,
-    GetRoundScreenError,
-    GetRoundScreenResponse,
-    ReturnType<typeof getRoundScreenQueryKey>
-  >({
-    queryFn: async ({ queryKey, signal }) => {
-      const { data } = await getRoundScreen({
-        ...options,
-        ...queryKey[0],
-        signal,
-        throwOnError: true,
-      });
-      return data;
-    },
-    queryKey: getRoundScreenQueryKey(options),
-  });
-
-/**
- * 면접자 자가 피드백 저장
- *
- * 면접자가 자가 피드백을 저장하거나 수정한다. E400, E1405, E1902, E1903을 응답할 수 있다.
- */
-export const saveSelfRoundFeedbackMutation = (
-  options?: Partial<Options<SaveSelfRoundFeedbackData>>,
-): UseMutationOptions<
-  SaveSelfRoundFeedbackResponse,
-  SaveSelfRoundFeedbackError,
-  Options<SaveSelfRoundFeedbackData>
-> => {
-  const mutationOptions: UseMutationOptions<
-    SaveSelfRoundFeedbackResponse,
-    SaveSelfRoundFeedbackError,
-    Options<SaveSelfRoundFeedbackData>
-  > = {
-    mutationFn: async (fnOptions) => {
-      const { data } = await saveSelfRoundFeedback({
-        ...options,
-        ...fnOptions,
-        throwOnError: true,
-      });
-      return data;
-    },
-  };
-  return mutationOptions;
-};
-
 export const termsListQueryKey = (options?: Options<TermsListData>) =>
   createQueryKey("termsList", options);
 
@@ -987,7 +673,7 @@ export const getMyAttendanceQueryKey = (options: Options<GetMyAttendanceData>) =
 /**
  * 내 출석 결과 조회
  *
- * 진행 시작 시 기록된 자신의 출석 결과를 조회한다. E1405, E1703, E1704, E1705를 응답할 수 있다.
+ * 완료 후 기록된 자신의 참석 결과를 조회한다. E1405, E1703, E1704, E1705를 응답할 수 있다.
  */
 export const getMyAttendanceOptions = (options: Options<GetMyAttendanceData>) =>
   queryOptions<
@@ -1115,24 +801,20 @@ export const getMyClosingQuestionsOptions = (options: Options<GetMyClosingQuesti
   });
 
 /**
- * 최종 피드백 카드 열람 확인
+ * [dev] QA 테스트 회원 생성
  *
- * 면접자가 카드 한 건을 열람 확인한다. E1405, E1902, E1904, E1905를 응답할 수 있다.
+ * local·local-dev·dev 프로파일에서만 등록되는 dev 전용 Test API 다(staging·live 에는 경로가 없다). QA 플랫폼이 테스트 데이터를 정리하는 용도이며 검증 대상 API 가 아니다. Google OAuth 없이 테스트 회원을 만든다. 닉네임 자동 부여·필수 약관 동의·빈 프로필 생성까지 실제 가입과 같은 경로를 탄다. 이메일은 qa-{uuid}@qa.moimyeon.test, 소셜 계정 식별자는 qa-{uuid} 다. 응답의 accessToken 으로 바로 API 를 호출할 수 있다. 생성된 회원은 DELETE /v1/dev/members/{memberId} 또는 일괄 삭제의 includeMembers=true 로 지운다.
  */
-export const confirmRoundFeedbackDisclosureMutation = (
-  options?: Partial<Options<ConfirmRoundFeedbackDisclosureData>>,
-): UseMutationOptions<
-  ConfirmRoundFeedbackDisclosureResponse,
-  ConfirmRoundFeedbackDisclosureError,
-  Options<ConfirmRoundFeedbackDisclosureData>
-> => {
+export const createQaMemberMutation = (
+  options?: Partial<Options<CreateQaMemberData>>,
+): UseMutationOptions<CreateQaMemberResponse, DefaultError, Options<CreateQaMemberData>> => {
   const mutationOptions: UseMutationOptions<
-    ConfirmRoundFeedbackDisclosureResponse,
-    ConfirmRoundFeedbackDisclosureError,
-    Options<ConfirmRoundFeedbackDisclosureData>
+    CreateQaMemberResponse,
+    DefaultError,
+    Options<CreateQaMemberData>
   > = {
     mutationFn: async (fnOptions) => {
-      const { data } = await confirmRoundFeedbackDisclosure({
+      const { data } = await createQaMember({
         ...options,
         ...fnOptions,
         throwOnError: true,
@@ -1142,6 +824,58 @@ export const confirmRoundFeedbackDisclosureMutation = (
   };
   return mutationOptions;
 };
+
+/**
+ * [dev] QA 데이터 일괄 삭제
+ *
+ * local·local-dev·dev 프로파일에서만 등록되는 dev 전용 Test API 다(staging·live 에는 경로가 없다). QA 플랫폼이 테스트 데이터를 정리하는 용도이며 검증 대상 API 가 아니다. 제목이 prefix(기본 [QA])로 시작하는 룸 전부를 딸린 행까지 하드 삭제한다. hostMemberId 를 주면 그 회원이 방장인 룸만. 한 트랜잭션이며 응답은 테이블별 건수 합계다. prefix 가 [QA] 로 시작하지 않으면 400(E400).
+ */
+export const deleteQaDataMutation = (
+  options?: Partial<Options<DeleteQaDataData>>,
+): UseMutationOptions<DeleteQaDataResponse, DeleteQaDataError, Options<DeleteQaDataData>> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteQaDataResponse,
+    DeleteQaDataError,
+    Options<DeleteQaDataData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteQaData({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const listQaDataQueryKey = (options?: Options<ListQaDataData>) =>
+  createQueryKey("listQaData", options);
+
+/**
+ * [dev] QA 데이터 목록
+ *
+ * local·local-dev·dev 프로파일에서만 등록되는 dev 전용 Test API 다(staging·live 에는 경로가 없다). QA 플랫폼이 테스트 데이터를 정리하는 용도이며 검증 대상 API 가 아니다. 제목이 prefix(기본 [QA])로 시작하는 룸을 soft delete 여부와 무관하게 전부 돌려준다. prefix 가 [QA] 로 시작하지 않거나 hostMemberId 가 UUID 가 아니면 400(E400).
+ */
+export const listQaDataOptions = (options?: Options<ListQaDataData>) =>
+  queryOptions<
+    ListQaDataResponse,
+    ListQaDataError,
+    ListQaDataResponse,
+    ReturnType<typeof listQaDataQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await listQaData({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: listQaDataQueryKey(options),
+  });
 
 /**
  * 채용 공고 링크 메타데이터 조회
@@ -1306,150 +1040,6 @@ export const nicknameSuggestionOptions = (options?: Options<NicknameSuggestionDa
     },
     queryKey: nicknameSuggestionQueryKey(options),
   });
-
-/**
- * 질문 메모 평가 상태 토글
- *
- * 좋아요 또는 아쉬워요 상태를 토글한다. E400, E1405, E1507, E1509, E1510, E1511을 응답할 수 있다.
- */
-export const toggleQuestionCommentTypeMutation = (
-  options?: Partial<Options<ToggleQuestionCommentTypeData>>,
-): UseMutationOptions<
-  ToggleQuestionCommentTypeResponse,
-  ToggleQuestionCommentTypeError,
-  Options<ToggleQuestionCommentTypeData>
-> => {
-  const mutationOptions: UseMutationOptions<
-    ToggleQuestionCommentTypeResponse,
-    ToggleQuestionCommentTypeError,
-    Options<ToggleQuestionCommentTypeData>
-  > = {
-    mutationFn: async (fnOptions) => {
-      const { data } = await toggleQuestionCommentType({
-        ...options,
-        ...fnOptions,
-        throwOnError: true,
-      });
-      return data;
-    },
-  };
-  return mutationOptions;
-};
-
-/**
- * 질문 메모 삭제
- *
- * 작성자 본인이 질문 메모를 삭제한다. E1405, E1507, E1509, E1510, E1511을 응답할 수 있다.
- */
-export const deleteQuestionCommentMutation = (
-  options?: Partial<Options<DeleteQuestionCommentData>>,
-): UseMutationOptions<
-  DeleteQuestionCommentResponse,
-  DeleteQuestionCommentError,
-  Options<DeleteQuestionCommentData>
-> => {
-  const mutationOptions: UseMutationOptions<
-    DeleteQuestionCommentResponse,
-    DeleteQuestionCommentError,
-    Options<DeleteQuestionCommentData>
-  > = {
-    mutationFn: async (fnOptions) => {
-      const { data } = await deleteQuestionComment({
-        ...options,
-        ...fnOptions,
-        throwOnError: true,
-      });
-      return data;
-    },
-  };
-  return mutationOptions;
-};
-
-/**
- * 질문 메모 수정
- *
- * 작성자 본인이 질문 메모를 수정한다. E400, E1405, E1507, E1509, E1510, E1511을 응답할 수 있다.
- */
-export const editQuestionCommentMutation = (
-  options?: Partial<Options<EditQuestionCommentData>>,
-): UseMutationOptions<
-  EditQuestionCommentResponse,
-  EditQuestionCommentError,
-  Options<EditQuestionCommentData>
-> => {
-  const mutationOptions: UseMutationOptions<
-    EditQuestionCommentResponse,
-    EditQuestionCommentError,
-    Options<EditQuestionCommentData>
-  > = {
-    mutationFn: async (fnOptions) => {
-      const { data } = await editQuestionComment({
-        ...options,
-        ...fnOptions,
-        throwOnError: true,
-      });
-      return data;
-    },
-  };
-  return mutationOptions;
-};
-
-export const getMyRoundQuestionRecordsQueryKey = (
-  options: Options<GetMyRoundQuestionRecordsData>,
-) => createQueryKey("getMyRoundQuestionRecords", options);
-
-/**
- * 내 라운드 질문 기록 조회
- *
- * 질문한 원 질문과 내 메모를 조회한다. E1405, E1902, E1903을 응답할 수 있다.
- */
-export const getMyRoundQuestionRecordsOptions = (options: Options<GetMyRoundQuestionRecordsData>) =>
-  queryOptions<
-    GetMyRoundQuestionRecordsResponse,
-    GetMyRoundQuestionRecordsError,
-    GetMyRoundQuestionRecordsResponse,
-    ReturnType<typeof getMyRoundQuestionRecordsQueryKey>
-  >({
-    queryFn: async ({ queryKey, signal }) => {
-      const { data } = await getMyRoundQuestionRecords({
-        ...options,
-        ...queryKey[0],
-        signal,
-        throwOnError: true,
-      });
-      return data;
-    },
-    queryKey: getMyRoundQuestionRecordsQueryKey(options),
-  });
-
-/**
- * 질문 사용 여부 변경
- *
- * 진행 중 질문했어요 표시를 체크하거나 해제한다. E400, E1405, E1502, E1503, E1507, E1703, E1704를 응답할 수 있다.
- */
-export const changeQuestionAskedMutation = (
-  options?: Partial<Options<ChangeQuestionAskedData>>,
-): UseMutationOptions<
-  ChangeQuestionAskedResponse,
-  ChangeQuestionAskedError,
-  Options<ChangeQuestionAskedData>
-> => {
-  const mutationOptions: UseMutationOptions<
-    ChangeQuestionAskedResponse,
-    ChangeQuestionAskedError,
-    Options<ChangeQuestionAskedData>
-  > = {
-    mutationFn: async (fnOptions) => {
-      const { data } = await changeQuestionAsked({
-        ...options,
-        ...fnOptions,
-        throwOnError: true,
-      });
-      return data;
-    },
-  };
-  return mutationOptions;
-};
 
 /**
  * 후기 삭제
@@ -1662,6 +1252,56 @@ export const jobPostingsOptions = (options: Options<JobPostingsData>) =>
     },
     queryKey: jobPostingsQueryKey(options),
   });
+
+/**
+ * [dev] QA 테스트 회원 삭제
+ *
+ * local·local-dev·dev 프로파일에서만 등록되는 dev 전용 Test API 다(staging·live 에는 경로가 없다). QA 플랫폼이 테스트 데이터를 정리하는 용도이며 검증 대상 API 가 아니다. 테스트 회원 생성 API 로 만든 회원(이메일 @qa.moimyeon.test, 소셜 식별자 qa-)만 하드 삭제한다. 먼저 테스트 계정 초기화 규칙(방장인 [QA] 룸·참여·신청·[QA] 룸 후기 삭제)을 적용한 뒤, 이 회원이 남긴 행(질문·코멘트·요약·클로징·라운드 피드백·방명록·출석·후기)과 회원 소유 행(이력서·프로필·약관 동의·토큰·소셜 계정)을 지우고 회원 행을 지운다. QA 생성 회원이 아니거나 방장인 룸 중 [QA] 가 아닌 룸이 있으면 409(E2201), 회원이 없으면 404(E1006), memberId 가 UUID 가 아니면 400(E400).
+ */
+export const deleteQaMemberMutation = (
+  options?: Partial<Options<DeleteQaMemberData>>,
+): UseMutationOptions<DeleteQaMemberResponse, DeleteQaMemberError, Options<DeleteQaMemberData>> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteQaMemberResponse,
+    DeleteQaMemberError,
+    Options<DeleteQaMemberData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteQaMember({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+/**
+ * [dev] QA 룸 삭제
+ *
+ * local·local-dev·dev 프로파일에서만 등록되는 dev 전용 Test API 다(staging·live 에는 경로가 없다). QA 플랫폼이 테스트 데이터를 정리하는 용도이며 검증 대상 API 가 아니다. 룸 하나를 참가 신청·참여·출석·진행·질문·클로징·후기·방명록 등 룸에 매인 행까지 하드 삭제한다. 제목이 [QA] 로 시작하지 않으면 409(E2201), 룸이 없으면 404(E1405), roomId 가 UUID 가 아니면 400(E400).
+ */
+export const deleteQaRoomMutation = (
+  options?: Partial<Options<DeleteQaRoomData>>,
+): UseMutationOptions<DeleteQaRoomResponse, DeleteQaRoomError, Options<DeleteQaRoomData>> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteQaRoomResponse,
+    DeleteQaRoomError,
+    Options<DeleteQaRoomData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteQaRoom({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
 
 export const participationSlotsQueryKey = (options?: Options<ParticipationSlotsData>) =>
   createQueryKey("participationSlots", options);
@@ -1957,31 +1597,6 @@ export const submitRoomApplicationMutation = (
   return mutationOptions;
 };
 
-/**
- * 룸 취소
- *
- * 방장이 모집을 접는다(「룸 참여」 §4.9). 룸 상태가 CANCELED 가 되고, 남아 있던 대기 신청은 같은 트랜잭션에서 일괄 종료된다. 반려가 아니므로 신청자는 재신청 차단에 걸리지 않는다. 방장 외 참여자가 남아 있으면 취소할 수 없다(E1420) — 그때는 나가기로 방장을 넘겨야 한다.
- */
-export const cancelRoomMutation = (
-  options?: Partial<Options<CancelRoomData>>,
-): UseMutationOptions<CancelRoomResponse, CancelRoomError, Options<CancelRoomData>> => {
-  const mutationOptions: UseMutationOptions<
-    CancelRoomResponse,
-    CancelRoomError,
-    Options<CancelRoomData>
-  > = {
-    mutationFn: async (fnOptions) => {
-      const { data } = await cancelRoom({
-        ...options,
-        ...fnOptions,
-        throwOnError: true,
-      });
-      return data;
-    },
-  };
-  return mutationOptions;
-};
-
 export const getRoomCommentsQueryKey = (options: Options<GetRoomCommentsData>) =>
   createQueryKey("getRoomComments", options);
 
@@ -2086,9 +1701,38 @@ export const createRoomCommentMutation = (
 };
 
 /**
+ * 룸 완료
+ *
+ * 방장이 확정 참여자 전원의 참석 여부를 입력하며 CONFIRMED 룸을 COMPLETED로 전환한다. E400, E1405, E1406, E1706, E1707, E1708을 응답할 수 있다.
+ */
+export const completeRoomProgressMutation = (
+  options?: Partial<Options<CompleteRoomProgressData>>,
+): UseMutationOptions<
+  CompleteRoomProgressResponse,
+  CompleteRoomProgressError,
+  Options<CompleteRoomProgressData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    CompleteRoomProgressResponse,
+    CompleteRoomProgressError,
+    Options<CompleteRoomProgressData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await completeRoomProgress({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+/**
  * 룸 진행 확정
  *
- * 방장이 진행을 확정한다(「진행 확정」 §4.2). 룸 상태가 CONFIRMED 가 되고 참여자·인원이 고정되며, 남아 있던 대기 신청은 같은 트랜잭션에서 일괄 종료된다(반려가 아니므로 재신청 차단에 걸리지 않는다). 확정 이후에는 룸 정보 수정·신규 신청·수락이 모두 막힌다(§4.3). 확정 조건은 서버가 실행 시점에 룸 행을 잠근 뒤 검증한다 — 인원 미달은 E1421, 일정 경과는 E1422, 이미 확정·취소·완료·진행 중인 룸은 E1410 이다. 같은 요청을 두 번 보내도 한 번만 처리된다.
+ * 방장이 진행을 확정한다(「진행 확정」 §4.2). 룸 상태가 CONFIRMED 가 되고 참여자·인원이 고정되며, 남아 있던 대기 신청은 같은 트랜잭션에서 일괄 종료된다(반려가 아니므로 재신청 차단에 걸리지 않는다). 확정 이후에는 룸 정보 수정·신규 신청·수락이 모두 막힌다(§4.3). 확정 조건은 서버가 실행 시점에 룸 행을 잠근 뒤 검증한다 — 인원 미달은 E1421, 일정 경과는 E1422, 이미 확정·취소·완료된 룸은 E1410 이다. 같은 요청을 두 번 보내도 한 번만 처리된다.
  */
 export const confirmRoomMutation = (
   options?: Partial<Options<ConfirmRoomData>>,
@@ -2116,7 +1760,7 @@ export const roomParticipantsQueryKey = (options: Options<RoomParticipantsData>)
 /**
  * 참여자 명부 조회
  *
- * 룸에 속한 사람이 참여자 명단을 확인한다(「룸 참여」 §4.5). 방장을 맨 위에 두고 참여한 순서로 내려준다. 나가거나 내보내진 참여자는 명부에 없다. AI 이력서 요약은 룸의 원본 공개 여부와 무관하게 같은 룸 참여자에게 공개된다. 이력서 원본 URL 은 응답에 없다 - 제출 식별자와 열람 가능 여부만 내려가고 발급은 별도 API 가 맡는다. 실명·연락처·전달 사항은 어떤 경우에도 내려가지 않는다(§6). 방장과 참여자만 조회할 수 있고 신청자·제3자는 거부된다(E1419). 취소·종료된 룸에서도 이미 속한 사람은 계속 조회할 수 있다.
+ * 룸에 속하지 않은 사용자가 명부를 조회하면 거부된다. 신청만 넣은 사용자와 나간 참여자도 포함이다(E1419).
  */
 export const roomParticipantsOptions = (options: Options<RoomParticipantsData>) =>
   queryOptions<
@@ -2262,6 +1906,89 @@ export const submitReviewMutation = (
   > = {
     mutationFn: async (fnOptions) => {
       const { data } = await submitReview({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+/**
+ * [dev] 테스트 계정 초기화
+ *
+ * local·local-dev·dev 프로파일에서만 등록되는 dev 전용 Test API 다(staging·live 에는 경로가 없다). QA 플랫폼이 테스트 데이터를 정리하는 용도이며 검증 대상 API 가 아니다. 회원을 룸 하나도 없는 처음 상태로 되돌린다. 방장인 [QA] 룸 전부 삭제, 이 회원의 참가 신청·참여 행 삭제(다른 회원의 룸 포함), [QA] 룸에서 받은/쓴 후기 삭제. 회원 행·프로필·이력서는 유지한다. 방장인 룸 중 [QA] 가 아닌 것이 있으면 409(E2201)로 전체 거절, 회원이 없거나 탈퇴했으면 404(E1006), memberId 가 UUID 가 아니면 400(E400).
+ */
+export const resetQaMemberMutation = (
+  options?: Partial<Options<ResetQaMemberData>>,
+): UseMutationOptions<ResetQaMemberResponse, ResetQaMemberError, Options<ResetQaMemberData>> => {
+  const mutationOptions: UseMutationOptions<
+    ResetQaMemberResponse,
+    ResetQaMemberError,
+    Options<ResetQaMemberData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await resetQaMember({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+/**
+ * [dev] 이력서 AI 요약 완료 강제
+ *
+ * local·local-dev·dev 프로파일에서만 등록되는 dev 전용 Test API 다(staging·live 에는 경로가 없다). QA 플랫폼이 테스트 데이터를 정리하는 용도이며 검증 대상 API 가 아니다. 이름이 [QA] 로 시작하는 이력서의 AI 요약을 Bedrock 호출 없이 완료(DONE) 상태로 만든다(이름은 이력서 이름 변경 API 로 바꿀 수 있다). 실패(FAILED)·생성 중(PROCESSING)이면 주어진 요약문으로 완료하고, 이미 완료면 그대로 둔다. 회원에게 기본 이력서가 없으면 이 이력서를 기본으로 지정한다(실제 요약 완료와 같은 규칙). 이름이 [QA] 로 시작하지 않으면 409(E2201), 이력서가 없거나 삭제됐으면 404(E1010), 소유 회원이 탈퇴했으면 404(E1006), 요약문이 공백이거나 1000자를 넘으면 400(E400).
+ */
+export const completeQaResumeSummaryMutation = (
+  options?: Partial<Options<CompleteQaResumeSummaryData>>,
+): UseMutationOptions<
+  CompleteQaResumeSummaryResponse,
+  CompleteQaResumeSummaryError,
+  Options<CompleteQaResumeSummaryData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    CompleteQaResumeSummaryResponse,
+    CompleteQaResumeSummaryError,
+    Options<CompleteQaResumeSummaryData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await completeQaResumeSummary({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+/**
+ * [dev] QA 룸 시작 시각 변경
+ *
+ * local·local-dev·dev 프로파일에서만 등록되는 dev 전용 Test API 다(staging·live 에는 경로가 없다). QA 플랫폼이 테스트 데이터를 정리하는 용도이며 검증 대상 API 가 아니다. [QA] 룸의 시작 시각(startAt)을 값 규칙 검증 없이 바꾼다. 상태는 바꾸지 않는다. 용도: 진행 확정(CONFIRMED) 뒤 시작 시각을 과거로 옮겨 8시간 자동 완료와 완료 후 출석·후기를 실제 경로로 검증한다. 제목이 [QA] 로 시작하지 않으면 409(E2201), 룸이 없으면 404(E1405), startAt 이 없거나 형식이 틀리면 400(E400).
+ */
+export const rescheduleQaRoomMutation = (
+  options?: Partial<Options<RescheduleQaRoomData>>,
+): UseMutationOptions<
+  RescheduleQaRoomResponse,
+  RescheduleQaRoomError,
+  Options<RescheduleQaRoomData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    RescheduleQaRoomResponse,
+    RescheduleQaRoomError,
+    Options<RescheduleQaRoomData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await rescheduleQaRoom({
         ...options,
         ...fnOptions,
         throwOnError: true,
@@ -2458,7 +2185,7 @@ export const getQuestionCardSetOptions = (options: Options<GetQuestionCardSetDat
 /**
  * 진행 준비 질문 삭제
  *
- * CONFIRMED 룸에서 본인이 작성한 질문 또는 꼬리질문을 소프트 삭제한다. 다른 작성자의 활성 꼬리질문이 달린 원 질문은 E1508로 거부한다.
+ * 다른 작성자의 활성 꼬리질문이 달린 원 질문은 삭제하지 않는다.
  */
 export const deletePreparationQuestionMutation = (
   options?: Partial<Options<DeletePreparationQuestionData>>,
@@ -2651,6 +2378,33 @@ export const leavePreparationFollowUpQuestionMutation = (
   };
   return mutationOptions;
 };
+
+export const resumeSubmissionViewUrlQueryKey = (options: Options<ResumeSubmissionViewUrlData>) =>
+  createQueryKey("resumeSubmissionViewUrl", options);
+
+/**
+ * 이력서 원본 열람 URL 발급
+ *
+ * 같은 룸 참여자가 참여자 명부의 resumeSubmissionId 로 제출 이력서 원본을 여는 임시 URL 을 받는다(「룸 참여」 §4.5). URL 은 5분 뒤 만료되며, 다시 열 때는 재호출해 새 URL 을 받는다. 매 발급마다 권한을 재검증한다 - 룸에 속하지 않으면 E1419(403), 참여자여도 진행 확정 전이거나 원본 비공개 룸이거나 룸이 끝났거나 제출자가 나가 회수된 경우는 E1429(409)로 거부된다. 본인 제출도 같은 게이트를 탄다. 제출을 찾을 수 없거나 다른 룸의 제출이면 E1010(404), 룸이 없으면 E1405(404).
+ */
+export const resumeSubmissionViewUrlOptions = (options: Options<ResumeSubmissionViewUrlData>) =>
+  queryOptions<
+    ResumeSubmissionViewUrlResponse,
+    ResumeSubmissionViewUrlError,
+    ResumeSubmissionViewUrlResponse,
+    ReturnType<typeof resumeSubmissionViewUrlQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await resumeSubmissionViewUrl({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: resumeSubmissionViewUrlQueryKey(options),
+  });
 
 export const googleOAuthStartQueryKey = (options?: Options<GoogleOAuthStartData>) =>
   createQueryKey("googleOAuthStart", options);

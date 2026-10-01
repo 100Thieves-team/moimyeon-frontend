@@ -4,7 +4,6 @@ import { Avatar } from "@base-ui/react/avatar";
 import { useState } from "react";
 import { Popover } from "@base-ui/react/popover";
 import { TrustCardPopover, type TrustCardPayload } from "@/features/trust-card/trust-card-popover";
-import * as trustCardStyles from "@/features/trust-card/trust-card.css";
 import type { InterviewDetail } from "./interview-detail-model";
 import * as styles from "./interview-detail.css";
 
@@ -73,7 +72,7 @@ export function ParticipantAvatarStack({
                 handle={profileHandle}
                 payload={{ memberId: participant.memberId, isHost }}
                 aria-label={`${accessibleName} 공개 신뢰 카드 열기`}
-                className={`${trustCardStyles.trigger} ${styles.participantAvatarTrigger}`}
+                className={styles.participantAvatarTrigger}
                 openOnHover
                 delay={300}
                 closeDelay={150}

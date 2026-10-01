@@ -111,12 +111,14 @@ export const avatarLink = style({
 
 export const avatarRoot = style({
   display: "inline-flex",
+  flexShrink: 0,
   width: "3.4rem",
   height: "3.4rem",
   alignItems: "center",
   justifyContent: "center",
   overflow: "hidden",
-  borderRadius: vars.radius.pill,
+  borderRadius: "50%",
+  aspectRatio: "1",
   backgroundColor: vars.color.yellow10,
   color: vars.color.brown,
   fontFamily: vars.font.sans,

@@ -1,5 +1,6 @@
 import { globalStyle, style, styleVariants } from "@vanilla-extract/css";
 import { vars, textMetrics } from "@/styles";
+import { trigger as trustCardTrigger } from "@/features/trust-card/trust-card.css";
 
 const mobile = "screen and (max-width: 799px)";
 
@@ -277,7 +278,7 @@ export const quotaStatusRow = style({
 });
 
 export const quotaNumber = style({
-  color: vars.color.tertiary,
+  color: vars.color.blue,
   ...textMetrics.metadata,
   fontWeight: 400,
 
@@ -286,7 +287,7 @@ export const quotaNumber = style({
   textAlign: "right",
 });
 
-export const remainingQuota = style({
+export const quotaLabel = style({
   color: vars.color.blue,
   ...textMetrics.bodySm,
   fontWeight: 500,
@@ -320,19 +321,26 @@ export const participantAvatarItem = style({
   },
 });
 
-export const participantAvatarTrigger = style({
-  width: "4rem",
-  height: vars.size.controlMd,
-  borderRadius: vars.radius.pill,
-});
+export const participantAvatarTrigger = style([
+  trustCardTrigger,
+  {
+    width: "4rem",
+    height: "4rem",
+    aspectRatio: "1",
+    flexShrink: 0,
+    borderRadius: "50%",
+  },
+]);
 
 const participantAvatarBase = style({
   display: "grid",
-  width: "100%",
-  height: "100%",
+  width: "4rem",
+  height: "4rem",
+  aspectRatio: "1",
+  flexShrink: 0,
   overflow: "hidden",
   border: `0.2rem solid ${vars.color.background}`,
-  borderRadius: vars.radius.pill,
+  borderRadius: "50%",
   placeItems: "center",
   fontSize: "1.3rem",
   fontWeight: 600,
@@ -370,8 +378,9 @@ export const participantAvatarFallback = style({
 
 export const participantAvatarOverflow = style({
   zIndex: 1,
+  aspectRatio: "1",
   border: `0.2rem solid ${vars.color.background}`,
-  borderRadius: vars.radius.pill,
+  borderRadius: "50%",
   backgroundColor: vars.color.fillSecondary,
   color: vars.color.secondary,
   fontFamily: vars.font.mono,

@@ -14,6 +14,8 @@ vi.mock("@/features/auth/current-member-server", () => ({ getCurrentMemberState:
 vi.mock("@/api/query-client", () => ({ getQueryClient: mocks.getQueryClient }));
 vi.mock("@/api/server-client", () => ({ createServerClient: vi.fn(() => ({})) }));
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
+  confirmRoomMutation: () => ({ mutationFn: vi.fn() }),
+  resumeSubmissionViewUrlOptions: () => ({ queryKey: ["original"], queryFn: vi.fn() }),
   getRoomCommentsInfiniteOptions: ({ path }: { path: { roomId: string } }) => ({
     queryKey: ["comments", path.roomId],
     queryFn: mocks.comments,

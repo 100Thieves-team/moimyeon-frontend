@@ -6,6 +6,7 @@ import {
   type MockInterviewDetailCategory,
 } from "@/features/interview-detail/interview-detail-mock";
 import { MOCK_REVIEW_ROOM_ID } from "@/features/review/review-mock";
+import { MOCK_CONFIRMATION_SCENARIOS } from "@/mocks/room-confirmation";
 import * as styles from "./page.css";
 
 export const metadata: Metadata = {
@@ -40,6 +41,24 @@ export default function InterviewDetailMockPage() {
       </header>
 
       <div className={styles.sections}>
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>진행 확정 · 참여자 원본 열람</h2>
+          <p className={styles.description}>
+            확정 가능 항목에서 실제 버튼 흐름을 확인할 수 있어요. 새로고침하면 초기 목 상태로
+            돌아갑니다. 원본은 개발용 샘플 PDF입니다.
+          </p>
+          <ul className={styles.grid}>
+            {MOCK_CONFIRMATION_SCENARIOS.map(({ room, label, description }) => (
+              <li key={room.roomId}>
+                <Link className={styles.card} href={`/interviews/${room.roomId}`}>
+                  <strong className={styles.cardTitle}>{label}</strong>
+                  <span className={styles.cardDescription}>{description}</span>
+                  <span className={styles.cardAction}>상세 화면 보기</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>내 면접</h2>
           <Link className={styles.card} href="/interviews/me">

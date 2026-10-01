@@ -34,6 +34,7 @@ function createRoom(overrides: Partial<InterviewDetail> = {}): InterviewDetail {
       recruitStatus: "RECRUITING",
       recruitStatusLabel: "모집 중",
     },
+    previouslyConfirmed: false,
     resumePublic: true,
     roomId: "019db000-0000-7000-8000-000000002001",
     round: "SECOND",
