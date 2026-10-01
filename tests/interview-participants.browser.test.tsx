@@ -24,16 +24,17 @@ const mocks = vi.hoisted(() => ({
   viewUrl: vi.fn(),
   profile: vi.fn(),
 }));
-vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
-  confirmRoomMutation: () => ({ mutationFn: mocks.confirm }),
-  resumeSubmissionViewUrlOptions: ({
+vi.mock("@/api/generated/sdk.gen", () => ({
+  resumeSubmissionViewUrl: async ({
     path,
   }: {
     path: { roomId: string; resumeSubmissionId: string };
   }) => ({
-    queryKey: ["original", path.roomId, path.resumeSubmissionId],
-    queryFn: () => mocks.viewUrl(path),
+    data: await mocks.viewUrl(path),
   }),
+}));
+vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
+  confirmRoomMutation: () => ({ mutationFn: mocks.confirm }),
   getRoomCommentsInfiniteQueryKey: ({ path }: { path: { roomId: string } }) => [
     "comments",
     path.roomId,

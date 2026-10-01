@@ -3,10 +3,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Toast } from "@base-ui/react/toast";
 import {
-  resumeSubmissionViewUrlOptions,
   roomDetailQueryKey,
   roomParticipantsQueryKey,
 } from "@/api/generated/@tanstack/react-query.gen";
+import { resumeSubmissionViewUrl } from "@/api/generated/sdk.gen";
 import { Button } from "@/components/button";
 import { getRoomRequestError, type RoomParticipant } from "./participant-model";
 import * as styles from "./interview-room.css";
@@ -24,16 +24,11 @@ export function ResumeOriginalButton({
   const mutation = useMutation({
     mutationFn: async (target: Window) => {
       try {
-        const response = await client.fetchQuery({
-          ...resumeSubmissionViewUrlOptions({
-            path: { roomId, resumeSubmissionId: String(participant.resumeSubmissionId) },
-            cache: "no-store",
-          }),
-          staleTime: 0,
-          gcTime: 0,
-          retry: false,
+        const { data: response } = await resumeSubmissionViewUrl({
+          path: { roomId, resumeSubmissionId: String(participant.resumeSubmissionId) },
+          throwOnError: true,
         });
-        if (response.result !== "SUCCESS" || !response.data?.url) throw response;
+        if (!response.data?.url) throw response;
         target.location.replace(response.data.url);
       } catch (error) {
         target.close();
