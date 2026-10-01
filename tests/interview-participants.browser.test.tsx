@@ -724,7 +724,9 @@ describe("확정 참여자 이력서 원본", () => {
       .toBeEnabled();
     await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
     await expect
-      .element(screen.getByText("방장이 위임되면 모집 중으로 돌아가", { exact: false }))
+      .element(
+        screen.getByText("참여를 취소하면 다른 참여자에게 방장이 위임돼요.", { exact: true }),
+      )
       .toBeVisible();
     await screen.getByRole("button", { name: "취소하기", exact: true }).click();
     await expect.poll(() => routerReplaceMock.mock.calls.length).toBe(1);

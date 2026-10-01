@@ -113,9 +113,7 @@ export function LeaveRoomDialog({ room }: { room: InterviewRoom }) {
               </p>
             )}
             {room.viewer?.isHost && room.status === "CONFIRMED" && (
-              <p className={styles.description}>
-                방장이 위임되면 모집 중으로 돌아가 새 방장이 다시 진행을 확정해요.
-              </p>
+              <p className={styles.description}>참여를 취소하면 다른 참여자에게 방장이 위임돼요.</p>
             )}
             {reason && reason !== error && <p className={styles.description}>{reason}</p>}
             {error && (
