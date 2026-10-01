@@ -21,21 +21,20 @@ export function ResumeOriginalButton({
   const client = useQueryClient();
   const toast = Toast.useToastManager();
   const available = participant.canViewOriginal && participant.resumeSubmissionId != null;
-  const mutation = useMutation({
-    mutationFn: async (target: Window) => {
-      try {
-        const { data: response } = await resumeSubmissionViewUrl({
-          path: { roomId, resumeSubmissionId: String(participant.resumeSubmissionId) },
-          throwOnError: true,
-        });
-        if (!response.data?.url) throw response;
-        target.location.replace(response.data.url);
-      } catch (error) {
-        target.close();
-        throw error;
-      }
+  const mutation = useMutation<string, unknown, Window>({
+    mutationFn: async () => {
+      const { data: response } = await resumeSubmissionViewUrl({
+        path: { roomId, resumeSubmissionId: String(participant.resumeSubmissionId) },
+        throwOnError: true,
+      });
+      if (!response.data?.url) throw response;
+      return response.data.url;
     },
-    onError: (error) => {
+    onSuccess: (url, target) => {
+      target.location.replace(url);
+    },
+    onError: (error, target) => {
+      target.close();
       const { code } = getRoomRequestError(error);
       if (code === "E1419" || code === "E1429" || code === "E1010") {
         void Promise.allSettled(
