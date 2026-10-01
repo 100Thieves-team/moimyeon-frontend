@@ -33,6 +33,27 @@ export type V1ReviewsReviewId292942325 = {
   >;
 };
 
+export type V1DevRoomsRoomIdSchedule1288597070 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 반영된 시작 시각
+     */
+    startAt: string;
+    /**
+     * 룸 id
+     */
+    roomId: string;
+    /**
+     * 현재 룸 상태 (RECRUITING | CONFIRMED | COMPLETED | CANCELED). 이 API 는 상태를 바꾸지 않는다
+     */
+    status: string;
+  } | null;
+};
+
 export type V1JobPostings1538643122 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -155,6 +176,13 @@ export type V1RoomsRoomIdParticipants1711899011 = {
   } | null;
 };
 
+export type V1RoomsRoomIdComments1160873406 = {
+  /**
+   * 글 내용 (trim 후 1~1000자, 텍스트만)
+   */
+  content: string;
+};
+
 export type V1JobPostingsLinkMetadata34312967 = {
   /**
    * 이 링크가 속한다고 가정할 회사 id (필수, /v1/companies 검색 결과)
@@ -164,13 +192,6 @@ export type V1JobPostingsLinkMetadata34312967 = {
    * 메타데이터를 읽을 공고 링크 (필수, http/https, 최대 2000자)
    */
   url: string;
-};
-
-export type V1RoomsRoomIdComments1160873406 = {
-  /**
-   * 글 내용 (trim 후 1~1000자, 텍스트만)
-   */
-  content: string;
 };
 
 export type V1RoomsRoomIdComments1495367468 = {
@@ -240,7 +261,7 @@ export type V1RoomsRoomIdComments1495367468 = {
   } | null;
 };
 
-export type Post191457252 = {
+export type GetExampleValue191457252 = {
   /**
    * ResultType
    */
@@ -277,91 +298,6 @@ export type V1AuthLogout198252895 = {
   result: string;
 };
 
-export type V1Rounds1524907893 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * INTERVIEWEE | PARTICIPANT
-     */
-    role: string;
-    /**
-     * 참여자용 질문 카드, 면접자는 null
-     */
-    questions?: Array<{
-      /**
-       * 꼬리질문 목록
-       */
-      followUps: Array<{
-        /**
-         * 꼬리질문 id
-         */
-        questionId: number;
-        /**
-         * 꼬리질문 사용 여부
-         */
-        asked: boolean;
-        author?: {
-          /**
-           * 꼬리질문 작성자 표시 이름
-           */
-          nickname: string;
-          /**
-           * 꼬리질문 작성자 회원 id
-           */
-          memberId: string;
-        } | null;
-        /**
-         * PREPARATION | IN_PROGRESS
-         */
-        source: string;
-        /**
-         * 꼬리질문 본문
-         */
-        content: string;
-      }>;
-      /**
-       * 원 질문 id
-       */
-      questionId: number;
-      /**
-       * 질문 사용 여부
-       */
-      asked: boolean;
-      author?: {
-        /**
-         * 원 질문 작성자 표시 이름
-         */
-        nickname: string;
-        /**
-         * 원 질문 작성자 회원 id
-         */
-        memberId: string;
-      } | null;
-      /**
-       * PREPARATION | IN_PROGRESS
-       */
-      source: string;
-      /**
-       * 원 질문 본문
-       */
-      content: string;
-    }> | null;
-    interviewee?: {
-      /**
-       * 현재 라운드 면접자 표시 이름
-       */
-      nickname: string;
-      /**
-       * 현재 라운드 면접자 회원 id
-       */
-      memberId: string;
-    } | null;
-  } | null;
-};
-
 export type V1ClosingQuestionsMe207387725 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -390,47 +326,6 @@ export type V1ClosingQuestionsMe207387725 = {
       content: string;
     }>;
   } | null;
-};
-
-export type V1AttendancesMe438784568 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 로그인 회원 닉네임
-     */
-    nickname: string;
-    /**
-     * ATTENDED | ABSENT
-     */
-    status: string;
-    /**
-     * 로그인 회원 id
-     */
-    memberId: string;
-  } | null;
-};
-
-export type V1FollowUpQuestions140122441 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 생성된 꼬리질문 id
-     */
-    questionId: number;
-  } | null;
-};
-
-export type Post1780624183 = {
-  /**
-   * ExampleBody Data Field
-   */
-  data: string;
 };
 
 export type V1MembersMeRooms257716809 = {
@@ -859,6 +754,13 @@ export type V1RoomsRoomIdQuestions282474051 = {
   content: string;
 };
 
+export type Post1780624183 = {
+  /**
+   * ExampleBody Data Field
+   */
+  data: string;
+};
+
 export type V1RoomsRoomIdReviewsOverview1524615499 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -925,6 +827,100 @@ export type V1RoomsRoomIdReviewsOverview1524615499 = {
   } | null;
 };
 
+export type V1RoomsRoomIdComplete139202778 = {
+  /**
+   * 확정 참여자 전원의 출석 선택
+   */
+  attendances: Array<{
+    /**
+     * ATTENDED | ABSENT
+     */
+    status: string;
+    /**
+     * 참여자 회원 식별자
+     */
+    memberId: string;
+  }>;
+};
+
+export type V1DevQaData1727863013 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * QA 룸 목록 (생성순)
+     */
+    rooms: Array<{
+      /**
+       * 생성 일시 (ISO-8601)
+       */
+      createdAt: string;
+      /**
+       * 현재 방장 회원 id (UUID). 방장이 나간 취소 룸처럼 없으면 null
+       */
+      hostMemberId?: string | null;
+      counts?: {
+        /**
+         * 참여 행 수 (방장 포함, 상태·soft delete 무관)
+         */
+        participants: number;
+        /**
+         * 참가 신청 행 수 (상태·soft delete 무관, 삭제 시 지워지는 행 수)
+         */
+        applications: number;
+      } | null;
+      /**
+       * 룸 제목 ([QA] 로 시작)
+       */
+      title: string;
+      /**
+       * 룸 id (UUID)
+       */
+      roomId: string;
+      /**
+       * 룸 상태 (RECRUITING | CONFIRMED | COMPLETED | CANCELED)
+       */
+      status: string;
+    }>;
+    /**
+     * 테스트 회원 생성 API 로 만든 QA 회원 목록 (생성순). prefix 필터와 무관하다
+     */
+    members: Array<{
+      /**
+       * 닉네임
+       */
+      nickname: string;
+      /**
+       * 테스트 이메일 (qa-{uuid}@qa.moimyeon.test)
+       */
+      email: string;
+      /**
+       * 회원 id (UUID)
+       */
+      memberId: string;
+    }>;
+  } | null;
+};
+
+export type V1RoomsRoomIdResumeSubmissionsResumeSubmissionIdViewUrl523936547 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * URL 만료 시각 (발급 시점 + 5분). 만료 후에는 재발급받는다
+     */
+    expiresAt: string;
+    /**
+     * 이력서 원본을 여는 presigned URL. 만료 전까지만 유효하다
+     */
+    url: string;
+  } | null;
+};
+
 export type V1RoomsRoomIdReviews1785905513 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -935,63 +931,6 @@ export type V1RoomsRoomIdReviews1785905513 = {
      * 생성된 후기 id
      */
     reviewId: number;
-  } | null;
-};
-
-export type V1ProgressRails60461824 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 오프닝, 라운드, 클로징 순 진행 블록
-     */
-    blocks: Array<{
-      /**
-       * OPENING | ROUND | CLOSING
-       */
-      type: string;
-      /**
-       * ROUND 블록의 면접 대상, 그 외 null
-       */
-      target?: {
-        /**
-         * 면접 대상 표시 이름
-         */
-        nickname?: string | null;
-        /**
-         * 면접 대상 회원 id
-         */
-        memberId?: string | null;
-      } | null;
-    }>;
-  } | null;
-};
-
-export type V1Questions1610867609 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 생성된 원 질문 id
-     */
-    questionId: number;
-  } | null;
-};
-
-export type V1SelfFeedbacks342673527 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 저장된 자가 피드백 id
-     */
-    feedbackId: number;
   } | null;
 };
 
@@ -1006,25 +945,6 @@ export type V1AuthDevSessions1490138447 = {
      */
     accessToken: string;
   } | null;
-};
-
-export type V1FollowUpQuestions1363007138 = {
-  /**
-   * 라운드 면접자 회원 id (UUID)
-   */
-  intervieweeMemberId: string;
-  /**
-   * 부모 원 질문 id
-   */
-  questionId: number;
-  /**
-   * 꼬리질문 본문 (1~500자)
-   */
-  content: string;
-  /**
-   * 룸 id (UUID)
-   */
-  roomId: string;
 };
 
 export type V1RoomsFormOptions38619118 = {
@@ -1385,40 +1305,6 @@ export type V1MembersMe1349704155 = {
   } | null;
 };
 
-export type V1RoomProgresses612761132 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 진행을 시작한 방장 회원 id
-     */
-    hostMemberId: string;
-    /**
-     * 확정된 출석 목록
-     */
-    attendances: Array<{
-      /**
-       * 참여자 닉네임. 탈퇴한 회원은 대체 표기로 내려간다
-       */
-      nickname: string;
-      /**
-       * ATTENDED | ABSENT
-       */
-      status: string;
-      /**
-       * 참여자 회원 id
-       */
-      memberId: string;
-    }>;
-    /**
-     * 시작 후 룸 상태 (IN_PROGRESS)
-     */
-    status: string;
-  } | null;
-};
-
 export type V1RoomsRoomIdQuestionsQuestionIdFollowUps1317980453 = {
   /**
    * 질문 본문 (공백 불가, 최대 500자)
@@ -1454,60 +1340,7 @@ export type V1ClosingResponses1424921824 = {
   } | null;
 };
 
-export type V1RoundFeedbacks923155903 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 최종 피드백 카드 목록
-     */
-    finalFeedbacks: Array<{
-      author?: {
-        /**
-         * 작성자 역할 (PARTICIPANT)
-         */
-        role: string;
-        /**
-         * 작성자 표시 이름
-         */
-        displayName: string;
-        /**
-         * 작성자 회원 id
-         */
-        memberId: string;
-      } | null;
-      /**
-       * 카드 열람 확인 여부
-       */
-      revealed: boolean;
-      /**
-       * 최종 피드백 id
-       */
-      feedbackId: number;
-      /**
-       * 열람 확인 후 피드백 본문, 확인 전 null
-       */
-      content?: string | null;
-    }>;
-    /**
-     * 자가 피드백, 작성하지 않았으면 null
-     */
-    selfFeedback?: {
-      /**
-       * 자가 피드백 id
-       */
-      feedbackId: number;
-      /**
-       * 자가 피드백 본문
-       */
-      content: string;
-    } | null;
-  } | null;
-};
-
-export type V1RoomsCreationLimit910352763 = {
+export type V1ClosingQuestionsMe910352763 = {
   /**
    * 처리 결과 (ERROR)
    */
@@ -1530,24 +1363,25 @@ export type V1RoomsCreationLimit910352763 = {
   } | null;
 };
 
-export type V1RoomProgresses1093163669 = {
+export type V1AttendancesMe1603283370 = {
   /**
-   * 확정 참여자 전원의 출석 선택
+   * 처리 결과 (SUCCESS)
    */
-  attendances: Array<{
+  result: string;
+  data?: {
+    /**
+     * 로그인 회원 닉네임
+     */
+    nickname: string;
     /**
      * ATTENDED | ABSENT
      */
     status: string;
     /**
-     * 참여자 회원 id (UUID)
+     * 로그인 회원 식별자
      */
     memberId: string;
-  }>;
-  /**
-   * 룸 id (UUID)
-   */
-  roomId: string;
+  } | null;
 };
 
 export type V1MembersMeResumesResumeId1837465274 = {
@@ -1638,239 +1472,6 @@ export type V1MembersMeProfile466680720 = {
    * 관심 회사 id 목록 (미지정이면 빈 배열, /v1/companies 검색 — 전체 교체)
    */
   interestCompanyIds?: Array<number> | null;
-};
-
-export type V1QuestionsQuestionId496267733 = {
-  /**
-   * 라운드 면접자 회원 id (UUID)
-   */
-  intervieweeMemberId: string;
-  /**
-   * 질문했으면 true, 되돌리면 false
-   */
-  asked: boolean;
-  /**
-   * 룸 id (UUID)
-   */
-  roomId: string;
-};
-
-export type V1RoomsRoomId349770905 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 조회자 본인에 대한 사실. 비로그인이면 null 이다. 버튼·배지 판정은 화면 소관이고, 신청 가능 여부의 강제와 사유는 신청 API 의 에러 응답(E1002 | E1410 | E1412 | E1413 | E1415 | E1416 | E1425)이 전담한다
-     */
-    viewer?: {
-      /**
-       * 이 룸에 대한 가장 최근 신청 상태 (PENDING | WITHDRAWN | REJECTED | ROOM_CANCELED | ROOM_CONFIRMED | SLOT_EXCEEDED | ACCEPTED). 신청 이력이 없으면 null. 강퇴자는 ACCEPTED 가 남아 있으므로 hasRemovalHistory 를 먼저 봐야 한다
-       */
-      latestApplicationStatus?: string | null;
-      /**
-       * 내가 참여 중인가. 방장도 참여자라 true — isHost 를 먼저 본다
-       */
-      isParticipating?: boolean | null;
-      /**
-       * 내가 이 룸의 방장인가. `내가 만든 룸` 배지와 룸 관리 진입 판정용
-       */
-      isHost?: boolean | null;
-      /**
-       * 이 룸에서 강퇴당한 이력. 자진 이탈은 포함하지 않는다 — 재신청을 막는 것은 강퇴뿐이다
-       */
-      hasRemovalHistory?: boolean | null;
-      /**
-       * 룸과 무관한 회원 축 사실
-       */
-      member?: {
-        /**
-         * 대기 신청 사용량. occupied >= limit 면 신청이 거부된다(E1416)
-         */
-        pendingApplicationQuota?: {
-          /**
-           * 대기 신청 한도
-           */
-          limit?: number | null;
-          /**
-           * 처리 대기 중인 내 신청 수
-           */
-          occupied?: number | null;
-        } | null;
-        /**
-         * 참여 슬롯 사용량. occupied >= limit 면 신청이 거부된다(E1425)
-         */
-        participationSlots?: {
-          /**
-           * 참여 슬롯 한도
-           */
-          limit?: number | null;
-          /**
-           * 참여 중인 룸 수 (방장 포함)
-           */
-          occupied?: number | null;
-        } | null;
-        /**
-         * 이용 제한(제재) 중이면 false
-         */
-        isActive?: boolean | null;
-      } | null;
-    } | null;
-    /**
-     * 방장 회원 식별자 (UUID)
-     */
-    hostMemberId: string;
-    /**
-     * 이력서 원본 공개 여부 (룸 속성)
-     */
-    resumePublic: boolean;
-    /**
-     * 진행 방식 (ONLINE | OFFLINE)
-     */
-    method: string;
-    /**
-     * 룸 설명 (선택)
-     */
-    description?: string | null;
-    /**
-     * 채용 공고 (폐기됐으면 null)
-     */
-    jobPosting?: {
-      /**
-       * 채용 공고 id
-       */
-      jobPostingId?: number | null;
-      /**
-       * 채용 공고명
-       */
-      postingName?: string | null;
-    } | null;
-    /**
-     * 면접 유형 (선택)
-     */
-    type?: string | null;
-    /**
-     * 룸 제목
-     */
-    title: string;
-    /**
-     * 룸 id (UUID)
-     */
-    roomId: string;
-    schedule?: {
-      /**
-       * 예상 소요 시간(분)
-       */
-      durationMinutes: number;
-      /**
-       * 진행 시작 일시 (ISO-8601)
-       */
-      startAt: string;
-    } | null;
-    /**
-     * 면접 회차 (FIRST | SECOND | THIRD | ETC)
-     */
-    round: string;
-    recruit?: {
-      /**
-       * 현재 인원 (활성 참여 수, 방장 포함)
-       */
-      current: number;
-      /**
-       * 최소 인원
-       */
-      min: number;
-      /**
-       * 대기 중인 참가 신청 수. 수만 공개하고 대기자 목록은 방장 외 비공개다
-       */
-      pendingApplicationCount: number;
-      /**
-       * 최대 인원
-       */
-      max: number;
-      /**
-       * 모집 상태 (RECRUITING | CLOSED, 정원 충족 시 CLOSED)
-       */
-      recruitStatus: string;
-      /**
-       * 모집 상태 표시명 (모집 중 | 모집 마감)
-       */
-      recruitStatusLabel: string;
-    } | null;
-    /**
-     * 진행 방식 표시명
-     */
-    methodLabel: string;
-    /**
-     * 직무 (폐기됐으면 null)
-     */
-    jobRole?: {
-      /**
-       * 직무 코드
-       */
-      code?: string | null;
-      /**
-       * 직무 표시명
-       */
-      displayName?: string | null;
-      /**
-       * 직무 id
-       */
-      jobRoleId?: number | null;
-    } | null;
-    /**
-     * 면접 유형 표시명 (선택)
-     */
-    typeLabel?: string | null;
-    /**
-     * 회사 (공고에서 파생. 회사를 알 수 없으면 null)
-     */
-    company?: {
-      /**
-       * 회사 id
-       */
-      companyId?: number | null;
-      /**
-       * 회사명
-       */
-      name?: string | null;
-    } | null;
-    /**
-     * 오프라인 지역 (온라인이거나 폐기된 지역이면 null)
-     */
-    region?: {
-      /**
-       * 지역 시군구 id
-       */
-      sigunguId?: number | null;
-      /**
-       * 지역 표시명
-       */
-      label?: string | null;
-    } | null;
-    /**
-     * 면접 회차 표시명
-     */
-    roundLabel: string;
-    /**
-     * 참여자 공개 명단 (참여 시각 순, 비로그인에도 공개 — §6 공개 데이터). 방장 표시는 hostMemberId 와 매칭한다
-     */
-    participants: Array<{
-      /**
-       * 참여자 닉네임. 탈퇴한 회원은 대체 표기로 내려간다
-       */
-      nickname: string;
-      /**
-       * 참여자 회원 id (UUID)
-       */
-      memberId: string;
-    }>;
-    /**
-     * 룸 상태 (RECRUITING | CONFIRMED | IN_PROGRESS | COMPLETED | CANCELED)
-     */
-    status: string;
-  } | null;
 };
 
 export type V1RoomsRoomIdApplicationsMe2061746466 = {
@@ -2127,82 +1728,6 @@ export type V1RoomsRejectReasons1951847967 = {
   } | null;
 };
 
-export type V1QuestionComments469179710 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 다음 페이지 커서, 없으면 null
-     */
-    nextCursor?: {
-      /**
-       * 다음 커서 생성 시각
-       */
-      createdAt?: string | null;
-      /**
-       * 다음 커서 질문 메모 id
-       */
-      id?: number | null;
-    } | null;
-    /**
-     * 오래된 순 질문 메모 목록
-     */
-    comments: Array<{
-      /**
-       * 질문 메모 작성 시각
-       */
-      createdAt: string;
-      author?: {
-        /**
-         * 로그인 회원이 작성했는지 여부
-         */
-        mine: boolean;
-        /**
-         * 작성자 표시 이름
-         */
-        nickname: string;
-        /**
-         * 작성자 회원 id
-         */
-        memberId: string;
-      } | null;
-      /**
-       * 질문 메모 id
-       */
-      commentId: number;
-      /**
-       * MEMO | GOOD_POINT | IMPROVEMENT_POINT
-       */
-      type: string;
-      /**
-       * 질문 메모 본문
-       */
-      content: string;
-    }>;
-  } | null;
-};
-
-export type V1QuestionCommentsCommentId83412404 = {
-  /**
-   * 라운드 면접자 회원 id (UUID)
-   */
-  intervieweeMemberId: string;
-  /**
-   * 원 질문 id
-   */
-  questionId: number;
-  /**
-   * 공백이 아닌 수정 본문
-   */
-  content: string;
-  /**
-   * 룸 id (UUID)
-   */
-  roomId: string;
-};
-
 export type V1RoomsRoomIdComments876888201 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -2246,16 +1771,129 @@ export type V1RoomsRoomIdReviews1356104346 = {
   >;
 };
 
-export type V1FinalFeedbacks317638049 = {
+export type V1DevRoomsRoomId1258339407 = {
   /**
    * 처리 결과 (SUCCESS)
    */
   result: string;
   data?: {
     /**
-     * 생성된 최종 피드백 id
+     * 테이블별 하드 삭제 건수. 키는 항상 전부 내려간다(0 포함)
      */
-    feedbackId: number;
+    deleted: {
+      /**
+       * guestbook_post (방명록 댓글)
+       */
+      guestbookPosts: number;
+      /**
+       * resume_submission (신청 시 제출한 이력서)
+       */
+      resumeSubmissions: number;
+      /**
+       * web_push_subscription (QA 회원 삭제 시)
+       */
+      webPushSubscriptions: number;
+      /**
+       * refresh_token (QA 회원 삭제 시)
+       */
+      refreshTokens: number;
+      /**
+       * room
+       */
+      rooms: number;
+      /**
+       * question (질문 · 꼬리질문)
+       */
+      questions: number;
+      /**
+       * resume (QA 회원 삭제 시에만 0 이 아니다)
+       */
+      resumes: number;
+      /**
+       * round_assignment (라운드 역할 배정)
+       */
+      roundAssignments: number;
+      /**
+       * attendance (출석)
+       */
+      attendances: number;
+      /**
+       * 위 건수의 합
+       */
+      total: number;
+      /**
+       * review (후기)
+       */
+      reviews: number;
+      /**
+       * question_vote (클로징 질문 평가)
+       */
+      questionVotes: number;
+      /**
+       * closing_response (클로징 응답)
+       */
+      closingResponses: number;
+      /**
+       * member (QA 회원 삭제 시). 그 밖의 API 는 항상 0
+       */
+      members: number;
+      /**
+       * answer_summary (답변 요약)
+       */
+      answerSummaries: number;
+      /**
+       * participation (참여, 방장 포함)
+       */
+      participants: number;
+      /**
+       * interview_round (진행 라운드)
+       */
+      interviewRounds: number;
+      /**
+       * terms_agreement (QA 회원 삭제 시)
+       */
+      termsAgreements: number;
+      /**
+       * member_profile + 관심 직무·회사 (QA 회원 삭제 시)
+       */
+      profiles: number;
+      /**
+       * review_tag (후기 태그)
+       */
+      reviewTags: number;
+      /**
+       * room_status_log (상태 전이 이력)
+       */
+      roomStatusLogs: number;
+      /**
+       * social_account (QA 회원 삭제 시)
+       */
+      socialAccounts: number;
+      /**
+       * interview_plan (진행 계획)
+       */
+      interviewPlans: number;
+      /**
+       * round_feedback (라운드 피드백)
+       */
+      roundFeedbacks: number;
+      /**
+       * room_guestbook (방명록)
+       */
+      guestbooks: number;
+      /**
+       * review_skip (후기 건너뜀)
+       */
+      reviewSkips: number;
+      /**
+       * question_comment (질문 코멘트)
+       */
+      questionComments: number;
+      /**
+       * room_application (참가 신청)
+       */
+      applications: number;
+    };
   } | null;
 };
 
@@ -2276,29 +1914,6 @@ export type V1RoomsRoomIdParticipantsMe837364537 = {
   } | null;
 };
 
-export type V1QuestionComments1807061222 = {
-  /**
-   * 라운드 면접자 회원 id (UUID)
-   */
-  intervieweeMemberId: string;
-  /**
-   * 원 질문 id
-   */
-  questionId: number;
-  /**
-   * 최초 유형 MEMO
-   */
-  type: string;
-  /**
-   * 공백이 아닌 메모 본문
-   */
-  content: string;
-  /**
-   * 룸 id (UUID)
-   */
-  roomId: string;
-};
-
 export type V1Rooms583341076 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -2311,6 +1926,228 @@ export type V1Rooms583341076 = {
     roomId: string;
     /**
      * 룸 상태 (RECRUITING)
+     */
+    status: string;
+  } | null;
+};
+
+export type V1RoomsRoomId1114993826 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 조회자 본인에 대한 사실. 비로그인이면 null 이다. 버튼·배지 판정은 화면 소관이고, 신청 가능 여부의 강제와 사유는 신청 API 의 에러 응답(E1002 | E1410 | E1412 | E1413 | E1415 | E1416 | E1425)이 전담한다
+     */
+    viewer?: {
+      /**
+       * 이 룸에 대한 가장 최근 신청 상태 (PENDING | WITHDRAWN | REJECTED | ROOM_CANCELED | ROOM_CONFIRMED | SLOT_EXCEEDED | ACCEPTED). 신청 이력이 없으면 null. 강퇴자는 ACCEPTED 가 남아 있으므로 hasRemovalHistory 를 먼저 봐야 한다
+       */
+      latestApplicationStatus?: string | null;
+      /**
+       * 내가 참여 중인가. 방장도 참여자라 true — isHost 를 먼저 본다
+       */
+      isParticipating?: boolean | null;
+      /**
+       * 내가 이 룸의 방장인가. `내가 만든 룸` 배지와 룸 관리 진입 판정용
+       */
+      isHost?: boolean | null;
+      /**
+       * 이 룸에서 강퇴당한 이력. 자진 이탈은 포함하지 않는다 — 재신청을 막는 것은 강퇴뿐이다
+       */
+      hasRemovalHistory?: boolean | null;
+      /**
+       * 룸과 무관한 회원 축 사실
+       */
+      member?: {
+        /**
+         * 대기 신청 사용량. occupied >= limit 면 신청이 거부된다(E1416)
+         */
+        pendingApplicationQuota?: {
+          /**
+           * 대기 신청 한도
+           */
+          limit?: number | null;
+          /**
+           * 처리 대기 중인 내 신청 수
+           */
+          occupied?: number | null;
+        } | null;
+        /**
+         * 참여 슬롯 사용량. occupied >= limit 면 신청이 거부된다(E1425)
+         */
+        participationSlots?: {
+          /**
+           * 참여 슬롯 한도
+           */
+          limit?: number | null;
+          /**
+           * 참여 중인 룸 수 (방장 포함)
+           */
+          occupied?: number | null;
+        } | null;
+        /**
+         * 이용 제한(제재) 중이면 false
+         */
+        isActive?: boolean | null;
+      } | null;
+    } | null;
+    /**
+     * 방장 회원 식별자 (UUID)
+     */
+    hostMemberId: string;
+    /**
+     * 이력서 원본 공개 여부 (룸 속성)
+     */
+    resumePublic: boolean;
+    /**
+     * 진행 방식 (ONLINE | OFFLINE)
+     */
+    method: string;
+    /**
+     * 룸 설명 (선택)
+     */
+    description?: string | null;
+    /**
+     * 채용 공고 (폐기됐으면 null)
+     */
+    jobPosting?: {
+      /**
+       * 채용 공고 id
+       */
+      jobPostingId?: number | null;
+      /**
+       * 채용 공고명
+       */
+      postingName?: string | null;
+    } | null;
+    /**
+     * 과거 확정 이력 여부. true이면 방장 위임 후 일정이 지났어도 재확정할 수 있다
+     */
+    previouslyConfirmed: boolean;
+    /**
+     * 면접 유형 (선택)
+     */
+    type?: string | null;
+    /**
+     * 룸 제목
+     */
+    title: string;
+    /**
+     * 룸 id (UUID)
+     */
+    roomId: string;
+    schedule?: {
+      /**
+       * 예상 소요 시간(분)
+       */
+      durationMinutes: number;
+      /**
+       * 진행 시작 일시 (ISO-8601)
+       */
+      startAt: string;
+    } | null;
+    /**
+     * 면접 회차 (FIRST | SECOND | THIRD | ETC)
+     */
+    round: string;
+    recruit?: {
+      /**
+       * 현재 인원 (활성 참여 수, 방장 포함)
+       */
+      current: number;
+      /**
+       * 최소 인원
+       */
+      min: number;
+      /**
+       * 대기 중인 참가 신청 수. 수만 공개하고 대기자 목록은 방장 외 비공개다
+       */
+      pendingApplicationCount: number;
+      /**
+       * 최대 인원
+       */
+      max: number;
+      /**
+       * 모집 상태 (RECRUITING | CLOSED, 정원 충족 시 CLOSED)
+       */
+      recruitStatus: string;
+      /**
+       * 모집 상태 표시명 (모집 중 | 모집 마감)
+       */
+      recruitStatusLabel: string;
+    } | null;
+    /**
+     * 진행 방식 표시명
+     */
+    methodLabel: string;
+    /**
+     * 직무 (폐기됐으면 null)
+     */
+    jobRole?: {
+      /**
+       * 직무 코드
+       */
+      code?: string | null;
+      /**
+       * 직무 표시명
+       */
+      displayName?: string | null;
+      /**
+       * 직무 id
+       */
+      jobRoleId?: number | null;
+    } | null;
+    /**
+     * 면접 유형 표시명 (선택)
+     */
+    typeLabel?: string | null;
+    /**
+     * 회사 (공고에서 파생. 회사를 알 수 없으면 null)
+     */
+    company?: {
+      /**
+       * 회사 id
+       */
+      companyId?: number | null;
+      /**
+       * 회사명
+       */
+      name?: string | null;
+    } | null;
+    /**
+     * 오프라인 지역 (온라인이거나 폐기된 지역이면 null)
+     */
+    region?: {
+      /**
+       * 지역 시군구 id
+       */
+      sigunguId?: number | null;
+      /**
+       * 지역 표시명
+       */
+      label?: string | null;
+    } | null;
+    /**
+     * 면접 회차 표시명
+     */
+    roundLabel: string;
+    /**
+     * 참여자 공개 명단 (참여 시각 순, 비로그인에도 공개 — §6 공개 데이터). 방장 표시는 hostMemberId 와 매칭한다
+     */
+    participants: Array<{
+      /**
+       * 참여자 닉네임. 탈퇴한 회원은 대체 표기로 내려간다
+       */
+      nickname: string;
+      /**
+       * 참여자 회원 id (UUID)
+       */
+      memberId: string;
+    }>;
+    /**
+     * 룸 상태 (RECRUITING | CONFIRMED | COMPLETED | CANCELED)
      */
     status: string;
   } | null;
@@ -2331,6 +2168,13 @@ export type V1JobPostings1848070641 = {
   url: string;
 };
 
+export type V1DevResumesResumeIdSummary1029161103 = {
+  /**
+   * 저장할 요약문 (1~1000자, 선택). 본문을 생략하면 고정 문구를 저장한다
+   */
+  summary?: string | null;
+};
+
 export type V1NicknamesSuggestion679533277 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -2344,7 +2188,7 @@ export type V1NicknamesSuggestion679533277 = {
   } | null;
 };
 
-export type V1RoomsRoomIdParticipantsMe1338856208 = {
+export type V1RoomsRoomIdParticipants1338856208 = {
   /**
    * 처리 결과 (ERROR)
    */
@@ -2358,45 +2202,6 @@ export type V1RoomsRoomIdParticipantsMe1338856208 = {
      * 에러 메시지
      */
     message: string;
-  } | null;
-};
-
-export type V1FeedbackDisclosuresFeedbackId256087070 = {
-  /**
-   * 라운드 면접자 회원 id (UUID)
-   */
-  intervieweeMemberId: string;
-  /**
-   * 룸 id (UUID)
-   */
-  roomId: string;
-};
-
-export type V1SelfFeedbacks784214113 = {
-  /**
-   * 라운드 면접자 회원 id (UUID)
-   */
-  intervieweeMemberId: string;
-  /**
-   * 공백이 아닌 자가 피드백 본문
-   */
-  content: string;
-  /**
-   * 룸 id (UUID)
-   */
-  roomId: string;
-};
-
-export type V1QuestionComments32871189 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 생성된 질문 메모 id
-     */
-    commentId: number;
   } | null;
 };
 
@@ -2447,43 +2252,70 @@ export type V1MembersMeProfile934225230 = {
   } | null;
 };
 
-export type V1RoomsRoomIdApplicationsApplicationIdReject855969760 = {
+export type V1DevResumesResumeIdSummary164691634 = {
   /**
    * 처리 결과 (SUCCESS)
    */
   result: string;
   data?: {
-    recruit?: {
-      /**
-       * 현재 인원 (반려는 변동 없음)
-       */
-      current: number;
-      /**
-       * 최대 인원
-       */
-      max: number;
-      /**
-       * 모집 상태 (RECRUITING | CLOSED)
-       */
-      recruitStatus: string;
-      /**
-       * 모집 상태 표시명
-       */
-      recruitStatusLabel: string;
-    } | null;
     /**
-     * 처리된 신청 id
+     * 저장된 요약문
      */
-    applicationId: number;
+    summary: string;
     /**
-     * 신청 상태 표시명 (반려)
+     * 기본 이력서 여부. 회원에게 기본 이력서가 없었으면 이 이력서가 기본이 된다
      */
-    statusLabel: string;
+    isDefault: boolean;
     /**
-     * 신청 상태 (REJECTED)
+     * 이력서 id
+     */
+    resumeId: string;
+    /**
+     * 요약 상태 (항상 DONE)
+     */
+    status: string;
+    /**
+     * 이력서 소유 회원 id
+     */
+    memberId: string;
+  } | null;
+};
+
+export type V1RoomsRoomIdComplete1395457871 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 저장된 출석 목록
+     */
+    attendances: Array<{
+      /**
+       * 참여자 닉네임
+       */
+      nickname: string;
+      /**
+       * ATTENDED | ABSENT
+       */
+      status: string;
+      /**
+       * 참여자 회원 식별자
+       */
+      memberId: string;
+    }>;
+    /**
+     * 완료 후 룸 상태 (COMPLETED)
      */
     status: string;
   } | null;
+};
+
+export type V1DevRoomsRoomIdSchedule800956633 = {
+  /**
+   * 새 시작 시각 (ISO-8601, 서버 로컬). 과거·미래 모두 허용하며 값 규칙 검증을 우회한다
+   */
+  startAt: string;
 };
 
 export type V1MembersMeReceivedReviews2000779045 = {
@@ -2531,6 +2363,45 @@ export type V1MembersMeReceivedReviews2000779045 = {
   } | null;
 };
 
+export type V1RoomsRoomIdApplicationsApplicationIdReject855969760 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    recruit?: {
+      /**
+       * 현재 인원 (반려는 변동 없음)
+       */
+      current: number;
+      /**
+       * 최대 인원
+       */
+      max: number;
+      /**
+       * 모집 상태 (RECRUITING | CLOSED)
+       */
+      recruitStatus: string;
+      /**
+       * 모집 상태 표시명
+       */
+      recruitStatusLabel: string;
+    } | null;
+    /**
+     * 처리된 신청 id
+     */
+    applicationId: number;
+    /**
+     * 신청 상태 표시명 (반려)
+     */
+    statusLabel: string;
+    /**
+     * 신청 상태 (REJECTED)
+     */
+    status: string;
+  } | null;
+};
+
 export type V1RoomsRoomIdApplicationsApplicationIdAccept674159690 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -2567,6 +2438,31 @@ export type V1RoomsRoomIdApplicationsApplicationIdAccept674159690 = {
      * 신청 상태 (ACCEPTED | SLOT_EXCEEDED)
      */
     status: string;
+  } | null;
+};
+
+export type V1DevMembers796339344 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 자동 부여된 닉네임
+     */
+    nickname: string;
+    /**
+     * 이 회원의 만료 없는 개발용 액세스 토큰 (dev-sessions 와 같은 토큰)
+     */
+    accessToken: string;
+    /**
+     * 테스트 이메일 (qa-{uuid}@qa.moimyeon.test). 실제 수신되지 않는다
+     */
+    email: string;
+    /**
+     * 생성된 회원 id (UUID)
+     */
+    memberId: string;
   } | null;
 };
 
@@ -2614,21 +2510,6 @@ export type V1JobRoles1436485238 = {
       }>;
     }>;
   } | null;
-};
-
-export type V1FinalFeedbacks135367546 = {
-  /**
-   * 라운드 면접자 회원 id (UUID)
-   */
-  intervieweeMemberId: string;
-  /**
-   * 공백이 아닌 최종 피드백 본문
-   */
-  content: string;
-  /**
-   * 룸 id (UUID)
-   */
-  roomId: string;
 };
 
 export type V1RoomsRoomIdApplications1651584797 = {
@@ -3075,64 +2956,6 @@ export type V1JobRolesSearch1966453570 = {
   } | null;
 };
 
-export type V1QuestionRecordsMe591289672 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 질문별 내 기록 목록
-     */
-    records: Array<{
-      /**
-       * 원 질문 본문
-       */
-      questionContent: string;
-      /**
-       * 해당 질문에 작성한 내 메모
-       */
-      comments: Array<{
-        /**
-         * 질문 메모 작성 시각
-         */
-        createdAt: string;
-        /**
-         * 질문 메모 id
-         */
-        commentId: number;
-        /**
-         * MEMO | GOOD_POINT | IMPROVEMENT_POINT
-         */
-        type: string;
-        /**
-         * 질문 메모 본문
-         */
-        content: string;
-      }>;
-      /**
-       * 실제로 질문한 원 질문 id
-       */
-      questionId: number;
-    }>;
-  } | null;
-};
-
-export type V1Questions1653829861 = {
-  /**
-   * 라운드 면접자 회원 id (UUID)
-   */
-  intervieweeMemberId: string;
-  /**
-   * 질문 본문 (1~500자)
-   */
-  content: string;
-  /**
-   * 룸 id (UUID)
-   */
-  roomId: string;
-};
-
 export type V1RoomsRoomIdQuestionSets2052308651 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -3218,25 +3041,6 @@ export type V1MembersMeWebPushSubscriptions615785551 = {
    * 해지할 웹 푸시 등록 식별자
    */
   registration: string;
-};
-
-export type V1QuestionCommentTypesCommentId844872488 = {
-  /**
-   * 라운드 면접자 회원 id (UUID)
-   */
-  intervieweeMemberId: string;
-  /**
-   * 원 질문 id
-   */
-  questionId: number;
-  /**
-   * GOOD_POINT | IMPROVEMENT_POINT
-   */
-  type: string;
-  /**
-   * 룸 id (UUID)
-   */
-  roomId: string;
 };
 
 export type V1RoomsCreationLimit1772486104 = {
@@ -3363,7 +3167,7 @@ export type ExampleGetResponses = {
   /**
    * 200
    */
-  200: Post191457252;
+  200: GetExampleValue191457252;
 };
 
 export type ExampleGetResponse = ExampleGetResponses[keyof ExampleGetResponses];
@@ -3379,7 +3183,7 @@ export type ExamplePostResponses = {
   /**
    * 200
    */
-  200: Post191457252;
+  200: GetExampleValue191457252;
 };
 
 export type ExamplePostResponse = ExamplePostResponses[keyof ExamplePostResponses];
@@ -3395,19 +3199,19 @@ export type SubmitClosingResponseErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type SubmitClosingResponseError =
@@ -3439,7 +3243,7 @@ export type SearchCompaniesErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
 };
 
 export type SearchCompaniesError = SearchCompaniesErrors[keyof SearchCompaniesErrors];
@@ -3453,84 +3257,6 @@ export type SearchCompaniesResponses = {
 
 export type SearchCompaniesResponse = SearchCompaniesResponses[keyof SearchCompaniesResponses];
 
-export type LeaveFinalRoundFeedbackData = {
-  body?: V1FinalFeedbacks135367546;
-  path?: never;
-  query?: never;
-  url: "/v1/final-feedbacks";
-};
-
-export type LeaveFinalRoundFeedbackErrors = {
-  /**
-   * 400
-   */
-  400: V1RoomsCreationLimit910352763;
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type LeaveFinalRoundFeedbackError =
-  LeaveFinalRoundFeedbackErrors[keyof LeaveFinalRoundFeedbackErrors];
-
-export type LeaveFinalRoundFeedbackResponses = {
-  /**
-   * 201
-   */
-  201: V1FinalFeedbacks317638049;
-};
-
-export type LeaveFinalRoundFeedbackResponse =
-  LeaveFinalRoundFeedbackResponses[keyof LeaveFinalRoundFeedbackResponses];
-
-export type LeaveProgressFollowUpQuestionData = {
-  body?: V1FollowUpQuestions1363007138;
-  path?: never;
-  query?: never;
-  url: "/v1/follow-up-questions";
-};
-
-export type LeaveProgressFollowUpQuestionErrors = {
-  /**
-   * 400
-   */
-  400: V1RoomsCreationLimit910352763;
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type LeaveProgressFollowUpQuestionError =
-  LeaveProgressFollowUpQuestionErrors[keyof LeaveProgressFollowUpQuestionErrors];
-
-export type LeaveProgressFollowUpQuestionResponses = {
-  /**
-   * 201
-   */
-  201: V1FollowUpQuestions140122441;
-};
-
-export type LeaveProgressFollowUpQuestionResponse =
-  LeaveProgressFollowUpQuestionResponses[keyof LeaveProgressFollowUpQuestionResponses];
-
 export type CreateJobPostingData = {
   body?: V1JobPostings1848070641;
   path?: never;
@@ -3542,11 +3268,11 @@ export type CreateJobPostingErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
 };
 
 export type CreateJobPostingError = CreateJobPostingErrors[keyof CreateJobPostingErrors];
@@ -3576,181 +3302,6 @@ export type JobRolesResponses = {
 
 export type JobRolesResponse = JobRolesResponses[keyof JobRolesResponses];
 
-export type GetProgressRailData = {
-  body?: never;
-  path?: never;
-  query: {
-    /**
-     * 룸 id (UUID)
-     */
-    roomId: string;
-  };
-  url: "/v1/progress-rails";
-};
-
-export type GetProgressRailErrors = {
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type GetProgressRailError = GetProgressRailErrors[keyof GetProgressRailErrors];
-
-export type GetProgressRailResponses = {
-  /**
-   * 200
-   */
-  200: V1ProgressRails60461824;
-};
-
-export type GetProgressRailResponse = GetProgressRailResponses[keyof GetProgressRailResponses];
-
-export type GetQuestionCommentsData = {
-  body?: never;
-  path?: never;
-  query: {
-    /**
-     * 룸 id (UUID)
-     */
-    roomId: string;
-    /**
-     * 라운드 면접자 회원 id (UUID)
-     */
-    intervieweeMemberId: string;
-    /**
-     * 원 질문 id
-     */
-    questionId: string;
-    /**
-     * 이전 페이지 마지막 생성 시각
-     */
-    cursorCreatedAt?: string;
-    /**
-     * 이전 페이지 마지막 질문 메모 id
-     */
-    cursorId?: string;
-  };
-  url: "/v1/question-comments";
-};
-
-export type GetQuestionCommentsErrors = {
-  /**
-   * 400
-   */
-  400: V1RoomsCreationLimit910352763;
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type GetQuestionCommentsError = GetQuestionCommentsErrors[keyof GetQuestionCommentsErrors];
-
-export type GetQuestionCommentsResponses = {
-  /**
-   * 200
-   */
-  200: V1QuestionComments469179710;
-};
-
-export type GetQuestionCommentsResponse =
-  GetQuestionCommentsResponses[keyof GetQuestionCommentsResponses];
-
-export type LeaveQuestionCommentData = {
-  body?: V1QuestionComments1807061222;
-  path?: never;
-  query?: never;
-  url: "/v1/question-comments";
-};
-
-export type LeaveQuestionCommentErrors = {
-  /**
-   * 400
-   */
-  400: V1RoomsCreationLimit910352763;
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type LeaveQuestionCommentError =
-  LeaveQuestionCommentErrors[keyof LeaveQuestionCommentErrors];
-
-export type LeaveQuestionCommentResponses = {
-  /**
-   * 201
-   */
-  201: V1QuestionComments32871189;
-};
-
-export type LeaveQuestionCommentResponse =
-  LeaveQuestionCommentResponses[keyof LeaveQuestionCommentResponses];
-
-export type LeaveProgressQuestionData = {
-  body?: V1Questions1653829861;
-  path?: never;
-  query?: never;
-  url: "/v1/questions";
-};
-
-export type LeaveProgressQuestionErrors = {
-  /**
-   * 400
-   */
-  400: V1RoomsCreationLimit910352763;
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type LeaveProgressQuestionError =
-  LeaveProgressQuestionErrors[keyof LeaveProgressQuestionErrors];
-
-export type LeaveProgressQuestionResponses = {
-  /**
-   * 201
-   */
-  201: V1Questions1610867609;
-};
-
-export type LeaveProgressQuestionResponse =
-  LeaveProgressQuestionResponses[keyof LeaveProgressQuestionResponses];
-
 export type RegionsData = {
   body?: never;
   path?: never;
@@ -3766,44 +3317,6 @@ export type RegionsResponses = {
 };
 
 export type RegionsResponse = RegionsResponses[keyof RegionsResponses];
-
-export type StartRoomProgressData = {
-  body?: V1RoomProgresses1093163669;
-  path?: never;
-  query?: never;
-  url: "/v1/room-progresses";
-};
-
-export type StartRoomProgressErrors = {
-  /**
-   * 400
-   */
-  400: V1RoomsCreationLimit910352763;
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type StartRoomProgressError = StartRoomProgressErrors[keyof StartRoomProgressErrors];
-
-export type StartRoomProgressResponses = {
-  /**
-   * 200
-   */
-  200: V1RoomProgresses612761132;
-};
-
-export type StartRoomProgressResponse =
-  StartRoomProgressResponses[keyof StartRoomProgressResponses];
 
 export type RoomsData = {
   body?: never;
@@ -3865,7 +3378,7 @@ export type RoomsErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
 };
 
 export type RoomsError = RoomsErrors[keyof RoomsErrors];
@@ -3890,7 +3403,7 @@ export type CreateRoomErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
 };
 
 export type CreateRoomError = CreateRoomErrors[keyof CreateRoomErrors];
@@ -3903,131 +3416,6 @@ export type CreateRoomResponses = {
 };
 
 export type CreateRoomResponse = CreateRoomResponses[keyof CreateRoomResponses];
-
-export type GetIntervieweeRoundFeedbackData = {
-  body?: never;
-  path?: never;
-  query: {
-    /**
-     * 룸 id (UUID)
-     */
-    roomId: string;
-    /**
-     * 라운드 면접자 회원 id (UUID)
-     */
-    intervieweeMemberId: string;
-  };
-  url: "/v1/round-feedbacks";
-};
-
-export type GetIntervieweeRoundFeedbackErrors = {
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type GetIntervieweeRoundFeedbackError =
-  GetIntervieweeRoundFeedbackErrors[keyof GetIntervieweeRoundFeedbackErrors];
-
-export type GetIntervieweeRoundFeedbackResponses = {
-  /**
-   * 200
-   */
-  200: V1RoundFeedbacks923155903;
-};
-
-export type GetIntervieweeRoundFeedbackResponse =
-  GetIntervieweeRoundFeedbackResponses[keyof GetIntervieweeRoundFeedbackResponses];
-
-export type GetRoundScreenData = {
-  body?: never;
-  path?: never;
-  query: {
-    /**
-     * 룸 id (UUID)
-     */
-    roomId: string;
-    /**
-     * 라운드 면접자 회원 id (UUID)
-     */
-    intervieweeMemberId: string;
-  };
-  url: "/v1/rounds";
-};
-
-export type GetRoundScreenErrors = {
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type GetRoundScreenError = GetRoundScreenErrors[keyof GetRoundScreenErrors];
-
-export type GetRoundScreenResponses = {
-  /**
-   * 200
-   */
-  200: V1Rounds1524907893;
-};
-
-export type GetRoundScreenResponse = GetRoundScreenResponses[keyof GetRoundScreenResponses];
-
-export type SaveSelfRoundFeedbackData = {
-  body?: V1SelfFeedbacks784214113;
-  path?: never;
-  query?: never;
-  url: "/v1/self-feedbacks";
-};
-
-export type SaveSelfRoundFeedbackErrors = {
-  /**
-   * 400
-   */
-  400: V1RoomsCreationLimit910352763;
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type SaveSelfRoundFeedbackError =
-  SaveSelfRoundFeedbackErrors[keyof SaveSelfRoundFeedbackErrors];
-
-export type SaveSelfRoundFeedbackResponses = {
-  /**
-   * 200
-   */
-  200: V1SelfFeedbacks342673527;
-};
-
-export type SaveSelfRoundFeedbackResponse =
-  SaveSelfRoundFeedbackResponses[keyof SaveSelfRoundFeedbackResponses];
 
 export type TermsListData = {
   body?: never;
@@ -4050,7 +3438,7 @@ export type GetMyAttendanceData = {
   path?: never;
   query: {
     /**
-     * 룸 id (UUID)
+     * 룸 식별자
      */
     roomId: string;
   };
@@ -4061,15 +3449,15 @@ export type GetMyAttendanceErrors = {
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type GetMyAttendanceError = GetMyAttendanceErrors[keyof GetMyAttendanceErrors];
@@ -4078,7 +3466,7 @@ export type GetMyAttendanceResponses = {
   /**
    * 200
    */
-  200: V1AttendancesMe438784568;
+  200: V1AttendancesMe1603283370;
 };
 
 export type GetMyAttendanceResponse = GetMyAttendanceResponses[keyof GetMyAttendanceResponses];
@@ -4094,11 +3482,11 @@ export type IssueDevSessionErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
 };
 
 export type IssueDevSessionError = IssueDevSessionErrors[keyof IssueDevSessionErrors];
@@ -4139,7 +3527,7 @@ export type AuthRefreshErrors = {
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
 };
 
 export type AuthRefreshError = AuthRefreshErrors[keyof AuthRefreshErrors];
@@ -4169,15 +3557,15 @@ export type GetMyClosingQuestionsErrors = {
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type GetMyClosingQuestionsError =
@@ -4193,45 +3581,97 @@ export type GetMyClosingQuestionsResponses = {
 export type GetMyClosingQuestionsResponse =
   GetMyClosingQuestionsResponses[keyof GetMyClosingQuestionsResponses];
 
-export type ConfirmRoundFeedbackDisclosureData = {
-  body?: V1FeedbackDisclosuresFeedbackId256087070;
-  path: {
-    /**
-     * 최종 피드백 id
-     */
-    feedbackId: string;
-  };
+export type CreateQaMemberData = {
+  body?: never;
+  path?: never;
   query?: never;
-  url: "/v1/feedback-disclosures/{feedbackId}";
+  url: "/v1/dev/members";
 };
 
-export type ConfirmRoundFeedbackDisclosureErrors = {
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type ConfirmRoundFeedbackDisclosureError =
-  ConfirmRoundFeedbackDisclosureErrors[keyof ConfirmRoundFeedbackDisclosureErrors];
-
-export type ConfirmRoundFeedbackDisclosureResponses = {
+export type CreateQaMemberResponses = {
   /**
    * 200
    */
-  200: V1AuthLogout198252895;
+  200: V1DevMembers796339344;
 };
 
-export type ConfirmRoundFeedbackDisclosureResponse =
-  ConfirmRoundFeedbackDisclosureResponses[keyof ConfirmRoundFeedbackDisclosureResponses];
+export type CreateQaMemberResponse = CreateQaMemberResponses[keyof CreateQaMemberResponses];
+
+export type DeleteQaDataData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * 룸 제목 접두 (기본 [QA]). [QA] 로 시작해야 하며 더 좁힐 수만 있다 (예: "[QA] smoke-")
+     */
+    prefix?: string;
+    /**
+     * 이 회원이 현재 방장인 룸만 (UUID, 선택). 목록 조회에서도 같은 필터로 동작한다
+     */
+    hostMemberId?: string;
+    /**
+     * 일괄 삭제에서 테스트 회원 생성 API 로 만든 QA 회원까지 지울지 (기본 false). prefix·hostMemberId 와 무관하게 QA 회원 전원과 그들이 방장인 [QA] 룸을 지운다. 회원 단계가 실패해도 룸 삭제는 이미 반영돼 있다. 목록 조회는 무시한다
+     */
+    includeMembers?: string;
+  };
+  url: "/v1/dev/qa-data";
+};
+
+export type DeleteQaDataErrors = {
+  /**
+   * 400
+   */
+  400: V1ClosingQuestionsMe910352763;
+};
+
+export type DeleteQaDataError = DeleteQaDataErrors[keyof DeleteQaDataErrors];
+
+export type DeleteQaDataResponses = {
+  /**
+   * 200
+   */
+  200: V1DevRoomsRoomId1258339407;
+};
+
+export type DeleteQaDataResponse = DeleteQaDataResponses[keyof DeleteQaDataResponses];
+
+export type ListQaDataData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * 룸 제목 접두 (기본 [QA]). [QA] 로 시작해야 하며 더 좁힐 수만 있다 (예: "[QA] smoke-")
+     */
+    prefix?: string;
+    /**
+     * 이 회원이 현재 방장인 룸만 (UUID, 선택). 목록 조회에서도 같은 필터로 동작한다
+     */
+    hostMemberId?: string;
+    /**
+     * 일괄 삭제에서 테스트 회원 생성 API 로 만든 QA 회원까지 지울지 (기본 false). prefix·hostMemberId 와 무관하게 QA 회원 전원과 그들이 방장인 [QA] 룸을 지운다. 회원 단계가 실패해도 룸 삭제는 이미 반영돼 있다. 목록 조회는 무시한다
+     */
+    includeMembers?: string;
+  };
+  url: "/v1/dev/qa-data";
+};
+
+export type ListQaDataErrors = {
+  /**
+   * 400
+   */
+  400: V1ClosingQuestionsMe910352763;
+};
+
+export type ListQaDataError = ListQaDataErrors[keyof ListQaDataErrors];
+
+export type ListQaDataResponses = {
+  /**
+   * 200
+   */
+  200: V1DevQaData1727863013;
+};
+
+export type ListQaDataResponse = ListQaDataResponses[keyof ListQaDataResponses];
 
 export type JobPostingLinkMetadataData = {
   body?: V1JobPostingsLinkMetadata34312967;
@@ -4244,7 +3684,7 @@ export type JobPostingLinkMetadataErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
 };
 
 export type JobPostingLinkMetadataError =
@@ -4280,7 +3720,7 @@ export type SearchJobPostingsErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
 };
 
 export type SearchJobPostingsError = SearchJobPostingsErrors[keyof SearchJobPostingsErrors];
@@ -4311,7 +3751,7 @@ export type SearchJobRolesErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
 };
 
 export type SearchJobRolesError = SearchJobRolesErrors[keyof SearchJobRolesErrors];
@@ -4336,11 +3776,11 @@ export type MemberMeErrors = {
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
 };
 
 export type MemberMeError = MemberMeErrors[keyof MemberMeErrors];
@@ -4370,7 +3810,7 @@ export type NicknameAvailabilityErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
 };
 
 export type NicknameAvailabilityError =
@@ -4403,233 +3843,6 @@ export type NicknameSuggestionResponses = {
 export type NicknameSuggestionResponse =
   NicknameSuggestionResponses[keyof NicknameSuggestionResponses];
 
-export type ToggleQuestionCommentTypeData = {
-  body?: V1QuestionCommentTypesCommentId844872488;
-  path: {
-    /**
-     * 질문 메모 id
-     */
-    commentId: string;
-  };
-  query?: never;
-  url: "/v1/question-comment-types/{commentId}";
-};
-
-export type ToggleQuestionCommentTypeErrors = {
-  /**
-   * 400
-   */
-  400: V1RoomsCreationLimit910352763;
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type ToggleQuestionCommentTypeError =
-  ToggleQuestionCommentTypeErrors[keyof ToggleQuestionCommentTypeErrors];
-
-export type ToggleQuestionCommentTypeResponses = {
-  /**
-   * 200
-   */
-  200: V1AuthLogout198252895;
-};
-
-export type ToggleQuestionCommentTypeResponse =
-  ToggleQuestionCommentTypeResponses[keyof ToggleQuestionCommentTypeResponses];
-
-export type DeleteQuestionCommentData = {
-  body?: never;
-  path: {
-    /**
-     * 질문 메모 id
-     */
-    commentId: string;
-  };
-  query: {
-    /**
-     * 룸 id (UUID)
-     */
-    roomId: string;
-    /**
-     * 라운드 면접자 회원 id (UUID)
-     */
-    intervieweeMemberId: string;
-    /**
-     * 원 질문 id
-     */
-    questionId: string;
-  };
-  url: "/v1/question-comments/{commentId}";
-};
-
-export type DeleteQuestionCommentErrors = {
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type DeleteQuestionCommentError =
-  DeleteQuestionCommentErrors[keyof DeleteQuestionCommentErrors];
-
-export type DeleteQuestionCommentResponses = {
-  /**
-   * 200
-   */
-  200: V1AuthLogout198252895;
-};
-
-export type DeleteQuestionCommentResponse =
-  DeleteQuestionCommentResponses[keyof DeleteQuestionCommentResponses];
-
-export type EditQuestionCommentData = {
-  body?: V1QuestionCommentsCommentId83412404;
-  path: {
-    /**
-     * 질문 메모 id
-     */
-    commentId: string;
-  };
-  query?: never;
-  url: "/v1/question-comments/{commentId}";
-};
-
-export type EditQuestionCommentErrors = {
-  /**
-   * 400
-   */
-  400: V1RoomsCreationLimit910352763;
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type EditQuestionCommentError = EditQuestionCommentErrors[keyof EditQuestionCommentErrors];
-
-export type EditQuestionCommentResponses = {
-  /**
-   * 200
-   */
-  200: V1AuthLogout198252895;
-};
-
-export type EditQuestionCommentResponse =
-  EditQuestionCommentResponses[keyof EditQuestionCommentResponses];
-
-export type GetMyRoundQuestionRecordsData = {
-  body?: never;
-  path?: never;
-  query: {
-    /**
-     * 룸 id (UUID)
-     */
-    roomId: string;
-    /**
-     * 라운드 면접자 회원 id (UUID)
-     */
-    intervieweeMemberId: string;
-  };
-  url: "/v1/question-records/me";
-};
-
-export type GetMyRoundQuestionRecordsErrors = {
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type GetMyRoundQuestionRecordsError =
-  GetMyRoundQuestionRecordsErrors[keyof GetMyRoundQuestionRecordsErrors];
-
-export type GetMyRoundQuestionRecordsResponses = {
-  /**
-   * 200
-   */
-  200: V1QuestionRecordsMe591289672;
-};
-
-export type GetMyRoundQuestionRecordsResponse =
-  GetMyRoundQuestionRecordsResponses[keyof GetMyRoundQuestionRecordsResponses];
-
-export type ChangeQuestionAskedData = {
-  body?: V1QuestionsQuestionId496267733;
-  path: {
-    /**
-     * 질문 또는 꼬리질문 id
-     */
-    questionId: string;
-  };
-  query?: never;
-  url: "/v1/questions/{questionId}";
-};
-
-export type ChangeQuestionAskedErrors = {
-  /**
-   * 400
-   */
-  400: V1RoomsCreationLimit910352763;
-  /**
-   * 403
-   */
-  403: V1RoomsCreationLimit910352763;
-  /**
-   * 404
-   */
-  404: V1RoomsCreationLimit910352763;
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type ChangeQuestionAskedError = ChangeQuestionAskedErrors[keyof ChangeQuestionAskedErrors];
-
-export type ChangeQuestionAskedResponses = {
-  /**
-   * 200
-   */
-  200: V1AuthLogout198252895;
-};
-
-export type ChangeQuestionAskedResponse =
-  ChangeQuestionAskedResponses[keyof ChangeQuestionAskedResponses];
-
 export type DeleteReviewData = {
   body?: never;
   path: {
@@ -4646,19 +3859,19 @@ export type DeleteReviewErrors = {
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type DeleteReviewError = DeleteReviewErrors[keyof DeleteReviewErrors];
@@ -4688,15 +3901,15 @@ export type GetReviewErrors = {
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
 };
 
 export type GetReviewError = GetReviewErrors[keyof GetReviewErrors];
@@ -4726,23 +3939,23 @@ export type UpdateReviewErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type UpdateReviewError = UpdateReviewErrors[keyof UpdateReviewErrors];
@@ -4776,7 +3989,7 @@ export type RoomCreationLimitErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
 };
 
 export type RoomCreationLimitError = RoomCreationLimitErrors[keyof RoomCreationLimitErrors];
@@ -4839,7 +4052,7 @@ export type RoomDetailResponses = {
   /**
    * 200
    */
-  200: V1RoomsRoomId349770905;
+  200: V1RoomsRoomId1114993826;
 };
 
 export type RoomDetailResponse = RoomDetailResponses[keyof RoomDetailResponses];
@@ -4862,7 +4075,7 @@ export type JobPostingsErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
 };
 
 export type JobPostingsError = JobPostingsErrors[keyof JobPostingsErrors];
@@ -4875,6 +4088,79 @@ export type JobPostingsResponses = {
 };
 
 export type JobPostingsResponse = JobPostingsResponses[keyof JobPostingsResponses];
+
+export type DeleteQaMemberData = {
+  body?: never;
+  path: {
+    memberId: string;
+  };
+  query?: never;
+  url: "/v1/dev/members/{memberId}";
+};
+
+export type DeleteQaMemberErrors = {
+  /**
+   * 400
+   */
+  400: V1ClosingQuestionsMe910352763;
+  /**
+   * 404
+   */
+  404: V1ClosingQuestionsMe910352763;
+  /**
+   * 409
+   */
+  409: V1ClosingQuestionsMe910352763;
+};
+
+export type DeleteQaMemberError = DeleteQaMemberErrors[keyof DeleteQaMemberErrors];
+
+export type DeleteQaMemberResponses = {
+  /**
+   * 200
+   */
+  200: V1DevRoomsRoomId1258339407;
+};
+
+export type DeleteQaMemberResponse = DeleteQaMemberResponses[keyof DeleteQaMemberResponses];
+
+export type DeleteQaRoomData = {
+  body?: never;
+  path: {
+    /**
+     * 삭제할 룸 id (UUID)
+     */
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/dev/rooms/{roomId}";
+};
+
+export type DeleteQaRoomErrors = {
+  /**
+   * 400
+   */
+  400: V1ClosingQuestionsMe910352763;
+  /**
+   * 404
+   */
+  404: V1ClosingQuestionsMe910352763;
+  /**
+   * 409
+   */
+  409: V1ClosingQuestionsMe910352763;
+};
+
+export type DeleteQaRoomError = DeleteQaRoomErrors[keyof DeleteQaRoomErrors];
+
+export type DeleteQaRoomResponses = {
+  /**
+   * 200
+   */
+  200: V1DevRoomsRoomId1258339407;
+};
+
+export type DeleteQaRoomResponse = DeleteQaRoomResponses[keyof DeleteQaRoomResponses];
 
 export type ParticipationSlotsData = {
   body?: never;
@@ -4904,19 +4190,19 @@ export type UpdateProfileErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type UpdateProfileError = UpdateProfileErrors[keyof UpdateProfileErrors];
@@ -4950,11 +4236,11 @@ export type GetReceivedReviewsErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
 };
 
 export type GetReceivedReviewsError = GetReceivedReviewsErrors[keyof GetReceivedReviewsErrors];
@@ -4980,7 +4266,7 @@ export type ResumesErrors = {
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
 };
 
 export type ResumesError = ResumesErrors[keyof ResumesErrors];
@@ -5010,11 +4296,11 @@ export type CreateResumeErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
 };
 
 export type CreateResumeError = CreateResumeErrors[keyof CreateResumeErrors];
@@ -5039,7 +4325,7 @@ export type GetInterviewOverviewErrors = {
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
 };
 
 export type GetInterviewOverviewError =
@@ -5105,11 +4391,11 @@ export type PublicProfileErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
 };
 
 export type PublicProfileError = PublicProfileErrors[keyof PublicProfileErrors];
@@ -5157,11 +4443,11 @@ export type SubmitRoomApplicationErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
 };
 
 export type SubmitRoomApplicationError =
@@ -5176,33 +4462,6 @@ export type SubmitRoomApplicationResponses = {
 
 export type SubmitRoomApplicationResponse =
   SubmitRoomApplicationResponses[keyof SubmitRoomApplicationResponses];
-
-export type CancelRoomData = {
-  body?: never;
-  path: {
-    roomId: string;
-  };
-  query?: never;
-  url: "/v1/rooms/{roomId}/cancellation";
-};
-
-export type CancelRoomErrors = {
-  /**
-   * 409
-   */
-  409: V1RoomsCreationLimit910352763;
-};
-
-export type CancelRoomError = CancelRoomErrors[keyof CancelRoomErrors];
-
-export type CancelRoomResponses = {
-  /**
-   * 200
-   */
-  200: V1AuthLogout198252895;
-};
-
-export type CancelRoomResponse = CancelRoomResponses[keyof CancelRoomResponses];
 
 export type GetRoomCommentsData = {
   body?: never;
@@ -5229,11 +4488,11 @@ export type GetRoomCommentsErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
 };
 
 export type GetRoomCommentsError = GetRoomCommentsErrors[keyof GetRoomCommentsErrors];
@@ -5250,6 +4509,9 @@ export type GetRoomCommentsResponse = GetRoomCommentsResponses[keyof GetRoomComm
 export type CreateRoomCommentData = {
   body?: V1RoomsRoomIdComments1160873406;
   path: {
+    /**
+     * 룸 id (UUID)
+     */
     roomId: string;
   };
   query?: never;
@@ -5260,15 +4522,15 @@ export type CreateRoomCommentErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type CreateRoomCommentError = CreateRoomCommentErrors[keyof CreateRoomCommentErrors];
@@ -5283,12 +4545,50 @@ export type CreateRoomCommentResponses = {
 export type CreateRoomCommentResponse =
   CreateRoomCommentResponses[keyof CreateRoomCommentResponses];
 
+export type CompleteRoomProgressData = {
+  body?: V1RoomsRoomIdComplete139202778;
+  path: {
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/complete";
+};
+
+export type CompleteRoomProgressErrors = {
+  /**
+   * 400
+   */
+  400: V1ClosingQuestionsMe910352763;
+  /**
+   * 403
+   */
+  403: V1ClosingQuestionsMe910352763;
+  /**
+   * 404
+   */
+  404: V1ClosingQuestionsMe910352763;
+  /**
+   * 409
+   */
+  409: V1ClosingQuestionsMe910352763;
+};
+
+export type CompleteRoomProgressError =
+  CompleteRoomProgressErrors[keyof CompleteRoomProgressErrors];
+
+export type CompleteRoomProgressResponses = {
+  /**
+   * 200
+   */
+  200: V1RoomsRoomIdComplete1395457871;
+};
+
+export type CompleteRoomProgressResponse =
+  CompleteRoomProgressResponses[keyof CompleteRoomProgressResponses];
+
 export type ConfirmRoomData = {
   body?: never;
   path: {
-    /**
-     * 확정할 룸 식별자
-     */
     roomId: string;
   };
   query?: never;
@@ -5299,7 +4599,7 @@ export type ConfirmRoomErrors = {
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type ConfirmRoomError = ConfirmRoomErrors[keyof ConfirmRoomErrors];
@@ -5329,7 +4629,7 @@ export type RoomParticipantsErrors = {
   /**
    * 403
    */
-  403: V1RoomsRoomIdParticipantsMe1338856208;
+  403: V1RoomsRoomIdParticipants1338856208;
 };
 
 export type RoomParticipantsError = RoomParticipantsErrors[keyof RoomParticipantsErrors];
@@ -5346,9 +4646,6 @@ export type RoomParticipantsResponse = RoomParticipantsResponses[keyof RoomParti
 export type GetQuestionCardSetsData = {
   body?: never;
   path: {
-    /**
-     * 룸 id (UUID)
-     */
     roomId: string;
   };
   query?: never;
@@ -5359,11 +4656,11 @@ export type GetQuestionCardSetsErrors = {
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
 };
 
 export type GetQuestionCardSetsError = GetQuestionCardSetsErrors[keyof GetQuestionCardSetsErrors];
@@ -5391,11 +4688,11 @@ export type LeavePreparationQuestionErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type LeavePreparationQuestionError =
@@ -5427,23 +4724,23 @@ export type SkipReviewErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type SkipReviewError = SkipReviewErrors[keyof SkipReviewErrors];
@@ -5473,19 +4770,19 @@ export type GetReviewTargetsErrors = {
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type GetReviewTargetsError = GetReviewTargetsErrors[keyof GetReviewTargetsErrors];
@@ -5515,23 +4812,23 @@ export type SubmitReviewErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type SubmitReviewError = SubmitReviewErrors[keyof SubmitReviewErrors];
@@ -5544,6 +4841,113 @@ export type SubmitReviewResponses = {
 };
 
 export type SubmitReviewResponse = SubmitReviewResponses[keyof SubmitReviewResponses];
+
+export type ResetQaMemberData = {
+  body?: never;
+  path: {
+    memberId: string;
+  };
+  query?: never;
+  url: "/v1/dev/members/{memberId}/reset";
+};
+
+export type ResetQaMemberErrors = {
+  /**
+   * 400
+   */
+  400: V1ClosingQuestionsMe910352763;
+  /**
+   * 404
+   */
+  404: V1ClosingQuestionsMe910352763;
+  /**
+   * 409
+   */
+  409: V1ClosingQuestionsMe910352763;
+};
+
+export type ResetQaMemberError = ResetQaMemberErrors[keyof ResetQaMemberErrors];
+
+export type ResetQaMemberResponses = {
+  /**
+   * 200
+   */
+  200: V1DevRoomsRoomId1258339407;
+};
+
+export type ResetQaMemberResponse = ResetQaMemberResponses[keyof ResetQaMemberResponses];
+
+export type CompleteQaResumeSummaryData = {
+  body?: V1DevResumesResumeIdSummary1029161103;
+  path: {
+    resumeId: string;
+  };
+  query?: never;
+  url: "/v1/dev/resumes/{resumeId}/summary";
+};
+
+export type CompleteQaResumeSummaryErrors = {
+  /**
+   * 400
+   */
+  400: V1ClosingQuestionsMe910352763;
+  /**
+   * 404
+   */
+  404: V1ClosingQuestionsMe910352763;
+  /**
+   * 409
+   */
+  409: V1ClosingQuestionsMe910352763;
+};
+
+export type CompleteQaResumeSummaryError =
+  CompleteQaResumeSummaryErrors[keyof CompleteQaResumeSummaryErrors];
+
+export type CompleteQaResumeSummaryResponses = {
+  /**
+   * 200
+   */
+  200: V1DevResumesResumeIdSummary164691634;
+};
+
+export type CompleteQaResumeSummaryResponse =
+  CompleteQaResumeSummaryResponses[keyof CompleteQaResumeSummaryResponses];
+
+export type RescheduleQaRoomData = {
+  body?: V1DevRoomsRoomIdSchedule800956633;
+  path: {
+    roomId: string;
+  };
+  query?: never;
+  url: "/v1/dev/rooms/{roomId}/schedule";
+};
+
+export type RescheduleQaRoomErrors = {
+  /**
+   * 400
+   */
+  400: V1ClosingQuestionsMe910352763;
+  /**
+   * 404
+   */
+  404: V1ClosingQuestionsMe910352763;
+  /**
+   * 409
+   */
+  409: V1ClosingQuestionsMe910352763;
+};
+
+export type RescheduleQaRoomError = RescheduleQaRoomErrors[keyof RescheduleQaRoomErrors];
+
+export type RescheduleQaRoomResponses = {
+  /**
+   * 200
+   */
+  200: V1DevRoomsRoomIdSchedule1288597070;
+};
+
+export type RescheduleQaRoomResponse = RescheduleQaRoomResponses[keyof RescheduleQaRoomResponses];
 
 export type DeleteResumeData = {
   body?: never;
@@ -5561,15 +4965,15 @@ export type DeleteResumeErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
 };
 
 export type DeleteResumeError = DeleteResumeErrors[keyof DeleteResumeErrors];
@@ -5599,15 +5003,15 @@ export type ResumeErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
 };
 
 export type ResumeError = ResumeErrors[keyof ResumeErrors];
@@ -5679,15 +5083,15 @@ export type DeleteRoomCommentErrors = {
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type DeleteRoomCommentError = DeleteRoomCommentErrors[keyof DeleteRoomCommentErrors];
@@ -5718,7 +5122,7 @@ export type RoomLeaveErrors = {
   /**
    * 403
    */
-  403: V1RoomsRoomIdParticipantsMe1338856208;
+  403: V1RoomsRoomIdParticipants1338856208;
   /**
    * 409
    */
@@ -5765,13 +5169,7 @@ export type GetQuestionCardSetResponse =
 export type DeletePreparationQuestionData = {
   body?: never;
   path: {
-    /**
-     * 룸 id (UUID)
-     */
     roomId: string;
-    /**
-     * 삭제할 질문 또는 꼬리질문 id
-     */
     questionId: string;
   };
   query?: never;
@@ -5782,7 +5180,7 @@ export type DeletePreparationQuestionErrors = {
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type DeletePreparationQuestionError =
@@ -5814,19 +5212,19 @@ export type GetReviewOverviewErrors = {
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type GetReviewOverviewError = GetReviewOverviewErrors[keyof GetReviewOverviewErrors];
@@ -5857,19 +5255,19 @@ export type MakeResumeDefaultErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
   /**
    * 401
    */
-  401: V1RoomsCreationLimit910352763;
+  401: V1ClosingQuestionsMe910352763;
   /**
    * 404
    */
-  404: V1RoomsCreationLimit910352763;
+  404: V1ClosingQuestionsMe910352763;
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type MakeResumeDefaultError = MakeResumeDefaultErrors[keyof MakeResumeDefaultErrors];
@@ -5900,7 +5298,7 @@ export type RetryResumeSummaryErrors = {
   /**
    * 409
    */
-  409: V1RoomsCreationLimit910352763;
+  409: V1ClosingQuestionsMe910352763;
 };
 
 export type RetryResumeSummaryError = RetryResumeSummaryErrors[keyof RetryResumeSummaryErrors];
@@ -5944,13 +5342,7 @@ export type AcceptApplicationResponse =
 export type RejectApplicationData = {
   body?: V1RoomsRoomIdApplicationsApplicationIdReject2057308046;
   path: {
-    /**
-     * 룸 id (UUID)
-     */
     roomId: string;
-    /**
-     * 반려할 신청 id
-     */
     applicationId: string;
   };
   query?: never;
@@ -5961,7 +5353,7 @@ export type RejectApplicationErrors = {
   /**
    * 400
    */
-  400: V1RoomsCreationLimit910352763;
+  400: V1ClosingQuestionsMe910352763;
 };
 
 export type RejectApplicationError = RejectApplicationErrors[keyof RejectApplicationErrors];
@@ -5996,7 +5388,7 @@ export type LeavePreparationFollowUpQuestionErrors = {
   /**
    * 403
    */
-  403: V1RoomsCreationLimit910352763;
+  403: V1ClosingQuestionsMe910352763;
 };
 
 export type LeavePreparationFollowUpQuestionError =
@@ -6011,6 +5403,48 @@ export type LeavePreparationFollowUpQuestionResponses = {
 
 export type LeavePreparationFollowUpQuestionResponse =
   LeavePreparationFollowUpQuestionResponses[keyof LeavePreparationFollowUpQuestionResponses];
+
+export type ResumeSubmissionViewUrlData = {
+  body?: never;
+  path: {
+    roomId: string;
+    resumeSubmissionId: string;
+  };
+  query?: never;
+  url: "/v1/rooms/{roomId}/resume-submissions/{resumeSubmissionId}/view-url";
+};
+
+export type ResumeSubmissionViewUrlErrors = {
+  /**
+   * 401
+   */
+  401: V1ClosingQuestionsMe910352763;
+  /**
+   * 403
+   */
+  403: V1ClosingQuestionsMe910352763;
+  /**
+   * 404
+   */
+  404: V1ClosingQuestionsMe910352763;
+  /**
+   * 409
+   */
+  409: V1ClosingQuestionsMe910352763;
+};
+
+export type ResumeSubmissionViewUrlError =
+  ResumeSubmissionViewUrlErrors[keyof ResumeSubmissionViewUrlErrors];
+
+export type ResumeSubmissionViewUrlResponses = {
+  /**
+   * 200
+   */
+  200: V1RoomsRoomIdResumeSubmissionsResumeSubmissionIdViewUrl523936547;
+};
+
+export type ResumeSubmissionViewUrlResponse =
+  ResumeSubmissionViewUrlResponses[keyof ResumeSubmissionViewUrlResponses];
 
 export type GoogleOAuthStartData = {
   body?: never;

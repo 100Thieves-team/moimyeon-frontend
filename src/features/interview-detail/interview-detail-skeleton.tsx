@@ -61,7 +61,7 @@ export function InterviewDetailSkeleton({
                   <Skeleton key={item} circle width="4rem" height="4rem" />
                 ))}
               </div>
-              <Skeleton className={styles.remainingQuota} width="6rem" height="1lh" />
+              <Skeleton className={styles.quotaLabel} width="6rem" height="1lh" />
               <Skeleton width="100%" height="0.6rem" />
               <Skeleton width="100%" height={vars.size.controlMd} />
             </div>

@@ -1,4 +1,4 @@
-import { style } from "@vanilla-extract/css";
+import { globalStyle, style } from "@vanilla-extract/css";
 import { vars, textMetrics } from "@/styles";
 
 const mobile = "screen and (max-width: 799px)";
@@ -117,7 +117,8 @@ export const avatar = style({
   placeItems: "center",
   width: "4rem",
   height: "4rem",
-  borderRadius: vars.radius.pill,
+  borderRadius: "50%",
+  aspectRatio: "1",
   backgroundColor: vars.color.fillSecondary,
   color: vars.color.secondary,
   fontSize: "1.5rem",
@@ -263,8 +264,8 @@ export const description = style({
 export const dialogBody = style({
   display: "flex",
   flexDirection: "column",
-  gap: vars.spacing.sm,
-  padding: `${vars.spacing.sm} ${vars.spacing["2xl"]} 0`,
+  gap: vars.spacing.lg,
+  padding: `${vars.spacing.base} ${vars.spacing["2xl"]} 0`,
 });
 export const reasons = style({ display: "flex", flexDirection: "column", gap: vars.spacing.sm });
 export const reason = style({
@@ -432,4 +433,39 @@ export const cardLeaveAction = style({
 export const cardLeaveButton = style({
   width: "100%",
   minHeight: vars.size.controlMd,
+});
+
+export const confirmationSummary = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.spacing.base,
+  color: vars.color.secondary,
+  ...textMetrics.bodySm,
+});
+
+globalStyle(`${confirmationSummary} > div`, {
+  display: "flex",
+  flexWrap: "wrap",
+  justifyContent: "space-between",
+  gap: vars.spacing.sm,
+});
+globalStyle(`${confirmationSummary} dd`, { margin: 0 });
+
+export const confirmationEffects = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.spacing.sm,
+  paddingLeft: vars.spacing.lg,
+  color: vars.color.secondary,
+  ...textMetrics.bodySm,
+});
+
+export const resumeAction = style({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-end",
+  gap: vars.spacing.sm,
+  flexShrink: 0,
+  maxWidth: "100%",
+  "@media": { [mobile]: { width: "100%", alignItems: "stretch" } },
 });

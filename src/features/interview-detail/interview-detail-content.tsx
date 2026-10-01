@@ -9,11 +9,9 @@ import * as styles from "./interview-detail.css";
 export function InterviewDetailContent({
   roomId,
   currentMemberId,
-  onViewApplications,
 }: {
   roomId: string;
   currentMemberId: string | null;
-  onViewApplications: () => void;
 }) {
   const { data: response } = useSuspenseQuery(roomDetailOptions({ path: { roomId } }));
   const room = response.data;
@@ -68,7 +66,7 @@ export function InterviewDetailContent({
         </div>
 
         <div className={styles.rightRail}>
-          <InterviewActionCard room={room} state={state} onViewApplications={onViewApplications} />
+          <InterviewActionCard room={room} state={state} />
         </div>
       </div>
     </div>

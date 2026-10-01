@@ -9,6 +9,7 @@ import * as trustCardStyles from "@/features/trust-card/trust-card.css";
 import { getParticipantSummary, type InterviewRoom } from "./participant-model";
 import { LeaveRoomTrigger } from "./leave-room-trigger";
 import * as styles from "./interview-room.css";
+import { ResumeOriginalButton } from "./resume-original-button";
 
 export function ParticipantsPanel({
   room,
@@ -67,12 +68,16 @@ export function ParticipantsPanel({
                   </Popover.Trigger>
                 </div>
                 <p className={styles.participantSummary}>{getParticipantSummary(participant)}</p>
+                <ResumeOriginalButton roomId={room.roomId} participant={participant} />
               </li>
             );
           })}
         </ul>
       )}
       <TrustCardPopover handle={profileHandle} />
+      {(room.status === "COMPLETED" || room.status === "CANCELED") && (
+        <p className={styles.description}>면접이 종료되어 이력서 원본 열람이 마감됐어요.</p>
+      )}
       <footer className={styles.participantsFooter}>
         <LeaveRoomTrigger room={room} />
       </footer>

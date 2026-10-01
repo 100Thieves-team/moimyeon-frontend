@@ -112,6 +112,9 @@ export function LeaveRoomDialog({ room }: { room: InterviewRoom }) {
                 면접이 취소돼요.
               </p>
             )}
+            {room.viewer?.isHost && room.status === "CONFIRMED" && (
+              <p className={styles.description}>참여를 취소하면 다른 참여자에게 방장이 위임돼요.</p>
+            )}
             {reason && reason !== error && <p className={styles.description}>{reason}</p>}
             {error && (
               <p className={styles.error} role="alert">

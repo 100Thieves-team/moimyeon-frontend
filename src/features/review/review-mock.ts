@@ -106,7 +106,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 export function isMockReviewRoom(roomId: string) {
-  return roomId === MOCK_REVIEW_ROOM_ID;
+  return roomId === MOCK_REVIEW_ROOM_ID || roomId === "00000000-0000-4000-8000-000000000207";
 }
 
 export function isMockReviewId(reviewId: number) {
@@ -143,6 +143,7 @@ export function getMockReviewRoomDetail(roomId: string): RoomDetailResponse | nu
         recruitStatusLabel: "모집 마감",
       },
       region: null,
+      previouslyConfirmed: true,
       resumePublic: true,
       roomId,
       round: "SECOND",
