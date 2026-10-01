@@ -168,7 +168,7 @@ export const confirmationHandlers = [
               applicationId: 3001,
               appliedAt: "2026-09-30T10:00:00",
               status: room.status === "RECRUITING" ? "PENDING" : "ROOM_CONFIRMED",
-              statusLabel: "대기 중",
+              statusLabel: room.status === "RECRUITING" ? "대기 중" : "인원이 확정됐어요",
               note: "실전처럼 함께 연습하고 싶어요!",
               aiSummary: { status: "DONE", text: "결제 서비스 UI를 개발한 경험이 있어요." },
               applicant: {

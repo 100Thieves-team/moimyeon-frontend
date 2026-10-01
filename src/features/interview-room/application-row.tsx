@@ -132,11 +132,7 @@ export function ApplicationRow({
                 </Button>
               </>
             ) : (
-              <span className={styles.status}>
-                {application.status === "ROOM_CONFIRMED"
-                  ? "진행 확정으로 종료"
-                  : application.statusLabel}
-              </span>
+              <span className={styles.status}>{application.statusLabel}</span>
             )}
           </div>
           <Collapsible.Trigger aria-label={`${nickname} 신청 내용`} className={styles.expand}>

@@ -725,7 +725,7 @@ describe("방장 진행 확정", () => {
     applications = applications.map((application) => ({
       ...application,
       status: "ROOM_CONFIRMED",
-      statusLabel: "종료",
+      statusLabel: "인원이 확정됐어요",
     }));
     return { result: "SUCCESS", data: null };
   };
@@ -759,7 +759,7 @@ describe("방장 진행 확정", () => {
     expect(mocks.confirm).toHaveBeenCalledOnce();
     expect(mocks.confirm.mock.calls[0][0]).toEqual({ path: { roomId } });
     await screen.getByRole("tab", { name: "참여 신청 0" }).click();
-    await expect.element(screen.getByText("진행 확정으로 종료", { exact: true })).toBeVisible();
+    await expect.element(screen.getByText("인원이 확정됐어요", { exact: true })).toBeVisible();
     await expect
       .element(screen.getByRole("button", { name: "수락", exact: true }))
       .not.toBeInTheDocument();
