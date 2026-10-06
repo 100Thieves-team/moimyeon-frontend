@@ -418,11 +418,6 @@ export const leaveAction = style({
   maxWidth: "32rem",
   "@media": { [mobile]: { alignItems: "flex-start", maxWidth: "100%" } },
 });
-export const leaveReason = style({
-  color: vars.color.secondary,
-  ...textMetrics.metadata,
-});
-
 export const cardLeaveAction = style({
   display: "flex",
   flexDirection: "column",

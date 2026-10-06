@@ -504,35 +504,33 @@ describe("참여 취소", () => {
   });
 
   it.each(["IN_PROGRESS", "COMPLETED", "CANCELED", "UNKNOWN"])(
-    "%s 상태는 참여 취소를 차단한다",
+    "%s 상태의 취소 제한은 서버 오류로 안내한다",
     async (status) => {
       room.status = status;
+      mocks.leave.mockRejectedValue(error("E1424", "변경된 면접 상태에서는 나갈 수 없습니다."));
       const { screen } = await setup();
+      await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
+      await screen.getByRole("button", { name: "취소하기", exact: true }).click();
       await expect
-        .element(screen.getByRole("button", { name: "참여 취소하기", exact: true }))
-        .toBeDisabled();
-      expect(mocks.leave).not.toHaveBeenCalled();
+        .element(screen.getByRole("alert"))
+        .toHaveTextContent("변경된 면접 상태에서는 나갈 수 없습니다.");
+      expect(mocks.leave).toHaveBeenCalledOnce();
     },
   );
 
   it.each([false, true])(
-    "확정된 면접의 최소 인원에서는 취소를 차단하고 사유를 보여준다: 참여자 탭=%s",
+    "확정된 면접의 최소 인원 취소 제한은 서버 오류로 안내한다: 참여자 탭=%s",
     async (openPrivateTab) => {
       room.status = "CONFIRMED";
       room.recruit!.current = room.recruit!.min;
+      mocks.leave.mockRejectedValue(error("E1423", "최소 인원이에요."));
       const { screen } = await setup(openPrivateTab);
+      await screen.getByRole("button", { name: "참여 취소하기", exact: true }).click();
+      await screen.getByRole("button", { name: "취소하기", exact: true }).click();
       await expect
-        .element(screen.getByRole("button", { name: "참여 취소하기", exact: true }))
-        .toBeDisabled();
-      await expect
-        .element(
-          screen
-            .getByRole("tabpanel", {
-              name: openPrivateTab ? `참여자 ${room.recruit!.current}` : "면접 정보",
-            })
-            .getByText("최소 진행 인원이라", { exact: false }),
-        )
-        .toBeVisible();
+        .element(screen.getByRole("alert"))
+        .toHaveTextContent("최소 진행 인원이라 참여를 취소할 수 없어요.");
+      expect(mocks.leave).toHaveBeenCalledOnce();
     },
   );
 
@@ -548,7 +546,7 @@ describe("참여 취소", () => {
   });
 
   it.each(["E1423", "E1424"])(
-    "%s 경합 실패 시 최신 상태와 제한을 반영하고 성공 이동하지 않는다",
+    "%s 서버 오류 시 최신 상태를 조회하고 성공 이동하지 않는다",
     async (code) => {
       mocks.leave.mockImplementation(async () => {
         room.status = code === "E1423" ? "CONFIRMED" : "IN_PROGRESS";
@@ -562,7 +560,7 @@ describe("참여 취소", () => {
       await expect.poll(() => mocks.room.mock.calls.length).toBe(2);
       await expect
         .element(screen.getByRole("button", { name: "취소하기", exact: true }))
-        .toBeDisabled();
+        .toBeEnabled();
       expect(routerReplaceMock).not.toHaveBeenCalled();
     },
   );

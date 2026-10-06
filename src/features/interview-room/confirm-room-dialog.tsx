@@ -16,9 +16,7 @@ import { Button } from "@/components/button";
 import { DialogCloseButton } from "@/components/dialog-close-button";
 import { formatInterviewSchedule } from "@/features/interview-detail/interview-detail-model";
 import { confirmRoomDialog } from "./confirm-room-dialog-handle";
-import { getConfirmationDisabledReason } from "./confirmation-model";
 import { getRoomRequestError, type InterviewRoom } from "./participant-model";
-import { useConfirmationReason } from "./use-confirmation-reason";
 import * as styles from "./interview-room.css";
 
 export function ConfirmRoomDialog({
@@ -31,7 +29,6 @@ export function ConfirmRoomDialog({
   const client = useQueryClient();
   const toast = Toast.useToastManager();
   const [open, setOpen] = useState(false);
-  const reason = useConfirmationReason(room);
   const path = { roomId: room.roomId };
   const refresh = () =>
     Promise.allSettled(
@@ -45,8 +42,7 @@ export function ConfirmRoomDialog({
     );
   const mutation = useMutation({
     ...confirmRoomMutation(),
-    onSuccess: async (response) => {
-      if (response.result !== "SUCCESS") throw response;
+    onSuccess: async () => {
       await refresh();
       setOpen(false);
       toast.add({ title: "면접 진행을 확정했어요." });
@@ -119,7 +115,6 @@ export function ConfirmRoomDialog({
                 마감돼요.
               </li>
             </ul>
-            {reason && <p className={styles.description}>{reason}</p>}
             {errorMessage && (
               <p className={styles.error} role="alert">
                 {errorMessage}
@@ -133,10 +128,9 @@ export function ConfirmRoomDialog({
               돌아가기
             </AlertDialog.Close>
             <Button
-              disabled={mutation.isPending || reason !== null}
+              disabled={mutation.isPending}
               onClick={() => {
-                if (!mutation.isPending && !getConfirmationDisabledReason(room))
-                  mutation.mutate({ path });
+                if (!mutation.isPending) mutation.mutate({ path });
               }}
             >
               {mutation.isPending ? "확정 중..." : "진행 확정하기"}

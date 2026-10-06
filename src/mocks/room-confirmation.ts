@@ -5,7 +5,7 @@ import {
   MOCK_INTERVIEW_HOST_ID,
 } from "@/features/interview-detail/interview-detail-mock";
 import type { InterviewRoom, RoomParticipant } from "@/features/interview-room/participant-model";
-import { getConfirmationDisabledReason } from "@/features/interview-room/confirmation-model";
+import { getConfirmationDisabledReason } from "@/mocks/room-confirmation-policy";
 
 const base = MOCK_INTERVIEW_DETAIL_SCENARIOS.find(({ key }) => key === "host")!.room;
 const scenarios: {

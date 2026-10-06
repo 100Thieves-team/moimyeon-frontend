@@ -99,9 +99,9 @@ function ActionControl({ room, state }: { room: InterviewDetail; state: Intervie
     case "PENDING_APPLICATION":
       return <WithdrawAction room={room} />;
     case "VIEW_INTERVIEW":
-      return <LeaveRoomTrigger room={room} variant="card" />;
+      return <LeaveRoomTrigger variant="card" />;
     case "MANAGE_INTERVIEW":
-      if (room.status === "RECRUITING") return <ConfirmRoomTrigger room={room} />;
+      if (room.status === "RECRUITING") return <ConfirmRoomTrigger />;
       if (room.status === "CONFIRMED") return <Button disabled>면접 완료하기</Button>;
       return <p className={styles.actionMessage}>{getRoomStatusLabel(room.status)}</p>;
     case "BLOCKED":

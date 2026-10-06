@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getConfirmationDisabledReason } from "@/features/interview-room/confirmation-model";
+import { getConfirmationDisabledReason } from "@/mocks/room-confirmation-policy";
 import { MOCK_INTERVIEW_DETAIL_SCENARIOS } from "@/features/interview-detail/interview-detail-mock";
 
 const now = Date.parse("2026-10-01T19:00:00+09:00");
@@ -11,7 +11,7 @@ const room = () => ({
   recruit: { ...base.recruit!, current: 3, min: 3 },
 });
 
-describe("진행 확정 조건", () => {
+describe("모킹 서버의 진행 확정 조건", () => {
   it("최소 인원을 채운 방장은 일정 전에 확정할 수 있다", () => {
     expect(getConfirmationDisabledReason(room(), now)).toBeNull();
   });

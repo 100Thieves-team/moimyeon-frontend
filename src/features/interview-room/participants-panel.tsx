@@ -79,7 +79,7 @@ export function ParticipantsPanel({
         <p className={styles.description}>면접이 종료되어 이력서 원본 열람이 마감됐어요.</p>
       )}
       <footer className={styles.participantsFooter}>
-        <LeaveRoomTrigger room={room} />
+        <LeaveRoomTrigger />
       </footer>
     </>
   );

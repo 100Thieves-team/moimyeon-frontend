@@ -28,9 +28,9 @@ const mocks = vi.hoisted(() => ({
   confirm: vi.fn(),
   overview: vi.fn(),
 }));
+vi.mock("@/api/generated/sdk.gen", () => ({ resumeSubmissionViewUrl: vi.fn() }));
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
   confirmRoomMutation: () => ({ mutationFn: mocks.confirm }),
-  resumeSubmissionViewUrlOptions: () => ({ queryKey: ["original"], queryFn: vi.fn() }),
   getRoomCommentsInfiniteQueryKey: ({ path }: { path: { roomId: string } }) => [
     "comments",
     path.roomId,
@@ -791,26 +791,23 @@ describe("방장 진행 확정", () => {
     await expect.element(dialog()).not.toBeInTheDocument();
   });
 
-  it.each(["E1421", "E1422", "E1410"])(
-    "%s 경합 오류를 안내하고 최신 조건에 따라 확정을 차단한다",
-    async (code) => {
-      mocks.confirm.mockImplementation(async () => {
-        if (code === "E1421") room.recruit!.current = 1;
-        if (code === "E1422") room.schedule!.startAt = "2020-01-01T19:00:00+09:00";
-        if (code === "E1410") room.status = "CONFIRMED";
-        throw error(code, "조건이 변경됐어요.");
-      });
-      const screen = await renderRoom(false);
-      await screen.getByRole("button", { name: "진행 확정하기" }).click();
-      await dialog().getByRole("button", { name: "진행 확정하기" }).click();
-      await expect.element(dialog().getByRole("alert")).toBeVisible();
-      await expect.element(dialog().getByRole("button", { name: "진행 확정하기" })).toBeDisabled();
-      await dialog().getByRole("button", { name: "돌아가기" }).click();
-      await expect
-        .element(screen.getByRole("tab", { name: "면접 정보" }))
-        .toHaveAttribute("aria-selected", "true");
-    },
-  );
+  it.each(["E1421", "E1422", "E1410"])("%s 서버 오류를 안내하고 재시도할 수 있다", async (code) => {
+    mocks.confirm.mockImplementation(async () => {
+      if (code === "E1421") room.recruit!.current = 1;
+      if (code === "E1422") room.schedule!.startAt = "2020-01-01T19:00:00+09:00";
+      if (code === "E1410") room.status = "CONFIRMED";
+      throw error(code, "조건이 변경됐어요.");
+    });
+    const screen = await renderRoom(false);
+    await screen.getByRole("button", { name: "진행 확정하기" }).click();
+    await dialog().getByRole("button", { name: "진행 확정하기" }).click();
+    await expect.element(dialog().getByRole("alert")).toBeVisible();
+    await expect.element(dialog().getByRole("button", { name: "진행 확정하기" })).toBeEnabled();
+    await dialog().getByRole("button", { name: "돌아가기" }).click();
+    await expect
+      .element(screen.getByRole("tab", { name: "면접 정보" }))
+      .toHaveAttribute("aria-selected", "true");
+  });
 
   it("일시적 확정 실패는 모달에 안내하고 다시 시도할 수 있다", async () => {
     mocks.confirm
@@ -836,19 +833,30 @@ describe("방장 진행 확정", () => {
     await dialog().getByRole("button", { name: "돌아가기" }).click();
   });
 
-  it("최소 인원 미달은 카드에 사유를 표시하고 확정할 수 없다", async () => {
+  it("최소 인원 미달도 서버에 확정을 요청하고 오류를 안내한다", async () => {
     room.recruit!.current = 1;
+    mocks.confirm.mockRejectedValue(error("E1421", "최소 인원이 부족해요."));
     const screen = await renderRoom(false);
-    await expect.element(screen.getByRole("button", { name: "진행 확정하기" })).toBeDisabled();
-    await expect.element(screen.getByText("진행 확정에는 최소 2명이 필요해요")).toBeVisible();
-    expect(mocks.confirm).not.toHaveBeenCalled();
+    await screen.getByRole("button", { name: "진행 확정하기" }).click();
+    await dialog().getByRole("button", { name: "진행 확정하기" }).click();
+    await expect
+      .element(dialog().getByRole("alert"))
+      .toHaveTextContent("최소 진행 인원을 채운 뒤 다시 확정해 주세요.");
+    expect(mocks.confirm).toHaveBeenCalledOnce();
+    await dialog().getByRole("button", { name: "돌아가기" }).click();
   });
 
-  it("화면을 열어 둔 채 시작 시각이 되면 확정 버튼이 비활성화된다", async () => {
-    room.schedule!.startAt = new Date(Date.now() + 1000).toISOString();
+  it("시작 시각이 지나도 서버에 확정을 요청하고 오류를 안내한다", async () => {
+    room.schedule!.startAt = "2020-01-01T19:00:00+09:00";
+    mocks.confirm.mockRejectedValue(error("E1422", "진행 일정이 지났어요."));
     const screen = await renderRoom(false);
-    await expect.element(screen.getByRole("button", { name: "진행 확정하기" })).toBeDisabled();
-    await expect.element(screen.getByText("진행 일정이 지나 확정할 수 없어요")).toBeVisible();
+    await screen.getByRole("button", { name: "진행 확정하기" }).click();
+    await dialog().getByRole("button", { name: "진행 확정하기" }).click();
+    await expect
+      .element(dialog().getByRole("alert"))
+      .toHaveTextContent("진행 일정이 지나 확정할 수 없어요");
+    expect(mocks.confirm).toHaveBeenCalledOnce();
+    await dialog().getByRole("button", { name: "돌아가기" }).click();
   });
 
   it("과거 확정 이력이 있는 방장은 일정이 지나도 다시 확정할 수 있다", async () => {
