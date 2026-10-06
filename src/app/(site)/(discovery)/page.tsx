@@ -13,7 +13,6 @@ import {
   interviewDiscoveryFiltersSchema,
   interviewRoomsInfiniteOptions,
 } from "@/features/interview-discovery/interview-discovery-model";
-import * as styles from "./page.css";
 
 export const metadata: Metadata = {
   title: "면접",
@@ -50,10 +49,8 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   queryClient.prefetchQuery(roomFormOptionsOptions(requestOptions));
 
   return (
-    <main className={styles.page}>
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <InterviewDiscoveryContent filters={filters} />
-      </HydrationBoundary>
-    </main>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <InterviewDiscoveryContent filters={filters} />
+    </HydrationBoundary>
   );
 }
