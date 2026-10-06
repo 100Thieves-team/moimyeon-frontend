@@ -116,6 +116,7 @@ function createScenario(
       methodLabel: "온라인",
       participants: createMockParticipants(recruit?.current ?? 0),
       recruit,
+      previouslyConfirmed: false,
       resumePublic: true,
       roomId,
       round: "FIRST",
@@ -296,6 +297,7 @@ export function getMockInterviewDetail(roomId: string): RoomDetailResponse | nul
           }
         : undefined,
       region: discoveryRoom.region,
+      previouslyConfirmed: false,
       resumePublic: true,
       roomId: discoveryRoom.roomId,
       round: discoveryRoom.round,

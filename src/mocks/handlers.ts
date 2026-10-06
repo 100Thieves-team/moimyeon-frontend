@@ -18,6 +18,7 @@ import {
   submitMockReview,
   updateMockReview,
 } from "@/features/review/review-mock";
+import { confirmationHandlers } from "./room-confirmation";
 
 function mockError(message: string, status: number) {
   return HttpResponse.json(
@@ -27,7 +28,8 @@ function mockError(message: string, status: number) {
 }
 
 export const handlers = [
-  http.get("*/v1/members/me/rooms", () => HttpResponse.json(getMockMyInterviews())),
+  ...confirmationHandlers,
+  http.get("*/v1/members/me/rooms", () => HttpResponse.json(getMockMyInterviews(true))),
   http.delete("*/v1/rooms/:roomId/applications/me", ({ params }) => {
     return withdrawMockMyInterview(String(params.roomId))
       ? HttpResponse.json({ result: "SUCCESS", data: null, error: null })

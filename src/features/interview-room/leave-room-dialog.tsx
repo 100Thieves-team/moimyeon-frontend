@@ -19,11 +19,7 @@ import {
 import { DialogCloseButton } from "@/components/dialog-close-button";
 import { Button } from "@/components/button";
 import { leaveRoomDialog } from "./leave-room-dialog-handle";
-import {
-  getLeaveDisabledReason,
-  getRoomRequestError,
-  type InterviewRoom,
-} from "./participant-model";
+import { getRoomRequestError, type InterviewRoom } from "./participant-model";
 import * as styles from "./interview-room.css";
 
 export function LeaveRoomDialog({ room }: { room: InterviewRoom }) {
@@ -34,11 +30,9 @@ export function LeaveRoomDialog({ room }: { room: InterviewRoom }) {
   const isPending = leaveMutation.isPending;
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const reason = getLeaveDisabledReason(room);
-  const disabled = isPending || reason !== null;
 
   const leave = async () => {
-    if (disabled) return;
+    if (isPending) return;
     setError(null);
     try {
       await leaveMutation.mutateAsync({ path: { roomId: room.roomId } });
@@ -112,7 +106,9 @@ export function LeaveRoomDialog({ room }: { room: InterviewRoom }) {
                 면접이 취소돼요.
               </p>
             )}
-            {reason && reason !== error && <p className={styles.description}>{reason}</p>}
+            {room.viewer?.isHost && room.status === "CONFIRMED" && (
+              <p className={styles.description}>참여를 취소하면 다른 참여자에게 방장이 위임돼요.</p>
+            )}
             {error && (
               <p className={styles.error} role="alert">
                 {error}
@@ -123,7 +119,7 @@ export function LeaveRoomDialog({ room }: { room: InterviewRoom }) {
             <AlertDialog.Close render={<Button variant="secondary" disabled={isPending} />}>
               돌아가기
             </AlertDialog.Close>
-            <Button disabled={disabled} onClick={() => void leave()}>
+            <Button disabled={isPending} onClick={() => void leave()}>
               {isPending ? "취소 중..." : "취소하기"}
             </Button>
           </footer>

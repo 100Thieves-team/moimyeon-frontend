@@ -18,28 +18,6 @@ export function getRoomRequestError(error: unknown) {
   };
 }
 
-export function getLeaveDisabledReason(room: InterviewRoom) {
-  if (!room.viewer?.isHost && !room.viewer?.isParticipating)
-    return "현재 참여자만 참여를 취소할 수 있어요.";
-  switch (room.status) {
-    case "RECRUITING":
-      return null;
-    case "CONFIRMED":
-      if (!room.recruit) return "인원 정보를 확인하지 못했어요. 다시 불러와 주세요.";
-      return room.recruit.current > room.recruit.min
-        ? null
-        : "최소 진행 인원이라 참여를 취소할 수 없어요. 도움이 필요하면 고객센터에 문의해 주세요.";
-    case "IN_PROGRESS":
-      return "이미 진행 중인 면접은 참여를 취소할 수 없어요.";
-    case "COMPLETED":
-      return "완료된 면접은 참여를 취소할 수 없어요.";
-    case "CANCELED":
-      return "취소된 면접이에요.";
-    default:
-      return "면접 상태를 확인하지 못했어요. 다시 불러와 주세요.";
-  }
-}
-
 export function getParticipantSummary(participant: RoomParticipant) {
   const summary = participant.aiSummary;
   if (!summary) return "제공된 AI 요약이 없어요.";

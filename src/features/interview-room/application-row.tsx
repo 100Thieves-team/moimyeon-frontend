@@ -24,11 +24,13 @@ export function ApplicationRow({
   roomId,
   refreshFailed,
   refreshing,
+  canManage,
 }: {
   application: RoomApplication;
   roomId: string;
   refreshFailed: boolean;
   refreshing: boolean;
+  canManage: boolean;
 }) {
   const [profileHandle] = useState(() => Popover.createHandle<TrustCardPayload>());
   const toastManager = Toast.useToastManager();
@@ -43,7 +45,7 @@ export function ApplicationRow({
   } = useApplicationActions(roomId);
   const nickname = application.applicant?.nickname ?? "신청자 정보 없음";
   const summary = getApplicationSummary(application);
-  const actionable = application.status === "PENDING";
+  const actionable = canManage && application.status === "PENDING";
 
   const profile = (
     <>

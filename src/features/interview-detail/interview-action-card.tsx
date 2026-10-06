@@ -1,10 +1,16 @@
 "use client";
 
+import { QueryErrorResetBoundary, useSuspenseQuery } from "@tanstack/react-query";
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import { getInterviewOverviewOptions } from "@/api/generated/@tanstack/react-query.gen";
 import { AlertDialog } from "@base-ui/react/alert-dialog";
 import { useWithdrawApplicationDialog } from "./withdraw-application-dialog";
 import { Button, LinkButton } from "@/components/button";
 import { LoginTrigger } from "@/features/auth/login-dialog";
 import { LeaveRoomTrigger } from "@/features/interview-room/leave-room-trigger";
+import { ConfirmRoomTrigger } from "@/features/interview-room/confirm-room-trigger";
+import { getRoomStatusLabel } from "@/features/interview-room/confirmation-model";
 import {
   getInterviewRelationLabel,
   type InterviewDetail,
@@ -26,17 +32,56 @@ function WithdrawAction({ room }: { room: InterviewDetail }) {
   );
 }
 
-function ActionControl({
-  room,
-  state,
-  onViewApplications,
-}: {
-  room: InterviewDetail;
-  state: InterviewViewerState;
-  onViewApplications: () => void;
-}) {
+function CompletedReviewAction({ roomId }: { roomId: string }) {
+  const { data } = useSuspenseQuery(getInterviewOverviewOptions());
+  const reviewStatus = data.data?.completedRooms.find(
+    ({ room }) => room.roomId === roomId,
+  )?.reviewStatus;
+  if (reviewStatus !== "WRITABLE" && reviewStatus !== "WRITTEN") return null;
+
+  return (
+    <LinkButton href={`/interviews/${roomId}/review`}>
+      {reviewStatus === "WRITABLE" ? "후기 남기기" : "후기 수정하기"}
+    </LinkButton>
+  );
+}
+
+function CompletedReviewActionBoundary({ roomId }: { roomId: string }) {
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary
+          onReset={reset}
+          // oxlint-disable-next-line react/no-unstable-nested-components -- fallbackRender는 컴포넌트 타입이 아닌 렌더 콜백이다.
+          fallbackRender={({ resetErrorBoundary }) => (
+            <div className={styles.actionControls}>
+              <p role="alert" className={styles.actionMessage}>
+                후기 정보를 불러오지 못했어요
+              </p>
+              <Button variant="secondary" onClick={resetErrorBoundary}>
+                다시 불러오기
+              </Button>
+            </div>
+          )}
+        >
+          <Suspense fallback={<Button disabled>후기 정보 불러오는 중</Button>}>
+            <CompletedReviewAction roomId={roomId} />
+          </Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  );
+}
+
+function ActionControl({ room, state }: { room: InterviewDetail; state: InterviewViewerState }) {
   const roomId = room.roomId;
   const returnTo = `/interviews/${roomId}` as const;
+  if (
+    room.status === "COMPLETED" &&
+    (state.kind === "MANAGE_INTERVIEW" || state.kind === "VIEW_INTERVIEW")
+  ) {
+    return <CompletedReviewActionBoundary roomId={roomId} />;
+  }
 
   switch (state.kind) {
     case "LOGIN_REQUIRED":
@@ -54,9 +99,11 @@ function ActionControl({
     case "PENDING_APPLICATION":
       return <WithdrawAction room={room} />;
     case "VIEW_INTERVIEW":
-      return <LeaveRoomTrigger room={room} variant="card" />;
+      return <LeaveRoomTrigger variant="card" />;
     case "MANAGE_INTERVIEW":
-      return <Button onClick={onViewApplications}>참여 신청 확인하기</Button>;
+      if (room.status === "RECRUITING") return <ConfirmRoomTrigger />;
+      if (room.status === "CONFIRMED") return <Button disabled>면접 완료하기</Button>;
+      return <p className={styles.actionMessage}>{getRoomStatusLabel(room.status)}</p>;
     case "BLOCKED":
     case "UNAVAILABLE":
       return <Button disabled>{state.message}</Button>;
@@ -68,11 +115,9 @@ function ActionControl({
 export function InterviewActionCard({
   room,
   state,
-  onViewApplications,
 }: {
   room: InterviewDetail;
   state: InterviewViewerState;
-  onViewApplications: () => void;
 }) {
   const recruit = room.recruit;
   const isHost = room.viewer?.isHost === true;
@@ -80,8 +125,6 @@ export function InterviewActionCard({
   const relation = isHost ? "방장" : getInterviewRelationLabel(room);
   const current = recruit?.current ?? 0;
   const max = recruit?.max ?? 0;
-  const remaining = Math.max(max - current, 0);
-  const isApplyState = state.kind === "APPLY" || state.kind === "LOGIN_REQUIRED";
 
   return (
     <aside aria-label="면접 참가 신청" className={styles.actionCard}>
@@ -96,7 +139,9 @@ export function InterviewActionCard({
                     : styles.statusBadge.closed
                 }
               >
-                {recruit.recruitStatusLabel}
+                {room.status === "RECRUITING"
+                  ? recruit.recruitStatusLabel
+                  : getRoomStatusLabel(room.status)}
               </span>
             )}
             {relation && (
@@ -122,9 +167,7 @@ export function InterviewActionCard({
               participants={room.participants}
             />
             <div className={styles.progressMeta}>
-              {isApplyState && remaining > 0 && (
-                <span className={styles.remainingQuota}>{remaining}자리 남았어요</span>
-              )}
+              <span className={styles.quotaLabel}>참여 인원</span>
               <span className={styles.quotaNumber}>
                 {current} / {max}명
               </span>
@@ -140,7 +183,7 @@ export function InterviewActionCard({
       </div>
 
       <div className={styles.actionControls}>
-        <ActionControl room={room} state={state} onViewApplications={onViewApplications} />
+        <ActionControl room={room} state={state} />
         {state.kind === "PENDING_APPLICATION" && (
           <p className={styles.actionMessage}>방장의 수락을 기다리고 있어요</p>
         )}
