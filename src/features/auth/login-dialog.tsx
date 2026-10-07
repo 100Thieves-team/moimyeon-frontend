@@ -11,6 +11,7 @@ import * as styles from "./login-dialog.css";
 
 type LoginTriggerProps = {
   children: ReactNode;
+  className?: ButtonProps["className"];
   returnTo: LoginReturnTo;
   size?: ButtonProps["size"];
   variant?: ButtonProps["variant"];
@@ -36,12 +37,12 @@ function getLoginDialogTitleLines(returnTo: LoginReturnTo): readonly [string, st
   return loginDialogTitleLines[returnTo];
 }
 
-export function LoginTrigger({ children, returnTo, size, variant }: LoginTriggerProps) {
+export function LoginTrigger({ children, className, returnTo, size, variant }: LoginTriggerProps) {
   return (
     <Dialog.Trigger
       handle={loginDialog}
       payload={{ returnTo }}
-      render={<Button size={size} variant={variant} />}
+      render={<Button className={className} size={size} variant={variant} />}
       type="button"
     >
       {children}
