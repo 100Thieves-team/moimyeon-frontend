@@ -287,33 +287,34 @@ export const steps = style({
   marginTop: vars.spacing["3xl"],
   display: "grid",
   gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-  gap: "4.8rem",
   "@media": {
-    [tablet]: { gap: "3.4rem" },
     [mobile]: { gridTemplateColumns: "1fr", marginTop: vars.spacing["2xl"], gap: "2.8rem" },
   },
 });
 export const step = style({
+  display: "flex",
+  minWidth: 0,
   position: "relative",
   selectors: {
     "&:not(:last-child)::after": {
       content: "'→'",
-      position: "absolute",
-      right: "-2.8rem",
-      top: "50%",
-      transform: "translateY(-50%)",
+      flex: "1 0 4.8rem",
+      alignSelf: "center",
+      textAlign: "center",
       color: "#a3a3a3",
       fontSize: "2.3rem",
     },
   },
   "@media": {
-    [tablet]: { selectors: { "&:not(:last-child)::after": { right: "-2.4rem" } } },
+    [tablet]: { selectors: { "&:not(:last-child)::after": { flexBasis: "3.4rem" } } },
     [mobile]: {
+      display: "block",
       paddingLeft: "5.4rem",
       selectors: { "&:not(:last-child)::after": { display: "none" } },
     },
   },
 });
+export const stepContent = style({ minWidth: 0 });
 export const stepTitle = style([
   heading,
   {

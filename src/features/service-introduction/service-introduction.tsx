@@ -117,37 +117,43 @@ export function ServiceIntroduction() {
             </div>
             <ol className={styles.steps}>
               <li className={styles.step}>
-                <span className={styles.stepNumber} aria-hidden="true">
-                  01
-                </span>
-                <h3 className={styles.stepTitle}>모집 조건 안내</h3>
-                <p className={styles.stepDescription}>
-                  회사·직무·일정·진행 방식과
-                  <br />
-                  모집 인원을 한 번에 정해요.
-                </p>
+                <div className={styles.stepContent}>
+                  <span className={styles.stepNumber} aria-hidden="true">
+                    01
+                  </span>
+                  <h3 className={styles.stepTitle}>모집 조건 안내</h3>
+                  <p className={styles.stepDescription}>
+                    회사·직무·일정·진행 방식과
+                    <br />
+                    모집 인원을 한 번에 정해요.
+                  </p>
+                </div>
               </li>
               <li className={styles.step}>
-                <span className={styles.stepNumber} aria-hidden="true">
-                  02
-                </span>
-                <h3 className={styles.stepTitle}>참여 신청 확인</h3>
-                <p className={styles.stepDescription}>
-                  프로필과 이력서 요약을 보고
-                  <br />
-                  함께 준비할 사람을 살펴봐요.
-                </p>
+                <div className={styles.stepContent}>
+                  <span className={styles.stepNumber} aria-hidden="true">
+                    02
+                  </span>
+                  <h3 className={styles.stepTitle}>참여 신청 확인</h3>
+                  <p className={styles.stepDescription}>
+                    프로필과 이력서 요약을 보고
+                    <br />
+                    함께 준비할 사람을 살펴봐요.
+                  </p>
+                </div>
               </li>
               <li className={styles.step}>
-                <span className={styles.stepNumber} aria-hidden="true">
-                  03
-                </span>
-                <h3 className={styles.stepTitle}>함께할 사람 확정</h3>
-                <p className={styles.stepDescription}>
-                  신청을 수락하고 참여 명단을 확인해요.
-                  <br />
-                  이제 면접 준비를 시작하세요.
-                </p>
+                <div className={styles.stepContent}>
+                  <span className={styles.stepNumber} aria-hidden="true">
+                    03
+                  </span>
+                  <h3 className={styles.stepTitle}>함께할 사람 확정</h3>
+                  <p className={styles.stepDescription}>
+                    신청을 수락하고 참여 명단을 확인해요.
+                    <br />
+                    이제 면접 준비를 시작하세요.
+                  </p>
+                </div>
               </li>
             </ol>
           </div>
