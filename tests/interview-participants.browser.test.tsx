@@ -35,6 +35,13 @@ vi.mock("@/api/generated/sdk.gen", () => ({
 }));
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
   confirmRoomMutation: () => ({ mutationFn: mocks.confirm }),
+  completeRoomProgressMutation: () => ({ mutationFn: vi.fn() }),
+  getMyAttendanceOptions: () => ({
+    queryKey: ["attendance"],
+    queryFn: async () => ({ data: { status: "ATTENDED" } }),
+  }),
+  getMyAttendanceQueryKey: () => ["attendance"],
+  getReviewOverviewQueryKey: () => ["review-overview"],
   getRoomCommentsInfiniteQueryKey: ({ path }: { path: { roomId: string } }) => [
     "comments",
     path.roomId,

@@ -2,14 +2,14 @@
 
 import * as z from "zod";
 
-export const zV1RoomsRoomIdApplications240308819 = z.object({
-  note: z.string().nullish(),
-  resumeId: z.string(),
-});
-
 export const zV1ReviewsReviewId292942325 = z.object({
   content: z.string().nullish(),
   tags: z.array(z.union([z.record(z.string(), z.unknown()), z.boolean(), z.string(), z.number()])),
+});
+
+export const zV1RoomsRoomIdApplications240308819 = z.object({
+  note: z.string().nullish(),
+  resumeId: z.string(),
 });
 
 export const zV1DevRoomsRoomIdSchedule1288597070 = z.object({
@@ -19,6 +19,18 @@ export const zV1DevRoomsRoomIdSchedule1288597070 = z.object({
       startAt: z.string(),
       roomId: z.string(),
       status: z.string(),
+    })
+    .nullish(),
+});
+
+export const zV1MembersMeNotificationSetting488583453 = z.object({
+  result: z.string(),
+  data: z
+    .object({
+      isMarketingEmailAgreed: z.boolean(),
+      isActivityEmailEnabled: z.boolean(),
+      marketingEmailAgreedAt: z.string().nullish(),
+      isWebPushAllowed: z.boolean(),
     })
     .nullish(),
 });
@@ -49,36 +61,6 @@ export const zV1JobPostingsLinkMetadata1427693842 = z.object({
     .nullish(),
 });
 
-export const zV1RoomsRoomIdParticipants1711899011 = z.object({
-  result: z.string(),
-  data: z
-    .object({
-      participants: z.array(
-        z.object({
-          isHost: z.boolean(),
-          jobRoles: z.array(
-            z.object({
-              name: z.string(),
-              jobRoleId: z.number(),
-            }),
-          ),
-          aiSummary: z
-            .object({
-              text: z.string().nullish(),
-              status: z.string().nullish(),
-            })
-            .nullish(),
-          canViewOriginal: z.boolean(),
-          nickname: z.string(),
-          activitySummary: z.string().nullish(),
-          resumeSubmissionId: z.number().nullish(),
-          memberId: z.string(),
-        }),
-      ),
-    })
-    .nullish(),
-});
-
 export const zV1RoomsRoomIdComments1160873406 = z.object({
   content: z.string(),
 });
@@ -86,6 +68,22 @@ export const zV1RoomsRoomIdComments1160873406 = z.object({
 export const zV1JobPostingsLinkMetadata34312967 = z.object({
   companyId: z.number(),
   url: z.string(),
+});
+
+export const zGetExampleValue191457252 = z.object({
+  result: z.string(),
+  data: z
+    .object({
+      date: z.string(),
+      result: z.string(),
+      datetime: z.string(),
+      items: z.array(
+        z.object({
+          key: z.string(),
+        }),
+      ),
+    })
+    .nullish(),
 });
 
 export const zV1RoomsRoomIdComments1495367468 = z.object({
@@ -116,22 +114,6 @@ export const zV1RoomsRoomIdComments1495367468 = z.object({
     .nullish(),
 });
 
-export const zGetExampleValue191457252 = z.object({
-  result: z.string(),
-  data: z
-    .object({
-      date: z.string(),
-      result: z.string(),
-      datetime: z.string(),
-      items: z.array(
-        z.object({
-          key: z.string(),
-        }),
-      ),
-    })
-    .nullish(),
-});
-
 export const zV1AuthLogout198252895 = z.object({
   result: z.string(),
 });
@@ -150,6 +132,10 @@ export const zV1ClosingQuestionsMe207387725 = z.object({
       ),
     })
     .nullish(),
+});
+
+export const zPost1780624183 = z.object({
+  data: z.string(),
 });
 
 export const zV1MembersMeRooms257716809 = z.object({
@@ -310,10 +296,6 @@ export const zV1RoomsRoomIdQuestions282474051 = z.object({
   content: z.string(),
 });
 
-export const zPost1780624183 = z.object({
-  data: z.string(),
-});
-
 export const zV1RoomsRoomIdReviewsOverview1524615499 = z.object({
   result: z.string(),
   data: z
@@ -389,6 +371,13 @@ export const zV1RoomsRoomIdResumeSubmissionsResumeSubmissionIdViewUrl523936547 =
       url: z.string(),
     })
     .nullish(),
+});
+
+export const zV1MembersMeNotificationSetting1642473215 = z.object({
+  isMarketingEmailAgreed: z.boolean().nullish(),
+  isActivityEmailEnabled: z.boolean().nullish(),
+  webPushRegistration: z.string().nullish(),
+  isWebPushAllowed: z.boolean().nullish(),
 });
 
 export const zV1RoomsRoomIdReviews1785905513 = z.object({
@@ -655,6 +644,42 @@ export const zV1Companies1839974379 = z.object({
     .nullish(),
 });
 
+export const zV1RoomsRoomIdParticipants313082217 = z.object({
+  result: z.string(),
+  data: z
+    .object({
+      confirmedParticipants: z.array(
+        z.object({
+          nickname: z.string(),
+          memberId: z.string(),
+        }),
+      ),
+      participants: z.array(
+        z.object({
+          isHost: z.boolean(),
+          jobRoles: z.array(
+            z.object({
+              name: z.string(),
+              jobRoleId: z.number(),
+            }),
+          ),
+          aiSummary: z
+            .object({
+              text: z.string().nullish(),
+              status: z.string().nullish(),
+            })
+            .nullish(),
+          canViewOriginal: z.boolean(),
+          nickname: z.string(),
+          activitySummary: z.string().nullish(),
+          resumeSubmissionId: z.number().nullish(),
+          memberId: z.string(),
+        }),
+      ),
+    })
+    .nullish(),
+});
+
 export const zV1MembersMeProfile466680720 = z.object({
   nickname: z.string(),
   bio: z.string().nullish(),
@@ -851,16 +876,6 @@ export const zV1DevRoomsRoomId1258339407 = z.object({
     .nullish(),
 });
 
-export const zV1RoomsRoomIdParticipantsMe837364537 = z.object({
-  result: z.string(),
-  error: z
-    .object({
-      code: z.string(),
-      message: z.string(),
-    })
-    .nullish(),
-});
-
 export const zV1Rooms583341076 = z.object({
   result: z.string(),
   data: z
@@ -869,6 +884,12 @@ export const zV1Rooms583341076 = z.object({
       status: z.string(),
     })
     .nullish(),
+});
+
+export const zV1JobPostings1848070641 = z.object({
+  companyId: z.number(),
+  postingName: z.string(),
+  url: z.string(),
 });
 
 export const zV1RoomsRoomId1114993826 = z.object({
@@ -962,12 +983,6 @@ export const zV1RoomsRoomId1114993826 = z.object({
       status: z.string(),
     })
     .nullish(),
-});
-
-export const zV1JobPostings1848070641 = z.object({
-  companyId: z.number(),
-  postingName: z.string(),
-  url: z.string(),
 });
 
 export const zV1DevResumesResumeIdSummary1029161103 = z.object({
@@ -1390,10 +1405,6 @@ export const zV1ReviewsReviewId949065321 = z.object({
     .nullish(),
 });
 
-export const zV1MembersMeWebPushSubscriptions615785551 = z.object({
-  registration: z.string(),
-});
-
 export const zV1RoomsCreationLimit1772486104 = z.object({
   result: z.string(),
   data: z
@@ -1557,6 +1568,11 @@ export const zAuthLogoutResponse = zV1AuthLogout198252895;
  */
 export const zAuthRefreshResponse = zV1AuthLogout198252895;
 
+/**
+ * 200
+ */
+export const zAuthRestoreResponse = zV1AuthLogout198252895;
+
 export const zGetMyClosingQuestionsQuery = z.object({
   roomId: z.string(),
 });
@@ -1618,6 +1634,11 @@ export const zSearchJobRolesQuery = z.object({
  * 200
  */
 export const zSearchJobRolesResponse = zV1JobRolesSearch1966453570;
+
+/**
+ * 200
+ */
+export const zMemberWithdrawResponse = zV1AuthLogout198252895;
 
 /**
  * 200
@@ -1730,6 +1751,18 @@ export const zDeleteQaRoomResponse = zV1DevRoomsRoomId1258339407;
 /**
  * 200
  */
+export const zGetNotificationSettingResponse = zV1MembersMeNotificationSetting488583453;
+
+export const zUpdateNotificationSettingBody = zV1MembersMeNotificationSetting1642473215;
+
+/**
+ * 200
+ */
+export const zUpdateNotificationSettingResponse = zV1MembersMeNotificationSetting488583453;
+
+/**
+ * 200
+ */
 export const zParticipationSlotsResponse = zV1MembersMeParticipationSlots889288482;
 
 export const zUpdateProfileBody = zV1MembersMeProfile466680720;
@@ -1768,19 +1801,12 @@ export const zCreateResumeResponse = zV1MembersMeResumesResumeId1837465274;
  */
 export const zGetInterviewOverviewResponse = zV1MembersMeRooms257716809;
 
-export const zUnregisterWebPushSubscriptionBody = zV1MembersMeWebPushSubscriptions615785551;
+export const zRefreshWebPushSubscriptionBody = zV1MembersMeWebPushSubscriptions1250153706;
 
 /**
  * 200
  */
-export const zUnregisterWebPushSubscriptionResponse = zV1AuthLogout198252895;
-
-export const zRegisterWebPushSubscriptionBody = zV1MembersMeWebPushSubscriptions1250153706;
-
-/**
- * 200
- */
-export const zRegisterWebPushSubscriptionResponse = zV1AuthLogout198252895;
+export const zRefreshWebPushSubscriptionResponse = zV1AuthLogout198252895;
 
 export const zPublicProfilePath = z.object({
   memberId: z.string(),
@@ -1863,7 +1889,7 @@ export const zRoomParticipantsPath = z.object({
 /**
  * 200
  */
-export const zRoomParticipantsResponse = zV1RoomsRoomIdParticipants1711899011;
+export const zRoomParticipantsResponse = zV1RoomsRoomIdParticipants313082217;
 
 export const zGetQuestionCardSetsPath = z.object({
   roomId: z.string(),

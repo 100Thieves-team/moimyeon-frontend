@@ -31,6 +31,7 @@ export function ParticipantsPanel({
         <ul aria-label="참여자 목록" className={styles.roster}>
           {data.participants.map((participant) => {
             const isMe = participant.memberId === currentMemberId;
+
             return (
               <li
                 key={participant.memberId}
@@ -75,9 +76,6 @@ export function ParticipantsPanel({
         </ul>
       )}
       <TrustCardPopover handle={profileHandle} />
-      {(room.status === "COMPLETED" || room.status === "CANCELED") && (
-        <p className={styles.description}>면접이 종료되어 이력서 원본 열람이 마감됐어요.</p>
-      )}
       <footer className={styles.participantsFooter}>
         <LeaveRoomTrigger />
       </footer>

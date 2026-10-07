@@ -10,6 +10,8 @@ import { Button, LinkButton } from "@/components/button";
 import { LoginTrigger } from "@/features/auth/login-dialog";
 import { LeaveRoomTrigger } from "@/features/interview-room/leave-room-trigger";
 import { ConfirmRoomTrigger } from "@/features/interview-room/confirm-room-trigger";
+import { CompleteRoomTrigger } from "@/features/interview-room/complete-room-trigger";
+import { MyAttendance } from "@/features/interview-room/my-attendance";
 import { getRoomStatusLabel } from "@/features/interview-room/confirmation-model";
 import {
   getInterviewRelationLabel,
@@ -102,7 +104,7 @@ function ActionControl({ room, state }: { room: InterviewDetail; state: Intervie
       return <LeaveRoomTrigger variant="card" />;
     case "MANAGE_INTERVIEW":
       if (room.status === "RECRUITING") return <ConfirmRoomTrigger />;
-      if (room.status === "CONFIRMED") return <Button disabled>면접 완료하기</Button>;
+      if (room.status === "CONFIRMED") return <CompleteRoomTrigger />;
       return <p className={styles.actionMessage}>{getRoomStatusLabel(room.status)}</p>;
     case "BLOCKED":
     case "UNAVAILABLE":
@@ -122,14 +124,17 @@ export function InterviewActionCard({
   const recruit = room.recruit;
   const isHost = room.viewer?.isHost === true;
   const isParticipant = !isHost && room.viewer?.isParticipating === true;
-  const relation = isHost ? "방장" : getInterviewRelationLabel(room);
+  const relation = isHost ? null : getInterviewRelationLabel(room);
   const current = recruit?.current ?? 0;
   const max = recruit?.max ?? 0;
+  const canViewMyAttendance =
+    room.status === "COMPLETED" &&
+    (state.kind === "MANAGE_INTERVIEW" || state.kind === "VIEW_INTERVIEW");
 
   return (
     <aside aria-label="면접 참가 신청" className={styles.actionCard}>
-      <div className={styles.quotaStats}>
-        {(recruit || relation) && (
+      <div className={styles.quotaStats} data-completed={room.status === "COMPLETED" || undefined}>
+        {(recruit || relation || canViewMyAttendance) && (
           <div className={styles.quotaStatusRow}>
             {recruit && !isParticipant && (
               <span
@@ -146,16 +151,15 @@ export function InterviewActionCard({
             )}
             {relation && (
               <span
-                className={
-                  isHost
-                    ? styles.hostBadge
-                    : isParticipant
-                      ? styles.statusBadge.recruiting
-                      : styles.relationBadge
-                }
+                className={isParticipant ? styles.statusBadge.recruiting : styles.relationBadge}
               >
                 {relation}
               </span>
+            )}
+            {canViewMyAttendance && (
+              <div className={styles.actionAttendance}>
+                <MyAttendance roomId={room.roomId} />
+              </div>
             )}
           </div>
         )}

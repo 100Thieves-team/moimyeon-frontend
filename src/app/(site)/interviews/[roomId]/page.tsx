@@ -3,6 +3,8 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import type { GetRoomCommentsResponse } from "@/api/generated";
 import {
   getRoomCommentsInfiniteOptions,
+  getMyAttendanceOptions,
+  getInterviewOverviewOptions,
   rejectReasonsOptions,
   roomApplicationsOptions,
   roomDetailOptions,
@@ -39,6 +41,12 @@ export default async function InterviewDetailPage({ params }: PageProps<"/interv
     void queryClient.prefetchQuery(rejectReasonsOptions(requestOptions));
   }
   if (canViewParticipants) {
+    if (response.data.status === "COMPLETED") {
+      void queryClient.prefetchQuery(
+        getMyAttendanceOptions({ ...requestOptions, query: { roomId } }),
+      );
+      void queryClient.prefetchQuery(getInterviewOverviewOptions(requestOptions));
+    }
     void queryClient.prefetchInfiniteQuery({
       ...getRoomCommentsInfiniteOptions({
         ...requestOptions,

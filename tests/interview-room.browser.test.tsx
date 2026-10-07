@@ -15,6 +15,7 @@ import {
   MOCK_INTERVIEW_HOST_ID,
 } from "@/features/interview-detail/interview-detail-mock";
 import "@/styles/global.css";
+import { routerPushMock } from "./mocks/next-navigation";
 
 const mocks = vi.hoisted(() => ({
   room: vi.fn(),
@@ -27,10 +28,25 @@ const mocks = vi.hoisted(() => ({
   reject: vi.fn(),
   confirm: vi.fn(),
   overview: vi.fn(),
+  complete: vi.fn(),
+  attendance: vi.fn(),
 }));
 vi.mock("@/api/generated/sdk.gen", () => ({ resumeSubmissionViewUrl: vi.fn() }));
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
   confirmRoomMutation: () => ({ mutationFn: mocks.confirm }),
+  completeRoomProgressMutation: () => ({ mutationFn: mocks.complete }),
+  getMyAttendanceOptions: ({ query }: { query: { roomId: string } }) => ({
+    queryKey: ["attendance", query.roomId],
+    queryFn: mocks.attendance,
+  }),
+  getMyAttendanceQueryKey: ({ query }: { query: { roomId: string } }) => [
+    "attendance",
+    query.roomId,
+  ],
+  getReviewOverviewQueryKey: ({ path }: { path: { roomId: string } }) => [
+    "review-overview",
+    path.roomId,
+  ],
   getRoomCommentsInfiniteQueryKey: ({ path }: { path: { roomId: string } }) => [
     "comments",
     path.roomId,
@@ -86,6 +102,7 @@ vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
 const roomId = "room-1";
 let room: NonNullable<RoomDetailResponse["data"]>;
 let applications: RoomApplication[];
+let confirmedParticipants: { memberId: string; nickname: string }[];
 const reasonList = [
   { code: "ROLE_MISMATCH", label: "직무·면접 단계가 맞지 않아요" },
   { code: "CAPACITY_FILLED", label: "정원을 다른 분들로 채웠어요" },
@@ -95,6 +112,23 @@ const reasonList = [
 function error(code: string, message: string) {
   return { result: "ERROR", error: { code, message } };
 }
+
+function mockCurrentRoomParticipants() {
+  mocks.participants.mockImplementation(async () => ({
+    result: "SUCCESS",
+    data: {
+      confirmedParticipants: structuredClone(confirmedParticipants),
+      participants: room.participants.map((participant) => ({
+        ...participant,
+        isHost: participant.memberId === room.hostMemberId,
+        jobRoles: [{ jobRoleId: 10, name: "백엔드 개발" }],
+        activitySummary: null,
+        aiSummary: { status: "DONE", text: "면접을 함께 준비했어요." },
+      })),
+    },
+  }));
+}
+
 function settle(status: string, statusLabel: string) {
   applications[0] = { ...applications[0], status, statusLabel };
   room.recruit = { ...room.recruit!, pendingApplicationCount: 0 };
@@ -114,10 +148,16 @@ function settle(status: string, statusLabel: string) {
   };
 }
 
-async function renderRoom(openApplications = true) {
-  const client = new QueryClient({
-    defaultOptions: { queries: { retry: false, staleTime: Infinity } },
-  });
+async function renderRoom(
+  openApplications = true,
+  currentMemberId = MOCK_INTERVIEW_HOST_ID,
+  queryClient?: QueryClient,
+) {
+  const client =
+    queryClient ??
+    new QueryClient({
+      defaultOptions: { queries: { retry: false, staleTime: Infinity } },
+    });
   const screen = await render(
     <QueryClientProvider client={client}>
       <ToastProvider>
@@ -127,7 +167,7 @@ async function renderRoom(openApplications = true) {
           )}
         >
           <Suspense fallback={<p>참여 신청을 불러오는 중이에요.</p>}>
-            <InterviewRoomContent roomId={roomId} currentMemberId={MOCK_INTERVIEW_HOST_ID} />
+            <InterviewRoomContent roomId={roomId} currentMemberId={currentMemberId} />
           </Suspense>
         </ErrorBoundary>
       </ToastProvider>
@@ -144,6 +184,30 @@ beforeEach(async () => {
     MOCK_INTERVIEW_DETAIL_SCENARIOS.find((scenario) => scenario.room.viewer?.isHost)!.room,
   );
   room.roomId = roomId;
+  confirmedParticipants = room.participants.map(({ memberId, nickname }) => ({
+    memberId,
+    nickname,
+  }));
+  mocks.attendance.mockResolvedValue({
+    result: "SUCCESS",
+    data: { memberId: MOCK_INTERVIEW_HOST_ID, nickname: "꼼꼼한 여우 12", status: "ATTENDED" },
+  });
+  mocks.complete.mockImplementation(
+    async ({ body }: { body: { attendances: { memberId: string; status: string }[] } }) => {
+      room.status = "COMPLETED";
+      const status = body.attendances.find(
+        ({ memberId }) => memberId === MOCK_INTERVIEW_HOST_ID,
+      )!.status;
+      mocks.attendance.mockResolvedValue({
+        result: "SUCCESS",
+        data: { memberId: MOCK_INTERVIEW_HOST_ID, nickname: "꼼꼼한 여우 12", status },
+      });
+      return {
+        result: "SUCCESS",
+        data: { roomId, status: "COMPLETED", attendances: body.attendances },
+      };
+    },
+  );
   room.title = "한빛커머스 백엔드 2차 같이 준비해요";
   room.recruit = {
     current: 4,
@@ -177,6 +241,7 @@ beforeEach(async () => {
   mocks.participants.mockImplementation(async () => ({
     result: "SUCCESS",
     data: {
+      confirmedParticipants: structuredClone(confirmedParticipants),
       participants: applications
         .filter((application) => application.status === "ACCEPTED")
         .map((application) => ({
@@ -407,7 +472,7 @@ describe("방장 참여 신청 관리", () => {
     await screen.getByRole("tab", { name: "면접 정보" }).click();
     const card = screen.getByRole("complementary", { name: "면접 참가 신청" });
     await expect.element(card.getByText("5 / 5명")).toBeVisible();
-    await expect.element(card.getByText("방장", { exact: true })).toBeVisible();
+    await expect.element(card.getByText("방장", { exact: true })).not.toBeInTheDocument();
     await expect.element(card.getByText(/신청 .*건 대기/)).not.toBeInTheDocument();
     await expect.element(screen.getByText("모집 마감", { exact: true })).toBeVisible();
     await expect
@@ -765,7 +830,7 @@ describe("방장 진행 확정", () => {
       .not.toBeInTheDocument();
     await screen.getByRole("tab", { name: "면접 정보" }).click();
     await expect.element(screen.getByText("진행 확정", { exact: true })).toBeVisible();
-    await expect.element(screen.getByRole("button", { name: "면접 완료하기" })).toBeDisabled();
+    await expect.element(screen.getByRole("button", { name: "면접 완료하기" })).toBeEnabled();
     await expect.element(screen.getByText("준비 중", { exact: true })).not.toBeInTheDocument();
     await expect
       .element(screen.getByRole("button", { name: "진행 확정하기" }))
@@ -866,18 +931,88 @@ describe("방장 진행 확정", () => {
     await expect.element(screen.getByRole("button", { name: "진행 확정하기" })).toBeEnabled();
   });
 
-  it("확정된 룸에 직접 진입해도 확정 상태와 비활성화된 완료 버튼을 표시한다", async () => {
+  it("확정된 룸에 직접 진입하면 방장이 완료 다이얼로그를 열 수 있다", async () => {
     room.status = "CONFIRMED";
     const screen = await renderRoom(false);
     await expect
       .element(screen.getByRole("tab", { name: "면접 정보" }))
       .toHaveAttribute("aria-selected", "true");
     await expect.element(screen.getByText("진행 확정", { exact: true }).first()).toBeVisible();
-    await expect.element(screen.getByRole("button", { name: "면접 완료하기" })).toBeDisabled();
+    await expect.element(screen.getByRole("button", { name: "면접 완료하기" })).toBeEnabled();
   });
 });
 
 describe("완료 면접 후기 액션", () => {
+  beforeEach(mockCurrentRoomParticipants);
+
+  it("자동 완료된 면접의 본인 출석 결과는 면접 카드에 표시하고 참여자 탭에는 표시하지 않는다", async () => {
+    room.status = "COMPLETED";
+    room.viewer!.isHost = false;
+    room.viewer!.isParticipating = true;
+    room.participants.push({ memberId: "participant", nickname: "참여자" });
+    mocks.attendance.mockResolvedValue({
+      result: "SUCCESS",
+      data: { memberId: "participant", nickname: "참여자", status: "ABSENT" },
+    });
+    const screen = await renderRoom(false, "participant");
+    await expect
+      .element(
+        screen
+          .getByRole("tabpanel", { name: "면접 정보" })
+          .getByRole("status", { name: "내 출석: 불참" }),
+      )
+      .toBeVisible();
+    await screen.getByRole("tab", { name: /참여자/ }).click();
+    await expect
+      .element(
+        screen
+          .getByRole("tabpanel", { name: /참여자/ })
+          .getByRole("status", { name: "내 출석: 불참" }),
+      )
+      .not.toBeInTheDocument();
+    await expect
+      .element(screen.getByRole("button", { name: "면접 완료하기" }))
+      .not.toBeInTheDocument();
+  });
+
+  it("출석 조회가 실패해도 후기 링크를 사용할 수 있고 재시도 후 면접 카드에서 결과를 확인한다", async () => {
+    room.status = "COMPLETED";
+    mocks.attendance.mockRejectedValueOnce(new Error("offline"));
+    mocks.overview.mockResolvedValue({
+      result: "SUCCESS",
+      data: { completedRooms: [{ room: { roomId }, reviewStatus: "WRITABLE" }] },
+    });
+    const screen = await renderRoom(false);
+    await expect.element(screen.getByRole("link", { name: "후기 남기기" })).toBeVisible();
+    await expect
+      .element(
+        screen
+          .getByRole("tabpanel", { name: "면접 정보" })
+          .getByText("출석 정보를 불러오지 못했어요"),
+      )
+      .toBeVisible();
+    await screen
+      .getByRole("tabpanel", { name: "면접 정보" })
+      .getByRole("button", { name: "출석 다시 불러오기" })
+      .click();
+    await expect
+      .element(
+        screen
+          .getByRole("tabpanel", { name: "면접 정보" })
+          .getByRole("status", { name: "내 출석: 출석" }),
+      )
+      .toBeVisible();
+    await screen.getByRole("tab", { name: /참여자/ }).click();
+    await expect
+      .element(
+        screen
+          .getByRole("tabpanel", { name: /참여자/ })
+          .getByRole("status", { name: "내 출석: 출석" }),
+      )
+      .not.toBeInTheDocument();
+    await screen.getByRole("tab", { name: "면접 정보" }).click();
+    await expect.element(screen.getByRole("link", { name: "후기 남기기" })).toBeVisible();
+  });
   it("후기 조회 중에도 모집 현황을 유지하고 조회 후 후기 버튼을 표시한다", async () => {
     room.status = "COMPLETED";
     let finish!: (value: unknown) => void;
@@ -953,4 +1088,250 @@ describe("완료 면접 후기 액션", () => {
         .not.toBeInTheDocument();
     },
   );
+});
+
+describe("출석 확인 후 면접 완료", () => {
+  beforeEach(() => {
+    mockCurrentRoomParticipants();
+    room.status = "CONFIRMED";
+    confirmedParticipants = [
+      { memberId: MOCK_INTERVIEW_HOST_ID, nickname: "꼼꼼한 여우 12" },
+      { memberId: "participant-2", nickname: "든든한 곰 04" },
+      { memberId: "left-participant", nickname: "확정 후 이탈한 사슴" },
+    ];
+    mocks.overview.mockImplementation(async () => ({
+      result: "SUCCESS",
+      data: {
+        completedRooms:
+          room.status === "COMPLETED" ? [{ room: { roomId }, reviewStatus: "WRITABLE" }] : [],
+      },
+    }));
+  });
+
+  async function openCompletion(queryClient?: QueryClient) {
+    const screen = await renderRoom(false, MOCK_INTERVIEW_HOST_ID, queryClient);
+    await screen.getByRole("button", { name: "면접 완료하기" }).click();
+    const completionDialog = page.getByRole("dialog");
+    await expect
+      .element(completionDialog.getByRole("radio", { name: "출석", exact: true }).last())
+      .toBeChecked();
+    return { screen, completionDialog };
+  }
+
+  it("확정 명단의 출석을 모두 기본 선택하고 취소하면 저장하지 않는다", async () => {
+    const { screen, completionDialog } = await openCompletion();
+    await expect.element(completionDialog.getByText("확정 후 이탈한 사슴")).toBeVisible();
+    await expect
+      .element(
+        completionDialog.getByText("제출하면 출석 기록이 확정되며, 이후 직접 수정할 수 없어요."),
+      )
+      .not.toBeInTheDocument();
+    await completionDialog.getByRole("radio", { name: "불참", exact: true }).last().click();
+    await completionDialog.getByRole("button", { name: "취소", exact: true }).click();
+    expect(mocks.complete).not.toHaveBeenCalled();
+    await screen.getByRole("button", { name: "면접 완료하기" }).click();
+    await expect
+      .element(page.getByRole("dialog").getByRole("radio", { name: "출석", exact: true }).last())
+      .toBeChecked();
+    await page.getByRole("dialog").getByRole("button", { name: "취소", exact: true }).click();
+  });
+
+  it("본인과 이탈자를 포함해 제출하고 최신 후기 상태가 작성 가능하면 후기 화면으로 이동한다", async () => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false, staleTime: Infinity } },
+    });
+    client.setQueryData(["overview"], { result: "SUCCESS", data: { completedRooms: [] } });
+    const { screen, completionDialog } = await openCompletion(client);
+    await completionDialog.getByRole("radio", { name: "불참", exact: true }).last().click();
+    await completionDialog.getByRole("button", { name: "면접 완료", exact: true }).click();
+    await expect.poll(() => mocks.complete.mock.calls.length).toBe(1);
+    expect(mocks.complete.mock.calls[0][0]).toEqual({
+      path: { roomId },
+      body: {
+        attendances: [
+          { memberId: MOCK_INTERVIEW_HOST_ID, status: "ATTENDED" },
+          { memberId: "participant-2", status: "ATTENDED" },
+          { memberId: "left-participant", status: "ABSENT" },
+        ],
+      },
+    });
+    await expect
+      .poll(() => routerPushMock.mock.calls)
+      .toContainEqual([`/interviews/${roomId}/review`]);
+    await expect
+      .element(
+        screen
+          .getByRole("tabpanel", { name: "면접 정보" })
+          .getByRole("status", { name: "내 출석: 출석" }),
+      )
+      .toBeVisible();
+  });
+
+  it("제출 실패 후 선택을 유지하고 요청 중 입력과 닫기를 잠근 뒤 다시 제출할 수 있다", async () => {
+    mocks.complete.mockRejectedValueOnce(new Error("offline"));
+    const { completionDialog } = await openCompletion();
+    await completionDialog.getByRole("radio", { name: "불참", exact: true }).last().click();
+    await completionDialog.getByRole("button", { name: "면접 완료", exact: true }).click();
+    await expect
+      .element(completionDialog.getByRole("alert"))
+      .toHaveTextContent("출석을 저장하지 못했어요");
+    await expect
+      .element(completionDialog.getByRole("radio", { name: "불참", exact: true }).last())
+      .toBeChecked();
+    const complete = mocks.complete.getMockImplementation()!;
+    let finish!: () => void;
+    mocks.complete.mockImplementationOnce(
+      (variables) =>
+        new Promise((resolve) => {
+          finish = () => resolve(complete(variables));
+        }),
+    );
+    await completionDialog.getByRole("button", { name: "면접 완료", exact: true }).click();
+    await expect
+      .element(completionDialog.getByRole("button", { name: "완료 중..." }))
+      .toBeDisabled();
+    await expect
+      .element(completionDialog.getByRole("button", { name: "취소", exact: true }))
+      .toBeDisabled();
+    await expect
+      .element(completionDialog.getByRole("button", { name: "출석 확인 닫기" }))
+      .toBeDisabled();
+    await expect
+      .element(completionDialog.getByRole("radio", { name: "불참", exact: true }).last())
+      .toBeDisabled();
+    finish();
+    await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
+    expect(mocks.complete).toHaveBeenCalledTimes(2);
+  });
+
+  it("명단 불일치면 최신 회원 ID로 교체하고 기존 선택을 보존해 재제출한다", async () => {
+    mocks.complete.mockImplementationOnce(async () => {
+      confirmedParticipants = [
+        confirmedParticipants[0],
+        confirmedParticipants[1],
+        { memberId: "new-participant-3", nickname: "새 확정 참여자" },
+      ];
+      throw error("E1706", "출석 대상이 달라요");
+    });
+    const { completionDialog } = await openCompletion();
+    await completionDialog.getByRole("radio", { name: "불참", exact: true }).nth(1).click();
+    await completionDialog.getByRole("button", { name: "면접 완료", exact: true }).click();
+    await expect
+      .element(completionDialog.getByRole("alert"))
+      .toHaveTextContent("참여자 명단이 변경됐어요");
+    await expect.element(completionDialog.getByText("확정 후 이탈한 사슴")).not.toBeInTheDocument();
+    await expect.element(completionDialog.getByText("새 확정 참여자")).toBeVisible();
+    await expect
+      .element(completionDialog.getByRole("radio", { name: "불참", exact: true }).nth(1))
+      .toBeChecked();
+    await expect
+      .element(completionDialog.getByRole("radio", { name: "출석", exact: true }).last())
+      .toBeChecked();
+    await completionDialog.getByRole("button", { name: "면접 완료", exact: true }).click();
+    await expect.poll(() => mocks.complete.mock.calls.length).toBe(2);
+    expect(mocks.complete.mock.calls[1][0].body.attendances).toEqual([
+      { memberId: MOCK_INTERVIEW_HOST_ID, status: "ATTENDED" },
+      { memberId: "participant-2", status: "ABSENT" },
+      { memberId: "new-participant-3", status: "ATTENDED" },
+    ]);
+    await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it.each(["E1707", "E1708"])(
+    "%s로 이미 완료됐음을 확인하면 저장된 출석과 후기 링크를 표시한다",
+    async (code) => {
+      mocks.complete.mockImplementationOnce(async () => {
+        room.status = "COMPLETED";
+        throw error(code, "이미 완료됐어요");
+      });
+      const { screen, completionDialog } = await openCompletion();
+      await completionDialog.getByRole("radio", { name: "불참", exact: true }).first().click();
+      await completionDialog.getByRole("button", { name: "면접 완료", exact: true }).click();
+      await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
+      await expect.element(screen.getByRole("link", { name: "후기 남기기" })).toBeVisible();
+      await expect
+        .element(
+          screen
+            .getByRole("tabpanel", { name: "면접 정보" })
+            .getByRole("status", { name: "내 출석: 출석" }),
+        )
+        .toBeVisible();
+      expect(routerPushMock).not.toHaveBeenCalled();
+    },
+  );
+
+  it("방장 권한이 변경되면 다이얼로그를 닫고 최신 참여자 화면을 표시한다", async () => {
+    mocks.complete.mockImplementationOnce(async () => {
+      room.viewer!.isHost = false;
+      room.viewer!.isParticipating = true;
+      throw error("E1406", "방장만 완료할 수 있어요");
+    });
+    const { screen, completionDialog } = await openCompletion();
+    await completionDialog.getByRole("button", { name: "면접 완료", exact: true }).click();
+    await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
+    await expect
+      .element(screen.getByRole("button", { name: "면접 완료하기" }))
+      .not.toBeInTheDocument();
+    expect(routerPushMock).not.toHaveBeenCalled();
+  });
+
+  it.each(["NOT_ELIGIBLE_ABSENT", "NOT_ELIGIBLE_NO_TARGET", "WRITTEN"])(
+    "완료 후 %s이면 상세에 머물며 서버 결과를 표시한다",
+    async (reviewStatus) => {
+      mocks.overview.mockResolvedValue({
+        result: "SUCCESS",
+        data: { completedRooms: [{ room: { roomId }, reviewStatus }] },
+      });
+      const { screen, completionDialog } = await openCompletion();
+      await completionDialog.getByRole("button", { name: "면접 완료", exact: true }).click();
+      await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
+      expect(routerPushMock).not.toHaveBeenCalled();
+      if (reviewStatus === "WRITTEN")
+        await expect.element(screen.getByRole("link", { name: "후기 수정하기" })).toBeVisible();
+      await expect
+        .element(
+          screen
+            .getByRole("tabpanel", { name: "면접 정보" })
+            .getByRole("status", { name: "내 출석: 출석" }),
+        )
+        .toBeVisible();
+    },
+  );
+
+  it("완료 성공 뒤 후기 조회 실패를 제출 실패로 표시하지 않고 후기 조회를 재시도한다", async () => {
+    mocks.overview.mockRejectedValue(new Error("overview offline"));
+    const { screen, completionDialog } = await openCompletion();
+    await completionDialog.getByRole("button", { name: "면접 완료", exact: true }).click();
+    await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
+    await expect.element(screen.getByText("후기 정보를 불러오지 못했어요")).toBeVisible();
+    await expect
+      .element(
+        screen
+          .getByRole("tabpanel", { name: "면접 정보" })
+          .getByRole("status", { name: "내 출석: 출석" }),
+      )
+      .toBeVisible();
+    mocks.overview.mockResolvedValue({
+      result: "SUCCESS",
+      data: { completedRooms: [{ room: { roomId }, reviewStatus: "WRITABLE" }] },
+    });
+    await screen.getByRole("button", { name: "다시 불러오기" }).click();
+    await expect.element(screen.getByRole("link", { name: "후기 남기기" })).toBeVisible();
+    expect(mocks.complete).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    { status: "RECRUITING", isHost: true, isParticipating: true },
+    { status: "CONFIRMED", isHost: false, isParticipating: true },
+    { status: "CONFIRMED", isHost: false, isParticipating: false },
+  ])("$status, 방장 $isHost, 참여자 $isParticipating에게 완료 권한을 적용한다", async (viewer) => {
+    room.status = viewer.status;
+    room.viewer!.isHost = viewer.isHost;
+    room.viewer!.isParticipating = viewer.isParticipating;
+    const screen = await renderRoom(false);
+    await expect
+      .element(screen.getByRole("button", { name: "면접 완료하기" }))
+      .not.toBeInTheDocument();
+    expect(mocks.complete).not.toHaveBeenCalled();
+  });
 });

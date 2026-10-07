@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import type { MemberMeResponse } from "@/api";
+import type { CompleteRoomProgressData, MemberMeResponse } from "@/api";
 import {
   MOCK_INTERVIEW_DETAIL_SCENARIOS,
   MOCK_INTERVIEW_HOST_ID,
@@ -17,6 +17,8 @@ const scenarios: {
   status?: string;
   private?: boolean;
   participant?: boolean;
+  attendance?: "ABSENT" | "NO_TARGET";
+  leftParticipant?: boolean;
 }[] = [
   {
     id: "201",
@@ -38,7 +40,7 @@ const scenarios: {
   {
     id: "204",
     label: "방장 · 확정 후 공개",
-    description: "확정 배너, 준비 중인 면접 완료 버튼, 원본 열람을 확인합니다.",
+    description: "출석 확인 다이얼로그에서 면접을 완료하고 후기 화면으로 이동합니다.",
     status: "CONFIRMED",
   },
   {
@@ -60,6 +62,34 @@ const scenarios: {
     label: "방장 · 면접 완료",
     description: "완료 상태에서 후기 남기기·수정하기 버튼과 후기 페이지 이동을 확인합니다.",
     status: "COMPLETED",
+  },
+  {
+    id: "208",
+    label: "방장 · 확정 후 이탈자 포함",
+    description: "현재 명부에서 나간 참여자도 출석 확인 명단에는 포함됩니다.",
+    status: "CONFIRMED",
+    leftParticipant: true,
+  },
+  {
+    id: "209",
+    label: "방장 · 불참으로 완료",
+    description: "내 출석 결과가 불참이면 후기 버튼 없이 완료 정보를 표시합니다.",
+    status: "COMPLETED",
+    attendance: "ABSENT",
+  },
+  {
+    id: "210",
+    label: "방장 · 후기 대상 없음",
+    description: "본인만 출석한 면접은 후기를 작성할 상대가 없습니다.",
+    status: "COMPLETED",
+    attendance: "NO_TARGET",
+  },
+  {
+    id: "211",
+    label: "참여자 · 자동 완료",
+    description: "완료된 면접에 직접 진입해 출석 결과와 후기 진입을 확인합니다.",
+    status: "COMPLETED",
+    participant: true,
   },
 ];
 export const MOCK_CONFIRMATION_SCENARIOS = scenarios.map((scenario) => ({
@@ -90,11 +120,83 @@ export const MOCK_CONFIRMATION_SCENARIOS = scenarios.map((scenario) => ({
   } satisfies InterviewRoom,
 }));
 
-const rooms = new Map(
-  MOCK_CONFIRMATION_SCENARIOS.map(({ room }) => [room.roomId, structuredClone(room)]),
-);
+const rooms = new Map<string, InterviewRoom>();
+type Attendances = NonNullable<CompleteRoomProgressData["body"]>["attendances"];
+const confirmedRosters = new Map<string, { memberId: string; nickname: string }[]>();
+const recordedAttendances = new Map<string, Attendances>();
+const completionCookiePrefix = "moimyeon_mock_completion_";
+
+// Node MSW와 Service Worker가 같은 완료 결과를 사용하도록 개발용 상태만 공유한다.
+export function restoreMockCompletion(cookieHeader: string) {
+  for (const cookie of cookieHeader.split(";")) {
+    const [name, value] = cookie.trim().split("=");
+    if (!name.startsWith(completionCookiePrefix) || !value) continue;
+    const roomId = name.slice(completionCookiePrefix.length);
+    const room = rooms.get(roomId);
+    const roster = confirmedRosters.get(roomId);
+    if (!room || !roster) continue;
+    try {
+      const attendances: Attendances = JSON.parse(decodeURIComponent(value));
+      if (
+        !Array.isArray(attendances) ||
+        attendances.length !== roster.length ||
+        !roster.every(({ memberId }) =>
+          attendances.some(
+            (attendance) =>
+              attendance?.memberId === memberId &&
+              (attendance.status === "ATTENDED" || attendance.status === "ABSENT"),
+          ),
+        )
+      )
+        continue;
+      room.status = "COMPLETED";
+      recordedAttendances.set(roomId, attendances);
+    } catch {
+      // 오래되거나 손상된 개발용 쿠키는 초기 시나리오를 유지한다.
+    }
+  }
+}
 export function resetMockConfirmation() {
-  for (const { room } of MOCK_CONFIRMATION_SCENARIOS) rooms.set(room.roomId, structuredClone(room));
+  rooms.clear();
+  confirmedRosters.clear();
+  recordedAttendances.clear();
+  for (const scenario of MOCK_CONFIRMATION_SCENARIOS) {
+    const room = structuredClone(scenario.room);
+    rooms.set(room.roomId, room);
+    if (room.status !== "CONFIRMED" && room.status !== "COMPLETED") continue;
+    const roster = participants(room).map(({ memberId, nickname }) => ({ memberId, nickname }));
+    if (scenario.leftParticipant)
+      roster.push({
+        memberId: "00000000-0000-4000-8001-000000000099",
+        nickname: "확정 후 이탈한 사슴",
+      });
+    confirmedRosters.set(room.roomId, roster);
+    if (room.status === "COMPLETED") {
+      recordedAttendances.set(
+        room.roomId,
+        roster.map(({ memberId }) => ({
+          memberId,
+          status:
+            (scenario.attendance === "ABSENT" && memberId === MOCK_INTERVIEW_HOST_ID) ||
+            (scenario.attendance === "NO_TARGET" && memberId !== MOCK_INTERVIEW_HOST_ID)
+              ? "ABSENT"
+              : "ATTENDED",
+        })),
+      );
+    }
+  }
+}
+
+export function getMockConfirmationRooms() {
+  return [...rooms.values()];
+}
+
+export function getMockRoomAttendance(roomId: string) {
+  return recordedAttendances.get(roomId);
+}
+
+export function getMockConfirmedRoster(roomId: string) {
+  return confirmedRosters.get(roomId) ?? [];
 }
 
 function participants(room: InterviewRoom): RoomParticipant[] {
@@ -122,6 +224,8 @@ function participants(room: InterviewRoom): RoomParticipant[] {
       canViewOriginal: room.status === "CONFIRMED" && room.resumePublic && index !== 2,
     }));
 }
+resetMockConfirmation();
+if (typeof document !== "undefined") restoreMockCompletion(document.cookie);
 function success(data: unknown) {
   return HttpResponse.json({ result: "SUCCESS", data });
 }
@@ -157,7 +261,69 @@ export const confirmationHandlers = [
   }),
   http.get("*/v1/rooms/:roomId/participants", ({ params }) => {
     const room = rooms.get(String(params.roomId));
-    return room ? success({ participants: participants(room) }) : undefined;
+    return room
+      ? success({
+          participants: participants(room),
+          confirmedParticipants: getMockConfirmedRoster(room.roomId),
+        })
+      : undefined;
+  }),
+  http.post("*/v1/rooms/:roomId/complete", async ({ params, request }) => {
+    const room = rooms.get(String(params.roomId));
+    if (!room) return;
+    if (!room.viewer?.isHost) return error("E1406", "방장만 면접을 완료할 수 있어요.", 403);
+    const { attendances } = (await request.json()) as NonNullable<CompleteRoomProgressData["body"]>;
+    const roster = getMockConfirmedRoster(room.roomId);
+    if (
+      !Array.isArray(attendances) ||
+      attendances.length !== roster.length ||
+      new Set(attendances.map(({ memberId }) => memberId)).size !== roster.length ||
+      !roster.every(({ memberId }) =>
+        attendances.some((attendance) => attendance.memberId === memberId),
+      )
+    )
+      return error("E1706", "확정 당시 참여자 전원의 출석이 필요해요.");
+    if (attendances.some(({ status }) => status !== "ATTENDED" && status !== "ABSENT"))
+      return error("E400", "출석 상태를 확인해 주세요.");
+    if (room.status === "COMPLETED") {
+      if (
+        !recordedAttendances
+          .get(room.roomId)
+          ?.every(({ memberId, status }) =>
+            attendances.some(
+              (attendance) => attendance.memberId === memberId && attendance.status === status,
+            ),
+          )
+      )
+        return error("E1708", "이미 출석이 확정됐어요.", 409);
+    } else if (room.status === "CONFIRMED") {
+      room.status = "COMPLETED";
+      recordedAttendances.set(room.roomId, attendances);
+    } else return error("E1707", "현재 면접을 완료할 수 없어요.", 409);
+    if (typeof document !== "undefined") {
+      document.cookie = `${completionCookiePrefix}${room.roomId}=${encodeURIComponent(JSON.stringify(attendances))}; Path=/; SameSite=Lax`;
+    }
+    return success({
+      status: room.status,
+      attendances: attendances.map((attendance) => ({
+        ...attendance,
+        nickname: roster.find(({ memberId }) => memberId === attendance.memberId)!.nickname,
+      })),
+    });
+  }),
+  http.get("*/v1/attendances/me", ({ request }) => {
+    const roomId = new URL(request.url).searchParams.get("roomId") ?? "";
+    const room = rooms.get(roomId);
+    if (!room) return;
+    if (room.status !== "COMPLETED")
+      return error("E1707", "면접 완료 후 출석을 확인할 수 있어요.", 409);
+    const participant = getMockConfirmedRoster(roomId).find(
+      ({ memberId }) => memberId === MOCK_INTERVIEW_HOST_ID,
+    )!;
+    const attendance = recordedAttendances
+      .get(roomId)!
+      .find(({ memberId }) => memberId === MOCK_INTERVIEW_HOST_ID)!;
+    return success({ ...participant, status: attendance.status });
   }),
   http.get("*/v1/rooms/:roomId/applications", ({ params }) => {
     const room = rooms.get(String(params.roomId));
@@ -203,6 +369,10 @@ export const confirmationHandlers = [
     room.status = "CONFIRMED";
     room.previouslyConfirmed = true;
     room.recruit!.pendingApplicationCount = 0;
+    confirmedRosters.set(
+      room.roomId,
+      participants(room).map(({ memberId, nickname }) => ({ memberId, nickname })),
+    );
     return success(null);
   }),
   http.get("*/v1/rooms/:roomId/resume-submissions/:resumeSubmissionId/view-url", ({ params }) => {

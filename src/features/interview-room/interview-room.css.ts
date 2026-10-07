@@ -257,6 +257,10 @@ export const dialogHeader = style({
   paddingRight: "6.4rem",
 });
 export const dialogTitle = style({ ...textMetrics.sectionTitle, fontWeight: 600 });
+export const attendanceDialogTitle = style([
+  dialogTitle,
+  { wordBreak: "keep-all", textWrap: "balance" },
+]);
 export const description = style({
   color: vars.color.secondary,
   ...textMetrics.body,
@@ -389,6 +393,32 @@ export const meBadge = style([
     backgroundColor: `color-mix(in srgb, ${vars.color.blue} 10%, transparent)`,
   },
 ]);
+export const attendanceStatus = style({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: vars.spacing.xs,
+  verticalAlign: "middle",
+  color: vars.color.secondary,
+  ...textMetrics.metadata,
+  fontWeight: 500,
+  whiteSpace: "nowrap",
+});
+export const attendanceAttended = style({
+  color: vars.color.blue,
+});
+export const attendanceFeedback = style({
+  color: vars.color.secondary,
+  ...textMetrics.metadata,
+});
+export const attendanceError = style({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  gap: vars.spacing.sm,
+});
+export const attendanceLabel = style({
+  textBox: "trim-both cap alphabetic",
+});
 export const participantSummary = style({
   flex: "1 1 0",
   minWidth: 0,
@@ -401,6 +431,7 @@ export const participantSummary = style({
 
   "@media": { [mobile]: { flexBasis: "100%" } },
 });
+
 export const participantsFooter = style({
   display: "flex",
   justifyContent: "flex-end",
@@ -453,6 +484,80 @@ export const confirmationEffects = style({
   paddingLeft: vars.spacing.lg,
   color: vars.color.secondary,
   ...textMetrics.bodySm,
+});
+
+export const attendanceRoster = style({
+  listStyle: "none",
+  margin: 0,
+  padding: 0,
+  border: `1px solid ${vars.color.strokeLight}`,
+  borderRadius: vars.radius.media,
+});
+
+export const attendanceRow = style({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: vars.spacing.md,
+  padding: vars.spacing.base,
+  ...textMetrics.bodySm,
+  "@media": {
+    [mobile]: {
+      flexDirection: "column",
+      alignItems: "stretch",
+      gap: vars.spacing.sm,
+      padding: vars.spacing.md,
+    },
+  },
+});
+
+export const attendanceParticipantName = style([
+  participantName,
+  { minWidth: 0, flex: "1 1 0", overflowWrap: "anywhere" },
+]);
+
+globalStyle(`${attendanceRoster} > li + li`, {
+  borderTop: `1px solid ${vars.color.strokeLight}`,
+});
+
+export const attendanceChoices = style({
+  display: "grid",
+  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+  flexShrink: 0,
+  width: "18rem",
+  gap: vars.spacing.xs,
+  padding: vars.spacing.xs,
+  borderRadius: vars.radius.cta,
+  backgroundColor: vars.color.fillTertiary,
+  "@media": { [mobile]: { width: "100%" } },
+});
+
+export const attendanceChoice = style({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: vars.spacing.xs,
+  minHeight: vars.size.controlSm,
+  padding: `0 ${vars.spacing.sm}`,
+  border: "1px solid transparent",
+  borderRadius: vars.radius.control,
+  color: vars.color.secondary,
+  whiteSpace: "nowrap",
+  fontWeight: 500,
+  cursor: "pointer",
+  selectors: {
+    "&[data-checked]": {
+      color: vars.color.primary,
+      borderColor: vars.color.strokeMedium,
+      backgroundColor: vars.color.trueWhite,
+      fontWeight: 600,
+    },
+    '&[data-checked][data-attendance="ATTENDED"]': {
+      color: vars.color.blue,
+    },
+    "&:focus-visible": { outline: `2px solid ${vars.color.blue}`, outlineOffset: "2px" },
+    "&[data-disabled]": { cursor: "default", opacity: 0.5 },
+  },
 });
 
 export const resumeAction = style({

@@ -18,6 +18,10 @@ const mocks = vi.hoisted(() => ({
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
   getInterviewOverviewOptions: () => ({ queryKey: ["getInterviewOverview"], queryFn: vi.fn() }),
   getInterviewOverviewQueryKey: () => ["getInterviewOverview"],
+  getMyAttendanceOptions: () => ({
+    queryKey: ["attendance"],
+    queryFn: async () => ({ data: { status: "ATTENDED" } }),
+  }),
   issueDevSessionMutation: () => ({ mutationFn: vi.fn() }),
   myRoomApplicationQueryKey: ({ path }: { path: { roomId: string } }) => [
     "myRoomApplication",
@@ -207,8 +211,8 @@ describe("InterviewDetailContent", () => {
   it.each([
     [null, null],
     [{ ...eligibleViewer, isParticipating: true }, "참여 중"],
-    [{ ...eligibleViewer, isHost: true }, "방장"],
-    [{ ...eligibleViewer, isHost: true, isParticipating: true }, "방장"],
+    [{ ...eligibleViewer, isHost: true }, null],
+    [{ ...eligibleViewer, isHost: true, isParticipating: true }, null],
     [{ ...eligibleViewer, latestApplicationStatus: "PENDING" }, "수락 대기"],
   ] as const)("모집 현황 카드에 모집 상태와 내 상태를 표시한다: %j", async (viewer, relation) => {
     mocks.roomDetail.mockResolvedValue(roomResponse(createRoom({ viewer })));
@@ -224,6 +228,7 @@ describe("InterviewDetailContent", () => {
     await expect.element(card.getByText("3 / 5명")).toBeVisible();
     await expect.element(card.getByText(/신청 .*건 대기/)).not.toBeInTheDocument();
     if (viewer?.isHost) {
+      await expect.element(card.getByText("방장", { exact: true })).not.toBeInTheDocument();
       await expect.element(card.getByText("참여 중", { exact: true })).not.toBeInTheDocument();
       await expect
         .element(card.getByText("내가 만든 면접", { exact: true }))

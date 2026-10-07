@@ -65,13 +65,6 @@ export const relationBadge = style({
   fontWeight: 700,
 });
 
-export const hostBadge = style({
-  ...statusBadgeBase,
-  backgroundColor: vars.color.yellow10,
-  color: vars.color.brown,
-  fontWeight: 700,
-});
-
 export const title = style({
   maxWidth: "90rem",
   marginTop: vars.spacing.md,
@@ -268,6 +261,10 @@ export const progressMeta = style({
   flexWrap: "wrap",
   gap: vars.spacing.sm,
   marginTop: vars.spacing.sm,
+  color: vars.color.blue,
+  selectors: {
+    [`${quotaStats}[data-completed] &`]: { color: vars.color.secondary },
+  },
 });
 
 export const quotaStatusRow = style({
@@ -277,8 +274,14 @@ export const quotaStatusRow = style({
   gap: vars.spacing.sm,
 });
 
+export const actionAttendance = style({
+  marginInlineStart: "auto",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-end",
+});
+
 export const quotaNumber = style({
-  color: vars.color.blue,
   ...textMetrics.metadata,
   fontWeight: 400,
 
@@ -288,7 +291,6 @@ export const quotaNumber = style({
 });
 
 export const quotaLabel = style({
-  color: vars.color.blue,
   ...textMetrics.bodySm,
   fontWeight: 500,
 });
@@ -405,6 +407,9 @@ export const actionControls = style({
   flexDirection: "column",
   alignItems: "stretch",
   gap: vars.spacing.sm,
+  selectors: {
+    "&:empty": { display: "none" },
+  },
 });
 
 export const actionError = style({
@@ -429,6 +434,14 @@ globalStyle(`${actionProgress}::-webkit-progress-value`, {
 globalStyle(`${actionProgress}::-moz-progress-bar`, {
   borderRadius: vars.radius.pill,
   backgroundColor: vars.color.blue,
+});
+
+globalStyle(`${quotaStats}[data-completed] ${actionProgress}::-webkit-progress-value`, {
+  backgroundColor: vars.color.quaternary,
+});
+
+globalStyle(`${quotaStats}[data-completed] ${actionProgress}::-moz-progress-bar`, {
+  backgroundColor: vars.color.quaternary,
 });
 
 globalStyle(`${actionControls} > :is(button, a)`, {

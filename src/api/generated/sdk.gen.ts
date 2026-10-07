@@ -17,6 +17,9 @@ import type {
   AuthRefreshData,
   AuthRefreshErrors,
   AuthRefreshResponses,
+  AuthRestoreData,
+  AuthRestoreErrors,
+  AuthRestoreResponses,
   CompleteQaResumeSummaryData,
   CompleteQaResumeSummaryErrors,
   CompleteQaResumeSummaryResponses,
@@ -74,6 +77,9 @@ import type {
   GetMyClosingQuestionsData,
   GetMyClosingQuestionsErrors,
   GetMyClosingQuestionsResponses,
+  GetNotificationSettingData,
+  GetNotificationSettingErrors,
+  GetNotificationSettingResponses,
   GetQuestionCardSetData,
   GetQuestionCardSetResponses,
   GetQuestionCardSetsData,
@@ -122,6 +128,9 @@ import type {
   MemberMeData,
   MemberMeErrors,
   MemberMeResponses,
+  MemberWithdrawData,
+  MemberWithdrawErrors,
+  MemberWithdrawResponses,
   MyRoomApplicationData,
   MyRoomApplicationResponses,
   NicknameAvailabilityData,
@@ -134,10 +143,11 @@ import type {
   PublicProfileData,
   PublicProfileErrors,
   PublicProfileResponses,
+  RefreshWebPushSubscriptionData,
+  RefreshWebPushSubscriptionErrors,
+  RefreshWebPushSubscriptionResponses,
   RegionsData,
   RegionsResponses,
-  RegisterWebPushSubscriptionData,
-  RegisterWebPushSubscriptionResponses,
   RejectApplicationData,
   RejectApplicationErrors,
   RejectApplicationResponses,
@@ -202,8 +212,9 @@ import type {
   SubmitRoomApplicationResponses,
   TermsListData,
   TermsListResponses,
-  UnregisterWebPushSubscriptionData,
-  UnregisterWebPushSubscriptionResponses,
+  UpdateNotificationSettingData,
+  UpdateNotificationSettingErrors,
+  UpdateNotificationSettingResponses,
   UpdateProfileData,
   UpdateProfileErrors,
   UpdateProfileResponses,
@@ -217,6 +228,7 @@ import {
   zAcceptApplicationResponse,
   zAuthLogoutResponse,
   zAuthRefreshResponse,
+  zAuthRestoreResponse,
   zCompleteQaResumeSummaryResponse,
   zCompleteRoomProgressResponse,
   zConfirmRoomResponse,
@@ -237,6 +249,7 @@ import {
   zGetInterviewOverviewResponse,
   zGetMyAttendanceResponse,
   zGetMyClosingQuestionsResponse,
+  zGetNotificationSettingResponse,
   zGetQuestionCardSetResponse,
   zGetQuestionCardSetsResponse,
   zGetReceivedReviewsResponse,
@@ -253,13 +266,14 @@ import {
   zListQaDataResponse,
   zMakeResumeDefaultResponse,
   zMemberMeResponse,
+  zMemberWithdrawResponse,
   zMyRoomApplicationResponse,
   zNicknameAvailabilityResponse,
   zNicknameSuggestionResponse,
   zParticipationSlotsResponse,
   zPublicProfileResponse,
+  zRefreshWebPushSubscriptionResponse,
   zRegionsResponse,
-  zRegisterWebPushSubscriptionResponse,
   zRejectApplicationResponse,
   zRejectReasonsResponse,
   zRescheduleQaRoomResponse,
@@ -283,7 +297,7 @@ import {
   zSubmitReviewResponse,
   zSubmitRoomApplicationResponse,
   zTermsListResponse,
-  zUnregisterWebPushSubscriptionResponse,
+  zUpdateNotificationSettingResponse,
   zUpdateProfileResponse,
   zUpdateReviewResponse,
   zWithdrawRoomApplicationResponse,
@@ -530,6 +544,20 @@ export const authRefresh = <ThrowOnError extends boolean = true>(
   });
 
 /**
+ * 탈퇴 계정 복구
+ *
+ * 탈퇴한 회원이 같은 Google 계정으로 로그인하면 세션 대신 RESTORE_TOKEN 쿠키(10분)를 받고 프론트 복구 확인 화면으로 이동한다. 사용자가 복구를 확인하면 이 API 를 호출한다. 계정·프로필·보관 이력서가 돌아오고 일반 로그인과 같은 ACCESS_TOKEN·REFRESH_TOKEN 쿠키를 발급하며 RESTORE_TOKEN 쿠키는 만료시킨다. 나간 룸·철회된 신청·끝난 세션은 돌아오지 않고, 이용 제한 상태는 그대로다(「회원 및 프로필」 R174~R178). 쿠키가 없거나 만료·위조됐으면 401(E1105)로 응답하며 FE 는 다시 로그인으로 보낸다. 이미 복구된 회원이면 다시 로그인만 된다(멱등). 다른 사이트가 대신 보내지 못하도록 Content-Type: application/json 요청만 받는다(아니면 400 E400). 토큰을 발급한 뒤 다시 탈퇴했다면 그 토큰은 쓸 수 없다(401 E1105). 토큰의 회원이 없으면 404(E1006).
+ */
+export const authRestore = <ThrowOnError extends boolean = true>(
+  options?: Options<AuthRestoreData, ThrowOnError>,
+): RequestResult<AuthRestoreResponses, AuthRestoreErrors, ThrowOnError> =>
+  (options?.client ?? client).post<AuthRestoreResponses, AuthRestoreErrors, ThrowOnError>({
+    responseValidator: async (data) => await zAuthRestoreResponse.parseAsync(data),
+    url: "/v1/auth/restoration",
+    ...options,
+  });
+
+/**
  * 내 클로징 평가 질문 조회
  *
  * 자기 라운드에서 실제 사용된 원 질문을 조회한다. E1405, E1801, E1802를 응답할 수 있다.
@@ -550,7 +578,7 @@ export const getMyClosingQuestions = <ThrowOnError extends boolean = true>(
 /**
  * [dev] QA 테스트 회원 생성
  *
- * local·local-dev·dev 프로파일에서만 등록되는 dev 전용 Test API 다(staging·live 에는 경로가 없다). QA 플랫폼이 테스트 데이터를 정리하는 용도이며 검증 대상 API 가 아니다. Google OAuth 없이 테스트 회원을 만든다. 닉네임 자동 부여·필수 약관 동의·빈 프로필 생성까지 실제 가입과 같은 경로를 탄다. 이메일은 qa-{uuid}@qa.moimyeon.test, 소셜 계정 식별자는 qa-{uuid} 다. 응답의 accessToken 으로 바로 API 를 호출할 수 있다. 생성된 회원은 DELETE /v1/dev/members/{memberId} 또는 일괄 삭제의 includeMembers=true 로 지운다.
+ * local·local-dev·dev 프로파일에서만 등록되는 dev 전용 Test API 다(staging·live 에는 경로가 없다). QA 플랫폼이 테스트 데이터를 정리하는 용도이며 검증 대상 API 가 아니다. Google OAuth 없이 테스트 회원을 만든다. 닉네임 자동 부여·필수 약관 동의·빈 프로필 생성까지 실제 가입과 같은 경로를 탄다. 이메일은 설정 qa.member.email-template 의 {key} 에 uuid 를 넣은 주소다(dev 는 100dodukteam+qa-{uuid}@gmail.com, 그 밖의 기본값은 qa-{uuid}@qa.moimyeon.test). 소셜 계정 식별자는 qa-{uuid} 다. 응답의 accessToken 으로 바로 API 를 호출할 수 있다. 생성된 회원은 DELETE /v1/dev/members/{memberId} 또는 일괄 삭제의 includeMembers=true 로 지운다.
  */
 export const createQaMember = <ThrowOnError extends boolean = true>(
   options?: Options<CreateQaMemberData, ThrowOnError>,
@@ -640,6 +668,20 @@ export const searchJobRoles = <ThrowOnError extends boolean = true>(
   (options.client ?? client).get<SearchJobRolesResponses, SearchJobRolesErrors, ThrowOnError>({
     responseValidator: async (data) => await zSearchJobRolesResponse.parseAsync(data),
     url: "/v1/job-roles/search",
+    ...options,
+  });
+
+/**
+ * 회원 탈퇴
+ *
+ * 탈퇴한다(「회원 및 프로필」 §4.8). 요청 한 번으로 참가 신청 대기 건을 모두 철회하고, 참여 중인 모집 중·확정 룸에서 나간다(방장이면 위임·모집 재개·취소, 참여자면 인원이 최소 밑으로 내려갈 때 모집 재개). 진행 예정 시각이 지난 확정 룸에는 남는다. 모든 기기의 세션을 끝내고 웹 푸시 등록을 지운 뒤 ACCESS_TOKEN·REFRESH_TOKEN 쿠키를 만료(Set-Cookie)시킨다. 같은 Google 계정으로 다시 로그인하면 확인을 거쳐 복구할 수 있다. 이미 탈퇴했으면 아무것도 하지 않고 성공한다(멱등). 없는 회원이면 404(E1006). 룸을 나가는 사이 새 참여가 생겨 세 번 시도해도 끝내지 못하면 409(E1014).
+ */
+export const memberWithdraw = <ThrowOnError extends boolean = true>(
+  options?: Options<MemberWithdrawData, ThrowOnError>,
+): RequestResult<MemberWithdrawResponses, MemberWithdrawErrors, ThrowOnError> =>
+  (options?.client ?? client).delete<MemberWithdrawResponses, MemberWithdrawErrors, ThrowOnError>({
+    responseValidator: async (data) => await zMemberWithdrawResponse.parseAsync(data),
+    url: "/v1/members/me",
     ...options,
   });
 
@@ -810,7 +852,7 @@ export const jobPostings = <ThrowOnError extends boolean = true>(
 /**
  * [dev] QA 테스트 회원 삭제
  *
- * local·local-dev·dev 프로파일에서만 등록되는 dev 전용 Test API 다(staging·live 에는 경로가 없다). QA 플랫폼이 테스트 데이터를 정리하는 용도이며 검증 대상 API 가 아니다. 테스트 회원 생성 API 로 만든 회원(이메일 @qa.moimyeon.test, 소셜 식별자 qa-)만 하드 삭제한다. 먼저 테스트 계정 초기화 규칙(방장인 [QA] 룸·참여·신청·[QA] 룸 후기 삭제)을 적용한 뒤, 이 회원이 남긴 행(질문·코멘트·요약·클로징·라운드 피드백·방명록·출석·후기)과 회원 소유 행(이력서·프로필·약관 동의·토큰·소셜 계정)을 지우고 회원 행을 지운다. QA 생성 회원이 아니거나 방장인 룸 중 [QA] 가 아닌 룸이 있으면 409(E2201), 회원이 없으면 404(E1006), memberId 가 UUID 가 아니면 400(E400).
+ * local·local-dev·dev 프로파일에서만 등록되는 dev 전용 Test API 다(staging·live 에는 경로가 없다). QA 플랫폼이 테스트 데이터를 정리하는 용도이며 검증 대상 API 가 아니다. 테스트 회원 생성 API 로 만든 회원(소셜 식별자 qa- 이고 이메일이 설정 템플릿 형식 또는 @qa.moimyeon.test)만 하드 삭제한다. 먼저 테스트 계정 초기화 규칙(방장인 [QA] 룸·참여·신청·[QA] 룸 후기 삭제)을 적용한 뒤, 이 회원이 남긴 행(질문·코멘트·요약·클로징·라운드 피드백·방명록·출석·후기)과 회원 소유 행(이력서·프로필·약관 동의·토큰·소셜 계정)을 지우고 회원 행을 지운다. QA 생성 회원이 아니거나 방장인 룸 중 [QA] 가 아닌 룸이 있으면 409(E2201), 회원이 없으면 404(E1006), memberId 가 UUID 가 아니면 400(E400).
  */
 export const deleteQaMember = <ThrowOnError extends boolean = true>(
   options: Options<DeleteQaMemberData, ThrowOnError>,
@@ -833,6 +875,50 @@ export const deleteQaRoom = <ThrowOnError extends boolean = true>(
     responseValidator: async (data) => await zDeleteQaRoomResponse.parseAsync(data),
     url: "/v1/dev/rooms/{roomId}",
     ...options,
+  });
+
+/**
+ * 알림 수신 설정 조회
+ *
+ * 인증 회원의 알림 수신 설정을 조회한다. isWebPushAllowed 는 회원이 웹 푸시를 허용했는지(끄지 않았는지)를 뜻한다 — 실제로 이 브라우저에서 받는지는 브라우저 알림 권한과 이 브라우저의 등록 여부를 함께 보고 화면이 정한다. 인증 정보 없음·무효 401(E1102)로 응답한다.
+ */
+export const getNotificationSetting = <ThrowOnError extends boolean = true>(
+  options?: Options<GetNotificationSettingData, ThrowOnError>,
+): RequestResult<GetNotificationSettingResponses, GetNotificationSettingErrors, ThrowOnError> =>
+  (options?.client ?? client).get<
+    GetNotificationSettingResponses,
+    GetNotificationSettingErrors,
+    ThrowOnError
+  >({
+    responseValidator: async (data) => await zGetNotificationSettingResponse.parseAsync(data),
+    url: "/v1/members/me/notification-setting",
+    ...options,
+  });
+
+/**
+ * 알림 수신 설정 변경
+ *
+ * 보낸 항목만 바꾸고 보내지 않은 항목은 그대로 둔다. isWebPushAllowed=true 는 이 브라우저의 webPushRegistration 과 함께 보내야 하며, 허용으로 바꾸고 이 브라우저를 등록한다. isWebPushAllowed=false 는 회원이 등록한 모든 브라우저의 등록을 지운다. isMarketingEmailAgreed 를 동의로 바꾸면 그 시각을 marketingEmailAgreedAt 에 남기고, 철회해도 그 시각은 지우지 않는다. 바꿀 항목이 없거나 isWebPushAllowed·webPushRegistration 짝이 맞지 않으면 400(E400), 등록 식별자가 비어 있으면 400(E1601), 인증 정보 없음·무효 401(E1102)로 응답한다.
+ */
+export const updateNotificationSetting = <ThrowOnError extends boolean = true>(
+  options?: Options<UpdateNotificationSettingData, ThrowOnError>,
+): RequestResult<
+  UpdateNotificationSettingResponses,
+  UpdateNotificationSettingErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).patch<
+    UpdateNotificationSettingResponses,
+    UpdateNotificationSettingErrors,
+    ThrowOnError
+  >({
+    responseValidator: async (data) => await zUpdateNotificationSettingResponse.parseAsync(data),
+    url: "/v1/members/me/notification-setting",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
   });
 
 /**
@@ -937,36 +1023,23 @@ export const getInterviewOverview = <ThrowOnError extends boolean = true>(
   });
 
 /**
- * 웹 푸시 등록 해지
+ * 웹 푸시 등록 갱신
  *
- * 현재 회원이 소유한 브라우저 등록을 물리 삭제한다. 이미 없거나 다른 회원이 소유한 등록이면 성공으로 끝나는 멱등 요청이다.
+ * 알림 권한을 받은 브라우저가 앱을 열 때 자신의 등록 식별자를 다시 보낸다. 회원이 웹 푸시를 허용하지 않은 상태면 저장하지 않고 성공으로 끝난다 — 다른 기기에서 끈 뒤 남아 있는 브라우저가 등록을 되살리지 못하게 하기 위해서다. 이때 그 등록이 다른 회원 것이면 지운다 — 같은 브라우저를 쓰던 앞사람의 알림이 계속 뜨지 않게 한다. 같은 값을 다시 보내면 마지막 동기화 시각을 갱신하며, 다른 회원으로 로그인한 브라우저라면 현재 회원에게 이전한다. 등록 식별자가 비어 있으면 400(E1601), 인증 정보 없음·무효 401(E1102)로 응답한다.
  */
-export const unregisterWebPushSubscription = <ThrowOnError extends boolean = true>(
-  options?: Options<UnregisterWebPushSubscriptionData, ThrowOnError>,
-): RequestResult<UnregisterWebPushSubscriptionResponses, unknown, ThrowOnError> =>
-  (options?.client ?? client).delete<UnregisterWebPushSubscriptionResponses, unknown, ThrowOnError>(
-    {
-      responseValidator: async (data) =>
-        await zUnregisterWebPushSubscriptionResponse.parseAsync(data),
-      url: "/v1/members/me/web-push-subscriptions",
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
-    },
-  );
-
-/**
- * 웹 푸시 등록
- *
- * 인증 회원의 현재 브라우저에서 발급받은 웹 푸시 등록 식별자를 저장한다. 같은 값을 다시 보내면 마지막 동기화 시각을 갱신하며, 다른 회원으로 로그인한 브라우저라면 현재 회원에게 이전한다.
- */
-export const registerWebPushSubscription = <ThrowOnError extends boolean = true>(
-  options?: Options<RegisterWebPushSubscriptionData, ThrowOnError>,
-): RequestResult<RegisterWebPushSubscriptionResponses, unknown, ThrowOnError> =>
-  (options?.client ?? client).put<RegisterWebPushSubscriptionResponses, unknown, ThrowOnError>({
-    responseValidator: async (data) => await zRegisterWebPushSubscriptionResponse.parseAsync(data),
+export const refreshWebPushSubscription = <ThrowOnError extends boolean = true>(
+  options?: Options<RefreshWebPushSubscriptionData, ThrowOnError>,
+): RequestResult<
+  RefreshWebPushSubscriptionResponses,
+  RefreshWebPushSubscriptionErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).put<
+    RefreshWebPushSubscriptionResponses,
+    RefreshWebPushSubscriptionErrors,
+    ThrowOnError
+  >({
+    responseValidator: async (data) => await zRefreshWebPushSubscriptionResponse.parseAsync(data),
     url: "/v1/members/me/web-push-subscriptions",
     ...options,
     headers: {
@@ -1334,7 +1407,7 @@ export const deleteRoomComment = <ThrowOnError extends boolean = true>(
 /**
  * 룸 나가기
  *
- * 참여자가 스스로 룸에서 나간다(「룸 참여」 §4.6). 모집 중에는 자유롭게 나갈 수 있고, 진행이 확정된 뒤에도 현재 인원이 최소 진행 인원보다 많으면 나갈 수 있다. 나가면 자리가 비어 방장이 대기 신청을 수락할 수 있고, 모집 중이면 같은 룸에 다시 신청할 수 있다. 방장이 나가면 방장 자리가 자동으로 넘어간다(참여자 → 대기 신청자 순). 넘길 사람이 아무도 없으면 룸이 취소된다.
+ * 참여자가 스스로 룸에서 나간다(「룸 참여」 §4.6). 모집 중에도 진행이 확정된 뒤에도 인원과 관계없이 나갈 수 있다. 확정된 룸에서 일반 참여자가 나가 인원이 최소 진행 인원보다 적어지면 룸은 모집 중으로 돌아가고 방장과 남은 참여자에게 알린다. 진행 예정 시각이 지난 뒤에는 확정 상태를 유지한다. 나가면 자리가 비어 방장이 대기 신청을 수락할 수 있고, 모집 중이면 같은 룸에 다시 신청할 수 있다. 방장이 나가면 방장 자리가 자동으로 넘어간다(참여자 → 대기 신청자 순). 넘길 사람이 아무도 없으면 룸이 취소된다.
  */
 export const roomLeave = <ThrowOnError extends boolean = true>(
   options: Options<RoomLeaveData, ThrowOnError>,

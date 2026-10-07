@@ -6,7 +6,8 @@ import {
   MOCK_REVIEW_ROOM_ID,
 } from "@/features/review/review-mock";
 
-import { MOCK_CONFIRMATION_SCENARIOS } from "@/mocks/room-confirmation";
+import { getMockConfirmationRooms, getMockRoomAttendance } from "@/mocks/room-confirmation";
+import { MOCK_INTERVIEW_HOST_ID } from "@/features/interview-detail/interview-detail-mock";
 
 type Overview = NonNullable<GetInterviewOverviewResponse["data"]>;
 type Detail = NonNullable<RoomDetailResponse["data"]>;
@@ -66,16 +67,32 @@ export function getMockMyInterviews(
               room: summary(pendingRoom),
             },
           ],
-      participatingRooms: [{ room: summary(participatingRoom) }],
+      participatingRooms: [
+        { room: summary(participatingRoom) },
+        ...(includeConfirmationRooms ? getMockConfirmationRooms() : [])
+          .filter((room) => room.status === "RECRUITING" || room.status === "CONFIRMED")
+          .map((room) => ({ room: summary(room) })),
+      ],
       completedRooms: [
-        ...(includeConfirmationRooms ? MOCK_CONFIRMATION_SCENARIOS : [])
-          .filter(({ room }) => room.status === "COMPLETED")
-          .map(({ room }) => ({
-            room: summary(room),
-            reviewStatus: reviewOverview.targets.some(({ status }) => status === "WRITABLE")
-              ? "WRITABLE"
-              : "WRITTEN",
-          })),
+        ...(includeConfirmationRooms ? getMockConfirmationRooms() : [])
+          .filter((room) => room.status === "COMPLETED")
+          .map((room) => {
+            const attendance = getMockRoomAttendance(room.roomId)!.find(
+              ({ memberId }) => memberId === MOCK_INTERVIEW_HOST_ID,
+            )!;
+            const { targets } = getMockReviewOverview(room.roomId)!.data!;
+            return {
+              room: summary(room),
+              reviewStatus:
+                attendance.status === "ABSENT"
+                  ? "NOT_ELIGIBLE_ABSENT"
+                  : targets.length === 0
+                    ? "NOT_ELIGIBLE_NO_TARGET"
+                    : targets.some(({ status }) => status === "WRITABLE")
+                      ? "WRITABLE"
+                      : "WRITTEN",
+            };
+          }),
         {
           room: summary(reviewRoom),
           reviewStatus: reviewOverview.targets.some(({ status }) => status === "WRITABLE")
