@@ -113,13 +113,12 @@ export const heroEyebrow = style([
   eyebrow,
   {
     display: "inline-block",
-    padding: "0.6rem 1.3rem",
-    borderRadius: vars.radius.pill,
-    backgroundColor: "#0358f70d",
-    color: "#0348cc",
+    paddingBlock: "0.6rem",
     marginBottom: "2.8rem",
-    fontWeight: 550,
-    "@media": { [mobile]: { marginBottom: "2.3rem", fontSize: "1.2rem" } },
+    fontSize: textMetrics.bodySm.fontSize,
+    fontWeight: 500,
+    letterSpacing: "-0.02em",
+    "@media": { [mobile]: { marginBottom: "2.3rem", fontSize: textMetrics.metadata.fontSize } },
   },
 ]);
 export const heroTitle = style([
