@@ -137,6 +137,7 @@ export const terms = style({
   fontWeight: 400,
 
   textAlign: "center",
+  whiteSpace: "nowrap",
 });
 
 export const termsLink = style({
