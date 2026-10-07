@@ -24,6 +24,7 @@ import { RoomCommentsPanel } from "./room-comments-panel";
 import { CommentDeleteProvider } from "./comment-delete-dialog";
 import { WithdrawApplicationProvider } from "@/features/interview-detail/withdraw-application-dialog";
 import { ConfirmRoomDialog } from "./confirm-room-dialog";
+import { CompleteRoomDialog } from "./complete-room-dialog";
 
 type RoomTab = "info" | "applications" | "participants" | "comments";
 
@@ -58,6 +59,9 @@ export function InterviewRoomContent({
               canViewParticipants={canViewParticipants}
             />
             {canViewParticipants && <LeaveRoomDialog room={room} />}
+            {currentMemberId !== null && (
+              <CompleteRoomDialog room={room} currentMemberId={currentMemberId} />
+            )}
           </div>
         </main>
       </CommentDeleteProvider>

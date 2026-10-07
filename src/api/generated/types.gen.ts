@@ -4,17 +4,6 @@ export type ClientOptions = {
   baseUrl: "http://localhost:8080" | "https://api.dev.moimyeon.plady.io" | (string & {});
 };
 
-export type V1RoomsRoomIdApplications240308819 = {
-  /**
-   * 방장에게 전할 말 (선택, 최대 300자, 미입력 시 빈 문자열)
-   */
-  note?: string | null;
-  /**
-   * 제출할 본인 보관 이력서 id (UUID)
-   */
-  resumeId: string;
-};
-
 export type V1ReviewsReviewId292942325 = {
   /**
    * 교체할 한 줄 후기 (선택)
@@ -31,6 +20,17 @@ export type V1ReviewsReviewId292942325 = {
     | string
     | number
   >;
+};
+
+export type V1RoomsRoomIdApplications240308819 = {
+  /**
+   * 방장에게 전할 말 (선택, 최대 300자, 미입력 시 빈 문자열)
+   */
+  note?: string | null;
+  /**
+   * 제출할 본인 보관 이력서 id (UUID)
+   */
+  resumeId: string;
 };
 
 export type V1DevRoomsRoomIdSchedule1288597070 = {
@@ -51,6 +51,31 @@ export type V1DevRoomsRoomIdSchedule1288597070 = {
      * 현재 룸 상태 (RECRUITING | CONFIRMED | COMPLETED | CANCELED). 이 API 는 상태를 바꾸지 않는다
      */
     status: string;
+  } | null;
+};
+
+export type V1MembersMeNotificationSetting488583453 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 광고성 정보 메일 수신 동의
+     */
+    isMarketingEmailAgreed: boolean;
+    /**
+     * 서비스 활동 알림 메일 수신
+     */
+    isActivityEmailEnabled: boolean;
+    /**
+     * 광고성 정보 수신 마지막 동의 시각. 동의한 적 없으면 null
+     */
+    marketingEmailAgreedAt?: string | null;
+    /**
+     * 회원이 웹 푸시를 허용했는지(끄지 않았는지)
+     */
+    isWebPushAllowed: boolean;
   } | null;
 };
 
@@ -112,70 +137,6 @@ export type V1JobPostingsLinkMetadata1427693842 = {
   } | null;
 };
 
-export type V1RoomsRoomIdParticipants1711899011 = {
-  /**
-   * 처리 결과 (SUCCESS)
-   */
-  result: string;
-  data?: {
-    /**
-     * 참여자 명부 (방장 우선, 그다음 참여 순서)
-     */
-    participants: Array<{
-      /**
-       * 방장 여부
-       */
-      isHost: boolean;
-      /**
-       * 관심 직무 목록 (없으면 빈 배열)
-       */
-      jobRoles: Array<{
-        /**
-         * 관심 직무명
-         */
-        name: string;
-        /**
-         * 관심 직무 id
-         */
-        jobRoleId: number;
-      }>;
-      /**
-       * 이력서 AI 요약. 제출 이력서가 없으면 null
-       */
-      aiSummary?: {
-        /**
-         * AI 요약 내용 (DONE 일 때 제공)
-         */
-        text?: string | null;
-        /**
-         * AI 요약 상태 (PROCESSING | DONE). 생성 실패도 준비 중으로 내려간다
-         */
-        status?: string | null;
-      } | null;
-      /**
-       * 이력서 원본을 열 수 있는지. 원본 공개 룸이고 진행이 확정됐으며 조회자가 확정 참여자일 때만 true
-       */
-      canViewOriginal: boolean;
-      /**
-       * 닉네임. 탈퇴한 회원이면 대체 문구가 내려간다
-       */
-      nickname: string;
-      /**
-       * 공개 가능한 활동 정보 (이 목록에서는 null, 공개 프로필 API에서 조회)
-       */
-      activitySummary?: string | null;
-      /**
-       * 제출 이력서 식별자. 원본 열람 요청의 입력이며 URL 은 내려가지 않는다
-       */
-      resumeSubmissionId?: number | null;
-      /**
-       * 참여자 회원 식별자 (UUID)
-       */
-      memberId: string;
-    }>;
-  } | null;
-};
-
 export type V1RoomsRoomIdComments1160873406 = {
   /**
    * 글 내용 (trim 후 1~1000자, 텍스트만)
@@ -192,6 +153,36 @@ export type V1JobPostingsLinkMetadata34312967 = {
    * 메타데이터를 읽을 공고 링크 (필수, http/https, 최대 2000자)
    */
   url: string;
+};
+
+export type GetExampleValue191457252 = {
+  /**
+   * ResultType
+   */
+  result: string;
+  data?: {
+    /**
+     * Result Date
+     */
+    date: string;
+    /**
+     * Result Data
+     */
+    result: string;
+    /**
+     * Result Datetime
+     */
+    datetime: string;
+    /**
+     * Result Items
+     */
+    items: Array<{
+      /**
+       * Result Item
+       */
+      key: string;
+    }>;
+  } | null;
 };
 
 export type V1RoomsRoomIdComments1495367468 = {
@@ -261,36 +252,6 @@ export type V1RoomsRoomIdComments1495367468 = {
   } | null;
 };
 
-export type GetExampleValue191457252 = {
-  /**
-   * ResultType
-   */
-  result: string;
-  data?: {
-    /**
-     * Result Date
-     */
-    date: string;
-    /**
-     * Result Data
-     */
-    result: string;
-    /**
-     * Result Datetime
-     */
-    datetime: string;
-    /**
-     * Result Items
-     */
-    items: Array<{
-      /**
-       * Result Item
-       */
-      key: string;
-    }>;
-  } | null;
-};
-
 export type V1AuthLogout198252895 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -326,6 +287,13 @@ export type V1ClosingQuestionsMe207387725 = {
       content: string;
     }>;
   } | null;
+};
+
+export type Post1780624183 = {
+  /**
+   * ExampleBody Data Field
+   */
+  data: string;
 };
 
 export type V1MembersMeRooms257716809 = {
@@ -754,13 +722,6 @@ export type V1RoomsRoomIdQuestions282474051 = {
   content: string;
 };
 
-export type Post1780624183 = {
-  /**
-   * ExampleBody Data Field
-   */
-  data: string;
-};
-
 export type V1RoomsRoomIdReviewsOverview1524615499 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -919,6 +880,25 @@ export type V1RoomsRoomIdResumeSubmissionsResumeSubmissionIdViewUrl523936547 = {
      */
     url: string;
   } | null;
+};
+
+export type V1MembersMeNotificationSetting1642473215 = {
+  /**
+   * 광고성 정보 메일 수신 동의
+   */
+  isMarketingEmailAgreed?: boolean | null;
+  /**
+   * 서비스 활동 알림 메일 수신
+   */
+  isActivityEmailEnabled?: boolean | null;
+  /**
+   * 이 브라우저의 FCM 등록 식별자. isWebPushAllowed=true 일 때만 보낸다
+   */
+  webPushRegistration?: string | null;
+  /**
+   * 웹 푸시 허용. true 면 webPushRegistration 필수, false 면 모든 브라우저 등록 삭제
+   */
+  isWebPushAllowed?: boolean | null;
 };
 
 export type V1RoomsRoomIdReviews1785905513 = {
@@ -1455,6 +1435,83 @@ export type V1Companies1839974379 = {
   } | null;
 };
 
+export type V1RoomsRoomIdParticipants313082217 = {
+  /**
+   * 처리 결과 (SUCCESS)
+   */
+  result: string;
+  data?: {
+    /**
+     * 출석 입력 대상인 확정 당시 참여자 (확정 당시 참여 순서). 확정 후 나간 참여자도 포함한다. 진행 확정·완료 상태에서만 채워지고 그 밖의 상태에서는 빈 배열
+     */
+    confirmedParticipants: Array<{
+      /**
+       * 닉네임. 탈퇴한 회원이면 대체 문구가 내려간다
+       */
+      nickname: string;
+      /**
+       * 확정 참여자 회원 식별자 (UUID). 면접 완료 요청의 attendances[].memberId 로 그대로 보낸다
+       */
+      memberId: string;
+    }>;
+    /**
+     * 참여자 명부 (방장 우선, 그다음 참여 순서)
+     */
+    participants: Array<{
+      /**
+       * 방장 여부
+       */
+      isHost: boolean;
+      /**
+       * 관심 직무 목록 (없으면 빈 배열)
+       */
+      jobRoles: Array<{
+        /**
+         * 관심 직무명
+         */
+        name: string;
+        /**
+         * 관심 직무 id
+         */
+        jobRoleId: number;
+      }>;
+      /**
+       * 이력서 AI 요약. 제출 이력서가 없으면 null
+       */
+      aiSummary?: {
+        /**
+         * AI 요약 내용 (DONE 일 때 제공)
+         */
+        text?: string | null;
+        /**
+         * AI 요약 상태 (PROCESSING | DONE). 생성 실패도 준비 중으로 내려간다
+         */
+        status?: string | null;
+      } | null;
+      /**
+       * 이력서 원본을 열 수 있는지. 원본 공개 룸이고 진행이 확정됐으며 조회자가 확정 참여자일 때만 true
+       */
+      canViewOriginal: boolean;
+      /**
+       * 닉네임. 탈퇴한 회원이면 대체 문구가 내려간다
+       */
+      nickname: string;
+      /**
+       * 공개 가능한 활동 정보 (이 목록에서는 null, 공개 프로필 API에서 조회)
+       */
+      activitySummary?: string | null;
+      /**
+       * 제출 이력서 식별자. 원본 열람 요청의 입력이며 URL 은 내려가지 않는다
+       */
+      resumeSubmissionId?: number | null;
+      /**
+       * 참여자 회원 식별자 (UUID)
+       */
+      memberId: string;
+    }>;
+  } | null;
+};
+
 export type V1MembersMeProfile466680720 = {
   /**
    * 변경할 닉네임 (전체 중복 불가, 자신 제외)
@@ -1897,23 +1954,6 @@ export type V1DevRoomsRoomId1258339407 = {
   } | null;
 };
 
-export type V1RoomsRoomIdParticipantsMe837364537 = {
-  /**
-   * 처리 결과 (ERROR)
-   */
-  result: string;
-  error?: {
-    /**
-     * 에러 코드 (E1423)
-     */
-    code: string;
-    /**
-     * 에러 메시지
-     */
-    message: string;
-  } | null;
-};
-
 export type V1Rooms583341076 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -1929,6 +1969,21 @@ export type V1Rooms583341076 = {
      */
     status: string;
   } | null;
+};
+
+export type V1JobPostings1848070641 = {
+  /**
+   * 회사 id (필수, /v1/companies 검색 결과)
+   */
+  companyId: number;
+  /**
+   * 확정한 공고명 (필수, 최대 100자)
+   */
+  postingName: string;
+  /**
+   * 원본 공고 링크 (필수, http/https, 최대 2000자)
+   */
+  url: string;
 };
 
 export type V1RoomsRoomId1114993826 = {
@@ -2151,21 +2206,6 @@ export type V1RoomsRoomId1114993826 = {
      */
     status: string;
   } | null;
-};
-
-export type V1JobPostings1848070641 = {
-  /**
-   * 회사 id (필수, /v1/companies 검색 결과)
-   */
-  companyId: number;
-  /**
-   * 확정한 공고명 (필수, 최대 100자)
-   */
-  postingName: string;
-  /**
-   * 원본 공고 링크 (필수, http/https, 최대 2000자)
-   */
-  url: string;
 };
 
 export type V1DevResumesResumeIdSummary1029161103 = {
@@ -3036,13 +3076,6 @@ export type V1ReviewsReviewId949065321 = {
   } | null;
 };
 
-export type V1MembersMeWebPushSubscriptions615785551 = {
-  /**
-   * 해지할 웹 푸시 등록 식별자
-   */
-  registration: string;
-};
-
 export type V1RoomsCreationLimit1772486104 = {
   /**
    * 처리 결과 (SUCCESS)
@@ -3541,6 +3574,39 @@ export type AuthRefreshResponses = {
 
 export type AuthRefreshResponse = AuthRefreshResponses[keyof AuthRefreshResponses];
 
+export type AuthRestoreData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/v1/auth/restoration";
+};
+
+export type AuthRestoreErrors = {
+  /**
+   * 400
+   */
+  400: V1ClosingQuestionsMe910352763;
+  /**
+   * 401
+   */
+  401: V1ClosingQuestionsMe910352763;
+  /**
+   * 404
+   */
+  404: V1ClosingQuestionsMe910352763;
+};
+
+export type AuthRestoreError = AuthRestoreErrors[keyof AuthRestoreErrors];
+
+export type AuthRestoreResponses = {
+  /**
+   * 200
+   */
+  200: V1AuthLogout198252895;
+};
+
+export type AuthRestoreResponse = AuthRestoreResponses[keyof AuthRestoreResponses];
+
 export type GetMyClosingQuestionsData = {
   body?: never;
   path?: never;
@@ -3764,6 +3830,35 @@ export type SearchJobRolesResponses = {
 };
 
 export type SearchJobRolesResponse = SearchJobRolesResponses[keyof SearchJobRolesResponses];
+
+export type MemberWithdrawData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/v1/members/me";
+};
+
+export type MemberWithdrawErrors = {
+  /**
+   * 404
+   */
+  404: V1ClosingQuestionsMe910352763;
+  /**
+   * 409
+   */
+  409: V1ClosingQuestionsMe910352763;
+};
+
+export type MemberWithdrawError = MemberWithdrawErrors[keyof MemberWithdrawErrors];
+
+export type MemberWithdrawResponses = {
+  /**
+   * 200
+   */
+  200: V1AuthLogout198252895;
+};
+
+export type MemberWithdrawResponse = MemberWithdrawResponses[keyof MemberWithdrawResponses];
 
 export type MemberMeData = {
   body?: never;
@@ -4162,6 +4257,64 @@ export type DeleteQaRoomResponses = {
 
 export type DeleteQaRoomResponse = DeleteQaRoomResponses[keyof DeleteQaRoomResponses];
 
+export type GetNotificationSettingData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/v1/members/me/notification-setting";
+};
+
+export type GetNotificationSettingErrors = {
+  /**
+   * 401
+   */
+  401: V1ClosingQuestionsMe910352763;
+};
+
+export type GetNotificationSettingError =
+  GetNotificationSettingErrors[keyof GetNotificationSettingErrors];
+
+export type GetNotificationSettingResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNotificationSetting488583453;
+};
+
+export type GetNotificationSettingResponse =
+  GetNotificationSettingResponses[keyof GetNotificationSettingResponses];
+
+export type UpdateNotificationSettingData = {
+  body?: V1MembersMeNotificationSetting1642473215;
+  path?: never;
+  query?: never;
+  url: "/v1/members/me/notification-setting";
+};
+
+export type UpdateNotificationSettingErrors = {
+  /**
+   * 400
+   */
+  400: V1ClosingQuestionsMe910352763;
+  /**
+   * 401
+   */
+  401: V1ClosingQuestionsMe910352763;
+};
+
+export type UpdateNotificationSettingError =
+  UpdateNotificationSettingErrors[keyof UpdateNotificationSettingErrors];
+
+export type UpdateNotificationSettingResponses = {
+  /**
+   * 200
+   */
+  200: V1MembersMeNotificationSetting488583453;
+};
+
+export type UpdateNotificationSettingResponse =
+  UpdateNotificationSettingResponses[keyof UpdateNotificationSettingResponses];
+
 export type ParticipationSlotsData = {
   body?: never;
   path?: never;
@@ -4341,39 +4494,36 @@ export type GetInterviewOverviewResponses = {
 export type GetInterviewOverviewResponse =
   GetInterviewOverviewResponses[keyof GetInterviewOverviewResponses];
 
-export type UnregisterWebPushSubscriptionData = {
-  body?: V1MembersMeWebPushSubscriptions615785551;
-  path?: never;
-  query?: never;
-  url: "/v1/members/me/web-push-subscriptions";
-};
-
-export type UnregisterWebPushSubscriptionResponses = {
-  /**
-   * 200
-   */
-  200: V1AuthLogout198252895;
-};
-
-export type UnregisterWebPushSubscriptionResponse =
-  UnregisterWebPushSubscriptionResponses[keyof UnregisterWebPushSubscriptionResponses];
-
-export type RegisterWebPushSubscriptionData = {
+export type RefreshWebPushSubscriptionData = {
   body?: V1MembersMeWebPushSubscriptions1250153706;
   path?: never;
   query?: never;
   url: "/v1/members/me/web-push-subscriptions";
 };
 
-export type RegisterWebPushSubscriptionResponses = {
+export type RefreshWebPushSubscriptionErrors = {
+  /**
+   * 400
+   */
+  400: V1ClosingQuestionsMe910352763;
+  /**
+   * 401
+   */
+  401: V1ClosingQuestionsMe910352763;
+};
+
+export type RefreshWebPushSubscriptionError =
+  RefreshWebPushSubscriptionErrors[keyof RefreshWebPushSubscriptionErrors];
+
+export type RefreshWebPushSubscriptionResponses = {
   /**
    * 200
    */
   200: V1AuthLogout198252895;
 };
 
-export type RegisterWebPushSubscriptionResponse =
-  RegisterWebPushSubscriptionResponses[keyof RegisterWebPushSubscriptionResponses];
+export type RefreshWebPushSubscriptionResponse =
+  RefreshWebPushSubscriptionResponses[keyof RefreshWebPushSubscriptionResponses];
 
 export type PublicProfileData = {
   body?: never;
@@ -4638,7 +4788,7 @@ export type RoomParticipantsResponses = {
   /**
    * 200
    */
-  200: V1RoomsRoomIdParticipants1711899011;
+  200: V1RoomsRoomIdParticipants313082217;
 };
 
 export type RoomParticipantsResponse = RoomParticipantsResponses[keyof RoomParticipantsResponses];
@@ -5123,10 +5273,6 @@ export type RoomLeaveErrors = {
    * 403
    */
   403: V1RoomsRoomIdParticipants1338856208;
-  /**
-   * 409
-   */
-  409: V1RoomsRoomIdParticipantsMe837364537;
 };
 
 export type RoomLeaveError = RoomLeaveErrors[keyof RoomLeaveErrors];

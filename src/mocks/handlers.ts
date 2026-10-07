@@ -18,7 +18,7 @@ import {
   submitMockReview,
   updateMockReview,
 } from "@/features/review/review-mock";
-import { confirmationHandlers } from "./room-confirmation";
+import { confirmationHandlers, restoreMockCompletion } from "./room-confirmation";
 
 function mockError(message: string, status: number) {
   return HttpResponse.json(
@@ -28,6 +28,9 @@ function mockError(message: string, status: number) {
 }
 
 export const handlers = [
+  http.all("*/v1/*", ({ request }) => {
+    restoreMockCompletion(request.headers.get("cookie") ?? "");
+  }),
   ...confirmationHandlers,
   http.get("*/v1/members/me/rooms", () => HttpResponse.json(getMockMyInterviews(true))),
   http.delete("*/v1/rooms/:roomId/applications/me", ({ params }) => {

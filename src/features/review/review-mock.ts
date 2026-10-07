@@ -4,6 +4,12 @@ import type {
   RoomDetailResponse,
   SubmitReviewResponse,
 } from "@/api";
+import { MOCK_INTERVIEW_HOST_ID } from "@/features/interview-detail/interview-detail-mock";
+import {
+  getMockConfirmationRooms,
+  getMockConfirmedRoster,
+  getMockRoomAttendance,
+} from "@/mocks/room-confirmation";
 
 type MockReviewOverview = NonNullable<GetReviewOverviewResponse["data"]>;
 type MockReview = MockReviewOverview["reviews"][number];
@@ -100,13 +106,34 @@ const mockProfiles: MockProfile[] = [
 
 let reviews = new Map(initialReviews.map((review) => [review.reviewId, structuredClone(review)]));
 let nextReviewId = 9103;
+let reviewRooms = new Map(initialReviews.map(({ reviewId }) => [reviewId, MOCK_REVIEW_ROOM_ID]));
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
 export function isMockReviewRoom(roomId: string) {
-  return roomId === MOCK_REVIEW_ROOM_ID || roomId === "00000000-0000-4000-8000-000000000207";
+  return (
+    roomId === MOCK_REVIEW_ROOM_ID ||
+    getMockConfirmationRooms().some((room) => room.roomId === roomId && room.status === "COMPLETED")
+  );
+}
+
+function getReviewMembers(roomId: string) {
+  if (roomId === MOCK_REVIEW_ROOM_ID) return [...mockMembers];
+  const attendances = getMockRoomAttendance(roomId);
+  if (
+    !attendances ||
+    attendances.find(({ memberId }) => memberId === MOCK_INTERVIEW_HOST_ID)?.status !== "ATTENDED"
+  )
+    return [];
+  return getMockConfirmedRoster(roomId).filter(
+    ({ memberId }) =>
+      memberId !== MOCK_INTERVIEW_HOST_ID &&
+      attendances.some(
+        (attendance) => attendance.memberId === memberId && attendance.status === "ATTENDED",
+      ),
+  );
 }
 
 export function isMockReviewId(reviewId: number) {
@@ -116,10 +143,13 @@ export function isMockReviewId(reviewId: number) {
 export function resetMockReviewState() {
   reviews = new Map(initialReviews.map((review) => [review.reviewId, structuredClone(review)]));
   nextReviewId = 9103;
+  reviewRooms = new Map(initialReviews.map(({ reviewId }) => [reviewId, MOCK_REVIEW_ROOM_ID]));
 }
 
 export function getMockReviewRoomDetail(roomId: string): RoomDetailResponse | null {
   if (!isMockReviewRoom(roomId)) return null;
+  const confirmationRoom = getMockConfirmationRooms().find((room) => room.roomId === roomId);
+  if (confirmationRoom) return { result: "SUCCESS", data: structuredClone(confirmationRoom) };
 
   return {
     data: {
@@ -172,10 +202,11 @@ export function getMockReviewRoomDetail(roomId: string): RoomDetailResponse | nu
 export function getMockReviewOverview(roomId: string): GetReviewOverviewResponse | null {
   if (!isMockReviewRoom(roomId)) return null;
 
-  const targets = mockMembers.map((member) => {
-    const review = [...reviews.values()].find(
-      ({ targetMemberId }) => targetMemberId === member.memberId,
-    );
+  const roomReviews = [...reviews.values()].filter(
+    ({ reviewId }) => reviewRooms.get(reviewId) === roomId,
+  );
+  const targets = getReviewMembers(roomId).map((member) => {
+    const review = roomReviews.find(({ targetMemberId }) => targetMemberId === member.memberId);
 
     return {
       ...member,
@@ -185,7 +216,7 @@ export function getMockReviewOverview(roomId: string): GetReviewOverviewResponse
 
   return {
     data: {
-      reviews: structuredClone([...reviews.values()]),
+      reviews: structuredClone(roomReviews),
       submittedCount: targets.filter(({ status }) => status === "SUBMITTED").length,
       targets,
       totalCount: targets.length,
@@ -196,15 +227,20 @@ export function getMockReviewOverview(roomId: string): GetReviewOverviewResponse
 
 export function getMockReviewProfile(memberId: string): PublicProfileResponse | null {
   const profile = mockProfiles.find((candidate) => candidate.memberId === memberId);
-
-  return profile ? { data: profile, result: "SUCCESS" } : null;
+  if (profile) return { data: profile, result: "SUCCESS" };
+  const participant = getMockConfirmationRooms()
+    .flatMap((room) => getMockConfirmedRoster(room.roomId))
+    .find((candidate) => candidate.memberId === memberId);
+  return participant
+    ? { result: "SUCCESS", data: { ...structuredClone(mockProfiles[0]), ...participant } }
+    : null;
 }
 
 export function submitMockReview(roomId: string, body: unknown): SubmitReviewResponse | null {
   if (!isMockReviewRoom(roomId) || !isRecord(body)) return null;
 
   const targetMemberId = body.targetMemberId;
-  const target = mockMembers.find((member) => member.memberId === targetMemberId);
+  const target = getReviewMembers(roomId).find((member) => member.memberId === targetMemberId);
   const tags = body.tags;
 
   if (
@@ -218,6 +254,7 @@ export function submitMockReview(roomId: string, body: unknown): SubmitReviewRes
   }
 
   const reviewId = nextReviewId++;
+  reviewRooms.set(reviewId, roomId);
   reviews.set(reviewId, {
     anonymous: body.anonymous,
     content: body.content ?? "",

@@ -42,10 +42,10 @@ export default function InterviewDetailMockPage() {
 
       <div className={styles.sections}>
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>진행 확정 · 참여자 원본 열람</h2>
+          <h2 className={styles.sectionTitle}>진행 확정 · 출석 확인 · 후기 작성</h2>
           <p className={styles.description}>
-            확정 가능 항목에서 실제 버튼 흐름을 확인할 수 있어요. 새로고침하면 초기 목 상태로
-            돌아갑니다. 원본은 개발용 샘플 PDF입니다.
+            각 항목에서 진행 확정, 출석 확인과 후기 작성 흐름을 확인할 수 있어요. 완료 결과는
+            새로고침해도 유지됩니다. 원본은 개발용 샘플 PDF입니다.
           </p>
           <ul className={styles.grid}>
             {MOCK_CONFIRMATION_SCENARIOS.map(({ room, label, description }) => (

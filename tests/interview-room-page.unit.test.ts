@@ -9,12 +9,16 @@ const mocks = vi.hoisted(() => ({
   participants: vi.fn(),
   comments: vi.fn(),
   member: vi.fn(),
+  attendance: vi.fn(),
+  overview: vi.fn(),
 }));
 vi.mock("@/features/auth/current-member-server", () => ({ getCurrentMemberState: mocks.member }));
 vi.mock("@/api/query-client", () => ({ getQueryClient: mocks.getQueryClient }));
 vi.mock("@/api/server-client", () => ({ createServerClient: vi.fn(() => ({})) }));
 vi.mock("@/api/generated/@tanstack/react-query.gen", () => ({
   confirmRoomMutation: () => ({ mutationFn: vi.fn() }),
+  getMyAttendanceOptions: () => ({ queryKey: ["attendance"], queryFn: mocks.attendance }),
+  getInterviewOverviewOptions: () => ({ queryKey: ["overview"], queryFn: mocks.overview }),
   resumeSubmissionViewUrlOptions: () => ({ queryKey: ["original"], queryFn: vi.fn() }),
   getRoomCommentsInfiniteOptions: ({ path }: { path: { roomId: string } }) => ({
     queryKey: ["comments", path.roomId],
@@ -39,12 +43,26 @@ beforeEach(() => {
     data: { comments: [], writable: true, nextCursor: null },
   });
   mocks.participants.mockResolvedValue({ data: { participants: [] } });
+  mocks.attendance.mockResolvedValue({ data: { status: "ATTENDED" } });
+  mocks.overview.mockResolvedValue({ data: { completedRooms: [] } });
   mocks.room.mockResolvedValue({ data: { viewer: { isHost: true } } });
   mocks.applications.mockResolvedValue({ data: { applications: [] } });
   mocks.reasons.mockResolvedValue({ data: { reasons: [] } });
 });
 
 describe("통합 면접 상세 서버 라우트", () => {
+  it("완료된 면접에 다시 진입하면 본인 출석과 후기 상태를 미리 조회한다", async () => {
+    mocks.room.mockResolvedValue({
+      data: { status: "COMPLETED", viewer: { isHost: false, isParticipating: true } },
+    });
+    const { default: Page } = await import("@/app/(site)/interviews/[roomId]/page");
+    await Page({
+      params: Promise.resolve({ roomId: "room-1" }),
+      searchParams: Promise.resolve({}),
+    });
+    await expect.poll(() => mocks.attendance.mock.calls.length).toBe(1);
+    expect(mocks.overview).toHaveBeenCalledOnce();
+  });
   it.each([null, { isHost: false, isParticipating: false }, { isHost: false }])(
     "비참여자는 상세를 보고 비공개 목록을 조회하지 않는다: %j",
     async (viewer) => {

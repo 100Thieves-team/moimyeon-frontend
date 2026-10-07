@@ -2,6 +2,9 @@ import type { RoomDetailResponse, RoomParticipantsResponse } from "@/api/generat
 
 export type InterviewRoom = NonNullable<RoomDetailResponse["data"]>;
 export type RoomParticipant = NonNullable<RoomParticipantsResponse["data"]>["participants"][number];
+export type ConfirmedRoomParticipant = NonNullable<
+  RoomParticipantsResponse["data"]
+>["confirmedParticipants"][number];
 
 export function getRoomRequestError(error: unknown) {
   const detail =
