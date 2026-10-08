@@ -39,9 +39,9 @@ export function InterviewDiscoverySkeleton() {
         >
           <div className={styles.resultsHeader}>
             <div className={styles.titleRow}>
-              <h1 className={styles.title} id="interview-discovery-skeleton-title">
+              <h2 className={styles.title} id="interview-discovery-skeleton-title">
                 면접
-              </h1>
+              </h2>
               <Skeleton className={skeletonStyles.count} />
             </div>
             <Skeleton className={skeletonStyles.sort} />

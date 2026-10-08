@@ -185,9 +185,9 @@ export function InterviewDiscoveryContent({ filters }: InterviewDiscoveryContent
         <section aria-labelledby="discovery-title" className={styles.results}>
           <div className={styles.resultsHeader}>
             <div className={styles.titleRow}>
-              <h1 className={styles.title} id="discovery-title">
+              <h2 className={styles.title} id="discovery-title">
                 면접
-              </h1>
+              </h2>
               <span className={styles.totalCount}>{firstPageData.totalCount}</span>
             </div>
             <DiscoverySortSelect
