@@ -33,6 +33,9 @@
     "react-dom": "19.2.4",
     "react-error-boundary": "^6.1.4",
     "react-hook-form": "^7.85.0",
+    "react-markdown": "^10.1.0",
+    "remark-cjk-friendly": "^2.3.2",
+    "remark-gfm": "^4.0.1",
     "zod": "4.4.3"
   },
   "devDependencies": {
