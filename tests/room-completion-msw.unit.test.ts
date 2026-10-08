@@ -94,23 +94,30 @@ describe("면접 완료 MSW 흐름", () => {
   it.each([
     { status: "NOT_ELIGIBLE_ABSENT", selfStatus: "ABSENT", otherStatus: "ATTENDED" },
     { status: "NOT_ELIGIBLE_NO_TARGET", selfStatus: "ATTENDED", otherStatus: "ABSENT" },
-  ])("$status 결과면 후기 대상을 제공하지 않는다", async ({ status, selfStatus, otherStatus }) => {
-    const { confirmedParticipants } = await readParticipants();
-    await complete(
-      confirmedParticipants.map(({ memberId }) => ({
-        memberId,
-        status: memberId === MOCK_INTERVIEW_HOST_ID ? selfStatus : otherStatus,
-      })),
-    );
-    expect(
-      (await readOverview()).completedRooms.find(({ room }) => room.roomId === roomId)
-        ?.reviewStatus,
-    ).toBe(status);
-    const review = zGetReviewOverviewResponse.parse(
-      await (await fetch(`${roomUrl}/reviews/overview`)).json(),
-    );
-    expect(review.data?.targets).toEqual([]);
-  });
+  ])(
+    "$status 결과에 맞춰 후기 조회 응답을 제공한다",
+    async ({ status, selfStatus, otherStatus }) => {
+      const { confirmedParticipants } = await readParticipants();
+      await complete(
+        confirmedParticipants.map(({ memberId }) => ({
+          memberId,
+          status: memberId === MOCK_INTERVIEW_HOST_ID ? selfStatus : otherStatus,
+        })),
+      );
+      expect(
+        (await readOverview()).completedRooms.find(({ room }) => room.roomId === roomId)
+          ?.reviewStatus,
+      ).toBe(status);
+      const response = await fetch(`${roomUrl}/reviews/overview`);
+      if (status === "NOT_ELIGIBLE_ABSENT") {
+        expect(response.status).toBe(403);
+        expect(await response.json()).toMatchObject({ error: { code: "E2002" } });
+      } else {
+        expect(response.status).toBe(200);
+        expect(zGetReviewOverviewResponse.parse(await response.json()).data?.targets).toEqual([]);
+      }
+    },
+  );
 
   it("새 서버 조회에서도 개발용 완료 쿠키로 저장된 출석 결과를 복원한다", async () => {
     const { confirmedParticipants } = await readParticipants();

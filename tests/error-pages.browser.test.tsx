@@ -20,7 +20,7 @@ describe("오류 페이지", () => {
   const errorPages = [
     { name: "면접 상세", element: <DetailError reset={reset} /> },
     { name: "참가 신청", element: <ApplyError reset={reset} /> },
-    { name: "후기 작성", element: <ReviewError reset={reset} /> },
+    { name: "후기 작성", element: <ReviewError error={new Error("offline")} reset={reset} /> },
     { name: "마이페이지", element: <MyPageError reset={reset} /> },
     { name: "내 면접", element: <MyInterviewsError /> },
   ];
@@ -74,7 +74,7 @@ describe("오류 페이지", () => {
   });
 
   it("후기 정보를 불러오지 못하면 후기 문맥에서 다시 시도할 수 있다", async () => {
-    const screen = await render(<ReviewError reset={reset} />);
+    const screen = await render(<ReviewError error={new Error("offline")} reset={reset} />);
 
     await expect
       .element(screen.getByRole("heading", { name: "후기 작성 정보를 불러오지 못했어요" }))

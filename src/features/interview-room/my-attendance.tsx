@@ -1,6 +1,6 @@
 "use client";
 
-import { QueryErrorResetBoundary, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { QueryErrorResetBoundary, useSuspenseQuery } from "@tanstack/react-query";
 import { CalendarCheck, CalendarX } from "lucide-react";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -10,14 +10,10 @@ import { iconSizes } from "@/styles/tokens";
 import * as styles from "./interview-room.css";
 
 export function MyAttendance({ roomId }: { roomId: string }) {
-  // 출석 쿼리가 복구되면 오류 경계도 함께 복구한다.
-  const query = useQuery({ ...getMyAttendanceOptions({ query: { roomId } }), enabled: false });
-
   return (
     <QueryErrorResetBoundary>
       {({ reset }) => (
         <ErrorBoundary
-          key={query.isSuccess ? "success" : "pending"}
           onReset={reset}
           // oxlint-disable-next-line react/no-unstable-nested-components -- fallbackRender는 컴포넌트 타입이 아닌 렌더 콜백이다.
           fallbackRender={({ resetErrorBoundary }) => (

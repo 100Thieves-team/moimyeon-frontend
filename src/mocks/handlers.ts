@@ -7,6 +7,7 @@ import { getMockInterviewRooms } from "@/features/interview-discovery/interview-
 import {
   getMockInterviewDetail,
   getMockInterviewHostProfile,
+  MOCK_INTERVIEW_HOST_ID,
 } from "@/features/interview-detail/interview-detail-mock";
 import {
   deleteMockReview,
@@ -18,7 +19,11 @@ import {
   submitMockReview,
   updateMockReview,
 } from "@/features/review/review-mock";
-import { confirmationHandlers, restoreMockCompletion } from "./room-confirmation";
+import {
+  confirmationHandlers,
+  getMockRoomAttendance,
+  restoreMockCompletion,
+} from "./room-confirmation";
 
 function mockError(message: string, status: number) {
   return HttpResponse.json(
@@ -50,7 +55,16 @@ export const handlers = [
     return response ? HttpResponse.json(response) : passthrough();
   }),
   http.get("*/v1/rooms/:roomId/reviews/overview", ({ params }) => {
-    const response = getMockReviewOverview(String(params.roomId));
+    const roomId = String(params.roomId);
+    const attendance = getMockRoomAttendance(roomId)?.find(
+      ({ memberId }) => memberId === MOCK_INTERVIEW_HOST_ID,
+    );
+    if (attendance?.status === "ABSENT")
+      return HttpResponse.json(
+        { result: "ERROR", error: { code: "E2002", message: "작성자가 결석한 면접이에요." } },
+        { status: 403 },
+      );
+    const response = getMockReviewOverview(roomId);
 
     return response ? HttpResponse.json(response) : passthrough();
   }),
