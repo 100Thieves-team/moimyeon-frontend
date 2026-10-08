@@ -47,6 +47,11 @@ export function usePathname() {
   return new URL(useCurrentUrl()).pathname;
 }
 
+export function useParams() {
+  const match = usePathname().match(/^\/interviews\/([^/]+)/);
+  return match ? { roomId: match[1] } : {};
+}
+
 export function useSearchParams() {
   return new URL(useCurrentUrl()).searchParams;
 }

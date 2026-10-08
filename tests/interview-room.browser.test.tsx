@@ -1136,7 +1136,7 @@ describe("출석 확인 후 면접 완료", () => {
     await page.getByRole("dialog").getByRole("button", { name: "취소", exact: true }).click();
   });
 
-  it("본인과 이탈자를 포함해 제출하고 최신 후기 상태가 작성 가능하면 후기 화면으로 이동한다", async () => {
+  it("본인과 이탈자를 포함해 제출하고 완료되면 후기 화면으로 이동한다", async () => {
     const client = new QueryClient({
       defaultOptions: { queries: { retry: false, staleTime: Infinity } },
     });
@@ -1238,7 +1238,7 @@ describe("출석 확인 후 면접 완료", () => {
   });
 
   it.each(["E1707", "E1708"])(
-    "%s로 이미 완료됐음을 확인하면 저장된 출석과 후기 링크를 표시한다",
+    "%s면 공통 안내로 다이얼로그를 닫고 저장된 출석과 후기 링크를 표시한다",
     async (code) => {
       mocks.complete.mockImplementationOnce(async () => {
         room.status = "COMPLETED";
@@ -1247,7 +1247,12 @@ describe("출석 확인 후 면접 완료", () => {
       const { screen, completionDialog } = await openCompletion();
       await completionDialog.getByRole("radio", { name: "불참", exact: true }).first().click();
       await completionDialog.getByRole("button", { name: "면접 완료", exact: true }).click();
-      await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
+      await expect
+        .element(page.getByRole("dialog", { name: "출석을 확인하고 면접을 완료할까요?" }))
+        .not.toBeInTheDocument();
+      await expect
+        .element(page.getByText("면접을 완료할 수 없어요. 최신 정보를 확인해 주세요."))
+        .toBeVisible();
       await expect.element(screen.getByRole("link", { name: "후기 남기기" })).toBeVisible();
       await expect
         .element(
@@ -1260,7 +1265,7 @@ describe("출석 확인 후 면접 완료", () => {
     },
   );
 
-  it("방장 권한이 변경되면 다이얼로그를 닫고 최신 참여자 화면을 표시한다", async () => {
+  it("방장 권한이 변경되면 같은 안내로 다이얼로그를 닫고 최신 참여자 화면을 표시한다", async () => {
     mocks.complete.mockImplementationOnce(async () => {
       room.viewer!.isHost = false;
       room.viewer!.isParticipating = true;
@@ -1268,7 +1273,12 @@ describe("출석 확인 후 면접 완료", () => {
     });
     const { screen, completionDialog } = await openCompletion();
     await completionDialog.getByRole("button", { name: "면접 완료", exact: true }).click();
-    await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
+    await expect
+      .element(page.getByRole("dialog", { name: "출석을 확인하고 면접을 완료할까요?" }))
+      .not.toBeInTheDocument();
+    await expect
+      .element(page.getByText("면접을 완료할 수 없어요. 최신 정보를 확인해 주세요."))
+      .toBeVisible();
     await expect
       .element(screen.getByRole("button", { name: "면접 완료하기" }))
       .not.toBeInTheDocument();
@@ -1276,7 +1286,7 @@ describe("출석 확인 후 면접 완료", () => {
   });
 
   it.each(["NOT_ELIGIBLE_ABSENT", "NOT_ELIGIBLE_NO_TARGET", "WRITTEN"])(
-    "완료 후 %s이면 상세에 머물며 서버 결과를 표시한다",
+    "완료 후 %s여도 후기 화면으로 이동한다",
     async (reviewStatus) => {
       mocks.overview.mockResolvedValue({
         result: "SUCCESS",
@@ -1285,7 +1295,9 @@ describe("출석 확인 후 면접 완료", () => {
       const { screen, completionDialog } = await openCompletion();
       await completionDialog.getByRole("button", { name: "면접 완료", exact: true }).click();
       await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
-      expect(routerPushMock).not.toHaveBeenCalled();
+      await expect
+        .poll(() => routerPushMock.mock.calls)
+        .toContainEqual([`/interviews/${roomId}/review`]);
       if (reviewStatus === "WRITTEN")
         await expect.element(screen.getByRole("link", { name: "후기 수정하기" })).toBeVisible();
       await expect
@@ -1298,11 +1310,14 @@ describe("출석 확인 후 면접 완료", () => {
     },
   );
 
-  it("완료 성공 뒤 후기 조회 실패를 제출 실패로 표시하지 않고 후기 조회를 재시도한다", async () => {
+  it("완료 성공 뒤 상세의 후기 조회가 실패해도 후기 화면으로 이동한다", async () => {
     mocks.overview.mockRejectedValue(new Error("overview offline"));
     const { screen, completionDialog } = await openCompletion();
     await completionDialog.getByRole("button", { name: "면접 완료", exact: true }).click();
     await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
+    await expect
+      .poll(() => routerPushMock.mock.calls)
+      .toContainEqual([`/interviews/${roomId}/review`]);
     await expect.element(screen.getByText("후기 정보를 불러오지 못했어요")).toBeVisible();
     await expect
       .element(

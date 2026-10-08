@@ -1,8 +1,9 @@
 "use client";
 
-import { useSuspenseQueries } from "@tanstack/react-query";
+import { QueryErrorResetBoundary, useSuspenseQueries } from "@tanstack/react-query";
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import {
   getReviewOverviewOptions,
   roomDetailOptions,
@@ -11,12 +12,35 @@ import { formatCompletedDate, isSubmittedTarget } from "./review-model";
 import * as styles from "./review-content.css";
 import { TargetRow } from "./target-row";
 import { SubmittedTargetRow } from "./target-row";
+import { ReviewError } from "./review-error";
+import { ReviewSkeleton } from "./review-skeleton";
+import { ReviewUnavailable } from "./review-unavailable";
 
 type ReviewContentProps = {
   roomId: string;
 };
 
 export function ReviewContent({ roomId }: ReviewContentProps) {
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary
+          onReset={reset}
+          // oxlint-disable-next-line react/no-unstable-nested-components -- fallbackRender는 컴포넌트 타입이 아닌 렌더 콜백이다.
+          fallbackRender={({ error, resetErrorBoundary }) => (
+            <ReviewError error={error} roomId={roomId} reset={resetErrorBoundary} />
+          )}
+        >
+          <Suspense fallback={<ReviewSkeleton />}>
+            <ReviewBody roomId={roomId} />
+          </Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  );
+}
+
+function ReviewBody({ roomId }: ReviewContentProps) {
   const [{ data: roomResponse }, { data: overviewResponse }] = useSuspenseQueries({
     queries: [
       roomDetailOptions({ path: { roomId } }),
@@ -47,6 +71,8 @@ export function ReviewContent({ roomId }: ReviewContentProps) {
 
     setExpandedMemberId(nextTarget?.memberId ?? null);
   };
+
+  if (targets.length === 0) return <ReviewUnavailable roomId={roomId} reason="NO_TARGET" />;
 
   return (
     <main className={styles.page}>

@@ -1,5 +1,4 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Suspense } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-react";
 import { page } from "vitest/browser";
@@ -124,15 +123,14 @@ function createQueryClient() {
 }
 
 async function renderReviewContent() {
+  window.history.replaceState(null, "", `/interviews/${roomId}/review`);
   const queryClient = createQueryClient();
   queryClient.setQueryData(["roomDetail", roomId], roomResponse);
 
   return render(
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
-        <Suspense fallback={<p>후기 화면을 불러오는 중이에요.</p>}>
-          <ReviewContent roomId={roomId} />
-        </Suspense>
+        <ReviewContent roomId={roomId} />
       </ToastProvider>
     </QueryClientProvider>,
   );
@@ -150,6 +148,59 @@ beforeEach(async () => {
 });
 
 describe("ReviewContent", () => {
+  it("불참한 면접의 후기에 진입하면 작성 불가 사유와 상세로 돌아가는 링크를 표시한다", async () => {
+    mocks.getReviewOverview.mockRejectedValue({
+      result: "ERROR",
+      error: { code: "E2002", message: "작성자가 결석한 면접이에요." },
+    });
+    const screen = await renderReviewContent();
+
+    await expect
+      .element(screen.getByRole("heading", { name: "후기를 작성할 수 없어요" }))
+      .toBeVisible();
+    await expect
+      .element(screen.getByText("불참으로 기록된 면접에는 후기를 남길 수 없어요."))
+      .toBeVisible();
+    await expect
+      .element(screen.getByRole("link", { name: "면접 상세로 돌아가기" }))
+      .toHaveAttribute("href", `/interviews/${roomId}`);
+    await expect
+      .element(screen.getByRole("button", { name: "다시 시도하기" }))
+      .not.toBeInTheDocument();
+  });
+
+  it("다른 출석자가 없으면 후기 대상이 없다는 안내와 상세로 돌아가는 링크를 표시한다", async () => {
+    mocks.getReviewOverview.mockResolvedValue({
+      result: "SUCCESS",
+      data: { reviews: [], targets: [], submittedCount: 0, totalCount: 0 },
+    });
+    const screen = await renderReviewContent();
+
+    await expect
+      .element(screen.getByRole("heading", { name: "후기를 남길 대상이 없어요" }))
+      .toBeVisible();
+    await expect
+      .element(screen.getByText("함께 출석한 다른 참여자가 없어 후기를 남길 수 없어요."))
+      .toBeVisible();
+    await expect
+      .element(screen.getByRole("link", { name: "면접 상세로 돌아가기" }))
+      .toHaveAttribute("href", `/interviews/${roomId}`);
+  });
+
+  it("후기 조회가 실패하면 오류 화면에서 재시도해 작성 대상을 불러온다", async () => {
+    mocks.getReviewOverview.mockRejectedValueOnce(new Error("offline"));
+    const screen = await renderReviewContent();
+
+    await expect
+      .element(screen.getByRole("heading", { name: "후기 작성 정보를 불러오지 못했어요" }))
+      .toBeVisible();
+    await screen.getByRole("button", { name: "다시 시도하기" }).click();
+
+    await expect
+      .element(screen.getByRole("button", { name: "차분한 고래 후기 작성 펼치기" }))
+      .toBeVisible();
+  });
+
   it("행을 펼치기 전에 제출된 모든 후기를 불러오고 기존 값으로 폼을 채운다", async () => {
     const screen = await renderReviewContent();
 
