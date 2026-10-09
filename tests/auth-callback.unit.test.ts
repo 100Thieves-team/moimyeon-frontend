@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { LOGIN_RESULT_COOKIE } from "@/features/analytics/login-tracking-contract";
 import { GET } from "@/app/auth/callback/route";
 
 const { createServerClientMock, memberMeMock, serverClientMock } = vi.hoisted(() => ({
@@ -59,6 +60,9 @@ describe("OAuth callback", () => {
     expect(response.status).toBe(303);
     expect(response.headers.get("Location")).toBe("https://moimyeon.plady.io/interviews/me");
     expectLoginIntentCleared(response);
+    expect(JSON.parse(response.cookies.get(LOGIN_RESULT_COOKIE)!.value)).toEqual({
+      status: "success",
+    });
   });
   it("인증된 회원을 로그인 전에 의도한 경로로 돌려보낸다", async () => {
     const response = await GET(createCallbackRequest("/interviews/new"));
@@ -114,5 +118,22 @@ describe("OAuth callback", () => {
       "https://moimyeon.plady.io/?authError=login_failed",
     );
     expectLoginIntentCleared(response);
+    expect(JSON.parse(response.cookies.get(LOGIN_RESULT_COOKIE)!.value)).toEqual({
+      status: "failed",
+      failure_type: _ === "네트워크 오류" ? "network" : "api",
+    });
+  });
+
+  it("인증 API 실패의 서버 코드만 복귀 결과에 남기고 오류 메시지는 제외한다", async () => {
+    memberMeMock.mockResolvedValue({
+      error: { result: "ERROR", error: { code: "Auth-001", message: "private error" } },
+    });
+    const response = await GET(createCallbackRequest());
+    expect(JSON.parse(response.cookies.get(LOGIN_RESULT_COOKIE)!.value)).toEqual({
+      status: "failed",
+      failure_type: "api",
+      error_code: "Auth-001",
+    });
+    expect(response.headers.get("Set-Cookie")).not.toContain("private");
   });
 });

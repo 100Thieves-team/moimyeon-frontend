@@ -1,5 +1,6 @@
 "use client";
 
+import { startLoginTracking } from "@/features/analytics/login-tracking";
 import { Dialog } from "@base-ui/react/dialog";
 import { DialogCloseButton } from "@/components/dialog-close-button";
 import type { ReactNode } from "react";
@@ -73,7 +74,11 @@ export function LoginDialog({
                 <span className={styles.titleLine}>{titleSecondLine}</span>
               </Dialog.Title>
 
-              <a className={styles.googleAction} href={googleLoginHref}>
+              <a
+                className={styles.googleAction}
+                href={googleLoginHref}
+                onClick={startLoginTracking}
+              >
                 <svg aria-hidden="true" className={styles.googleMark} viewBox="0 0 18 18">
                   <path
                     d="M17.64 9.205c0-.638-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.797 2.715v2.258h2.909c1.702-1.567 2.684-3.874 2.684-6.613Z"

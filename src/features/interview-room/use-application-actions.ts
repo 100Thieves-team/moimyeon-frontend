@@ -1,5 +1,7 @@
 "use client";
 
+import { trackMutation } from "@/features/analytics/track-mutation";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   acceptApplicationMutation,
@@ -27,11 +29,21 @@ export function useApplicationActions(roomId: string) {
   };
 
   const accept = useMutation({
-    ...acceptApplicationMutation(),
+    ...trackMutation(acceptApplicationMutation(), {
+      action: "interview_application_accept",
+      event: "interview_application_accepted",
+      properties: () => ({ room_id: roomId, actor_role: "host" }),
+      failureProperties: { room_id: roomId, actor_role: "host" },
+    }),
     onSettled: refresh,
   });
   const reject = useMutation({
-    ...rejectApplicationMutation(),
+    ...trackMutation(rejectApplicationMutation(), {
+      action: "interview_application_reject",
+      event: "interview_application_rejected",
+      properties: () => ({ room_id: roomId, actor_role: "host" }),
+      failureProperties: { room_id: roomId, actor_role: "host" },
+    }),
     onSettled: refresh,
   });
   const processing = accept.isPending ? "accept" : reject.isPending ? "reject" : null;

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { LOGIN_INTENT_MAX_AGE_SECONDS } from "@/features/analytics/login-tracking-contract";
 import type { NextRequest, NextResponse } from "next/server";
 import { memberMe } from "@/api";
 import { createServerClient } from "@/api/server-client";
@@ -9,7 +10,7 @@ const LOGIN_RETURN_TO_COOKIE = "moimyeon_return_to";
 
 const loginIntentCookieOptions = {
   httpOnly: true,
-  maxAge: 60 * 10,
+  maxAge: LOGIN_INTENT_MAX_AGE_SECONDS,
   path: "/auth",
   sameSite: "lax" as const,
   secure: process.env.NODE_ENV === "production",
@@ -58,5 +59,6 @@ export async function hasAuthenticatedMember() {
     throwOnError: false,
   });
 
+  if (result.error !== undefined) throw result.error;
   return result.data?.data !== undefined && result.data.data !== null;
 }

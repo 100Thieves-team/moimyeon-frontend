@@ -1,5 +1,7 @@
 "use client";
 
+import { trackMutation } from "@/features/analytics/track-mutation";
+
 import { Dialog } from "@base-ui/react/dialog";
 import { Field } from "@base-ui/react/field";
 import { Form } from "@base-ui/react/form";
@@ -65,7 +67,12 @@ export function CompleteRoomAttendanceForm({
       ].map((queryKey) => client.invalidateQueries({ queryKey })),
     );
   const mutation = useMutation({
-    ...completeRoomProgressMutation(),
+    ...trackMutation(completeRoomProgressMutation(), {
+      action: "interview_complete",
+      event: "interview_completed",
+      properties: () => ({ room_id: roomId, actor_role: "host" }),
+      failureProperties: { room_id: roomId, actor_role: "host" },
+    }),
     mutationKey: completeRoomMutationKey(roomId),
     onSuccess: () => {
       void refresh();

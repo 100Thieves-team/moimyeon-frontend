@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { AnalyticsPageviews } from "@/features/analytics/analytics-pageviews";
 import { QueryProvider } from "@/api/query-provider";
 import { ToastProvider } from "@/components/toast";
 import { MSWProvider } from "@/mocks/msw-provider";
@@ -55,6 +56,7 @@ export default function RootLayout({
         <MSWProvider>
           <QueryProvider>
             <ToastProvider>
+              <AnalyticsPageviews />
               <div className={app}>{children}</div>
             </ToastProvider>
           </QueryProvider>
