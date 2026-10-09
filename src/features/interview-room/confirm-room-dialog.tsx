@@ -1,5 +1,7 @@
 "use client";
 
+import { trackMutation } from "@/features/analytics/track-mutation";
+
 import { AlertDialog } from "@base-ui/react/alert-dialog";
 import { Toast } from "@base-ui/react/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -41,7 +43,12 @@ export function ConfirmRoomDialog({
       ].map((queryKey) => client.invalidateQueries({ queryKey })),
     );
   const mutation = useMutation({
-    ...confirmRoomMutation(),
+    ...trackMutation(confirmRoomMutation(), {
+      action: "interview_confirm",
+      event: "interview_confirmed",
+      properties: () => ({ room_id: room.roomId, actor_role: "host" }),
+      failureProperties: { room_id: room.roomId, actor_role: "host" },
+    }),
     onSuccess: async () => {
       await refresh();
       setOpen(false);

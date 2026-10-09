@@ -1,5 +1,10 @@
 "use client";
 
+import type { ActorRole } from "@/features/analytics/analytics-contract";
+import { getActorRole } from "@/features/analytics/analytics";
+import { useRoomEntry } from "@/features/analytics/use-analytics-entry";
+import { trackMutation } from "@/features/analytics/track-mutation";
+
 import { Field } from "@base-ui/react/field";
 import { Form } from "@base-ui/react/form";
 import { useMutation, useQueryClient, useSuspenseQueries } from "@tanstack/react-query";
@@ -49,9 +54,11 @@ function getApplicationError(error: unknown) {
 function InterviewApplicationForm({
   initialResumeId,
   roomId,
+  actorRole,
 }: {
   initialResumeId: string;
   roomId: string;
+  actorRole?: ActorRole;
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -61,7 +68,14 @@ function InterviewApplicationForm({
   });
   const selectedResumeId = useWatch({ control: methods.control, name: "resumeId" });
   const { resumes, selectedResume } = useResumePickerData(selectedResumeId);
-  const submitApplication = useMutation(submitRoomApplicationMutation());
+  const submitApplication = useMutation(
+    trackMutation(submitRoomApplicationMutation(), {
+      action: "interview_apply",
+      event: "interview_applied",
+      properties: () => ({ room_id: roomId, actor_role: actorRole }),
+      failureProperties: { room_id: roomId, actor_role: actorRole },
+    }),
+  );
 
   const submit = methods.handleSubmit(async (values) => {
     methods.clearErrors("root.serverError");
@@ -188,6 +202,7 @@ export function InterviewApplyContent({ roomId }: { roomId: string }) {
     queries: [roomDetailOptions({ path: { roomId } }), resumesOptions()],
   });
   const room = roomResponse.data;
+  useRoomEntry("interview_apply_started", roomId, getActorRole(room?.viewer));
 
   if (room === undefined || room === null) {
     throw new Error("Failed to load interview detail");
@@ -221,7 +236,11 @@ export function InterviewApplyContent({ roomId }: { roomId: string }) {
           </Link>
         </section>
 
-        <InterviewApplicationForm initialResumeId={getPreferredResumeId(resumes)} roomId={roomId} />
+        <InterviewApplicationForm
+          initialResumeId={getPreferredResumeId(resumes)}
+          roomId={roomId}
+          actorRole={getActorRole(room.viewer)}
+        />
       </div>
     </main>
   );
