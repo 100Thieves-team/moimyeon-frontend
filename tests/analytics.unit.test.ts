@@ -6,6 +6,7 @@ const sdk = vi.hoisted(() => ({
   init: vi.fn(),
   capture: vi.fn(),
   identify: vi.fn(),
+  setPersonProperties: vi.fn(),
   reset: vi.fn(),
   get_property: vi.fn(),
 }));
@@ -92,6 +93,77 @@ describe("PostHog 사용자 수집 계약", () => {
     expect(sdk.identify).not.toHaveBeenCalled();
   });
 
+  it("회원 기본 정보를 연결하고 닉네임 변경은 같은 회원 속성으로 갱신한다", () => {
+    analytics.initializeAnalytics();
+    const member = {
+      name: "꼼꼼한 여우 12",
+      email: "member@example.test",
+      member_status: "ACTIVE",
+    };
+    analytics.syncAnalyticsMember("member-a", member);
+    analytics.syncAnalyticsMember("member-a", { ...member });
+    expect(sdk.identify).toHaveBeenCalledExactlyOnceWith("member-a", member);
+    expect(sdk.setPersonProperties).not.toHaveBeenCalled();
+    analytics.syncAnalyticsMember("member-a", { ...member, name: "든든한 곰 04" });
+    expect(sdk.setPersonProperties).toHaveBeenCalledExactlyOnceWith({
+      ...member,
+      name: "든든한 곰 04",
+    });
+    expect(sdk.reset).not.toHaveBeenCalled();
+    analytics.syncAnalyticsMember("member-b", { ...member, email: "other@example.test" });
+    expect(sdk.reset).toHaveBeenCalledTimes(1);
+    expect(sdk.identify).toHaveBeenLastCalledWith("member-b", {
+      ...member,
+      email: "other@example.test",
+    });
+  });
+
+  it("기존 로그인 세션에도 기본 정보를 갱신하고 SDK 오류가 화면 흐름을 막지 않는다", () => {
+    sdk.get_property.mockReturnValue("member-a");
+    analytics.initializeAnalytics();
+    const member = {
+      name: "꼼꼼한 여우 12",
+      email: "member@example.test",
+      member_status: "ACTIVE",
+    };
+    sdk.setPersonProperties.mockImplementationOnce(() => {
+      throw new Error("blocked");
+    });
+    expect(() => analytics.syncAnalyticsMember("member-a", member)).not.toThrow();
+    analytics.syncAnalyticsMember("member-a", member);
+    expect(sdk.setPersonProperties).toHaveBeenLastCalledWith(member);
+    expect(sdk.identify).not.toHaveBeenCalled();
+    expect(capturedNames()).not.toContain("login_completed");
+  });
+
+  it.each(["$identify", "$set"])("%s 사용자 속성에서 기본 회원 정보만 허용한다", (event) => {
+    const member = {
+      name: "꼼꼼한 여우 12",
+      email: "member@example.test",
+      member_status: "ACTIVE",
+    };
+    for (const topLevel of [true, false]) {
+      const set = {
+        ...member,
+        bio: "private",
+        resume: "private",
+        $initial_current_url: "https://site.test/?private",
+      };
+      const payload = {
+        uuid: "event-a",
+        event,
+        properties: { distinct_id: "member-a", ...(topLevel ? {} : { $set: set }) },
+        ...(topLevel ? { $set: set } : {}),
+        $set_once: { nickname: "private" },
+      } as CaptureResult;
+      const clean = analytics.sanitizeCapture(payload)!;
+      expect(clean.$set).toEqual(member);
+      expect(JSON.stringify(clean)).not.toContain("private");
+      expect(clean.properties.$set).toBeUndefined();
+      expect(clean.$set_once).toBeUndefined();
+    }
+  });
+
   it("계정을 바꾸기 전에 식별을 reset하고 로그아웃 후에는 익명으로 기록한다", () => {
     analytics.initializeAnalytics();
     analytics.syncAnalyticsMember("member-a");
@@ -172,7 +244,7 @@ describe("PostHog 사용자 수집 계약", () => {
     );
   });
 
-  it("본문·회원 정보·query·hash·자동 person 속성을 최종 payload에서 제외한다", () => {
+  it("일반 행동 이벤트에서 본문·회원 정보·query·hash·자동 person 속성을 제외한다", () => {
     const payload = {
       uuid: "event-id",
       event: "interview_applied",

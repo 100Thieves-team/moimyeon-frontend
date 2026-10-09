@@ -17,7 +17,7 @@
 
 ## 이벤트 계약
 
-공통 속성은 `event_version=1`, `environment=dev|live`, `page_path`, `is_authenticated`, `event_source=frontend`이다. SDK의 `$identify`는 사용자 연결을 위한 내부 이벤트다.
+공통 속성은 `event_version=1`, `environment=dev|live`, `page_path`, `is_authenticated`, `event_source=frontend`이다. SDK의 `$identify`는 사용자 연결, `$set`은 사용자 속성 갱신을 위한 내부 이벤트다.
 
 | 이벤트                           | 수집 시점                                    | 추가 속성                                                                                |
 | -------------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------- |
@@ -46,13 +46,13 @@
 
 ## 식별과 개인정보
 
-익명 방문은 SDK의 개별 익명 ID를 사용한다. 서버가 인증 회원을 확인하면 `memberId`로 identify하고 기존 익명 탐색을 연결한다. 이메일·닉네임을 식별자로 사용하지 않는다. 같은 회원을 다시 조회하면 identify를 반복하지 않는다. 다른 계정으로 바뀌거나 로그아웃에 성공하면 reset한다. 기존 인증 세션 복원·새로고침만으로 `login_completed`를 수집하지 않는다.
+익명 방문은 SDK의 개별 익명 ID를 사용한다. 서버가 인증 회원을 확인하면 `memberId`로 identify하고 기존 익명 탐색을 연결한다. 이메일·닉네임을 식별자로 사용하지 않는다. 로그인 회원의 사용자 속성으로 `name`(닉네임), `email`(대표 이메일), `member_status`(회원 상태)를 전달한다. 닉네임 변경은 같은 memberId의 속성만 갱신하며, 마이페이지의 회원 재조회 결과도 반영한다. 가입 시각은 현재 회원 API가 제공하지 않아 전송하지 않는다. 같은 회원을 다시 조회하면 identify를 반복하지 않는다. 다른 계정으로 바뀌거나 로그아웃에 성공하면 reset한다. 기존 인증 세션 복원·새로고침만으로 `login_completed`를 수집하지 않는다.
 
 Google 로그인 클릭은 세션 저장소에 시작 시각을 남긴다. 기존 로그인 의도와 동일한 10분 이내에 `/auth/callback`이 짧은 복귀 결과 쿠키를 남기고, 브라우저가 인증 결과를 확인한 뒤 쿠키와 시작 표시를 한 번 소비한다. 쿠키에는 성공/실패·실패 종류·서버 코드만 저장한다. 저장소 접근이 차단되면 로그인 기능은 유지되지만 해당 로그인 전환을 집계하지 못할 수 있다.
 
 `actor_role`은 API viewer의 `isHost`·`isParticipating`에서 `host`, `participant`, `visitor`로 결정하며 판단할 수 없으면 생략한다. 수락·반려의 distinct_id는 신청자가 아니라 동작한 방장의 memberId다. 후기 대상의 memberId는 전송하지 않는다.
 
-이메일·닉네임·이력서·소개·신청 전달사항·후기 본문·반려 사유·원본 오류 객체나 오류 메시지를 보내지 않는다. 공통 수집 함수에서 이벤트별 속성을 제한하고 `before_send`에서 SDK가 붙이는 속성까지 다시 제한한다. 현재 URL·referrer는 query와 hash를 제거하고 `/interviews/[roomId]`, `/interviews/[roomId]/apply`, `/interviews/[roomId]/review`, `/terms/[type]`로 정규화한다. 알 수 없는 경로는 `/[unknown]`으로 처리한다. `$set`·`$set_once`와 캠페인·검색어 속성은 전달하지 않는다.
+일반 행동 이벤트에는 이메일·닉네임을 붙이지 않는다. 로그인 회원의 사용자 속성 갱신에만 승인된 기본 정보(name, email, member_status)를 허용한다. 이력서·소개·신청 전달사항·후기 본문·반려 사유·원본 오류 객체나 오류 메시지는 보내지 않는다. 공통 수집 함수에서 이벤트별 속성을 제한하고 `before_send`에서 SDK가 붙이는 속성까지 다시 제한한다. 현재 URL·referrer는 query와 hash를 제거하고 `/interviews/[roomId]`, `/interviews/[roomId]/apply`, `/interviews/[roomId]/review`, `/terms/[type]`로 정규화한다. 알 수 없는 경로는 `/[unknown]`으로 처리한다. `$identify`·`$set` 이벤트의 `$set`에서 name, email, member_status만 허용한다. 일반 행동 이벤트의 `$set`, 모든 `$set_once`, 캠페인·검색어 속성은 전달하지 않는다. PostHog 사용자 표시 이름은 name 속성으로 설정할 수 있다.
 
 ## 퍼널 구성
 
@@ -79,7 +79,7 @@ Google 로그인 클릭은 세션 저장소에 시작 시각을 남긴다. 기�
 
 - 자동 테스트: SDK 경계를 모킹하여 익명→회원 연결, 로그인 복귀 1회 소비·10분 만료, reset, 화면·단계 중복 제거, payload 정리, API·네트워크 실패, 캐시 재조회 실패, SDK 오류 시 Mutation 성공 보존을 검증한다.
 - Chromium 컴포넌트 테스트: Strict Mode 화면·단계 수집, 계정 전환, 실제 참가 신청 폼의 성공·서버 오류·폼 검증·SDK 오류를 확인한다. 기존 사용자 흐름 테스트는 유지한다.
-- 실제 dev 수신 결과 및 미검증 범위는 아래에 기록한다.
+- 회원 기본 정보 연결·변경·계정 전환과 사용자 속성 허용 목록도 SDK를 모킹해 검증한다. 실제 dev 수신 결과 및 미검증 범위는 아래에 기록한다.
 
 ### Dia 실제 수신 검증 (2026-10-09)
 
@@ -92,3 +92,5 @@ Moimyeon US Cloud 프로젝트의 Activity에서 로컬 개발 서버의 실제 
 - 실제 Google OAuth 왕복, 생성·신청·수락·반려 성공 및 실제 API 오류 수신은 미검증이다. 자동 테스트와 수집 시점 코드 검증으로 확인했다.
 
 현재 PostHog UI의 순서 옵션은 Sequential이며 Hold property constant 메뉴는 확인되지 않았다. 방별 분석은 위의 전체 단계 room_id 필터를 사용한다. UI와 필터 개념은 [PostHog 공식 퍼널 문서](https://posthog.com/docs/product-analytics/funnels)를 참고한다.
+
+회원 기본 정보 전송은 이후 사용자 요청으로 추가되었으며 MOI-586 최초의 닉네임·이메일 전송 제외 조건보다 이 요청을 우선한다. 이 추가 변경의 실제 회원 정보 전송은 브라우저에서 실행하지 않고 자동 테스트로 검증했다.

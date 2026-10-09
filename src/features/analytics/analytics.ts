@@ -11,6 +11,7 @@ import {
 let enabled = false;
 let environment: "dev" | "live" = "dev";
 let memberId: string | null = null;
+let memberPropertiesKey: string | undefined;
 let visitPath: string | undefined;
 const entries = new Map<string, string>();
 const commonKeys = [
@@ -41,6 +42,23 @@ const sdkKeys = [
   "$screen_width",
   "$host",
 ];
+export type AnalyticsMemberProperties = {
+  name: string;
+  email: string;
+  member_status: string;
+};
+
+function sanitizeMemberProperties(value: unknown): Partial<AnalyticsMemberProperties> {
+  const result: Partial<AnalyticsMemberProperties> = {};
+  if (typeof value !== "object" || value === null) return result;
+  const properties = value as Record<string, unknown>;
+  for (const key of ["name", "email", "member_status"] as const) {
+    const property = properties[key];
+    if (typeof property === "string") result[key] = property;
+  }
+  return result;
+}
+
 const urlKeys = ["$current_url", "$referrer", "$initial_current_url", "$initial_referrer"];
 
 function sanitizeUrl(value: unknown): string | undefined {
@@ -58,7 +76,9 @@ function sanitizeUrl(value: unknown): string | undefined {
 export function sanitizeCapture(event: CaptureResult | null): CaptureResult | null {
   if (!event) return null;
   const keys =
-    event.event === "$identify" ? [] : eventPropertyKeys[event.event as keyof AnalyticsEvents];
+    event.event === "$identify" || event.event === "$set"
+      ? []
+      : eventPropertyKeys[event.event as keyof AnalyticsEvents];
   if (!keys) return null;
   const original = event.properties;
   const properties: Record<string, unknown> = {};
@@ -75,8 +95,19 @@ export function sanitizeCapture(event: CaptureResult | null): CaptureResult | nu
   if (typeof properties.page_path === "string") {
     properties.page_path = normalizePagePath(properties.page_path);
   }
-  // Never forward $set/$set_once, campaign parameters, search keywords, or raw URLs.
-  return { uuid: event.uuid, event: event.event, properties, timestamp: event.timestamp };
+  const clean: CaptureResult = {
+    uuid: event.uuid,
+    event: event.event,
+    properties,
+    timestamp: event.timestamp,
+  };
+  // Only explicit person updates can transmit approved member properties.
+  if (event.event === "$identify" || event.event === "$set") {
+    const person = sanitizeMemberProperties(event.$set ?? original.$set);
+    if (Object.keys(person).length > 0) clean.$set = person;
+  }
+  // Never forward $set_once, campaign parameters, search keywords, or raw URLs.
+  return clean;
 }
 
 export const analyticsConfig = {
@@ -154,12 +185,26 @@ export function captureEvent<E extends keyof AnalyticsEvents>(
   }
 }
 
-export function syncAnalyticsMember(nextMemberId: string | null) {
+export function syncAnalyticsMember(
+  nextMemberId: string | null,
+  nextProperties?: AnalyticsMemberProperties,
+) {
   if (!enabled) return;
   try {
     const previous = memberId ?? posthogClient.get_property("$user_id");
-    if (previous && previous !== nextMemberId) posthogClient.reset();
-    if (nextMemberId && previous !== nextMemberId) posthogClient.identify(nextMemberId);
+    if (previous && previous !== nextMemberId) {
+      posthogClient.reset();
+      memberPropertiesKey = undefined;
+    }
+    const properties = nextProperties ? sanitizeMemberProperties(nextProperties) : undefined;
+    const key = properties ? JSON.stringify(properties) : undefined;
+    if (nextMemberId && previous !== nextMemberId) {
+      if (properties) posthogClient.identify(nextMemberId, properties);
+      else posthogClient.identify(nextMemberId);
+    } else if (nextMemberId && properties && key !== memberPropertiesKey) {
+      posthogClient.setPersonProperties(properties);
+    }
+    memberPropertiesKey = nextMemberId ? key : undefined;
     memberId = nextMemberId;
   } catch {
     memberId = nextMemberId;
@@ -168,6 +213,7 @@ export function syncAnalyticsMember(nextMemberId: string | null) {
 
 export function resetAnalyticsMember() {
   memberId = null;
+  memberPropertiesKey = undefined;
   if (!enabled) return;
   try {
     posthogClient.reset();

@@ -10,6 +10,7 @@ const sdk = vi.hoisted(() => ({
   init: vi.fn(),
   capture: vi.fn(),
   identify: vi.fn(),
+  setPersonProperties: vi.fn(),
   reset: vi.fn(),
   get_property: vi.fn(),
 }));
@@ -106,6 +107,43 @@ it("계정 전환은 이전 사용자 식별을 지우고 상세 재렌더링은
   );
   expect(sdk.reset).toHaveBeenCalledTimes(1);
   expect(sdk.identify).toHaveBeenLastCalledWith("member-b");
+  expect(
+    sdk.capture.mock.calls.filter(([name]) => name === "interview_detail_viewed"),
+  ).toHaveLength(1);
+});
+
+it("로그인 회원의 닉네임 변경은 ID와 화면 이벤트를 유지하며 사용자 속성만 갱신한다", async () => {
+  window.history.replaceState(null, "", "/interviews/room-a");
+  const memberProperties = {
+    name: "꼼꼼한 여우 12",
+    email: "member@example.test",
+    member_status: "ACTIVE",
+  };
+  const screen = await render(
+    <StrictMode>
+      <AnalyticsSession memberId="member-profile" memberProperties={memberProperties}>
+        <DetailScreen />
+      </AnalyticsSession>
+    </StrictMode>,
+  );
+  expect(sdk.identify).toHaveBeenCalledExactlyOnceWith("member-profile", memberProperties);
+  expect(sdk.setPersonProperties).not.toHaveBeenCalled();
+  await screen.rerender(
+    <StrictMode>
+      <AnalyticsSession
+        memberId="member-profile"
+        memberProperties={{ ...memberProperties, name: "든든한 곰 04" }}
+      >
+        <DetailScreen />
+      </AnalyticsSession>
+    </StrictMode>,
+  );
+  expect(sdk.setPersonProperties).toHaveBeenCalledExactlyOnceWith({
+    ...memberProperties,
+    name: "든든한 곰 04",
+  });
+  expect(sdk.identify).toHaveBeenCalledTimes(1);
+  expect(sdk.reset).not.toHaveBeenCalled();
   expect(
     sdk.capture.mock.calls.filter(([name]) => name === "interview_detail_viewed"),
   ).toHaveLength(1);

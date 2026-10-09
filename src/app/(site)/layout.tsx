@@ -13,7 +13,18 @@ export default async function SiteLayout({ children }: SiteLayoutProps) {
   const state = await getCurrentMemberState();
   const memberId = state.status === "authenticated" ? state.member.memberId : null;
   return (
-    <AnalyticsSession memberId={memberId}>
+    <AnalyticsSession
+      memberId={memberId}
+      memberProperties={
+        state.status === "authenticated"
+          ? {
+              name: state.member.nickname,
+              email: state.member.email,
+              member_status: state.member.status,
+            }
+          : undefined
+      }
+    >
       <div className={styles.site}>
         <TopBar />
         <Suspense fallback={null}>
