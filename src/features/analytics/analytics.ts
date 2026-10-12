@@ -6,14 +6,15 @@ import {
   type AnalyticsEvents,
   type CoreAction,
   type ActorRole,
+  type CreationStep,
 } from "./analytics-contract";
 
 let enabled = false;
 let environment: "dev" | "live" = "dev";
 let memberId: string | null = null;
-let memberPropertiesKey: string | undefined;
 let visitPath: string | undefined;
-const entries = new Map<string, string>();
+const entries = new Set<string>();
+let lastCreationStep: CreationStep | undefined;
 const commonKeys = [
   "event_version",
   "environment",
@@ -168,15 +169,11 @@ export function captureEvent<E extends keyof AnalyticsEvents>(
 ) {
   if (!enabled || typeof window === "undefined") return;
   try {
-    const allowed: Record<string, unknown> = {};
-    for (const key of eventPropertyKeys[event]) {
-      if (key in properties) allowed[key] = (properties as Record<string, unknown>)[key];
-    }
     posthogClient.capture(event, {
-      ...allowed,
+      ...properties,
       event_version: 1,
       environment,
-      page_path: normalizePagePath(window.location.pathname),
+      page_path: window.location.pathname,
       is_authenticated: memberId !== null,
       event_source: "frontend",
     });
@@ -192,19 +189,12 @@ export function syncAnalyticsMember(
   if (!enabled) return;
   try {
     const previous = memberId ?? posthogClient.get_property("$user_id");
-    if (previous && previous !== nextMemberId) {
-      posthogClient.reset();
-      memberPropertiesKey = undefined;
-    }
-    const properties = nextProperties ? sanitizeMemberProperties(nextProperties) : undefined;
-    const key = properties ? JSON.stringify(properties) : undefined;
-    if (nextMemberId && previous !== nextMemberId) {
-      if (properties) posthogClient.identify(nextMemberId, properties);
+    if (previous && previous !== nextMemberId) posthogClient.reset();
+    // identify also updates person properties; the SDK suppresses identical updates.
+    if (nextMemberId) {
+      if (nextProperties) posthogClient.identify(nextMemberId, nextProperties);
       else posthogClient.identify(nextMemberId);
-    } else if (nextMemberId && properties && key !== memberPropertiesKey) {
-      posthogClient.setPersonProperties(properties);
     }
-    memberPropertiesKey = nextMemberId ? key : undefined;
     memberId = nextMemberId;
   } catch {
     memberId = nextMemberId;
@@ -213,7 +203,6 @@ export function syncAnalyticsMember(
 
 export function resetAnalyticsMember() {
   memberId = null;
-  memberPropertiesKey = undefined;
   if (!enabled) return;
   try {
     posthogClient.reset();
@@ -226,13 +215,14 @@ function ensureVisit(pathname: string) {
   if (visitPath === pathname) return;
   visitPath = pathname;
   entries.clear();
+  lastCreationStep = undefined;
 }
 
 export function capturePageview(pathname: string) {
   if (!enabled) return;
   ensureVisit(pathname);
   if (entries.has("$pageview")) return;
-  entries.set("$pageview", pathname);
+  entries.add("$pageview");
   captureEvent("$pageview", {});
 }
 
@@ -246,11 +236,13 @@ export type EntryEvent =
 export function captureEntry<E extends EntryEvent>(event: E, properties: AnalyticsEvents[E]) {
   if (!enabled || typeof window === "undefined") return;
   ensureVisit(window.location.pathname);
-  const key = JSON.stringify(properties);
-  // Role changes/query refreshes don't create a new screen entry. Step transitions do.
-  const entryKey = event === "interview_create_step_viewed" ? key : "entered";
-  if (entries.get(event) === entryKey) return;
-  entries.set(event, entryKey);
+  if (event === "interview_create_step_viewed" && "step" in properties) {
+    if (lastCreationStep === properties.step) return;
+    lastCreationStep = properties.step;
+  } else {
+    if (entries.has(event)) return;
+    entries.add(event);
+  }
   captureEvent(event, properties);
 }
 

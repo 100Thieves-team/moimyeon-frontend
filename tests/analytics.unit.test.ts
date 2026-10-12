@@ -81,16 +81,17 @@ describe("PostHog 사용자 수집 계약", () => {
     analytics.syncAnalyticsMember("member-a");
     analytics.syncAnalyticsMember("member-a");
     login.completeLoginTracking("member-a");
-    expect(sdk.identify).toHaveBeenCalledExactlyOnceWith("member-a");
+    expect(sdk.identify).toHaveBeenLastCalledWith("member-a");
     expect(sdk.reset).not.toHaveBeenCalled();
     expect(capturedNames()).not.toContain("login_completed");
   });
 
-  it("기존 회원 식별이 저장돼 있으면 같은 세션을 다시 identify하지 않는다", () => {
+  it("기존 회원 식별을 SDK에 전달해도 로그인 성공으로 세지 않는다", () => {
     sdk.get_property.mockReturnValue("member-a");
     analytics.initializeAnalytics();
     analytics.syncAnalyticsMember("member-a");
-    expect(sdk.identify).not.toHaveBeenCalled();
+    expect(sdk.identify).toHaveBeenCalledExactlyOnceWith("member-a");
+    expect(capturedNames()).not.toContain("login_completed");
   });
 
   it("회원 기본 정보를 연결하고 닉네임 변경은 같은 회원 속성으로 갱신한다", () => {
@@ -102,10 +103,9 @@ describe("PostHog 사용자 수집 계약", () => {
     };
     analytics.syncAnalyticsMember("member-a", member);
     analytics.syncAnalyticsMember("member-a", { ...member });
-    expect(sdk.identify).toHaveBeenCalledExactlyOnceWith("member-a", member);
-    expect(sdk.setPersonProperties).not.toHaveBeenCalled();
+    expect(sdk.identify).toHaveBeenLastCalledWith("member-a", member);
     analytics.syncAnalyticsMember("member-a", { ...member, name: "든든한 곰 04" });
-    expect(sdk.setPersonProperties).toHaveBeenCalledExactlyOnceWith({
+    expect(sdk.identify).toHaveBeenLastCalledWith("member-a", {
       ...member,
       name: "든든한 곰 04",
     });
@@ -126,13 +126,12 @@ describe("PostHog 사용자 수집 계약", () => {
       email: "member@example.test",
       member_status: "ACTIVE",
     };
-    sdk.setPersonProperties.mockImplementationOnce(() => {
+    sdk.identify.mockImplementationOnce(() => {
       throw new Error("blocked");
     });
     expect(() => analytics.syncAnalyticsMember("member-a", member)).not.toThrow();
     analytics.syncAnalyticsMember("member-a", member);
-    expect(sdk.setPersonProperties).toHaveBeenLastCalledWith(member);
-    expect(sdk.identify).not.toHaveBeenCalled();
+    expect(sdk.identify).toHaveBeenLastCalledWith("member-a", member);
     expect(capturedNames()).not.toContain("login_completed");
   });
 
