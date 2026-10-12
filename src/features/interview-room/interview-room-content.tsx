@@ -1,5 +1,7 @@
 "use client";
 
+import { getActorRole } from "@/features/analytics/analytics";
+import { useRoomEntry } from "@/features/analytics/use-analytics-entry";
 import * as errorStyles from "@/features/error/error-state.css";
 import { Tabs } from "@base-ui/react/tabs";
 import { QueryErrorResetBoundary, useSuspenseQuery } from "@tanstack/react-query";
@@ -37,6 +39,7 @@ export function InterviewRoomContent({
 }) {
   const roomQuery = useSuspenseQuery(roomDetailOptions({ path: { roomId } }));
   const room = roomQuery.data.data;
+  useRoomEntry("interview_detail_viewed", roomId, getActorRole(room?.viewer));
   const isHost = currentMemberId !== null && room?.viewer?.isHost === true;
   const canViewParticipants =
     currentMemberId !== null && (isHost || room?.viewer?.isParticipating === true);

@@ -1,4 +1,6 @@
 "use client";
+
+import { trackMutation } from "@/features/analytics/track-mutation";
 import { iconSizes } from "@/styles/tokens";
 
 import { Checkbox } from "@base-ui/react/checkbox";
@@ -30,7 +32,14 @@ type CreateReviewFormValues = ReviewFormValues & {
 export function CreateReviewForm({ onCompleted, roomId, target }: CreateReviewFormProps) {
   const queryClient = useQueryClient();
   const toastManager = Toast.useToastManager();
-  const submitReview = useMutation(submitReviewMutation());
+  const submitReview = useMutation(
+    trackMutation(submitReviewMutation(), {
+      action: "review_create",
+      event: "review_created",
+      properties: () => ({ room_id: roomId }),
+      failureProperties: { room_id: roomId },
+    }),
+  );
   const methods = useForm<CreateReviewFormValues>({
     defaultValues: {
       anonymous: true,

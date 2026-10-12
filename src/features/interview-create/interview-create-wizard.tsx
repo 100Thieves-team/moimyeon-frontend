@@ -1,5 +1,8 @@
 "use client";
 
+import { useCreationEntry } from "@/features/analytics/use-analytics-entry";
+import { trackMutation } from "@/features/analytics/track-mutation";
+
 import { Form } from "@base-ui/react/form";
 import { Toast } from "@base-ui/react/toast";
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
@@ -165,7 +168,12 @@ export function InterviewCreateWizard({
     enabled: hasCreationLimitParams,
   });
   const createRoom = useMutation({
-    ...createRoomMutation(),
+    ...trackMutation(createRoomMutation(), {
+      action: "interview_create",
+      event: "interview_created",
+      properties: (response) =>
+        response.data?.roomId ? { room_id: response.data.roomId, actor_role: "host" } : null,
+    }),
     onError: (error) => {
       methods.setError("root.serverError", {
         message: getErrorMessage(error),
@@ -197,6 +205,7 @@ export function InterviewCreateWizard({
   const isFormComplete = completedSteps.slice(0, 3).every(Boolean);
   const stepParam = searchParams.get("step");
   const step = steps.find((item) => item.slug === stepParam) ?? steps[0];
+  useCreationEntry(step.slug);
   const currentStep: InterviewCreateStepLabel = step.label;
   const currentStepIndex = steps.findIndex((item) => item.label === currentStep);
 

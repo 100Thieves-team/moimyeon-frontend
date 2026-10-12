@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authLogoutMutation } from "@/api/generated/@tanstack/react-query.gen";
+import { resetAnalyticsMember } from "@/features/analytics/analytics";
 import { Button } from "@/components/button";
 import * as styles from "./mypage-shell.css";
 
@@ -23,6 +24,7 @@ export function LogoutButton() {
       return;
     }
 
+    resetAnalyticsMember();
     queryClient.removeQueries();
     router.replace("/");
     router.refresh();
