@@ -149,9 +149,8 @@ export const meta = style({
 export const excerpt = style({
   flex: "1 1 12rem",
   minWidth: 0,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
+  whiteSpace: "pre-wrap",
+  overflowWrap: "anywhere",
   color: vars.color.secondary,
   ...textMetrics.bodySm,
 
@@ -422,10 +421,8 @@ export const attendanceLabel = style({
 export const participantSummary = style({
   flex: "1 1 0",
   minWidth: 0,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
-  textWrap: "nowrap",
+  whiteSpace: "pre-wrap",
+  overflowWrap: "anywhere",
   color: vars.color.secondary,
   ...textMetrics.bodySm,
 
