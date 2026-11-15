@@ -6,7 +6,8 @@ import {
   memberMeOptions,
   publicProfileOptions,
 } from "@/api/generated/@tanstack/react-query.gen";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+import { syncAnalyticsMember } from "@/features/analytics/analytics";
 import type { MemberMeResponse } from "@/api/generated";
 import { MyPageShell } from "./mypage-shell";
 import { ProfileEditor } from "./profile-editor";
@@ -56,6 +57,12 @@ function MyPageDetails({ member }: MyPageDetailsProps) {
 export function MyPageContent() {
   const { data: memberResponse } = useSuspenseQuery(memberMeOptions());
   const member = memberResponse.data;
+
+  const { memberId, nickname, email, status } = member ?? {};
+  useEffect(() => {
+    if (memberId && nickname !== undefined && email !== undefined && status !== undefined)
+      syncAnalyticsMember(memberId, { name: nickname, email, member_status: status });
+  }, [memberId, nickname, email, status]);
 
   if (member === undefined || member === null) {
     throw new Error("Failed to load member");

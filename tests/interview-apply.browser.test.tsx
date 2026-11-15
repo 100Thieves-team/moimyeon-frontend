@@ -3,9 +3,19 @@ import { Suspense } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-react";
 import { page } from "vitest/browser";
+import { initializeAnalytics, capturePageview } from "@/features/analytics/analytics";
 import { InterviewApplyContent } from "@/features/interview-apply/interview-apply-content";
 import type { Resumes } from "@/features/resume/resume-model";
 import "@/styles/global.css";
+
+const analyticsSdk = vi.hoisted(() => ({
+  init: vi.fn(),
+  capture: vi.fn(),
+  identify: vi.fn(),
+  reset: vi.fn(),
+  get_property: vi.fn(),
+}));
+vi.mock("posthog-js", () => ({ default: analyticsSdk }));
 
 const mocks = vi.hoisted(() => ({
   createResume: vi.fn(),
@@ -195,6 +205,15 @@ function chooseFile(input: HTMLInputElement, file: File) {
 
 beforeEach(async () => {
   vi.clearAllMocks();
+  initializeAnalytics({
+    enabled: "true",
+    projectToken: "phc_mock",
+    host: "https://us.i.posthog.com",
+    environment: "dev",
+    nodeEnv: "development",
+  });
+  capturePageview("/reset-test-visit");
+  analyticsSdk.capture.mockClear();
   window.history.replaceState(null, "", `/interviews/${roomId}/apply`);
   mocks.roomDetail.mockResolvedValue(sdkSuccess(room));
   mocks.resumes.mockResolvedValue(sdkSuccess(resumes));
@@ -237,6 +256,14 @@ describe("InterviewApplyContent", () => {
       throwOnError: true,
     });
     await expect.poll(() => window.location.pathname).toBe(`/interviews/${roomId}`);
+    expect(
+      analyticsSdk.capture.mock.calls.filter(([event]) => event === "interview_applied"),
+    ).toHaveLength(1);
+    expect(analyticsSdk.capture).toHaveBeenCalledWith(
+      "interview_applied",
+      expect.objectContaining({ room_id: roomId, actor_role: "visitor" }),
+    );
+    expect(JSON.stringify(analyticsSdk.capture.mock.calls)).not.toContain("함께 준비하고 싶어요.");
   });
 
   it("포인터로 다른 이력서를 선택하면 이전 선택에 포커스 링을 남기지 않는다", async () => {
@@ -272,6 +299,11 @@ describe("InterviewApplyContent", () => {
 
     await expect.element(screen.getByText("이력서를 선택해 주세요.")).toBeVisible();
     expect(mocks.submitRoomApplication).not.toHaveBeenCalled();
+    expect(
+      analyticsSdk.capture.mock.calls.some(
+        ([event]) => event === "interview_applied" || event === "core_action_failed",
+      ),
+    ).toBe(false);
   });
 
   it("전달 사항이 300자를 초과하면 요청하지 않고 필드 오류로 표시한다", async () => {
@@ -317,6 +349,17 @@ describe("InterviewApplyContent", () => {
       .element(screen.getByRole("alert"))
       .toHaveTextContent("대기 중인 신청이 너무 많아요.");
     await expect.element(note).toHaveValue("꼭 참여하고 싶어요.");
+    expect(analyticsSdk.capture).toHaveBeenCalledWith(
+      "core_action_failed",
+      expect.objectContaining({
+        action: "interview_apply",
+        error_code: "E1416",
+        failure_type: "api",
+      }),
+    );
+    expect(analyticsSdk.capture.mock.calls.some(([event]) => event === "interview_applied")).toBe(
+      false,
+    );
     await expect.element(screen.getByText("기본_이력서.pdf", { exact: true })).toBeVisible();
 
     mocks.submitRoomApplication.mockResolvedValue(
@@ -347,5 +390,15 @@ describe("InterviewApplyContent", () => {
       sdkSuccess({ applicationId: 12, status: "PENDING", statusLabel: "대기 중" }, 201),
     );
     await expect.poll(() => window.location.pathname).toBe(`/interviews/${roomId}`);
+  });
+  it("분석 전송이 실패해도 참가 신청을 완료하고 상세로 이동한다", async () => {
+    analyticsSdk.capture.mockImplementation(() => {
+      throw new Error("PostHog blocked");
+    });
+    const screen = await renderApply();
+    await screen.getByRole("button", { name: "참가 신청하기" }).click();
+    await expect.poll(() => window.location.pathname).toBe(`/interviews/${roomId}`);
+    expect(mocks.submitRoomApplication).toHaveBeenCalledTimes(1);
+    analyticsSdk.capture.mockReset();
   });
 });

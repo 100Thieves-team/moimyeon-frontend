@@ -35,6 +35,10 @@ pnpm generate:api
 
 Generated files are written to `src/api/generated` and committed to Git. Do not edit them directly; update the OpenAPI schema and regenerate instead.
 
+## Product Analytics
+
+See [PostHog event contracts, setup, funnels, and verification](docs/posthog.md). Analytics is disabled by default.
+
 ## Testing
 
 Install the Chromium binary once after installing dependencies:

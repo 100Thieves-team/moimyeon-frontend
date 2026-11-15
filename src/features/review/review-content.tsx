@@ -1,5 +1,7 @@
 "use client";
 
+import { getActorRole } from "@/features/analytics/analytics";
+import { useRoomEntry } from "@/features/analytics/use-analytics-entry";
 import { QueryErrorResetBoundary, useSuspenseQueries } from "@tanstack/react-query";
 import Link from "next/link";
 import { Suspense, useState } from "react";
@@ -50,6 +52,7 @@ function ReviewBody({ roomId }: ReviewContentProps) {
   const [expandedMemberId, setExpandedMemberId] = useState<string | null>(null);
   const room = roomResponse.data;
   const reviewOverview = overviewResponse.data;
+  useRoomEntry("review_started", roomId, getActorRole(room?.viewer));
 
   if (room === undefined || room === null) {
     throw new Error("Failed to load room detail");
